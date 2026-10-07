@@ -1,0 +1,25 @@
+{
+ "source": "eval/feasibility_2026-10-07/crosscheck_dev/cases.jsonl",
+ "replies": {
+  "삼성전자 2025년 매출액이 전년보다 얼마나 늘었어?": {
+   "messages_sha256": "7cc17541abf912fbfc7d17a9c1b01da056039831cf974dc05f5a0a7accc187a2",
+   "content": "{\n  \"action\": \"compare\",\n  \"company\": \"삼성전자\",\n  \"basis\": \"연결\",\n  \"account\": \"revenue\",\n  \"current_period\": {\"kind\": \"year_to_date\", \"year\": 2025, \"month\": 12},\n  \"base_period\": {\"kind\": \"year_to_date\", \"year\": 2024, \"month\": 12},\n  \"clarify_accounts\": []\n}"
+  },
+  "삼성전자 2025년 3분기말 자산총계를 작년 3분기말과 비교해 줘.": {
+   "messages_sha256": "26a895cd154026cd201ce838cf237d61a6a63f7521ffe8bd8f2ebff617415620",
+   "content": "{\n  \"action\": \"compare\",\n  \"company\": \"삼성전자\",\n  \"basis\": \"연결\",\n  \"account\": \"total_assets\",\n  \"current_period\": {\n    \"kind\": \"instant\",\n    \"year\": 2025,\n    \"month\": 9\n  },\n  \"base_period\": {\n    \"kind\": \"instant\",\n    \"year\": 2024,\n    \"month\": 9\n  },\n  \"clarify_accounts\": []\n}"
+  },
+  "삼성전자의 2025년 3분기까지 누적 영업활동현금흐름은 얼마이고, 작년 같은 기간보다 얼마나 늘었어?": {
+   "messages_sha256": "3f00ec8428f0c6454a42308114b023a19bce81882d92611ae5b0f96d24326680",
+   "content": "{\n  \"action\": \"compare\",\n  \"company\": \"삼성전자\",\n  \"basis\": \"연결\",\n  \"account\": \"operating_cash_flow\",\n  \"current_period\": {\n    \"kind\": \"year_to_date\",\n    \"year\": 2025,\n    \"month\": 9\n  },\n  \"base_period\": {\n    \"kind\": \"year_to_date\",\n    \"year\": 2024,\n    \"month\": 9\n  },\n  \"clarify_accounts\": []\n}"
+  },
+  "삼성전자 2025년 연결 매출이랑 별도 매출은 각각 얼마야? 차이가 왜 이렇게 커?": {
+   "messages_sha256": "65400f3188f93b8a96bb2c565668a1b56de7beaeb678401881a256cb1b724936",
+   "content": "{\n  \"action\": \"side_by_side\",\n  \"company\": \"삼성전자\",\n  \"basis\": \"연결\",\n  \"account\": \"revenue\",\n  \"current_period\": {\n    \"kind\": \"year_to_date\",\n    \"year\": 2025,\n    \"month\": 12\n  },\n  \"base_period\": {\n    \"kind\": \"year_to_date\",\n    \"year\": 2025,\n    \"month\": 12\n  },\n  \"clarify_accounts\": []\n}"
+  },
+  "삼성전자 2014년 매출액을 2013년과 비교해 줘.": {
+   "messages_sha256": "5b3ca84bfee3c62805184534af6504be349601c4deba233dc1331063f4978ec0",
+   "content": "{\n  \"action\": \"compare\",\n  \"company\": \"삼성전자\",\n  \"basis\": \"연결\",\n  \"account\": \"revenue\",\n  \"current_period\": {\n    \"kind\": \"year_to_date\",\n    \"year\": 2014,\n    \"month\": 12\n  },\n  \"base_period\": {\n    \"kind\": \"year_to_date\",\n    \"year\": 2013,\n    \"month\": 12\n  },\n  \"clarify_accounts\": []\n}"
+  }
+ }
+}

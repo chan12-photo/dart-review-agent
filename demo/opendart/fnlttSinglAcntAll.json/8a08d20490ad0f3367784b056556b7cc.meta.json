@@ -1,0 +1,14 @@
+{
+  "endpoint": "fnlttSinglAcntAll.json",
+  "params": {
+    "bsns_year": "2014",
+    "corp_code": "00126380",
+    "fs_div": "CFS",
+    "reprt_code": "11011"
+  },
+  "status": "013",
+  "message": "조회된 데이타가 없습니다.",
+  "fetched_at": "2026-10-07T07:57:35+00:00",
+  "sha256": "1a2bdcb29a71e6600029f73eeb98cb11bfa176971ba77a3ba2a7a9133dc43e49",
+  "size": 68
+}

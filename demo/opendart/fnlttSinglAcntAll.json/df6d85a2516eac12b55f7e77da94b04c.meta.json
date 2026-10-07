@@ -1,0 +1,14 @@
+{
+  "endpoint": "fnlttSinglAcntAll.json",
+  "params": {
+    "bsns_year": "2025",
+    "corp_code": "00126380",
+    "fs_div": "CFS",
+    "reprt_code": "11011"
+  },
+  "status": "000",
+  "message": "정상",
+  "fetched_at": "2026-10-07T06:49:42+00:00",
+  "sha256": "f39595fdd3435b1ab2011b246e645a39a2f3ce8717c62d544de212663fd2a19a",
+  "size": 7655
+}

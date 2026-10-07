@@ -8,6 +8,7 @@ This repository is developed with Claude Code (see `CLAUDE.md`) and reviewed ind
 - Explain to the user in Korean; code and code comments are in English. `*.ko.md` files are Korean.
 - Useful commands (offline, no key needed):
   - `python3 -m unittest discover -s tests`
+  - `python3 -m dart_review demo` (replay demo from demo/: no key, no model server, no network)
   - `python3 eval/build_gold.py --check`
   - `python3 scripts/check_trap_tests.py`
   - `python3 eval/finalize.py <run folder>` (final scores after the human review in `human_review.json`)

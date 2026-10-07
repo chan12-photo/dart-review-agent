@@ -1,7 +1,8 @@
 """Show that each trap test catches its mistake.
 
 For every trap, swap one rule for the naive version a developer would plausibly
-write, run the cache-based tests, and require the trap's own test to fail.
+write, run the rule tests (synthetic and cache-based), and require the trap's
+own test to fail.
 Run without mutations first to require that every test passes. Needs the
 development cache (scripts/fetch_dev_cache.py); makes no network requests.
 
@@ -20,10 +21,11 @@ from unittest import mock
 ROOT = Path(__file__).resolve().parents[1]
 sys.path[:0] = [str(ROOT), str(ROOT / "tests")]
 
-from dart_review import accounts, compare, periods  # noqa: E402
+from dart_review import accounts, compare, periods, review  # noqa: E402
 from dart_review.periods import (  # noqa: E402
     ANNUAL, REPORT_END_MONTH, Plan, instant, own_source, quarter, year_to_date,
 )
+import test_rules  # noqa: E402
 import test_rules_on_cache  # noqa: E402
 
 original_column_periods = periods.column_periods
@@ -69,6 +71,19 @@ def id_only(rows, key):
     return found if found.method != accounts.NAME else accounts.Resolution(found.account, accounts.NOT_FOUND, None)
 
 
+def every_row_is_a_total(row):
+    return True
+
+
+def name_conflicts_accepted(rows, key):
+    found = original_resolve_account(rows, key)
+    return replace(found, method=accounts.NAME) if found.method == accounts.NAME_CONFLICT else found
+
+
+def unchecked_reports_are_linked(facts, first, second):
+    return True
+
+
 def base_from_its_own_report(current, base, sj_div):
     return Plan(own_source(current, sj_div), own_source(base, sj_div))
 
@@ -83,6 +98,12 @@ MUTATIONS = [
     ("전기 값을 그 기간의 원래 보고서에서 읽음", "plan_comparison", base_from_its_own_report,
      "test_trap_restated_comparative_inside_one_report"),
     ("재작성 확인 생략", "find_restatements", lambda facts: [], "test_trap_restatement_between_two_reports"),
+    # added after the Codex review (docs/reviews/1-3_codex_result.ko.md R1, R3, R4)
+    ("합계 행 필터 제거", "_is_total_row", every_row_is_a_total, "test_breakdown_rows_in_the_same_statement_are_ignored"),
+    ("다른 표준ID의 이름 일치를 그대로 인정", "resolve_account", name_conflicts_accepted,
+     "test_name_with_a_conflicting_standard_id_needs_review"),
+    ("확인하지 못한 보고서 사이를 같은 기준으로 간주", "_linked", unchecked_reports_are_linked,
+     "test_an_unusable_bridge_report_needs_review"),
 ]
 
 
@@ -102,10 +123,12 @@ def _home(name: str) -> str:
 
 
 def run_tests() -> tuple[int, set[str]]:
-    suite = unittest.defaultTestLoader.loadTestsFromModule(test_rules_on_cache)
+    suite = unittest.TestSuite(unittest.defaultTestLoader.loadTestsFromModule(module)
+                               for module in (test_rules, test_rules_on_cache))
     result = unittest.TestResult()
     suite.run(result)
-    failed = {test.id().rsplit(".", 1)[-1] for test, _ in result.failures + result.errors}
+    # a failing subTest is reported as a _SubTest wrapping the test case
+    failed = {getattr(test, "test_case", test)._testMethodName for test, _ in result.failures + result.errors}
     return result.testsRun, failed
 
 
@@ -114,7 +137,7 @@ def main() -> int:
         print("no cache: run scripts/fetch_dev_cache.py first")
         return 2
     total, failed = run_tests()
-    print(f"원래 규칙: {total}개 중 실패 {len(failed)}개 {sorted(failed) or ''}")
+    print(f"원래 규칙: 규칙 테스트 {total}개 중 실패 {len(failed)}개 {sorted(failed) or ''}")
     ok = not failed
     for label, name, replacement, expected in MUTATIONS:
         with ExitStack() as stack:

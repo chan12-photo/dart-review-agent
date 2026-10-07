@@ -5,12 +5,17 @@ Resolution order:
    preference (IS before CIS: some companies, such as Kakao, have no separate
    income statement and report revenue in the comprehensive income statement).
 2. Only when no row carries the id: an exact (whitespace-insensitive) match on
-   a known account name. Kakao's 2023 quarterly reports label revenue
-   "영업수익" but tag it ``ifrs-full_GrossProfit``, so the id alone misses it.
+   a known account name.
+   - A row without a standard id (``-표준계정코드 미사용-`` or empty) is accepted.
+   - A row tagged with a *different* standard id is a conflict: the name and
+     the id disagree about what the row is (for example "당기순이익" tagged as
+     profit attributable to owners of the parent). It is returned with method
+     NAME_CONFLICT so the comparison asks for review, unless the conflict is
+     listed in VERIFIED_MISTAGS with evidence.
 
-Rows whose ``account_detail`` is not "-" are breakdowns (statement of changes
-in equity components) and are never used. More than one matching row in the
-same statement is ambiguous and is not resolved automatically.
+Rows whose ``account_detail`` is not "-" are breakdowns (for example segment
+or equity-component members) and are never used. More than one matching row
+in the same statement is ambiguous and is not resolved automatically.
 """
 
 from __future__ import annotations
@@ -22,6 +27,7 @@ from typing import Any, Sequence
 NON_STANDARD_ID = "-표준계정코드 미사용-"
 ID = "account_id"
 NAME = "account_name"
+NAME_CONFLICT = "account_name_conflict"
 AMBIGUOUS = "ambiguous"
 NOT_FOUND = "not_found"
 
@@ -57,6 +63,17 @@ ACCOUNTS = {
 }
 
 
+# (corp_code, account key, the row's standard id, the row's name): conflicts
+# checked against the cache and accepted as mis-tags. Evidence in
+# docs/DATA_NOTES.ko.md section 3.
+VERIFIED_MISTAGS = {
+    # Kakao tags its 영업수익 line ifrs-full_Revenue in 18 of its 24 cached
+    # responses and ifrs-full_GrossProfit only in the 2023 Q1, half-year, and
+    # Q3 reports (consolidated and separate); no other revenue-like line exists.
+    ("00258801", "revenue", "ifrs-full_GrossProfit", "영업수익"),
+}
+
+
 def normalize_name(name: str) -> str:
     return re.sub(r"\s+", "", name or "")
 
@@ -64,7 +81,7 @@ def normalize_name(name: str) -> str:
 @dataclass(frozen=True)
 class Resolution:
     account: Account
-    method: str  # ID, NAME, AMBIGUOUS, or NOT_FOUND
+    method: str  # ID, NAME, NAME_CONFLICT, AMBIGUOUS, or NOT_FOUND
     row: dict[str, Any] | None
     candidates: tuple[dict[str, Any], ...] = ()
     notes: tuple[str, ...] = ()
@@ -92,10 +109,14 @@ def resolve_account(rows: Sequence[dict[str, Any]], key: str) -> Resolution:
         hits = [row for row in usable if row.get("sj_div") == sj_div and normalize_name(row.get("account_nm", "")) in names]
         if len(hits) == 1:
             row = hits[0]
-            note = f"표준계정ID {account.account_id} 없음: 계정명 '{row.get('account_nm')}'으로 찾음"
-            if row.get("account_id") not in (NON_STANDARD_ID, "", None):
-                note += f" (이 행의 ID는 {row.get('account_id')}로 표기됨)"
-            return Resolution(account, NAME, row, notes=(note,))
+            row_id, name = row.get("account_id"), row.get("account_nm")
+            note = f"표준계정ID {account.account_id} 없음: 계정명 '{name}'으로 찾음"
+            if row_id in (NON_STANDARD_ID, "", None):
+                return Resolution(account, NAME, row, notes=(note,))
+            if (row.get("corp_code"), key, row_id, normalize_name(name)) in VERIFIED_MISTAGS:
+                return Resolution(account, NAME, row, notes=(note + f" (이 행의 ID {row_id}는 확인된 오표기)",))
+            return Resolution(account, NAME_CONFLICT, row, notes=(
+                f"계정명 '{name}'은 {account.label}와 같지만 다른 표준계정ID({row_id})로 표기됨: 같은 계정인지 확인 필요",))
         if hits:
             return _ambiguous(account, hits)
     return Resolution(account, NOT_FOUND, None, notes=(f"{account.label} 계정을 찾지 못함",))

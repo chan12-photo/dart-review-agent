@@ -112,18 +112,54 @@ class CacheGoldTests(unittest.TestCase):
         self.assertEqual(problems, [])
         self.assertEqual(build_gold.render(document), build_gold.GOLD.read_text(encoding="utf-8"))
 
-    def test_wrong_hand_evidence_is_caught(self):
-        # the naive reading: the 2025 Q3 report's prior column as "last year's Q3 end"
+    def test_evidence_for_the_wrong_period_is_refused(self):
+        # the naive reading: the 2025 Q3 report's prior column as "last year's Q3 end" (it is the 2024 year end)
         question = copy.deepcopy(self.question("dev02"))
         question["expected"]["evidence"]["base"] = {"year": 2025, "report_code": "11014", "column": "frmtrm",
                                                     "sj_div": "BS", "account_id": "ifrs-full_Assets"}
-        self.assertTrue(any("base value or source differs" in problem for problem in self.problems(question)))
+        with self.assertRaises(GoldError) as caught:
+            build_gold.build_question(self.client, question)
+        self.assertIn("2024-12-31", str(caught.exception))
+
+    def test_evidence_from_the_wrong_report_is_caught(self):
+        # right period, but the 2024 report's own figure instead of the 2025 report's comparative column
+        question = copy.deepcopy(self.question("dev07"))
+        question["expected"]["evidence"]["base"] = question["expected"]["evidence"]["base_in_prior_report"]
+        question["expected"]["evidence"].pop("base_in_prior_report")
+        self.assertTrue(any(problem.startswith("base value, source, or period differs") for problem in self.problems(question)))
 
     def test_wrong_expected_status_is_caught(self):
         question = copy.deepcopy(self.question("dev08"))
         question["expected"]["status"] = "비교 가능"
         question["expected"].pop("reason_keywords")
         self.assertTrue(any(problem.startswith("status:") for problem in self.problems(question)))
+
+    def test_a_restated_pair_must_be_one_period_in_two_reports(self):
+        # Codex R2: the comparison's own two cells are different periods, not a restated pair
+        question = copy.deepcopy(self.question("dev08"))
+        evidence = question["expected"]["evidence"]
+        evidence["restated_pair"]["cells"] = [copy.deepcopy(evidence[role]) for role in ("current", "base")]
+        with self.assertRaises(GoldError):
+            build_gold.build_question(self.client, question)
+        # the 2024 year end appears in both reports with the same amount: not a restatement
+        evidence["restated_pair"] = {"period": {"kind": "instant", "year": 2024, "month": 12}, "cells": [
+            {"year": 2025, "report_code": "11014", "column": "frmtrm", "sj_div": "BS", "account_id": "ifrs-full_Liabilities"},
+            {"year": 2024, "report_code": "11011", "column": "thstrm", "sj_div": "BS", "account_id": "ifrs-full_Liabilities"}]}
+        with self.assertRaises(GoldError):
+            build_gold.build_question(self.client, question)
+
+    def test_rules_must_name_the_exact_restated_pair(self):
+        question = self.question("dev08")
+        gold = build_gold.build_question(self.client, question)
+        gold["restated_pair"]["cells"][0] = {**gold["restated_pair"]["cells"][0], "amount": 1}
+        self.assertTrue(any("exact restated pair" in problem for problem in cross_check(self.client, question, gold)))
+
+    def test_a_wrong_period_label_in_the_rules_is_caught(self):
+        # Codex R2: the gold labels no longer come from the rule code, so a label bug there shows up
+        original = periods.Period.label
+        with mock.patch.object(periods.Period, "label", lambda self: original(self) if self.is_instant else "WRONG"):
+            _, problems = build(self.client, load_spec())
+        self.assertTrue(any("period differs" in problem for problem in problems))
 
     def test_a_rule_bug_is_caught(self):
         original = periods.column_periods
@@ -137,7 +173,7 @@ class CacheGoldTests(unittest.TestCase):
         with mock.patch.object(periods, "column_periods", naive), mock.patch.object(facts, "column_periods", naive), \
                 mock.patch.object(review, "column_periods", naive):
             problems = self.problems(self.question("dev02"))
-        self.assertTrue(any("base value or source differs" in problem for problem in problems))
+        self.assertTrue(any(problem.startswith("base value, source, or period differs") for problem in problems))
 
 
 if __name__ == "__main__":

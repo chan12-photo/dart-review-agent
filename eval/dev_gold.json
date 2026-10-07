@@ -1,8 +1,8 @@
 {
-  "version": 1,
+  "version": 2,
   "source": "eval/dev_questions.json",
   "rules": "docs/GOLD_RULES.ko.md",
-  "status": "draft written by Claude on 2026-10-07; awaiting review by the user and Codex (docs/ROADMAP.ko.md)",
+  "status": "draft written by Claude on 2026-10-07, revised after the Codex review (docs/reviews/1-3_codex_result.ko.md, response in 1-3_codex_response.ko.md); awaiting review by the user",
   "answers": [
     {
       "id": "dev01",
@@ -30,6 +30,7 @@
           "status": "000",
           "response_sha256": "d2888e542f9159cb087c7679efcd41e3d76cbf2df9e90260fa95549c7fee15e9",
           "column": "thstrm",
+          "period": "2025-01-01~2025-12-31 (누적 12개월)",
           "sj_div": "IS",
           "account_id": "ifrs-full_Revenue",
           "account_nm": "매출액",
@@ -45,6 +46,7 @@
           "status": "000",
           "response_sha256": "d2888e542f9159cb087c7679efcd41e3d76cbf2df9e90260fa95549c7fee15e9",
           "column": "frmtrm",
+          "period": "2024-01-01~2024-12-31 (누적 12개월)",
           "sj_div": "IS",
           "account_id": "ifrs-full_Revenue",
           "account_nm": "매출액",
@@ -83,6 +85,7 @@
           "status": "000",
           "response_sha256": "12373931fd0ecb290ec6b6ee161048259e50e5fac39e81982b3cb8d268e61b25",
           "column": "thstrm",
+          "period": "2025-09-30 시점",
           "sj_div": "BS",
           "account_id": "ifrs-full_Assets",
           "account_nm": "자산총계",
@@ -98,6 +101,7 @@
           "status": "000",
           "response_sha256": "419eef963a40cbc4d9107706ae9505afeb3e2da43aa6590896e1d3c3c96385af",
           "column": "thstrm",
+          "period": "2024-09-30 시점",
           "sj_div": "BS",
           "account_id": "ifrs-full_Assets",
           "account_nm": "자산총계",
@@ -136,6 +140,7 @@
           "status": "000",
           "response_sha256": "12373931fd0ecb290ec6b6ee161048259e50e5fac39e81982b3cb8d268e61b25",
           "column": "thstrm",
+          "period": "2025-01-01~2025-09-30 (누적 9개월)",
           "sj_div": "CF",
           "account_id": "ifrs-full_CashFlowsFromUsedInOperatingActivities",
           "account_nm": "영업활동현금흐름",
@@ -151,6 +156,7 @@
           "status": "000",
           "response_sha256": "12373931fd0ecb290ec6b6ee161048259e50e5fac39e81982b3cb8d268e61b25",
           "column": "frmtrm_q",
+          "period": "2024-01-01~2024-09-30 (누적 9개월)",
           "sj_div": "CF",
           "account_id": "ifrs-full_CashFlowsFromUsedInOperatingActivities",
           "account_nm": "영업활동현금흐름",
@@ -189,6 +195,7 @@
           "status": "000",
           "response_sha256": "7e61187d2d2d9362d733bc38fc86b84a3a6703d9a10b8b1e3bd9c920370d5694",
           "column": "thstrm_add",
+          "period": "2025-01-01~2025-09-30 (누적 9개월)",
           "sj_div": "IS",
           "account_id": "dart_OperatingIncomeLoss",
           "account_nm": "영업이익",
@@ -204,6 +211,7 @@
           "status": "000",
           "response_sha256": "7e61187d2d2d9362d733bc38fc86b84a3a6703d9a10b8b1e3bd9c920370d5694",
           "column": "frmtrm_add",
+          "period": "2024-01-01~2024-09-30 (누적 9개월)",
           "sj_div": "IS",
           "account_id": "dart_OperatingIncomeLoss",
           "account_nm": "영업이익",
@@ -241,6 +249,7 @@
           "status": "000",
           "response_sha256": "d2888e542f9159cb087c7679efcd41e3d76cbf2df9e90260fa95549c7fee15e9",
           "column": "thstrm",
+          "period": "2025-01-01~2025-12-31 (누적 12개월)",
           "sj_div": "IS",
           "account_id": "ifrs-full_Revenue",
           "account_nm": "매출액",
@@ -256,6 +265,7 @@
           "status": "000",
           "response_sha256": "49e4ac1514c31abbe13fadc23e7d979e7061c939864420255e33ad7ab5182361",
           "column": "thstrm",
+          "period": "2025-01-01~2025-12-31 (누적 12개월)",
           "sj_div": "IS",
           "account_id": "ifrs-full_Revenue",
           "account_nm": "매출액",
@@ -263,7 +273,8 @@
           "currency": "KRW",
           "amount": 238043009000000
         }
-      }
+      },
+      "allowed_difference": 95562929000000
     },
     {
       "id": "dev06",
@@ -292,6 +303,7 @@
           "status": "000",
           "response_sha256": "28a25abd03b808628a62e534d4d8c42f834b3d4ad891db083f5f762cb6cc3b4f",
           "column": "thstrm",
+          "period": "2023-07-01~2023-09-30 (3개월)",
           "sj_div": "CIS",
           "account_id": "ifrs-full_GrossProfit",
           "account_nm": "영업수익",
@@ -307,6 +319,7 @@
           "status": "000",
           "response_sha256": "513e596628c2e9ed870963184a622595cd6502ff6fc38076f2c7ef8c5a3cf820",
           "column": "thstrm",
+          "period": "2023-04-01~2023-06-30 (3개월)",
           "sj_div": "CIS",
           "account_id": "ifrs-full_GrossProfit",
           "account_nm": "영업수익",
@@ -345,6 +358,7 @@
           "status": "000",
           "response_sha256": "dc8e875ffbc7151445edaf1466d6ea42214849265ec99628aecf6cf5eddf092a",
           "column": "thstrm",
+          "period": "2025-01-01~2025-12-31 (누적 12개월)",
           "sj_div": "CIS",
           "account_id": "dart_OperatingIncomeLoss",
           "account_nm": "영업이익",
@@ -360,6 +374,7 @@
           "status": "000",
           "response_sha256": "dc8e875ffbc7151445edaf1466d6ea42214849265ec99628aecf6cf5eddf092a",
           "column": "frmtrm",
+          "period": "2024-01-01~2024-12-31 (누적 12개월)",
           "sj_div": "CIS",
           "account_id": "dart_OperatingIncomeLoss",
           "account_nm": "영업이익",
@@ -371,7 +386,7 @@
       "change": 236758778026,
       "change_pct": "47.80",
       "direction": "증가",
-      "base_as_originally_reported": {
+      "base_in_prior_report": {
         "year": 2024,
         "report": "사업보고서",
         "report_code": "11011",
@@ -379,6 +394,7 @@
         "status": "000",
         "response_sha256": "541b0392a576f50a6dd11ad98334f60228d9cfe843282679a23ac76a5e0f9370",
         "column": "thstrm",
+        "period": "2024-01-01~2024-12-31 (누적 12개월)",
         "sj_div": "CIS",
         "account_id": "dart_OperatingIncomeLoss",
         "account_nm": "영업이익(손실)",
@@ -417,6 +433,7 @@
           "status": "000",
           "response_sha256": "cdeea98a7142186bee7ee5c11ae3e2b456c57e9cac97fbfa239c00d35bdbcd84",
           "column": "thstrm",
+          "period": "2025-09-30 시점",
           "sj_div": "BS",
           "account_id": "ifrs-full_Liabilities",
           "account_nm": "부채총계",
@@ -432,6 +449,7 @@
           "status": "000",
           "response_sha256": "b6d5a4fb3a4097337d213511c7ac6bcc2fb899f7ffbb050b419b0e8c76ecc7bd",
           "column": "thstrm",
+          "period": "2024-09-30 시점",
           "sj_div": "BS",
           "account_id": "ifrs-full_Liabilities",
           "account_nm": "부채총계",
@@ -443,38 +461,43 @@
       "change": 843644711683,
       "change_pct": "34.69",
       "direction": "증가",
-      "restated_pair": [
-        {
-          "year": 2024,
-          "report": "3분기보고서",
-          "report_code": "11014",
-          "fs_div": "OFS",
-          "status": "000",
-          "response_sha256": "b6d5a4fb3a4097337d213511c7ac6bcc2fb899f7ffbb050b419b0e8c76ecc7bd",
-          "column": "frmtrm",
-          "sj_div": "BS",
-          "account_id": "ifrs-full_Liabilities",
-          "account_nm": "부채총계",
-          "rcept_no": "20241114002862",
-          "currency": "KRW",
-          "amount": 2230608519706
-        },
-        {
-          "year": 2024,
-          "report": "사업보고서",
-          "report_code": "11011",
-          "fs_div": "OFS",
-          "status": "000",
-          "response_sha256": "3af9a08c661b03cc528538957b46794d00fd97cd028c1aad42bf849bb23cd8f1",
-          "column": "frmtrm",
-          "sj_div": "BS",
-          "account_id": "ifrs-full_Liabilities",
-          "account_nm": "부채총계",
-          "rcept_no": "20250317000929",
-          "currency": "KRW",
-          "amount": 2256044979595
-        }
-      ]
+      "restated_pair": {
+        "period": "2023-12-31 시점",
+        "cells": [
+          {
+            "year": 2024,
+            "report": "3분기보고서",
+            "report_code": "11014",
+            "fs_div": "OFS",
+            "status": "000",
+            "response_sha256": "b6d5a4fb3a4097337d213511c7ac6bcc2fb899f7ffbb050b419b0e8c76ecc7bd",
+            "column": "frmtrm",
+            "period": "2023-12-31 시점",
+            "sj_div": "BS",
+            "account_id": "ifrs-full_Liabilities",
+            "account_nm": "부채총계",
+            "rcept_no": "20241114002862",
+            "currency": "KRW",
+            "amount": 2230608519706
+          },
+          {
+            "year": 2024,
+            "report": "사업보고서",
+            "report_code": "11011",
+            "fs_div": "OFS",
+            "status": "000",
+            "response_sha256": "3af9a08c661b03cc528538957b46794d00fd97cd028c1aad42bf849bb23cd8f1",
+            "column": "frmtrm",
+            "period": "2023-12-31 시점",
+            "sj_div": "BS",
+            "account_id": "ifrs-full_Liabilities",
+            "account_nm": "부채총계",
+            "rcept_no": "20250317000929",
+            "currency": "KRW",
+            "amount": 2256044979595
+          }
+        ]
+      }
     },
     {
       "id": "dev09",
@@ -502,6 +525,7 @@
           "status": "000",
           "response_sha256": "dc8e875ffbc7151445edaf1466d6ea42214849265ec99628aecf6cf5eddf092a",
           "column": "thstrm",
+          "period": "2025-01-01~2025-12-31 (누적 12개월)",
           "sj_div": "CIS",
           "account_id": "ifrs-full_ProfitLoss",
           "account_nm": "당기순이익(손실)",
@@ -517,6 +541,7 @@
           "status": "000",
           "response_sha256": "dc8e875ffbc7151445edaf1466d6ea42214849265ec99628aecf6cf5eddf092a",
           "column": "frmtrm",
+          "period": "2024-01-01~2024-12-31 (누적 12개월)",
           "sj_div": "CIS",
           "account_id": "ifrs-full_ProfitLoss",
           "account_nm": "당기순이익(손실)",
@@ -600,6 +625,62 @@
           "label": "당기순이익"
         }
       ]
+    },
+    {
+      "id": "dev13",
+      "question": "삼성전자 별도 기준으로 2025년 상반기 영업이익은 전년 상반기와 비교해 얼마나 변했어?",
+      "case_types": [
+        "정상 비교",
+        "3개월·누적 함정"
+      ],
+      "action": "compare",
+      "company": "삼성전자",
+      "corp_code": "00126380",
+      "status": "비교 가능",
+      "account": "operating_income",
+      "account_label": "영업이익",
+      "reason_keywords": [],
+      "basis": "별도",
+      "fs_div": "OFS",
+      "current_period": "2025-01-01~2025-06-30 (누적 6개월)",
+      "base_period": "2024-01-01~2024-06-30 (누적 6개월)",
+      "values": {
+        "current": {
+          "year": 2025,
+          "report": "반기보고서",
+          "report_code": "11012",
+          "fs_div": "OFS",
+          "status": "000",
+          "response_sha256": "0b70afa73bfd5d1b508224b12412c8866a0cd8c60368d15bb3cad825644c88b5",
+          "column": "thstrm_add",
+          "period": "2025-01-01~2025-06-30 (누적 6개월)",
+          "sj_div": "IS",
+          "account_id": "dart_OperatingIncomeLoss",
+          "account_nm": "영업이익",
+          "rcept_no": "20250814003156",
+          "currency": "KRW",
+          "amount": 2660105000000
+        },
+        "base": {
+          "year": 2025,
+          "report": "반기보고서",
+          "report_code": "11012",
+          "fs_div": "OFS",
+          "status": "000",
+          "response_sha256": "0b70afa73bfd5d1b508224b12412c8866a0cd8c60368d15bb3cad825644c88b5",
+          "column": "frmtrm_add",
+          "period": "2024-01-01~2024-06-30 (누적 6개월)",
+          "sj_div": "IS",
+          "account_id": "dart_OperatingIncomeLoss",
+          "account_nm": "영업이익",
+          "rcept_no": "20250814003156",
+          "currency": "KRW",
+          "amount": 9229871000000
+        }
+      },
+      "change": -6569766000000,
+      "change_pct": "-71.18",
+      "direction": "감소"
     }
   ]
 }

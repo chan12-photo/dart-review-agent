@@ -1,10 +1,19 @@
 """Build the development gold answers from the raw cache and cross-check the rule code.
 
-Gold values do not come from the rule code. Each question names its evidence
-cells by hand (report, column, statement, account id); this script reads
-exactly those cells from the cached responses, computes the change itself,
-and only then runs the rule code (``review_change``) on the same question.
-Any disagreement stops the build. See docs/GOLD_RULES.ko.md.
+What is independent of the rule code (dart_review.periods, accounts, facts,
+compare, review):
+- the evidence cells: each question names them by hand (report, column,
+  statement, account id) in eval/dev_questions.json;
+- reading them: exactly one total row with that statement and id, straight
+  from the cached response;
+- the period each cell covers and its label: this script's own column table
+  (``cell_period``), checked against the period the question declares;
+- the change, rate, and direction arithmetic.
+
+What is shared: the cache and HTTP client (to read responses), company names,
+and account labels. The rule code is then run on the same question
+(``review_change``) and every value, source, period, status, and reason must
+match. Any disagreement stops the build. See docs/GOLD_RULES.ko.md.
 
     python eval/build_gold.py          # write eval/dev_gold.json
     python eval/build_gold.py --check  # fail if the committed file is stale
@@ -15,6 +24,8 @@ Runs offline from the cache and never needs the API key.
 from __future__ import annotations
 
 import argparse
+import calendar
+from datetime import date
 from decimal import ROUND_HALF_UP, Decimal
 import json
 from pathlib import Path
@@ -29,10 +40,6 @@ from dart_review.accounts import ACCOUNTS  # noqa: E402
 from dart_review.cache import ResponseCache  # noqa: E402
 from dart_review.client import DartClient  # noqa: E402
 from dart_review.companies import DEV_COMPANIES, FS_DIVS, REPORT_CODES, ensure_not_sealed  # noqa: E402
-from dart_review.compare import compare  # noqa: E402
-from dart_review.facts import fact_from_response  # noqa: E402
-from dart_review.periods import Period, instant, quarter, year_to_date  # noqa: E402
-from dart_review.review import review_change  # noqa: E402
 
 SPEC = ROOT / "eval" / "dev_questions.json"
 GOLD = ROOT / "eval" / "dev_gold.json"
@@ -41,6 +48,7 @@ ACTIONS = ("compare", "side_by_side", "clarify")
 STATUSES = ("비교 가능", "비교 불가", "데이터 없음", "확인 필요")
 CASE_TYPES = ("정상 비교", "연결·별도 함정", "3개월·누적 함정", "전년 분기 추가 조회", "표준계정코드 없음",
               "비교 불가", "데이터 없음", "모호한 질문")
+END_MONTH = {"11013": 3, "11012": 6, "11014": 9, "11011": 12}
 _AMOUNT = re.compile(r"-?\d+")
 
 
@@ -48,9 +56,44 @@ class GoldError(Exception):
     pass
 
 
-def make_period(spec: dict[str, Any]) -> Period:
-    makers = {"instant": instant, "quarter": quarter, "year_to_date": year_to_date}
-    return makers[spec["kind"]](spec["year"], spec["month"])
+# Periods are (year, end month, months); months 0 means a point in time.
+
+def spec_period(spec: dict[str, Any]) -> tuple[int, int, int]:
+    year, month = spec["year"], spec["month"]
+    return {"instant": (year, month, 0), "quarter": (year, month, 3), "year_to_date": (year, month, month)}[spec["kind"]]
+
+
+def cell_period(cell: dict[str, Any]) -> tuple[int, int, int]:
+    """The period an OpenDART column covers (docs/DATA_NOTES.ko.md section 1), written apart from periods.py."""
+    year, month, column, statement = cell["year"], END_MONTH[cell["report_code"]], cell["column"], cell["sj_div"]
+    if statement == "BS":
+        table = {"thstrm": (year, month, 0), "frmtrm": (year - 1, 12, 0), "bfefrmtrm": (year - 2, 12, 0)}
+    elif cell["report_code"] == "11011":
+        table = {"thstrm": (year, 12, 12), "frmtrm": (year - 1, 12, 12), "bfefrmtrm": (year - 2, 12, 12)}
+    elif statement == "CF":
+        table = {"thstrm": (year, month, month), "frmtrm_q": (year - 1, month, month)}
+    else:
+        table = {"thstrm": (year, month, 3), "thstrm_add": (year, month, month),
+                 "frmtrm_q": (year - 1, month, 3), "frmtrm_add": (year - 1, month, month)}
+    if column not in table:
+        raise GoldError(f"{cell}: {statement} in report {cell['report_code']} has no column {column}")
+    return table[column]
+
+
+def period_end(period: tuple[int, int, int]) -> date:
+    year, month, _ = period
+    return date(year, month, calendar.monthrange(year, month)[1])
+
+
+def period_label(period: tuple[int, int, int]) -> str:
+    year, month, months = period
+    end = period_end(period)
+    if months == 0:
+        return f"{end.isoformat()} 시점"
+    first = year * 12 + month - months
+    start = date(first // 12, first % 12 + 1, 1)
+    cumulative = "누적 " if start.month == 1 and months > 3 else ""
+    return f"{start.isoformat()}~{end.isoformat()} ({cumulative}{months}개월)"
 
 
 def read_cell(client: DartClient, corp_code: str, fs_div: str, cell: dict[str, Any]) -> dict[str, Any]:
@@ -74,9 +117,19 @@ def read_cell(client: DartClient, corp_code: str, fs_div: str, cell: dict[str, A
     text = (row.get(f"{cell['column']}_amount") or "").replace(",", "")
     if not _AMOUNT.fullmatch(text):
         raise GoldError(f"{corp_code} {fs_div} {cell}: amount {text!r} is not an integer")
-    found.update(column=cell["column"], sj_div=row["sj_div"], account_id=row["account_id"], account_nm=row["account_nm"],
-                 rcept_no=row["rcept_no"], currency=row.get("currency"), amount=int(text))
+    if not row.get("currency"):
+        raise GoldError(f"{corp_code} {fs_div} {cell}: no currency")
+    found.update(column=cell["column"], period=period_label(cell_period(cell)), sj_div=row["sj_div"],
+                 account_id=row["account_id"], account_nm=row["account_nm"], rcept_no=row["rcept_no"],
+                 currency=row["currency"], amount=int(text))
     return found
+
+
+def require_period(question_id: str, role: str, cell: dict[str, Any], expected: tuple[int, int, int]) -> None:
+    covered = cell_period(cell)
+    if covered != expected:
+        raise GoldError(f"{question_id} {role}: the cell covers {period_label(covered)}, "
+                        f"the question asks for {period_label(expected)}")
 
 
 def change_of(current: int, base: int, direction: str | None) -> dict[str, Any]:
@@ -116,9 +169,9 @@ def validate_spec(spec: dict[str, Any]) -> None:
 
 
 def build_question(client: DartClient, question: dict[str, Any]) -> dict[str, Any]:
-    expected = question["expected"]
+    expected, question_id = question["expected"], question["id"]
     corp_code = expected["corp_code"]
-    gold: dict[str, Any] = {"id": question["id"], "question": question["question"], "case_types": question["case_types"],
+    gold: dict[str, Any] = {"id": question_id, "question": question["question"], "case_types": question["case_types"],
                             "action": expected["action"], "company": DEV_COMPANIES[corp_code], "corp_code": corp_code}
     if expected["action"] == "clarify":
         gold.update(ambiguity=expected["ambiguity"],
@@ -128,37 +181,82 @@ def build_question(client: DartClient, question: dict[str, Any]) -> dict[str, An
                 reason_keywords=expected.get("reason_keywords", []))
     evidence = expected.get("evidence", {})
     if expected["action"] == "side_by_side":
-        gold["period"] = make_period(expected["period"]).label()
+        period = spec_period(expected["period"])
+        gold["period"] = period_label(period)
+        for fs_div, cell in evidence.items():
+            require_period(question_id, fs_div, cell, period)
         gold["values"] = {fs_div: read_cell(client, corp_code, fs_div, cell) for fs_div, cell in evidence.items()}
+        # a scope difference at one point in time, not a change over time (GOLD_RULES section 3)
+        gold["allowed_difference"] = gold["values"]["CFS"]["amount"] - gold["values"]["OFS"]["amount"]
         return gold
     fs_div = expected["fs_div"]
-    gold.update(basis=FS_DIVS[fs_div], fs_div=fs_div, current_period=make_period(expected["current"]).label(),
-                base_period=make_period(expected["base"]).label())
-    values = {role: read_cell(client, corp_code, fs_div, evidence[role]) for role in ("current", "base") if role in evidence}
+    periods = {role: spec_period(expected[role]) for role in ("current", "base")}
+    gold.update(basis=FS_DIVS[fs_div], fs_div=fs_div, current_period=period_label(periods["current"]),
+                base_period=period_label(periods["base"]))
+    values = {}
+    for role in ("current", "base"):
+        if role in evidence:
+            if "expect_status" not in evidence[role]:
+                require_period(question_id, role, evidence[role], periods[role])
+            values[role] = read_cell(client, corp_code, fs_div, evidence[role])
     gold["values"] = values
     if expected["status"] in ("비교 가능", "확인 필요"):
         gold.update(change_of(values["current"]["amount"], values["base"]["amount"], expected.get("direction")))
-    if "base_as_originally_reported" in evidence:
-        original = read_cell(client, corp_code, fs_div, evidence["base_as_originally_reported"])
-        if original["amount"] == values["base"]["amount"]:
-            raise GoldError(f"{question['id']}: the original value equals the restated one")
-        gold["base_as_originally_reported"] = original
+    if "base_in_prior_report" in evidence:
+        require_period(question_id, "base_in_prior_report", evidence["base_in_prior_report"], periods["base"])
+        prior = read_cell(client, corp_code, fs_div, evidence["base_in_prior_report"])
+        if prior["amount"] == values["base"]["amount"] or prior["rcept_no"] == values["base"]["rcept_no"]:
+            raise GoldError(f"{question_id}: the prior report's value is not a different figure from another report")
+        gold["base_in_prior_report"] = prior
     if "restated_pair" in evidence:
-        pair = [read_cell(client, corp_code, fs_div, cell) for cell in evidence["restated_pair"]]
-        if pair[0]["amount"] == pair[1]["amount"]:
-            raise GoldError(f"{question['id']}: the restated pair has equal amounts")
-        gold["restated_pair"] = pair
+        pair_spec = evidence["restated_pair"]
+        period = spec_period(pair_spec["period"])
+        cells = pair_spec["cells"]
+        for index, cell in enumerate(cells):
+            require_period(question_id, f"restated_pair[{index}]", cell, period)
+        if {(cell["sj_div"], cell["account_id"]) for cell in cells} != {(cells[0]["sj_div"], cells[0]["account_id"])}:
+            raise GoldError(f"{question_id}: the restated pair is not the same statement and account")
+        pair = [read_cell(client, corp_code, fs_div, cell) for cell in cells]
+        if pair[0]["rcept_no"] == pair[1]["rcept_no"] or pair[0]["amount"] == pair[1]["amount"]:
+            raise GoldError(f"{question_id}: the restated pair must be two reports with different amounts")
+        if pair[0]["currency"] != pair[1]["currency"]:
+            raise GoldError(f"{question_id}: the restated pair has different currencies")
+        gold["restated_pair"] = {"period": period_label(period), "cells": pair}
     return gold
 
 
 def _same_cell(fact: Any, cell: dict[str, Any]) -> bool:
     return (fact is not None and fact.amount == cell["amount"] and fact.rcept_no == cell["rcept_no"]
             and (fact.source.year, fact.source.report_code, fact.source.column) == (cell["year"], cell["report_code"], cell["column"])
-            and (fact.sj_div, fact.account_id) == (cell["sj_div"], cell["account_id"]))
+            and (fact.sj_div, fact.account_id, fact.currency) == (cell["sj_div"], cell["account_id"], cell["currency"])
+            and fact.period.label() == cell["period"])
+
+
+def _numbers(text: str) -> set[str]:
+    """Whole numbers in a text (with thousands separators kept), so "1" never matches inside "2,231"."""
+    return set(re.findall(r"-?\d[\d,]*\d|-?\d", text))
+
+
+def _names_cells(text: str, cells: list[dict[str, Any]]) -> bool:
+    numbers = _numbers(text)
+    return all(f"{cell['amount']:,}" in numbers and cell["rcept_no"] in numbers for cell in cells)
+
+
+def _mentions(texts: tuple[str, ...], cell: dict[str, Any]) -> bool:
+    return any(_names_cells(text, [cell]) for text in texts)
 
 
 def cross_check(client: DartClient, question: dict[str, Any], gold: dict[str, Any]) -> list[str]:
     """Differences between the hand-specified gold and the rule code (empty when they agree)."""
+    from dart_review.compare import compare
+    from dart_review.facts import fact_from_response
+    from dart_review.periods import Period
+    from dart_review.review import review_change
+
+    def rule_period(spec: dict[str, Any]) -> Period:
+        period = spec_period(spec)
+        return Period(period_end(period), period[2])
+
     expected = question["expected"]
     if expected["action"] == "clarify":
         return []
@@ -171,19 +269,21 @@ def cross_check(client: DartClient, question: dict[str, Any], gold: dict[str, An
         problems += [f"{fs_div} value differs" for fs_div, fact in facts.items() if not _same_cell(fact, gold["values"][fs_div])]
     else:
         result = review_change(client, expected["corp_code"], expected["fs_div"], expected["account"],
-                               make_period(expected["current"]), make_period(expected["base"]))
+                               rule_period(expected["current"]), rule_period(expected["base"]))
         for role, cell in gold["values"].items():
             if "amount" in cell and not _same_cell(getattr(result, role), cell):
-                problems.append(f"{role} value or source differs: rules gave {getattr(result, role)}")
+                problems.append(f"{role} value, source, or period differs: rules gave {getattr(result, role)}")
         for key in ("change", "change_pct", "direction"):
             ours = getattr(result, key)
             ours = str(ours) if key == "change_pct" and ours is not None else ours
             if key in gold and ours != gold[key]:
                 problems.append(f"{key}: rules {ours!r}, gold {gold[key]!r}")
-        if "base_as_originally_reported" in gold:
-            original = f"{gold['base_as_originally_reported']['amount']:,}"
-            if not any(original in note for note in result.notes):
-                problems.append(f"the rules do not note the original value {original}")
+        if "base_in_prior_report" in gold and not _mentions(result.notes, gold["base_in_prior_report"]):
+            problems.append("the rules do not note the prior report's figure and receipt number")
+        if "restated_pair" in gold and not any(
+                _names_cells(reason, gold["restated_pair"]["cells"]) and gold["restated_pair"]["period"] in reason
+                for reason in result.reasons):
+            problems.append("no rule reason names the exact restated pair (period, both amounts, both receipt numbers)")
     if result.status != gold["status"]:
         problems.append(f"status: rules {result.status}, gold {gold['status']}")
     for keyword in gold["reason_keywords"]:

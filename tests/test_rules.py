@@ -8,10 +8,12 @@ from pathlib import Path
 import tempfile
 import unittest
 
-from dart_review.accounts import AMBIGUOUS, ID, NAME, NOT_FOUND, resolve_account
+from dart_review.accounts import AMBIGUOUS, ID, NAME, NAME_CONFLICT, NOT_FOUND, resolve_account
 from dart_review.cache import ResponseCache
 from dart_review.client import DartClient, DartResponse
-from dart_review.compare import COMPARABLE, NEEDS_REVIEW, NO_DATA, NOT_COMPARABLE, compare, find_restatements
+from dart_review.compare import (
+    COMPARABLE, NEEDS_REVIEW, NO_DATA, NOT_COMPARABLE, BasisCheck, compare, find_restatements,
+)
 from dart_review.facts import UnexpectedAmount, fact_from_response, parse_amount
 from dart_review.review import review_change
 from dart_review.periods import (
@@ -23,7 +25,8 @@ CORP = "00000001"
 
 
 def row(sj_div, account_id, account_nm, detail="-", year=2025, report="11014", **amounts):
-    data = {"rcept_no": f"{year + 1}0317000001" if report == "11011" else f"{year}1114000001", "reprt_code": report,
+    filed = {"11013": f"{year}0515", "11012": f"{year}0814", "11014": f"{year}1114", "11011": f"{year + 1}0317"}[report]
+    data = {"rcept_no": filed + "000001", "reprt_code": report,
             "bsns_year": str(year), "corp_code": CORP, "sj_div": sj_div, "account_id": account_id,
             "account_nm": account_nm, "account_detail": detail, "currency": "KRW"}
     data.update({f"{column}_amount": value for column, value in amounts.items()})
@@ -126,20 +129,35 @@ class ResolutionTests(unittest.TestCase):
         found = resolve_account([row("CIS", "ifrs-full_Revenue", "영업수익", thstrm="5")], "revenue")
         self.assertEqual((found.method, found.row["sj_div"]), (ID, "CIS"))
 
-    def test_breakdown_rows_and_other_statements_are_ignored(self):
+    def test_other_statements_are_ignored(self):
         rows = [row("SCE", "ifrs-full_ProfitLoss", "당기순이익", detail="이익잉여금 [member]", thstrm="9"),
                 row("CF", "ifrs-full_ProfitLoss", "당기순이익", thstrm="8")]
         self.assertEqual(resolve_account(rows, "net_income").method, NOT_FOUND)
 
-    def test_name_fallback_reports_a_mistagged_id(self):
+    def test_breakdown_rows_in_the_same_statement_are_ignored(self):
+        total = row("IS", "ifrs-full_Revenue", "매출액", thstrm="10")
+        breakdown = row("IS", "ifrs-full_Revenue", "매출액", detail="반도체 부문 [member]", thstrm="99")
+        found = resolve_account([breakdown, total], "revenue")
+        self.assertEqual((found.method, found.row["thstrm_amount"]), (ID, "10"))
+        self.assertEqual(resolve_account([breakdown], "revenue").method, NOT_FOUND)
+
+    def test_name_with_a_conflicting_standard_id_needs_review(self):
+        found = resolve_account([row("IS", "ifrs-full_ProfitLossAttributableToOwnersOfParent", "당기순이익", thstrm="5")], "net_income")
+        self.assertEqual(found.method, NAME_CONFLICT)
+        self.assertIn("ifrs-full_ProfitLossAttributableToOwnersOfParent", found.notes[0])
         found = resolve_account([row("CIS", "ifrs-full_GrossProfit", "영업수익", thstrm="5")], "revenue")
+        self.assertEqual(found.method, NAME_CONFLICT)
+
+    def test_verified_mistag_is_accepted(self):
+        kakao_row = {**row("CIS", "ifrs-full_GrossProfit", "영업수익", thstrm="5"), "corp_code": "00258801"}
+        found = resolve_account([kakao_row], "revenue")
         self.assertEqual(found.method, NAME)
-        self.assertIn("ifrs-full_GrossProfit", found.notes[0])
+        self.assertIn("확인된 오표기", found.notes[0])
 
     def test_name_fallback_ignores_whitespace(self):
         found = resolve_account([row("CF", "-표준계정코드 미사용-", "영업활동으로 인한 현금흐름", thstrm="5")], "operating_cash_flow")
         self.assertEqual(found.method, NAME)
-        self.assertNotIn("로 표기됨", found.notes[0])
+        self.assertNotIn("표기됨", found.notes[0])
 
     def test_two_candidates_are_ambiguous(self):
         rows = [row("BS", "ifrs-full_Assets", "자산총계", thstrm="1"), row("BS", "ifrs-full_Assets", "자산총계", thstrm="2")]
@@ -175,7 +193,8 @@ class FactTests(unittest.TestCase):
 
 def fact(amount, period=None, fs_div="CFS", account="revenue", rcept="20251114000001", currency="KRW"):
     rows = [row("IS", "ifrs-full_Revenue", "매출액", thstrm=str(amount)),
-            row("IS", "dart_OperatingIncomeLoss", "영업이익", thstrm=str(amount))]
+            row("IS", "dart_OperatingIncomeLoss", "영업이익", thstrm=str(amount)),
+            row("CF", "ifrs-full_CashFlowsFromUsedInOperatingActivities", "영업활동현금흐름", thstrm=str(amount))]
     base = fact_from_response(response(rows, fs_div=fs_div), account, "thstrm")
     return replace(base, period=period or base.period, rcept_no=rcept, currency=currency)
 
@@ -222,26 +241,68 @@ class CompareTests(unittest.TestCase):
         self.assertEqual(result.status, NEEDS_REVIEW)
         self.assertIsNone(result.change)
 
+    def test_rate_rounds_halves_away_from_zero(self):
+        self.assertEqual(compare(fact(100_005), fact(100_000, quarter(2024, 9))).change_pct, Decimal("0.01"))
+        self.assertEqual(compare(fact(99_995), fact(100_000, quarter(2024, 9))).change_pct, Decimal("-0.01"))
+        self.assertEqual(compare(fact(1_000_049), fact(1_000_000, quarter(2024, 9))).change_pct, Decimal("0.00"))
+        self.assertEqual(compare(fact(0), fact(100, quarter(2024, 9))).change_pct, Decimal("-100.00"))
+
+    def test_cash_flow_sign_change_is_not_called_profit_or_loss(self):
+        cash = dict(account="operating_cash_flow")
+        result = compare(fact(5, year_to_date(2025, 9), **cash), fact(-3, year_to_date(2024, 9), **cash))
+        self.assertEqual((result.status, result.change_pct, result.direction), (COMPARABLE, None, "증가"))
+
+    def test_missing_currency_needs_review(self):
+        for currencies in ((None, None), ("", ""), ("KRW", None)):
+            with self.subTest(currencies=currencies):
+                result = compare(fact(120, currency=currencies[0]), fact(100, quarter(2024, 9), currency=currencies[1]))
+                self.assertEqual((result.status, result.change), (NEEDS_REVIEW, 20))
+                self.assertIn("통화가 확인되지 않았다", result.reasons)
+
+    def test_name_conflict_needs_review_but_shows_the_numbers(self):
+        conflicted = replace(fact(120), resolved_by=NAME_CONFLICT, notes=("다른 표준계정ID로 표기됨",))
+        result = compare(conflicted, fact(100, quarter(2024, 9)))
+        self.assertEqual((result.status, result.change, result.reasons), (NEEDS_REVIEW, 20, ("다른 표준계정ID로 표기됨",)))
+
+    def test_two_reports_without_a_basis_check_need_review(self):
+        result = compare(fact(120, rcept="20251114000001"), fact(100, quarter(2024, 9), rcept="20241114000001"))
+        self.assertEqual(result.status, NEEDS_REVIEW)
+        self.assertIn("확인하지 않았다", result.reasons[0])
+
+    def test_two_reports_with_a_basis_check(self):
+        current = fact(120, rcept="20251114000001")
+        base = fact(100, quarter(2024, 9), rcept="20241114000001")
+        linked = compare(current, base, BasisCheck(linked=True))
+        self.assertEqual(linked.status, COMPARABLE)
+        self.assertTrue(any("모두 일치" in note for note in linked.notes))
+        unlinked = compare(current, base, BasisCheck(linked=False))
+        self.assertEqual(unlinked.status, NEEDS_REVIEW)
+        self.assertIn("함께 나오는 값이 없어", unlinked.reasons[0])
+        gap = compare(current, base, BasisCheck(linked=False, gaps=("2024년 사업보고서가 캐시에 없어",)))
+        self.assertEqual(gap.reasons, ("2024년 사업보고서가 캐시에 없어",))
+
     def test_restatement_between_two_reports_needs_review(self):
         current = fact(120, rcept="20251114000001")
         base = fact(100, quarter(2024, 9), rcept="20241114000001")
-        original = fact(90, instant(2023, 12), rcept="20241114000001")
-        restated = fact(95, instant(2023, 12), rcept="20250317000001")
-        restatements = find_restatements([original, restated])
+        restatements = find_restatements([fact(90, instant(2023, 12), rcept="20241114000001"),
+                                          fact(95, instant(2023, 12), rcept="20250317000001")])
         self.assertEqual(len(restatements), 1)
-        result = compare(current, base, restatements)
+        result = compare(current, base, BasisCheck(tuple(restatements), linked=True))
         self.assertEqual((result.status, result.change), (NEEDS_REVIEW, 20))
         self.assertIn("재작성", result.reasons[0])
-        later = find_restatements([fact(90, instant(2023, 12), rcept="20251201000001"), fact(95, instant(2023, 12), rcept="20251202000001")])
-        self.assertEqual(compare(current, base, later).status, COMPARABLE)
+        self.assertIn("영향은 확인하지 못했다", result.reasons[0])
 
     def test_restatement_inside_one_report_is_only_noted(self):
         current = fact(120, rcept="20251114000001")
         base = fact(100, quarter(2024, 9), rcept="20251114000001")
-        original = fact(110, quarter(2024, 9), rcept="20241114000001")
-        result = compare(current, base, find_restatements([original, base]))
+        earlier = fact(110, quarter(2024, 9), rcept="20241114000001")
+        result = compare(current, base, BasisCheck(tuple(find_restatements([earlier, base])), linked=True))
         self.assertEqual((result.status, result.change_pct), (COMPARABLE, Decimal("20.00")))
-        self.assertTrue(any("재작성된 값을 쓴다" in note for note in result.notes))
+        self.assertTrue(any("같은 보고서의 값을 쓴다" in note for note in result.notes))
+
+    def test_restatements_need_the_same_currency(self):
+        self.assertEqual(find_restatements([fact(90, instant(2023, 12), rcept="1"),
+                                            fact(95, instant(2023, 12), rcept="2", currency="USD")]), [])
 
 
 class ReviewTests(unittest.TestCase):
@@ -251,35 +312,79 @@ class ReviewTests(unittest.TestCase):
         temp = tempfile.TemporaryDirectory()
         self.addCleanup(temp.cleanup)
         self.cache = ResponseCache(Path(temp.name))
-        self.client = DartClient(self.cache, key_loader=self.fail, offline=True)
+        self.client = DartClient(self.cache, key_loader=self.no_key, offline=True)
 
     @staticmethod
-    def fail():
+    def no_key():
         raise AssertionError("must not need the key")
 
-    def store(self, year, report, **amounts):
-        body = json.dumps({"status": "000", "message": "정상", "list": [
-            row("BS", "ifrs-full_Assets", "자산총계", year=year, report=report, **amounts)]}, ensure_ascii=False)
+    def store(self, year, report, rows=None, status="000", **amounts):
+        if rows is None:
+            rows = [row("BS", "ifrs-full_Assets", "자산총계", year=year, report=report, **amounts)] if status == "000" else []
+        body = json.dumps({"status": status, "message": "", "list": rows}, ensure_ascii=False)
         params = {"corp_code": CORP, "bsns_year": str(year), "reprt_code": report, "fs_div": "CFS"}
-        self.cache.put("fnlttSinglAcntAll.json", params, body.encode("utf-8"), "000", "정상", "2026-10-07T00:00:00+00:00")
+        self.cache.put("fnlttSinglAcntAll.json", params, body.encode("utf-8"), status, "", "2026-10-07T00:00:00+00:00")
 
     def review(self):
         return review_change(self.client, CORP, "CFS", "total_assets", instant(2025, 9), instant(2024, 9))
 
-    def test_missing_bridge_report_is_noted(self):
+    def store_quarters(self):
         self.store(2025, "11014", thstrm="120", frmtrm="110")
         self.store(2024, "11014", thstrm="100", frmtrm="90")
+
+    def test_linked_reports_are_comparable(self):
+        self.store_quarters()
+        self.store(2024, "11011", thstrm="110", frmtrm="90", bfefrmtrm="80")
         result = self.review()
         self.assertEqual((result.status, result.change), (COMPARABLE, 20))
-        self.assertIn("2024년 사업보고서가 캐시에 없어", result.notes[-1])
 
     def test_restatement_found_through_the_bridge_report(self):
-        self.store(2025, "11014", thstrm="120", frmtrm="110")
-        self.store(2024, "11014", thstrm="100", frmtrm="90")
+        self.store_quarters()
         self.store(2024, "11011", thstrm="110", frmtrm="95", bfefrmtrm="80")
         result = self.review()
         self.assertEqual((result.status, result.change), (NEEDS_REVIEW, 20))
         self.assertIn("2023-12-31", result.reasons[0])
+
+    def test_an_unusable_bridge_report_needs_review(self):
+        cases = {
+            "not cached": (lambda: None, "캐시에 없어"),
+            "no data": (lambda: self.store(2024, "11011", status="013"), "013"),
+            "no account": (lambda: self.store(2024, "11011", rows=[row("BS", "ifrs-full_Liabilities", "부채총계", year=2024,
+                                                                         report="11011", thstrm="1")]), "계정 값을 쓸 수 없어"),
+        }
+        for label, (prepare, text) in cases.items():
+            with self.subTest(label):
+                self.setUp()
+                self.store_quarters()
+                prepare()
+                result = self.review()
+                self.assertEqual((result.status, result.change), (NEEDS_REVIEW, 20))
+                self.assertIn(text, result.reasons[0])
+
+    def store_income(self, year, report, **amounts):
+        self.store(year, report, rows=[row("IS", "ifrs-full_Revenue", "매출액", year=year, report=report, **amounts)])
+
+    def quarter_over_quarter(self):
+        return review_change(self.client, CORP, "CFS", "revenue", quarter(2025, 9), quarter(2025, 6))
+
+    def test_quarters_of_one_year_are_linked_through_the_year_to_date(self):
+        self.store_income(2025, "11014", thstrm="30", thstrm_add="90", frmtrm_q="20", frmtrm_add="70")
+        self.store_income(2025, "11012", thstrm="25", thstrm_add="60", frmtrm_q="22", frmtrm_add="50")
+        self.assertEqual(self.quarter_over_quarter().status, COMPARABLE)
+
+    def test_quarters_whose_year_to_date_disagree_need_review(self):
+        self.store_income(2025, "11014", thstrm="30", thstrm_add="90", frmtrm_q="20", frmtrm_add="70")
+        self.store_income(2025, "11012", thstrm="25", thstrm_add="61", frmtrm_q="22", frmtrm_add="50")
+        result = self.quarter_over_quarter()
+        self.assertEqual(result.status, NEEDS_REVIEW)
+        self.assertIn("2025-01-01~2025-06-30", result.reasons[0])
+
+    def test_quarters_without_a_shared_value_need_review(self):
+        self.store_income(2025, "11014", thstrm="30", thstrm_add="", frmtrm_q="20", frmtrm_add="")
+        self.store_income(2025, "11012", thstrm="25", thstrm_add="60", frmtrm_q="22", frmtrm_add="50")
+        result = self.quarter_over_quarter()
+        self.assertEqual(result.status, NEEDS_REVIEW)
+        self.assertIn("함께 나오는 값이 없어", result.reasons[0])
 
 
 if __name__ == "__main__":

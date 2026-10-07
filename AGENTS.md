@@ -10,5 +10,5 @@ This repository is developed with Claude Code (see `CLAUDE.md`) and reviewed ind
   - `python3 -m unittest discover -s tests`
   - `python3 eval/build_gold.py --check`
   - `python3 scripts/check_trap_tests.py`
-  - `python3 scripts/check_public_safety.py`
+  - `DART_API_KEY_FILE=/nonexistent python3 scripts/check_public_safety.py` (by default the scan reads the local key file to look for its value; pointing it at a missing file skips that part, so the key file is never opened)
 - Cache layout: `cache/<endpoint>/<id>.body` holds the raw response, `<id>.meta.json` its request parameters, status, fetch time, and SHA-256. Financial statements are under `cache/fnlttSinglAcntAll.json/`; match a file to a report through `params` in its `.meta.json`.

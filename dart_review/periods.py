@@ -8,8 +8,9 @@ all 72 cached development reports (docs/DATA_NOTES.ko.md):
   ``thstrm_add`` is the year to date, ``frmtrm_q`` / ``frmtrm_add`` are the same
   for the prior year.
 - Cash flow statement (CF), quarterly and half-year reports: ``thstrm`` is
-  already the year to date and ``frmtrm_q`` is the prior year to date. There
-  is no three-month cash flow column.
+  already the year to date and ``frmtrm_q`` is the prior year to date. For Q1
+  the year to date is the three months; half-year and Q3 reports have no
+  column for the quarter alone.
 - Balance sheet (BS): point-in-time values. ``frmtrm`` is the prior fiscal
   year end in every report, not the same quarter end of the prior year.
 - Annual report: ``thstrm`` / ``frmtrm`` / ``bfefrmtrm`` are this year, the
@@ -128,7 +129,7 @@ def own_source(period: Period, sj_div: str) -> Source:
         if covered == period and column in ("thstrm", "thstrm_add"):
             return Source(period.end.year, report_code, column)
     if sj_div == "CF" and not period.is_instant and not period.is_year_to_date:
-        raise PeriodNotProvided(f"{period.label()}: 현금흐름표는 누적 값만 제공한다 (3개월 값 없음)")
+        raise PeriodNotProvided(f"{period.label()}: 현금흐름표는 연초부터의 누적 값만 제공한다 (반기·3분기 보고서에 그 분기만의 값이 없음)")
     if not period.is_instant and period.end.month == 12 and period.months == 3:
         raise PeriodNotProvided(f"{period.label()}: 4분기 3개월 값은 사업보고서에 없다 (연간 값과 3분기 누적 값의 차이로만 계산 가능)")
     raise PeriodNotProvided(f"{period.label()}: {STATEMENT_NAMES[sj_div]}에서 제공하지 않는 기간")

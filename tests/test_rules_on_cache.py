@@ -12,7 +12,7 @@ import unittest
 
 from dart_review.accounts import ACCOUNTS, ID, NAME, resolve_account
 from dart_review.cache import ResponseCache
-from dart_review.client import DartClient
+from dart_review.client import DartClient, NotCached
 from dart_review.compare import COMPARABLE, NEEDS_REVIEW, NOT_COMPARABLE, compare
 from dart_review.companies import DEV_COMPANIES
 from dart_review.facts import fact_from_response
@@ -107,6 +107,25 @@ class TrapTests(CacheTestCase):
         self.assertEqual(result.status, NEEDS_REVIEW)
         self.assertIn("2023-12-31", result.reasons[0])
         self.assertIsNotNone(result.change)
+
+    def test_reports_that_cannot_be_linked_need_review(self):
+        # Codex review R1: without the 2024 annual report nothing links the two Q3 reports
+        client = self.client
+
+        class WithoutBridge:
+            def financial_statements(self, corp_code, year, report_code, fs_div):
+                if (year, report_code) == (2024, "11011"):
+                    raise NotCached("bridge withheld for the test")
+                return client.financial_statements(corp_code, year, report_code, fs_div)
+
+        result = review_change(WithoutBridge(), SAMSUNG, "CFS", "total_assets", instant(2025, 9), instant(2024, 9))
+        self.assertEqual((result.status, result.change), (NEEDS_REVIEW, 32_352_269_000_000))
+        self.assertIn("2024년 사업보고서", result.reasons[0])
+
+    def test_quarters_of_one_year_link_through_the_year_to_date(self):
+        result = review_change(self.client, KAKAO, "CFS", "revenue", quarter(2023, 9), quarter(2023, 6))
+        self.assertEqual((result.status, result.change_pct), (COMPARABLE, Decimal("5.80")))
+        self.assertTrue(any("모두 일치" in note for note in result.notes))
 
     def test_sign_changes(self):
         result = review_change(self.client, KAKAO, "CFS", "net_income", year_to_date(2024, 12), year_to_date(2023, 12))

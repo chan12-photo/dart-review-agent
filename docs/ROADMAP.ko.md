@@ -24,9 +24,10 @@ Claude가 만든 결과를 Claude가 검증하면 같은 착각을 반복할 수
 
 ## 현재 상태
 - 마지막 갱신: 2026-10-07
-- 완료: 0단계, 1-1, 1-2, 1-3(+ Codex 검토 반영), **1-4 평가 실행기** (테스트 134개, 규칙만 방식 13/13)
+- 완료: 0단계, 1-1, 1-2, 1-3(+ Codex 검토 반영), **1-4 평가 실행기** (테스트 139개, 규칙만 방식 13/13)
 - 다음 작업: **Codex 검토(1-5 실행 전, 강하게 권장)** → 1-5 gpt-oss:20b 가능성 검증 (추천 모드: 실행은 중간, 판정은 엑스트라)
   - 검토 요청문: [reviews/1-5_codex_request.ko.md](reviews/1-5_codex_request.ko.md). 1-3 반영분 재확인도 들어 있다
+  - 첫 검토는 사용량 한도로 중간에 멈췄다. 남긴 발견 3개(+같은 종류 2개)는 고쳤다: [reviews/1-5_codex_partial.ko.md](reviews/1-5_codex_partial.ko.md). 나머지 검토가 남았다
   - 1-5 첫 단계: 실제 Ollama에 요청 1회로 연결 확인. 구조화 출력 스키마(null 허용 타입)와 중첩된 도구 인자가 실제 Ollama에서 동작하는지 **아직 확인하지 않았다** (1-4는 가짜 응답으로만 검증)
   - 사용자 검토 남음: [dev_questions.json](../eval/dev_questions.json)의 질문 문장과 [GOLD_RULES.ko.md](GOLD_RULES.ko.md)의 해석 기본값 (질문은 Claude 초안)
 - 1-2에서 새로 찾은 함정 2개: 카카오 2023 분기 매출의 계정ID 오표기(`ifrs-full_GrossProfit`), 같은 기간 값이 보고서마다 다름(카카오, 셀트리온). 근거와 숫자는 [DATA_NOTES.ko.md](DATA_NOTES.ko.md)

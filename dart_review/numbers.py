@@ -9,11 +9,14 @@ because a decrease is often written as a word ("감소") rather than "-".
 Kinds of numbers (docs/EVAL_DESIGN.ko.md section 4):
 - amount: written with 조/억/만 (optionally 천) and/or 원, or a bare number of
   1,000 or more / with thousands separators; must match an allowed amount
-- percent: "%", "%p", "퍼센트"; must match an allowed rate
-- ratio: "배"; must match an allowed rate (tool results give none, so a
-  self-computed multiple is ungrounded)
+- percent: "%", "퍼센트"; must match an allowed rate
+- point: "%p", "퍼센트포인트"; must match an allowed percentage-point figure
+- ratio: "배"; must match an allowed multiple
+  (tool results give no points or multiples, so a self-computed one is
+  ungrounded; a rate never grounds a point or a multiple)
 - year: "2025년", ISO dates, bare 19xx/20xx; must be an allowed year
-- receipt: 14-digit receipt numbers; must be an allowed receipt
+- receipt: 14-digit numbers; an allowed receipt number, or exactly an
+  allowed amount written without separators
 - calendar: months, days, quarters, month counts, fiscal terms; accepted
   within their ranges (whether the period is right is scored separately)
 - unparsed: anything else that is not a small integer count; never grounded
@@ -46,12 +49,16 @@ class Mention:
 class Allowed:
     amounts: set[Decimal] = field(default_factory=set)
     percents: set[Decimal] = field(default_factory=set)
+    points: set[Decimal] = field(default_factory=set)
+    ratios: set[Decimal] = field(default_factory=set)
     years: set[int] = field(default_factory=set)
     receipts: set[str] = field(default_factory=set)
 
     def update(self, other: "Allowed") -> None:
         self.amounts |= other.amounts
         self.percents |= other.percents
+        self.points |= other.points
+        self.ratios |= other.ratios
         self.years |= other.years
         self.receipts |= other.receipts
 
@@ -109,13 +116,15 @@ def extract(text: str) -> list[Mention]:
 def _classify(kind: str, match: re.Match[str]) -> list[Mention] | None:
     text = match.group(0).strip()
     if kind == "receipt":
-        return [Mention("receipt", text, extra=(text,))]
+        return [Mention("receipt", text, Decimal(text), Decimal(1), extra=(text,))]
     if kind == "iso_date":
         year, month, day = (int(group) for group in match.groups())
         return [Mention("year", text, Decimal(year)), Mention("calendar", text, extra=("month", month)),
                 Mention("calendar", text, extra=("day", day))]
     if kind == "percent":
-        return [Mention("percent", text, _decimal(match.group(2)), _precision(match.group(2)), extra=(match.group(3),))]
+        suffix = match.group(3)
+        return [Mention("point" if suffix in ("%p", "퍼센트포인트") else "percent", text, _decimal(match.group(2)),
+                        _precision(match.group(2)), extra=(suffix,))]
     if kind == "ratio":
         return [Mention("ratio", text, _decimal(match.group(1)), _precision(match.group(1)))]
     if kind == "korean_amount":
@@ -160,12 +169,13 @@ _CALENDAR_RANGES = {"month": (1, 12), "day": (1, 31), "quarter": (1, 4), "months
 def grounded(mention: Mention, allowed: Allowed) -> bool:
     if mention.kind == "amount":
         return any(abs(abs(mention.value) - amount) < mention.unit for amount in allowed.amounts)
-    if mention.kind in ("percent", "ratio"):
-        return any(abs(abs(mention.value) - rate) < mention.unit for rate in allowed.percents)
+    if mention.kind in ("percent", "point", "ratio"):
+        pool = {"percent": allowed.percents, "point": allowed.points, "ratio": allowed.ratios}[mention.kind]
+        return any(abs(abs(mention.value) - rate) < mention.unit for rate in pool)
     if mention.kind == "year":
         return int(mention.value) in allowed.years
     if mention.kind == "receipt":
-        return mention.extra[0] in allowed.receipts
+        return mention.extra[0] in allowed.receipts or mention.value in allowed.amounts
     if mention.kind == "calendar":
         low, high = _CALENDAR_RANGES[mention.extra[0]]
         return low <= mention.extra[1] <= high
@@ -201,13 +211,12 @@ def _collect(value: Any, allowed: Allowed, key: str | None) -> None:
         for mention in extract(value):
             if mention.kind == "amount":
                 allowed.amounts.add(abs(mention.value))
-            elif mention.kind == "percent":
-                allowed.percents.add(abs(mention.value))
+            elif mention.kind in ("percent", "point", "ratio"):
+                {"percent": allowed.percents, "point": allowed.points, "ratio": allowed.ratios}[mention.kind].add(abs(mention.value))
             elif mention.kind == "year":
                 allowed.years.add(int(mention.value))
             elif mention.kind == "receipt":
                 allowed.receipts.add(mention.extra[0])
-                allowed.amounts.discard(Decimal(mention.extra[0]))
 
 
 def _is_rate(text: str) -> bool:

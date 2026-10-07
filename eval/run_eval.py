@@ -138,7 +138,7 @@ def run_case(mode: str, question: dict[str, Any], gold: dict[str, Any], client: 
                 if not reply.tool_calls:
                     break
                 for call in reply.tool_calls:
-                    function = call.get("function") or {}
+                    function = call.get("function") if isinstance(call.get("function"), dict) else {}
                     name, arguments = function.get("name"), function.get("arguments")
                     if record["tool_call_count"] >= MAX_TOOL_CALLS:
                         record["budget_exceeded"] = True

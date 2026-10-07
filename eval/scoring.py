@@ -51,6 +51,11 @@ def expected_values(gold: dict[str, Any]) -> list[tuple[str, str | None, str, in
     return []
 
 
+def _sorted_keys(keys) -> list[tuple]:
+    """Sort (basis, start, end) keys whose start may be None (a point in time)."""
+    return sorted(keys, key=lambda key: tuple("" if part is None else str(part) for part in key))
+
+
 def _structured_numbers(answer: Answer, allowed) -> list[str]:
     problems = []
     for index, value in enumerate(answer.values):
@@ -87,7 +92,8 @@ def score_case(gold: dict[str, Any], raw_answer: str | dict[str, Any] | None, se
         keys_ok = len(got) == len(answer.values) and set(got) == {item[:3] for item in expected}
         score.basis_ok = same_company(answer.company, gold["company"]) and answer.account == gold["account"] and keys_ok
         if not score.basis_ok:
-            score.problems.append(f"basis/period/account: got {sorted(got)} for {answer.account}, expected {sorted(item[:3] for item in expected)}")
+            score.problems.append(f"basis/period/account: got {_sorted_keys(got)} for {answer.account}, "
+                                  f"expected {_sorted_keys(item[:3] for item in expected)}")
         amounts_ok = all(got.get(item[:3]) == item[3] for item in expected)
         if decision == "side_by_side":
             change_ok = answer.change is None and answer.change_pct is None

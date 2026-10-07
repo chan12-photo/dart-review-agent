@@ -87,6 +87,19 @@ class GroundingTests(unittest.TestCase):
         self.assertEqual(bad("1,494억 원 감소(6.92%)", allowed), [])
         self.assertEqual(bad("−1,494억 원(−6.92%)", allowed), [])
 
+    def test_amount_without_separators_is_not_a_receipt(self):
+        # Codex 1-5 review: a 14-digit amount was read as an unknown receipt number
+        self.assertEqual(bad("변화는 32735035000000원, 매출 333605938000000"), [])
+        self.assertEqual(bad("접수번호 20260310002820"), [])
+        self.assertEqual(bad("32735035000001"), ["32735035000001"])
+
+    def test_a_rate_never_grounds_a_multiple_or_points(self):
+        # Codex 1-5 review: "10.88배" passed against the rate 10.88%
+        self.assertEqual(bad("10.88배 늘었다"), ["10.88배"])
+        self.assertEqual(bad("10.88%p 늘었다"), ["10.88%p"])
+        self.assertEqual(bad("10.88% 늘었다"), [])
+        self.assertEqual(bad("1.4배", {"note": "연결이 별도의 1.4배"}), [])
+
     def test_unparsed_numbers_count_as_ungrounded(self):
         self.assertEqual(bad("변화율은 10.88"), ["10.88"])
 

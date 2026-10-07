@@ -172,6 +172,36 @@ class WordingAndCompanyTests(unittest.TestCase):
         self.assertFalse(score("dev01", edited(company="삼성SDI")).basis_ok)
 
 
+class RobustnessTests(unittest.TestCase):
+    def test_point_in_time_value_with_a_start_date_is_a_basis_error(self):
+        # Codex 1-5 review: mixing None and a date in the sort raised TypeError
+        answer = {"status": "비교 가능", "company": "삼성전자", "account": "total_assets",
+                  "values": [{"basis": "연결", "start": None, "end": "2025-09-30", "amount": 523_659_586_000_000},
+                             {"basis": "연결", "start": "2024-01-01", "end": "2024-09-30", "amount": 491_307_317_000_000}],
+                  "change": 32_352_269_000_000, "change_pct": "6.58", "answer": "증가", "clarifying_question": None}
+        result = score("dev02", answer, [])
+        self.assertFalse(result.basis_ok)
+
+    def test_no_well_formed_answer_crashes_the_scorer(self):
+        import random
+        rng = random.Random(20261007)
+        starts = [None, "2024-01-01", "2025-01-01", "2025-07-01", "2024-07-01"]
+        ends = ["2025-09-30", "2024-09-30", "2025-12-31", "2024-12-31", "2025-06-30"]
+        statuses = ["비교 가능", "비교 불가", "데이터 없음", "확인 필요", "나란히 표시", "되묻기"]
+        accounts = [None, "revenue", "total_assets", "net_income"]
+        for _ in range(500):
+            values = [{"basis": rng.choice(["연결", "별도"]), "start": rng.choice(starts), "end": rng.choice(ends),
+                       "amount": rng.choice([0, -5, 523_659_586_000_000, 10 ** 15])} for _ in range(rng.randint(0, 3))]
+            answer = {"status": rng.choice(statuses), "company": rng.choice(["삼성전자", "", "카카오"]),
+                      "account": rng.choice(accounts), "values": values,
+                      "change": rng.choice([None, 0, -1, 32_352_269_000_000]),
+                      "change_pct": rng.choice([None, "0.00", "-4.48", "6.58"]),
+                      "answer": rng.choice(["답", "32735035000000원 10.88배 2025-09-30 1~9월 △3조", "없음"]),
+                      "clarifying_question": rng.choice([None, "", "영업이익과 당기순이익?"])}
+            for question_id in GOLD:
+                score(question_id, answer, rng.choice([[], DEV01_SEEN]))
+
+
 class SummaryTests(unittest.TestCase):
     def test_summary_counts(self):
         cases = [{"score": score("dev01", DEV01_CORRECT).to_dict(), "model_requests": 1, "latency_ms": 100.0},

@@ -117,6 +117,13 @@ class RunnerTests(unittest.TestCase):
         self.assertIn("error", record["tool_calls"][0]["result"])
         self.assertFalse(record["tool_args_ok"])
 
+    def test_odd_tool_call_shapes_do_not_crash_the_runner(self):
+        odd = [{"function": "compare_values"}, {"function": None}, {}, {"function": {"name": "compare_values", "arguments": [1]}}]
+        chat = ScriptedChat([Reply("", odd), Reply("끝"), self.final_answer("dev01")])
+        record = self.case("full", "dev01", chat)
+        self.assertTrue(all("error" in call["result"] for call in record["tool_calls"]))
+        self.assertFalse(record["tool_args_ok"])
+
     def test_a_model_error_fails_only_that_question(self):
         def broken(messages, tools, schema):
             raise ModelError("connection refused")

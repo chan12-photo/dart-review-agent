@@ -1,5 +1,6 @@
 """The local model adapter (fake HTTP, no Ollama needed), the answer format, and tool argument checks."""
 
+import hashlib
 import io
 import json
 from pathlib import Path
@@ -77,6 +78,32 @@ class OllamaChatTests(unittest.TestCase):
         with self.assertRaises(ModelError):
             OllamaChat("gpt-oss:20b", opener=FakeOpener({"done": False, "message": {"content": ""}})).chat([])
 
+    def test_every_attempt_is_recorded(self):
+        # Codex 1-5 review E6
+        error = urllib.error.URLError("refused")
+        chat = OllamaChat("gpt-oss:20b", opener=FakeOpener(CHAT_REPLY, error=error))
+        with self.assertRaises(ModelError):
+            chat.chat([{"role": "user", "content": "질문"}])
+        self.assertEqual((chat.attempts, chat.responses), (1, 0))
+        self.assertIsNone(chat.last_exchange["response"])
+        self.assertTrue(chat.last_exchange["error"])
+        opener = FakeOpener(CHAT_REPLY)
+        chat = OllamaChat("gpt-oss:20b", opener=opener)
+        chat.chat([{"role": "user", "content": "질문"}])
+        sent = opener.requests[-1].data
+        self.assertEqual(chat.last_exchange["request_sha256"], hashlib.sha256(sent).hexdigest())
+        self.assertEqual(chat.last_exchange["response"], CHAT_REPLY)
+        self.assertEqual((chat.attempts, chat.responses), (1, 1))
+
+    def test_malformed_tool_calls_are_kept_or_rejected_not_dropped(self):
+        odd = {**CHAT_REPLY, "message": {**CHAT_REPLY["message"], "tool_calls": [42]}}
+        self.assertEqual(OllamaChat("gpt-oss:20b", opener=FakeOpener(odd)).chat([]).tool_calls, [42])
+        broken = {**CHAT_REPLY, "message": {**CHAT_REPLY["message"], "tool_calls": "compare_values"}}
+        chat = OllamaChat("gpt-oss:20b", opener=FakeOpener(broken))
+        with self.assertRaises(ModelError):
+            chat.chat([])
+        self.assertEqual(chat.last_exchange["response"], broken)
+
     def test_think_is_sent_only_when_set(self):
         opener = FakeOpener(CHAT_REPLY)
         OllamaChat("gpt-oss:20b", opener=opener, think="low").chat([])
@@ -124,6 +151,26 @@ class ToolArgumentTests(unittest.TestCase):
             with self.subTest(spec=spec):
                 with self.assertRaises(ToolArgumentError):
                     parse_period(spec, "period")
+
+    def test_wrong_types_are_errors_not_crashes(self):
+        # Codex 1-5 review E1
+        client = DartClient(ResponseCache(ROOT / "nonexistent-cache"), key_loader=lambda: (_ for _ in ()).throw(AssertionError()), offline=True)
+        good = {"company": "삼성전자", "basis": "연결", "account": "revenue",
+                "current_period": {"kind": "year_to_date", "year": 2025, "month": 12},
+                "base_period": {"kind": "year_to_date", "year": 2024, "month": 12}}
+        changes = [{"account": []}, {"basis": []}, {"company": ["삼성전자"]},
+                   {"current_period": {"kind": [], "year": 2025, "month": 12}},
+                   {"current_period": {"kind": "year_to_date", "year": 2025, "month": 12.0}},
+                   {"current_period": {"kind": "year_to_date", "year": 2025.0, "month": 12}}]
+        for change in changes:
+            with self.subTest(change=change):
+                self.assertIn("error", execute_tool(client, "compare_values", {**good, **change}))
+        self.assertIn("error", execute_tool(client, ["compare_values"], good))
+        self.assertNotIn("unknown_x", execute_tool(client, "unknown_x", {})["error"])  # the name is not echoed
+        with self.assertRaises(AnswerFormatError):
+            parse_answer(json.dumps({**VALID, "account": []}))
+        with self.assertRaises(AnswerFormatError):
+            parse_answer(json.dumps({**VALID, "status": ["비교 가능"]}))
 
     def test_bad_calls_become_error_results(self):
         client = DartClient(ResponseCache(ROOT / "nonexistent-cache"), key_loader=lambda: (_ for _ in ()).throw(AssertionError()), offline=True)

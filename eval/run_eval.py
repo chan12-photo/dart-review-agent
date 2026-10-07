@@ -11,12 +11,16 @@ question runs once; nothing is retried or re-sampled.
 from __future__ import annotations
 
 import argparse
+import copy
+from datetime import datetime, timezone
 import hashlib
 import json
 from pathlib import Path
 import subprocess
 import sys
-from typing import Any
+import time
+import traceback
+from typing import Any, Callable
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path[:0] = [str(ROOT), str(ROOT / "eval")]
@@ -28,7 +32,8 @@ from dart_review.companies import DEV_COMPANIES, FS_DIVS  # noqa: E402
 from dart_review.llm import ModelError, OllamaChat  # noqa: E402
 from dart_review.prompts import FINAL_INSTRUCTION, PROMPT_VERSION, SYSTEM_PROMPT, oracle_message  # noqa: E402
 from dart_review.tools import TOOL_SPECS, ToolArgumentError, execute_tool, find_company  # noqa: E402
-from scoring import score_case, summarize  # noqa: E402
+from finalize import write_review_files  # noqa: E402
+from scoring import CaseScore, score_case, summarize  # noqa: E402
 
 SPEC = ROOT / "eval" / "dev_questions.json"
 GOLD = ROOT / "eval" / "dev_gold.json"
@@ -88,8 +93,13 @@ def rules_answer(question: dict[str, Any], results: list[dict[str, Any]]) -> dic
             "change_pct": None, "answer": f"{status}: " + " / ".join(result["reasons"]), "clarifying_question": None}
 
 
-def _same_call(call: tuple[str, dict[str, Any]], expected: tuple[str, dict[str, Any]]) -> bool:
+def _same_call(call: tuple[Any, Any], expected: tuple[str, dict[str, Any]]) -> bool:
     name, arguments = call
+    if isinstance(arguments, str):  # Ollama may pass arguments as a JSON string
+        try:
+            arguments = json.loads(arguments)
+        except ValueError:
+            return False
     if name != expected[0] or not isinstance(arguments, dict) or set(arguments) != set(expected[1]):
         return False
     for key, value in expected[1].items():
@@ -104,16 +114,26 @@ def _same_call(call: tuple[str, dict[str, Any]], expected: tuple[str, dict[str, 
     return True
 
 
-def run_case(mode: str, question: dict[str, Any], gold: dict[str, Any], client: DartClient, chat: Any = None) -> dict[str, Any]:
-    record: dict[str, Any] = {"id": question["id"], "mode": mode, "question": question["question"], "replies": [],
-                              "tool_calls": [], "model_requests": 0, "tool_call_count": 0, "latency_ms": 0.0,
-                              "budget_exceeded": False, "tool_args_ok": None, "error": None, "answer": None}
-    seen: list[dict[str, Any]] = []
+def run_case(mode: str, question: dict[str, Any], gold: dict[str, Any], client: DartClient, chat: Any = None,
+             clock: Callable[[], float] = time.monotonic) -> dict[str, Any]:
+    """Run one question. Model failures, evaluator bugs, and budget overruns fail only this question."""
+    started = clock()
+    record: dict[str, Any] = {"id": question["id"], "mode": mode, "question": question["question"], "requests": [],
+                              "replies": [], "tool_calls": [], "model_attempts": 0, "model_responses": 0,
+                              "model_latency_ms": 0.0, "tool_call_count": 0, "budget_exceeded": False,
+                              "tool_args_first_ok": None, "tool_args_any_ok": None, "model_error": None,
+                              "evaluator_error": None, "answer": None, "seen": []}
+    seen = record["seen"]
 
     def ask(messages: list[dict[str, Any]], **kwargs: Any):
-        reply = chat.chat(messages, **kwargs)
-        record["model_requests"] += 1
-        record["latency_ms"] = round(record["latency_ms"] + reply.metadata.get("elapsed_ms", 0), 1)
+        record["model_attempts"] += 1
+        try:
+            reply = chat.chat(messages, **kwargs)
+        finally:
+            # whatever happened, keep the exact request and the raw response or error
+            record["requests"].append(copy.deepcopy(getattr(chat, "last_exchange", None)))
+        record["model_responses"] += 1
+        record["model_latency_ms"] = round(record["model_latency_ms"] + (reply.metadata.get("elapsed_ms") or 0), 1)
         record["replies"].append({"content": reply.content, "tool_calls": reply.tool_calls,
                                   "thinking": reply.thinking, "metadata": reply.metadata})
         return reply
@@ -127,54 +147,78 @@ def run_case(mode: str, question: dict[str, Any], gold: dict[str, Any], client: 
             else:
                 messages = [{"role": "system", "content": SYSTEM_PROMPT},
                             {"role": "user", "content": oracle_message(question["question"], seen)}]
-                record["messages"] = messages
                 record["answer"] = ask(messages, schema=ANSWER_SCHEMA).content
         else:
-            messages = [{"role": "system", "content": SYSTEM_PROMPT}, {"role": "user", "content": question["question"]}]
-            expected_calls = interpretation_calls(question) if question["expected"]["action"] != "clarify" else None
-            while record["model_requests"] < MAX_MODEL_CALLS - 1:
-                reply = ask(messages, tools=TOOL_SPECS)
-                messages.append(reply.message())
-                if not reply.tool_calls:
-                    break
-                for call in reply.tool_calls:
-                    function = call.get("function") if isinstance(call.get("function"), dict) else {}
-                    name, arguments = function.get("name"), function.get("arguments")
-                    if record["tool_call_count"] >= MAX_TOOL_CALLS:
-                        record["budget_exceeded"] = True
-                        break
-                    result = execute_tool(client, name, arguments)
-                    record["tool_call_count"] += 1
-                    record["tool_calls"].append({"name": name, "arguments": arguments, "result": result})
-                    if record["tool_args_ok"] is None and expected_calls and "error" not in result:
-                        record["tool_args_ok"] = _same_call((name, arguments), expected_calls[0])
-                    seen.append(result)
-                    messages.append({"role": "tool", "tool_name": name, "content": json.dumps(result, ensure_ascii=False)})
-                if record["budget_exceeded"]:
-                    break
-            else:
-                record["budget_exceeded"] = True
-            if expected_calls and record["tool_args_ok"] is None:
-                record["tool_args_ok"] = False  # never made a successful call
-            messages.append({"role": "user", "content": FINAL_INSTRUCTION})
-            record["messages"] = messages
-            record["answer"] = ask(messages, schema=ANSWER_SCHEMA).content
+            _run_full(question, client, record, ask)
     except ModelError as exc:
-        record["error"] = f"model error: {exc}"
-    record["seen"] = seen
-    score = score_case(gold, record["answer"], seen, question["question"])
-    if record["error"]:
-        score.format_error = record["error"]  # the cause, rather than "no answer"
-        score.passed = False
-    if record["budget_exceeded"]:
-        score.problems.append("budget exceeded")
-        score.passed = False
+        record["model_error"] = str(exc)
+    except Exception as exc:  # a bug in the evaluator, not a model mistake: recorded and reported, never hidden
+        record["evaluator_error"] = f"{type(exc).__name__}: {exc}"
+        record["evaluator_traceback"] = traceback.format_exc(limit=8)
+    try:
+        score = score_case(gold, record["answer"], seen, question["question"])
+    except Exception as exc:
+        record["evaluator_error"] = record["evaluator_error"] or f"{type(exc).__name__} while scoring: {exc}"
+        record["evaluator_traceback"] = traceback.format_exc(limit=8)
+        score = CaseScore(question["id"], format_error="evaluator error")
+    if record["model_error"]:
+        score.format_error = f"model error: {record['model_error']}"
+    elif record["evaluator_error"]:
+        score.format_error = "evaluator error"
+    elif record["budget_exceeded"]:
+        score.format_error = "budget exceeded (no final answer)"
+    if record["model_error"] or record["evaluator_error"] or record["budget_exceeded"]:
+        score.automatic_passed = False
     record["score"] = score.to_dict()
+    record["wall_ms"] = round((clock() - started) * 1000, 1)
     return record
 
 
-def _sha256(path: Path) -> str:
-    return hashlib.sha256(path.read_bytes()).hexdigest()
+def _run_full(question: dict[str, Any], client: DartClient, record: dict[str, Any], ask: Callable[..., Any]) -> None:
+    """Mode ③: tool calls until the model stops calling tools, then one structured final answer.
+
+    Over budget (model requests or tool calls), the question ends there without a final request, so no
+    tool call is ever left without its result in the conversation.
+    """
+    seen = record["seen"]
+    messages = [{"role": "system", "content": SYSTEM_PROMPT}, {"role": "user", "content": question["question"]}]
+    expected = interpretation_calls(question)[0] if question["expected"]["action"] != "clarify" else None
+    if expected:
+        record["tool_args_first_ok"] = record["tool_args_any_ok"] = False
+    while True:
+        if record["model_attempts"] >= MAX_MODEL_CALLS - 1:  # the last request is reserved for the final answer
+            record["budget_exceeded"] = True
+            return
+        reply = ask(messages, tools=TOOL_SPECS)
+        if not reply.tool_calls:
+            messages.append(reply.message())
+            break
+        if record["tool_call_count"] + len(reply.tool_calls) > MAX_TOOL_CALLS:
+            record["budget_exceeded"] = True
+            record["unexecuted_tool_calls"] = copy.deepcopy(reply.tool_calls)
+            return
+        messages.append(reply.message())
+        for call in reply.tool_calls:
+            function = call.get("function") if isinstance(call, dict) and isinstance(call.get("function"), dict) else {}
+            name, arguments = function.get("name"), function.get("arguments")
+            result = execute_tool(client, name, arguments) if function else {"error": "도구 호출 형식이 맞지 않는다"}
+            first = record["tool_call_count"] == 0
+            record["tool_call_count"] += 1
+            record["tool_calls"].append({"raw": copy.deepcopy(call), "name": name, "arguments": arguments, "result": result})
+            if expected:
+                matched = _same_call((name, arguments), expected)
+                if first:
+                    record["tool_args_first_ok"] = matched
+                record["tool_args_any_ok"] = record["tool_args_any_ok"] or (matched and "error" not in result)
+            seen.append(result)
+            messages.append({"role": "tool", "tool_name": name if isinstance(name, str) else "",
+                             "content": json.dumps(result, ensure_ascii=False)})
+    messages.append({"role": "user", "content": FINAL_INSTRUCTION})
+    record["answer"] = ask(messages, schema=ANSWER_SCHEMA).content
+
+
+def _sha256(data: bytes) -> str:
+    return hashlib.sha256(data).hexdigest()
 
 
 def _git_state() -> dict[str, Any]:
@@ -183,11 +227,26 @@ def _git_state() -> dict[str, Any]:
     return {"commit": git("rev-parse", "HEAD"), "dirty": bool(git("status", "--porcelain"))}
 
 
-def run(mode: str, chat: Any, client: DartClient, only: list[str] | None = None) -> tuple[list[dict[str, Any]], dict[str, Any]]:
+def contract_hashes() -> dict[str, str]:
+    """Fingerprints of everything that defines the evaluation, recorded with each run."""
+    def text(value: Any) -> bytes:
+        return json.dumps(value, ensure_ascii=False, sort_keys=True).encode("utf-8")
+    return {"gold": _sha256(GOLD.read_bytes()), "questions": _sha256(SPEC.read_bytes()),
+            "system_prompt": _sha256(SYSTEM_PROMPT.encode("utf-8")), "final_instruction": _sha256(FINAL_INSTRUCTION.encode("utf-8")),
+            "tools": _sha256(text(TOOL_SPECS)), "answer_schema": _sha256(text(ANSWER_SCHEMA))}
+
+
+def run(mode: str, chat: Any, client: DartClient, only: list[str] | None = None,
+        on_case: Callable[[dict[str, Any]], None] | None = None) -> tuple[list[dict[str, Any]], dict[str, Any]]:
     spec = json.loads(SPEC.read_text(encoding="utf-8"))
     gold = {answer["id"]: answer for answer in json.loads(GOLD.read_text(encoding="utf-8"))["answers"]}
     questions = [question for question in spec["questions"] if not only or question["id"] in only]
-    cases = [run_case(mode, question, gold[question["id"]], client, chat) for question in questions]
+    cases = []
+    for question in questions:
+        case = run_case(mode, question, gold[question["id"]], client, chat)
+        cases.append(case)
+        if on_case:
+            on_case(case)
     return cases, summarize(cases)
 
 
@@ -200,32 +259,50 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--mode", choices=MODES, required=True)
     parser.add_argument("--model", help="local Ollama model name (oracle and full modes)")
     parser.add_argument("--only", nargs="+", help="question ids to run")
-    parser.add_argument("--out", type=Path, help="directory for run.json, cases.jsonl, summary.json")
+    parser.add_argument("--out", type=Path, help="new directory for run.json, cases.jsonl, summary.json, review files")
+    parser.add_argument("--allow-dirty", action="store_true", help="allow a model run with uncommitted changes")
     args = parser.parse_args(argv)
     if (args.mode == "rules") == bool(args.model):
         parser.error("--model is required for oracle and full, and not used for rules")
+    if args.model and not args.out:
+        parser.error("model runs must be recorded: pass --out")
     if args.out and args.out.exists():
         parser.error(f"{args.out} exists; results are never overwritten")
+    git = _git_state()
+    if args.model and git["dirty"] and not args.allow_dirty:
+        parser.error("commit first: a model run must name the exact code it ran (or pass --allow-dirty)")
     if not CACHE.exists():
         print("no cache: run scripts/fetch_dev_cache.py first")
         return 2
     client = DartClient(ResponseCache(CACHE), key_loader=no_key, offline=True)
     chat = OllamaChat(args.model) if args.model else None
     identity = chat.prepare() if chat else None
-    cases, summary = run(args.mode, chat, client, args.only)
+    handle = None
+    if args.out:
+        # written as the run goes, so an interrupted run keeps every finished question
+        args.out.mkdir(parents=True)
+        meta = {"mode": args.mode, "model": identity, "prompt_version": PROMPT_VERSION, "contract": contract_hashes(),
+                "git": git, "budget": {"model_calls": MAX_MODEL_CALLS, "tool_calls": MAX_TOOL_CALLS},
+                "started_at": datetime.now(timezone.utc).isoformat(timespec="seconds")}
+        (args.out / "run.json").write_text(json.dumps(meta, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+        handle = (args.out / "cases.jsonl").open("w", encoding="utf-8")
+
+    def save(case: dict[str, Any]) -> None:
+        if handle:
+            handle.write(json.dumps(case, ensure_ascii=False) + "\n")
+            handle.flush()
+
+    try:
+        cases, summary = run(args.mode, chat, client, args.only, on_case=save)
+    finally:
+        if handle:
+            handle.close()
+    summary["network_requests"] = client.network_requests
     print(json.dumps(summary, ensure_ascii=False, indent=1))
     if args.out:
-        args.out.mkdir(parents=True)
-        meta = {"mode": args.mode, "model": identity, "prompt_version": PROMPT_VERSION,
-                "gold_sha256": _sha256(GOLD), "questions_sha256": _sha256(SPEC), "git": _git_state(),
-                "budget": {"model_calls": MAX_MODEL_CALLS, "tool_calls": MAX_TOOL_CALLS},
-                "network_requests": client.network_requests}
-        (args.out / "run.json").write_text(json.dumps(meta, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
-        with (args.out / "cases.jsonl").open("w", encoding="utf-8") as handle:
-            for case in cases:
-                handle.write(json.dumps(case, ensure_ascii=False) + "\n")
         (args.out / "summary.json").write_text(json.dumps(summary, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
-    return 0
+        write_review_files(args.out, cases)
+    return 1 if summary["evaluator_errors"] else 0
 
 
 if __name__ == "__main__":

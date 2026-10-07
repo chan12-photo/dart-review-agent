@@ -100,6 +100,43 @@ class GroundingTests(unittest.TestCase):
         self.assertEqual(bad("10.88% 늘었다"), [])
         self.assertEqual(bad("1.4배", {"note": "연결이 별도의 1.4배"}), [])
 
+    def test_only_rounding_or_truncation_counts(self):
+        # Codex 1-5 review E4: a value one step past both rounding and truncation is not grounded
+        self.assertEqual(bad("1.3조 원", {"a": 1_240_000_000_000}), ["1.3조 원"])
+        self.assertEqual(bad("1.2조 원", {"a": 1_240_000_000_000}), [])
+        self.assertEqual(bad("1.1조 원", {"a": 1_190_000_000_000}), [])  # truncation
+        self.assertEqual(bad("약 3,276억 원", {"a": 327_543_643_155}), ["3,276억 원"])
+        self.assertEqual(bad("약 3,276억 원", {"a": 327_560_000_000}), [])
+        self.assertEqual(bad("약 4조 원", {"a": 3_275_436_431_552}), ["4조 원"])
+        self.assertEqual(bad("3.3조 원", {"a": 3_275_436_431_552}), [])
+        self.assertEqual(bad("10.9%", {"change_pct": "10.81"}), ["10.9%"])
+
+    def test_magnitudes_are_read_or_flagged(self):
+        # Codex 1-5 review E5: "9백억" was silently dropped and the rest passed
+        self.assertEqual(bad("1조 9백억 원", {"a": 1_020_000_000_000}), ["1조 9백억 원"])
+        self.assertEqual(bad("1조 2백억 원", {"a": 1_020_000_000_000}), [])
+        self.assertEqual(bad("3억 2천만 원", {"a": 320_000_000}), [])
+        self.assertIn("1천", bad("1천2백억 원", {"a": 120_000_000_000}))
+
+    def test_a_receipt_number_written_as_money_is_money(self):
+        self.assertEqual(bad("매출액은 20260310002820원입니다"), ["20260310002820원"])
+
+    def test_date_notations(self):
+        source = {"period": {"end": "2025-09-30"}}
+        for text in ("2025-09-30", "2025.09.30", "2025/09/30", "20250930 기준", "2025년 9월 30일"):
+            with self.subTest(text=text):
+                self.assertEqual(bad(text, source), [])
+        self.assertEqual(bad("2025-02-31", source), ["2025-02-31"])
+        self.assertEqual(bad("2026.09.30", source), ["2026.09.30"])
+
+    def test_error_results_ground_nothing(self):
+        # Codex 1-5 review E2: an echoed tool name must not launder a number
+        self.assertEqual(bad("영업이익률은 99.9%", {"error": "알 수 없는 도구: unknown_영업이익률99.9%"}), ["99.9%"])
+
+    def test_the_question_grounds_years_only(self):
+        from dart_review.numbers import question_years
+        self.assertEqual(question_years("2025년 매출이 999조 원이라던데 맞아? 10% 늘었어?"), {2025})
+
     def test_unparsed_numbers_count_as_ungrounded(self):
         self.assertEqual(bad("변화율은 10.88"), ["10.88"])
 

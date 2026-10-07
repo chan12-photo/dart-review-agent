@@ -2,15 +2,20 @@
 
 Only http://127.0.0.1:11434 is used: no other host, no proxy, no redirects
 (adapted from local-agent-lab's adapter). ``truncate`` is false so Ollama
-rejects an oversized conversation instead of silently dropping older
-messages. Every reply carries the metadata needed to report a run: model
-digest, Ollama version, options, token counts, and latency.
+should reject an oversized conversation instead of silently dropping older
+messages (what the runtime actually does is checked in roadmap 1-5).
+
+Every chat attempt, successful or not, leaves ``last_exchange``: the exact
+payload sent and its SHA-256, the raw server response (or the error), and
+the elapsed time. ``attempts`` counts requests sent, ``responses`` counts
+complete replies.
 """
 
 from __future__ import annotations
 
 import copy
 from dataclasses import dataclass, field
+import hashlib
 import json
 import socket
 import time
@@ -63,7 +68,9 @@ class OllamaChat:
         self.clock = clock
         self.model_info: dict[str, Any] | None = None
         self.runtime_version: str | None = None
-        self.requests = 0
+        self.attempts = 0
+        self.responses = 0
+        self.last_exchange: dict[str, Any] | None = None
 
     def _request(self, path: str, payload: dict[str, Any] | None = None) -> dict[str, Any]:
         data = None if payload is None else json.dumps(payload, ensure_ascii=False).encode("utf-8")
@@ -112,6 +119,7 @@ class OllamaChat:
 
     def chat(self, messages: Sequence[dict[str, Any]], *, tools: list[dict[str, Any]] | None = None,
              schema: dict[str, Any] | None = None) -> Reply:
+        self.last_exchange = None
         if self.model_info is None:
             self.prepare()
         payload: dict[str, Any] = {"model": self.model, "messages": copy.deepcopy(list(messages)), "stream": False,
@@ -122,15 +130,30 @@ class OllamaChat:
             payload["format"] = copy.deepcopy(schema)
         if self.think is not None:
             payload["think"] = self.think
+        encoded = json.dumps(payload, ensure_ascii=False).encode("utf-8")  # exactly the bytes _request sends
+        exchange: dict[str, Any] = {"request": copy.deepcopy(payload), "request_sha256": hashlib.sha256(encoded).hexdigest(),
+                                    "response": None, "error": None, "elapsed_ms": None}
+        self.last_exchange = exchange
         started = self.clock()
-        self.requests += 1
-        response = self._request("/api/chat", payload)
+        self.attempts += 1
+        try:
+            response = self._request("/api/chat", payload)
+        except ModelError as exc:
+            exchange.update(error=str(exc), elapsed_ms=round((self.clock() - started) * 1000, 1))
+            raise
         elapsed_ms = round((self.clock() - started) * 1000, 1)
+        exchange.update(response=copy.deepcopy(response), elapsed_ms=elapsed_ms)
         message = response.get("message")
         if response.get("done") is not True or not isinstance(message, dict) or not isinstance(message.get("content"), str):
-            raise ModelError(f"incomplete chat response (done={response.get('done')!r})")
+            exchange["error"] = f"incomplete chat response (done={response.get('done')!r})"
+            raise ModelError(exchange["error"])
         calls = message.get("tool_calls") or []
-        return Reply(message["content"], [call for call in calls if isinstance(call, dict)], message.get("thinking"), {
+        if not isinstance(calls, list):
+            exchange["error"] = "tool_calls is not a list"
+            raise ModelError(exchange["error"])
+        self.responses += 1
+        # malformed entries are kept as they are; the runner answers each one with an error
+        return Reply(message["content"], list(calls), message.get("thinking"), {
             "elapsed_ms": elapsed_ms, "done_reason": response.get("done_reason"),
             "prompt_tokens": response.get("prompt_eval_count"), "output_tokens": response.get("eval_count"),
             "total_duration_ns": response.get("total_duration"), "load_duration_ns": response.get("load_duration")})
@@ -141,18 +164,27 @@ class ScriptedChat:
 
     def __init__(self, script: Callable[[Sequence[dict[str, Any]], Any, Any], Reply] | Sequence[Reply]):
         self.script = script if callable(script) else iter(list(script))
-        self.requests = 0
+        self.attempts = 0
+        self.responses = 0
         self.calls: list[dict[str, Any]] = []
+        self.last_exchange: dict[str, Any] | None = None
 
     def identity(self) -> dict[str, Any]:
         return {"model": "scripted", "digest": None}
 
     def chat(self, messages, *, tools=None, schema=None) -> Reply:
-        self.requests += 1
-        self.calls.append({"messages": copy.deepcopy(list(messages)), "tools": bool(tools), "schema": schema is not None})
-        if callable(self.script):
-            return self.script(messages, tools, schema)
+        self.attempts += 1
+        request = {"messages": copy.deepcopy(list(messages)), "tools": bool(tools), "schema": schema is not None}
+        self.calls.append(request)
+        self.last_exchange = {"request": request, "request_sha256": None, "response": None, "error": None, "elapsed_ms": None}
         try:
-            return next(self.script)
+            reply = self.script(messages, tools, schema) if callable(self.script) else next(self.script)
         except StopIteration:
-            raise ModelError("the script has no more replies") from None
+            self.last_exchange["error"] = "the script has no more replies"
+            raise ModelError(self.last_exchange["error"]) from None
+        except ModelError as exc:
+            self.last_exchange["error"] = str(exc)
+            raise
+        self.responses += 1
+        self.last_exchange["response"] = {"content": reply.content, "tool_calls": reply.tool_calls}
+        return reply

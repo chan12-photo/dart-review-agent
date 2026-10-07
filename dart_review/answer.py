@@ -21,7 +21,7 @@ ANSWER_SCHEMA: dict[str, Any] = {
     "properties": {
         "status": {"type": "string", "enum": list(STATUSES)},
         "company": {"type": "string"},
-        "account": {"type": ["string", "null"]},
+        "account": {"type": ["string", "null"], "enum": [*ACCOUNTS, None]},
         "values": {
             "type": "array",
             "items": {
@@ -37,7 +37,7 @@ ANSWER_SCHEMA: dict[str, Any] = {
             },
         },
         "change": {"type": ["integer", "null"]},
-        "change_pct": {"type": ["string", "null"]},
+        "change_pct": {"type": ["string", "null"], "pattern": "^-?[0-9]+\\.[0-9]{2}$"},
         "answer": {"type": "string"},
         "clarifying_question": {"type": ["string", "null"]},
     },
@@ -110,11 +110,12 @@ def parse_answer(content: str | dict[str, Any]) -> Answer:
     extra = [key for key in data if key not in required]
     if missing or extra:
         raise AnswerFormatError(f"missing fields {missing}, unexpected fields {extra}")
-    if data["status"] not in STATUSES:
+    # check types before membership: an unhashable value must be a format error, not a crash
+    if not isinstance(data["status"], str) or data["status"] not in STATUSES:
         raise AnswerFormatError(f"unknown status {data['status']!r}")
     if not isinstance(data["company"], str):
         raise AnswerFormatError("company must be a string")
-    if data["account"] is not None and data["account"] not in ACCOUNTS:
+    if data["account"] is not None and (not isinstance(data["account"], str) or data["account"] not in ACCOUNTS):
         raise AnswerFormatError(f"unknown account {data['account']!r}")
     if not isinstance(data["values"], list):
         raise AnswerFormatError("values must be a list")
@@ -122,7 +123,7 @@ def parse_answer(content: str | dict[str, Any]) -> Answer:
     for index, item in enumerate(data["values"]):
         if not isinstance(item, dict) or sorted(item) != ["amount", "basis", "end", "start"]:
             raise AnswerFormatError(f"values[{index}] must have exactly basis, start, end, amount")
-        if item["basis"] not in BASIS_NAMES:
+        if not isinstance(item["basis"], str) or item["basis"] not in BASIS_NAMES:
             raise AnswerFormatError(f"values[{index}].basis must be 연결 or 별도")
         _check_date(item["start"], f"values[{index}].start", nullable=True)
         _check_date(item["end"], f"values[{index}].end", nullable=False)

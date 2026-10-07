@@ -10,10 +10,10 @@ from __future__ import annotations
 import json
 from typing import Any
 
-from .accounts import ACCOUNTS
+from .accounts import ACCOUNTS, NAME_CONFLICT
 from .client import DartAPIError, DartClient, DartTransportError, NotCached
 from .companies import DEV_COMPANIES, REPORT_CODES, SEALED_EVAL_COMPANIES
-from .compare import NO_DATA, NOT_COMPARABLE, Comparison, compare
+from .compare import NEEDS_REVIEW, NO_DATA, NOT_COMPARABLE, Comparison, compare
 from .facts import Fact, fact_from_response
 from .periods import Period, PeriodNotProvided, instant, own_source, quarter, year_to_date
 from .review import review_change
@@ -26,10 +26,11 @@ DIFFERENCE_MEANING = "연결 − 별도: 같은 시점·같은 통화의 집계 
 
 _PERIOD_PARAMETER = {
     "type": "object",
+    "additionalProperties": False,
     "description": "kind: instant(재무상태표의 시점), quarter(그 분기 3개월), year_to_date(연초부터 누적; 연간은 month=12)",
     "properties": {
         "kind": {"type": "string", "enum": list(PERIOD_KINDS)},
-        "year": {"type": "integer"},
+        "year": {"type": "integer", "minimum": 1990, "maximum": 2100},
         "month": {"type": "integer", "enum": [3, 6, 9, 12]},
     },
     "required": ["kind", "year", "month"],
@@ -48,13 +49,13 @@ TOOL_SPECS: list[dict[str, Any]] = [
             "basis": {"type": "string", "enum": list(BASIS_CODES)},
             "current_period": _PERIOD_PARAMETER,
             "base_period": {**_PERIOD_PARAMETER, "description": "비교 기준이 되는 앞선 기간. " + _PERIOD_PARAMETER["description"]},
-        }, "required": ["company", "basis", "account", "current_period", "base_period"]},
+        }, "required": ["company", "basis", "account", "current_period", "base_period"], "additionalProperties": False},
     }},
     {"type": "function", "function": {
         "name": "side_by_side",
         "description": "한 기간의 연결 값과 별도 값을 나란히 보여 준다(시간 변화 비교가 아니다)",
         "parameters": {"type": "object", "properties": {**_COMMON, "period": _PERIOD_PARAMETER},
-                       "required": ["company", "account", "period"]},
+                       "required": ["company", "account", "period"], "additionalProperties": False},
     }},
 ]
 
@@ -79,17 +80,17 @@ def parse_period(spec: Any, field: str) -> Period:
     if not isinstance(spec, dict) or set(spec) != {"kind", "year", "month"}:
         raise ToolArgumentError(f"{field}는 kind, year, month를 가진 객체여야 한다")
     kind, year, month = spec["kind"], spec["year"], spec["month"]
-    if kind not in PERIOD_KINDS:
+    if not isinstance(kind, str) or kind not in PERIOD_KINDS:
         raise ToolArgumentError(f"{field}.kind는 {', '.join(PERIOD_KINDS)} 중 하나여야 한다")
     if isinstance(year, bool) or not isinstance(year, int) or not 1990 <= year <= 2100:
         raise ToolArgumentError(f"{field}.year는 연도 정수여야 한다")
-    if month not in (3, 6, 9, 12) or isinstance(month, bool):
+    if not isinstance(month, int) or isinstance(month, bool) or month not in (3, 6, 9, 12):
         raise ToolArgumentError(f"{field}.month는 3, 6, 9, 12 중 하나여야 한다")
     return PERIOD_KINDS[kind](year, month)
 
 
 def _account(key: Any) -> str:
-    if key not in ACCOUNTS:
+    if not isinstance(key, str) or key not in ACCOUNTS:
         raise ToolArgumentError(f"account는 {', '.join(ACCOUNTS)} 중 하나여야 한다")
     return key
 
@@ -117,7 +118,7 @@ def _comparison_dict(result: Comparison) -> dict[str, Any]:
 def compare_values(client: DartClient, company: Any, basis: Any, account: Any,
                    current_period: Any, base_period: Any) -> dict[str, Any]:
     corp_code = find_company(company)
-    if basis not in BASIS_CODES:
+    if not isinstance(basis, str) or basis not in BASIS_CODES:
         raise ToolArgumentError("basis는 연결 또는 별도여야 한다")
     key = _account(account)
     current, base = parse_period(current_period, "current_period"), parse_period(base_period, "base_period")
@@ -143,8 +144,18 @@ def side_by_side(client: DartClient, company: Any, account: Any, period: Any) ->
     if not all(fact.available for fact in facts):
         reasons = [note for fact in facts if not fact.available for note in fact.notes]
         return {**output, "status": NO_DATA, "reasons": reasons, "values": [fact_dict(f) for f in facts], "difference": None}
-    # the rules refuse a CFS/OFS change; the plain scope difference is reported separately
+    # the rules refuse a CFS/OFS change; the plain scope difference needs the
+    # same company, account, period, and a confirmed common currency
     rule = compare(facts[0], facts[1])
+    review = [note for fact in facts if fact.resolved_by == NAME_CONFLICT for note in fact.notes]
+    currencies = [fact.currency for fact in facts]
+    if not all(currencies):
+        review.append("통화가 확인되지 않아 차이를 계산하지 않았다")
+    elif currencies[0] != currencies[1]:
+        review.append(f"통화가 달라({currencies[0]}, {currencies[1]}) 차이를 계산하지 않았다")
+    if review:
+        return {**output, "status": NEEDS_REVIEW, "reasons": review, "values": [fact_dict(fact) for fact in facts],
+                "difference": None, "rule_status_for_change": rule.status}
     return {**output, "status": SIDE_BY_SIDE, "values": [fact_dict(fact) for fact in facts],
             "difference": facts[0].amount - facts[1].amount, "difference_meaning": DIFFERENCE_MEANING,
             "rule_status_for_change": rule.status}
@@ -155,8 +166,8 @@ TOOLS = {"compare_values": compare_values, "side_by_side": side_by_side}
 
 def execute_tool(client: DartClient, name: str, arguments: Any) -> dict[str, Any]:
     """Run a tool call from the model. Bad calls come back as an error result the model can read."""
-    if name not in TOOLS:
-        return {"error": f"알 수 없는 도구: {name}"}
+    if not isinstance(name, str) or name not in TOOLS:
+        return {"error": "알 수 없는 도구다"}  # the name is not echoed: an error must not carry the model's text
     if isinstance(arguments, str):
         try:
             arguments = json.loads(arguments)
@@ -165,7 +176,7 @@ def execute_tool(client: DartClient, name: str, arguments: Any) -> dict[str, Any
     if not isinstance(arguments, dict):
         return {"error": "도구 인자는 객체여야 한다"}
     required = next(spec for spec in TOOL_SPECS if spec["function"]["name"] == name)["function"]["parameters"]["required"]
-    if set(arguments) != set(required):
+    if not all(isinstance(key, str) for key in arguments) or set(arguments) != set(required):
         return {"error": f"{name}의 인자는 정확히 {', '.join(required)}이다"}
     try:
         return TOOLS[name](client, **arguments)

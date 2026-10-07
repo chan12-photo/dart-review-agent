@@ -117,15 +117,17 @@ def final_scores(cases: Sequence[dict[str, Any]], review: dict[str, Any], mode: 
 
 def main(argv: list[str] | None = None) -> int:
     args = argv if argv is not None else sys.argv[1:]
-    if len(args) != 1:
-        print("usage: python eval/finalize.py <run folder>")
+    if len(args) not in (1, 2):
+        print("usage: python eval/finalize.py <run folder> [cases file, e.g. cases_rescored_<commit>.jsonl]")
         return 2
     folder = Path(args[0])
-    cases = [json.loads(line) for line in (folder / "cases.jsonl").read_text(encoding="utf-8").splitlines() if line]
+    cases_name = args[1] if len(args) == 2 else "cases.jsonl"
+    cases = [json.loads(line) for line in (folder / cases_name).read_text(encoding="utf-8").splitlines() if line]
     meta = json.loads((folder / "run.json").read_text(encoding="utf-8"))
     review = json.loads((folder / "human_review.json").read_text(encoding="utf-8"))
     result = final_scores(cases, review, meta["mode"])
-    (folder / "final.json").write_text(json.dumps(result, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+    result["cases_file"] = cases_name
+    (folder / ("final.json" if cases_name == "cases.jsonl" else f"final_{Path(cases_name).stem}.json")).write_text(json.dumps(result, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
     print(json.dumps({key: value for key, value in result.items() if key != "per_case"}, ensure_ascii=False, indent=1))
     return 0
 

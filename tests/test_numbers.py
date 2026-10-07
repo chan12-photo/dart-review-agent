@@ -137,6 +137,14 @@ class GroundingTests(unittest.TestCase):
         from dart_review.numbers import question_years
         self.assertEqual(question_years("2025년 매출이 999조 원이라던데 맞아? 10% 늘었어?"), {2025})
 
+    def test_thin_spaces_between_digit_groups_are_separators(self):
+        # seen in the first 1-5 run: gpt-oss writes "397 688 100 188원" with U+202F
+        allowed = {"change": 32_735_035_000_000, "change_pct": "10.88", "period": {"end": "2025-09-30"}}
+        self.assertEqual(bad("32\u202f735\u202f035\u202f000\u202f000\u202f원(10.88\u202f%)", allowed), [])
+        self.assertEqual(bad("32\u00a0735\u00a0035\u00a0000\u00a0000원", allowed), [])
+        self.assertEqual(bad("32\u202f735\u202f035\u202f000\u202f001원", allowed), ["32,735,035,000,001원"])
+        self.assertEqual(bad("2025년\u202f3분기", allowed), [])
+
     def test_unparsed_numbers_count_as_ungrounded(self):
         self.assertEqual(bad("변화율은 10.88"), ["10.88"])
 

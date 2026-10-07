@@ -104,9 +104,16 @@ def _valid_date(year: int, month: int, day: int) -> bool:
     return True
 
 
+# Thin and no-break spaces between digit groups are thousands separators
+# ("397 688 100 188원" with U+202F, as gpt-oss writes them). Added after the
+# first 1-5 run, where reading only the last group made exact amounts
+# ungrounded (eval/feasibility_2026-10-07/RESCORE.md).
+_GROUP_SPACE = re.compile(r"(?<=\d)[\u202f\u00a0\u2009\u2007](?=\d{3}(?!\d))")
+
+
 def extract(text: str) -> list[Mention]:
     """Every number in ``text``, classified. Matched spans are blanked so nothing is counted twice."""
-    remaining = text or ""
+    remaining = _GROUP_SPACE.sub(",", text or "")
     mentions: list[Mention] = []
     for kind, pattern in _PATTERNS:
         found: list[tuple[int, int]] = []

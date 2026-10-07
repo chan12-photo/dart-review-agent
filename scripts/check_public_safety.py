@@ -22,7 +22,8 @@ TEXT_PATTERNS: list[tuple[str, re.Pattern[str]]] = [
     ("absolute_home_path", re.compile(r"/Users/[A-Za-z0-9._-]+|/home/[A-Za-z0-9._-]+|[A-Za-z]:\\Users\\[A-Za-z0-9._-]+")),
     ("macos_temp_path", re.compile(r"/var/folders/[A-Za-z0-9_+-]+/|/private/tmp/[A-Za-z0-9._-]+")),
     ("email_address", re.compile(r"[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}")),
-    ("korean_phone_number", re.compile(r"(?<![0-9])01[016789]-?[0-9]{3,4}-?[0-9]{4}(?![0-9])")),
+    # not inside a longer letter-or-digit run, so hex digests such as SHA-256 values do not match
+    ("korean_phone_number", re.compile(r"(?<![0-9A-Za-z])01[016789]-?[0-9]{3,4}-?[0-9]{4}(?![0-9A-Za-z])")),
     ("api_key", re.compile(r"sk-[A-Za-z0-9_-]{20,}|AKIA[0-9A-Z]{16}|gh[pousr]_[A-Za-z0-9]{36}|xox[abprs]-[A-Za-z0-9-]{10,}")),
     ("private_key_block", re.compile(r"-----BEGIN [A-Z ]*PRIVATE KEY-----")),
     ("opendart_key_param", re.compile(r"crtfc_key=[0-9A-Fa-f]{8,}")),

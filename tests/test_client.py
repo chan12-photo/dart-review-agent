@@ -205,6 +205,16 @@ class SealedCompanyTests(unittest.TestCase):
 
 
 class PublicSafetyTests(unittest.TestCase):
+    def test_phone_numbers_but_not_digits_inside_hex_digests(self):
+        sys.path.insert(0, str(ROOT / "scripts"))
+        import check_public_safety
+        pattern = dict(check_public_safety.TEXT_PATTERNS)["korean_phone_number"]
+        prefix = "0" + "10"  # assembled so this file does not itself look like it holds a phone number
+        for text in (f"연락처 {prefix}-1234-5678", f"{prefix}12345678", f"번호:{prefix}12345678."):
+            self.assertTrue(pattern.search(text), text)
+        self.assertFalse(pattern.search("76415e813ef7618d0dc90ff2ed65930caa01040247575f4d6e0ae1cb0209cf00"))
+
+
     def test_scan_flags_key_parameter_and_real_key_value(self):
         with tempfile.TemporaryDirectory() as temp:
             repo = Path(temp)

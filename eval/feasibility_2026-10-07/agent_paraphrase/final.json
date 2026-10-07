@@ -1,0 +1,128 @@
+{
+ "mode": "agent",
+ "reviewer": "Claude (1차, 2026-10-08)",
+ "confirmed_by_user": false,
+ "automatic_passed": 11,
+ "reviewed_passed": 11,
+ "total": 13,
+ "per_case": [
+  {
+   "id": "p01",
+   "automatic_passed": true,
+   "automatic_after_accepted_notation": true,
+   "body_ok": true,
+   "reviewed_passed": true,
+   "note": "사실 문장은 렌더러와 동일, 모델 해석은 사실 반복(단정 없음) 또는 숨겨짐",
+   "accepted_unparsed": []
+  },
+  {
+   "id": "p02",
+   "automatic_passed": true,
+   "automatic_after_accepted_notation": true,
+   "body_ok": true,
+   "reviewed_passed": true,
+   "note": "사실 문장은 렌더러와 동일, 모델 해석은 사실 반복(단정 없음) 또는 숨겨짐",
+   "accepted_unparsed": []
+  },
+  {
+   "id": "p03",
+   "automatic_passed": true,
+   "automatic_after_accepted_notation": true,
+   "body_ok": true,
+   "reviewed_passed": true,
+   "note": "사실 문장은 렌더러와 동일, 모델 해석은 사실 반복(단정 없음) 또는 숨겨짐",
+   "accepted_unparsed": []
+  },
+  {
+   "id": "p04",
+   "automatic_passed": true,
+   "automatic_after_accepted_notation": true,
+   "body_ok": true,
+   "reviewed_passed": true,
+   "note": "사실 문장은 렌더러와 동일, 모델 해석은 사실 반복(단정 없음) 또는 숨겨짐",
+   "accepted_unparsed": []
+  },
+  {
+   "id": "p05",
+   "automatic_passed": true,
+   "automatic_after_accepted_notation": true,
+   "body_ok": true,
+   "reviewed_passed": true,
+   "note": "사실 문장은 렌더러와 동일, 모델 해석은 사실 반복(단정 없음) 또는 숨겨짐",
+   "accepted_unparsed": []
+  },
+  {
+   "id": "p06",
+   "automatic_passed": true,
+   "automatic_after_accepted_notation": true,
+   "body_ok": true,
+   "reviewed_passed": true,
+   "note": "사실 문장은 렌더러와 동일, 모델 해석은 사실 반복(단정 없음) 또는 숨겨짐",
+   "accepted_unparsed": []
+  },
+  {
+   "id": "p07",
+   "automatic_passed": true,
+   "automatic_after_accepted_notation": true,
+   "body_ok": true,
+   "reviewed_passed": true,
+   "note": "사실 문장은 렌더러와 동일, 모델 해석은 사실 반복(단정 없음) 또는 숨겨짐",
+   "accepted_unparsed": []
+  },
+  {
+   "id": "p08",
+   "automatic_passed": true,
+   "automatic_after_accepted_notation": true,
+   "body_ok": true,
+   "reviewed_passed": true,
+   "note": "사실 문장은 렌더러와 동일, 모델 해석은 사실 반복(단정 없음) 또는 숨겨짐",
+   "accepted_unparsed": []
+  },
+  {
+   "id": "p09",
+   "automatic_passed": true,
+   "automatic_after_accepted_notation": true,
+   "body_ok": true,
+   "reviewed_passed": true,
+   "note": "사실 문장은 렌더러와 동일, 모델 해석은 사실 반복(단정 없음) 또는 숨겨짐",
+   "accepted_unparsed": []
+  },
+  {
+   "id": "p10",
+   "automatic_passed": false,
+   "automatic_after_accepted_notation": false,
+   "body_ok": false,
+   "reviewed_passed": false,
+   "note": "4: 도구가 비교 불가(누적만 제공)를 줬는데 모델이 되묻기로 결정. 이유와 대안을 말하지 않고 계정을 되물음",
+   "accepted_unparsed": []
+  },
+  {
+   "id": "p11",
+   "automatic_passed": false,
+   "automatic_after_accepted_notation": false,
+   "body_ok": false,
+   "reviewed_passed": false,
+   "note": "답 없음: 결정 단계에서 데이터 없음을 오류로 보고 도구를 다시 부르려다 빈 응답(결정 형식 오류)",
+   "accepted_unparsed": []
+  },
+  {
+   "id": "p12",
+   "automatic_passed": true,
+   "automatic_after_accepted_notation": true,
+   "body_ok": true,
+   "reviewed_passed": true,
+   "note": "두 후보를 묻고 확정하지 않음",
+   "accepted_unparsed": []
+  },
+  {
+   "id": "p13",
+   "automatic_passed": true,
+   "automatic_after_accepted_notation": true,
+   "body_ok": true,
+   "reviewed_passed": true,
+   "note": "사실 문장은 렌더러와 동일, 모델 해석은 사실 반복(단정 없음) 또는 숨겨짐",
+   "accepted_unparsed": []
+  }
+ ],
+ "cases_file": "cases.jsonl"
+}

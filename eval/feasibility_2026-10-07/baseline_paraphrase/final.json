@@ -1,73 +1,128 @@
 {
+ "mode": "baseline",
  "reviewer": "Claude (1차, 2026-10-08)",
  "confirmed_by_user": false,
- "criteria": "eval/HUMAN_REVIEW.ko.md",
- "cases": {
-  "p01": {
+ "automatic_passed": 12,
+ "reviewed_passed": 12,
+ "total": 13,
+ "per_case": [
+  {
+   "id": "p01",
+   "automatic_passed": true,
+   "automatic_after_accepted_notation": true,
    "body_ok": true,
+   "reviewed_passed": true,
    "note": "렌더러 문장(같은 해석의 규칙만 방식과 동일)",
    "accepted_unparsed": []
   },
-  "p02": {
+  {
+   "id": "p02",
+   "automatic_passed": true,
+   "automatic_after_accepted_notation": true,
    "body_ok": true,
+   "reviewed_passed": true,
    "note": "렌더러 문장(같은 해석의 규칙만 방식과 동일)",
    "accepted_unparsed": []
   },
-  "p03": {
+  {
+   "id": "p03",
+   "automatic_passed": true,
+   "automatic_after_accepted_notation": true,
    "body_ok": true,
+   "reviewed_passed": true,
    "note": "렌더러 문장(같은 해석의 규칙만 방식과 동일)",
    "accepted_unparsed": []
   },
-  "p04": {
+  {
+   "id": "p04",
+   "automatic_passed": true,
+   "automatic_after_accepted_notation": true,
    "body_ok": true,
+   "reviewed_passed": true,
    "note": "렌더러 문장(같은 해석의 규칙만 방식과 동일)",
    "accepted_unparsed": []
   },
-  "p05": {
+  {
+   "id": "p05",
+   "automatic_passed": true,
+   "automatic_after_accepted_notation": true,
    "body_ok": true,
+   "reviewed_passed": true,
    "note": "렌더러 문장(같은 해석의 규칙만 방식과 동일)",
    "accepted_unparsed": []
   },
-  "p06": {
+  {
+   "id": "p06",
+   "automatic_passed": false,
+   "automatic_after_accepted_notation": false,
    "body_ok": false,
+   "reviewed_passed": false,
    "note": "2: '4~6월보다'를 읽지 못해 2022년 3분기와 비교함(2022-07~09 대 2023-07~09). 확신 있게 다른 비교(+16.26%)를 답함",
    "accepted_unparsed": []
   },
-  "p07": {
+  {
+   "id": "p07",
+   "automatic_passed": true,
+   "automatic_after_accepted_notation": true,
    "body_ok": true,
+   "reviewed_passed": true,
    "note": "렌더러 문장(같은 해석의 규칙만 방식과 동일)",
    "accepted_unparsed": []
   },
-  "p08": {
+  {
+   "id": "p08",
+   "automatic_passed": true,
+   "automatic_after_accepted_notation": true,
    "body_ok": true,
+   "reviewed_passed": true,
    "note": "렌더러 문장(같은 해석의 규칙만 방식과 동일)",
    "accepted_unparsed": []
   },
-  "p09": {
+  {
+   "id": "p09",
+   "automatic_passed": true,
+   "automatic_after_accepted_notation": true,
    "body_ok": true,
+   "reviewed_passed": true,
    "note": "렌더러 문장(같은 해석의 규칙만 방식과 동일)",
    "accepted_unparsed": []
   },
-  "p10": {
+  {
+   "id": "p10",
+   "automatic_passed": true,
+   "automatic_after_accepted_notation": true,
    "body_ok": true,
+   "reviewed_passed": true,
    "note": "렌더러 문장(같은 해석의 규칙만 방식과 동일)",
    "accepted_unparsed": []
   },
-  "p11": {
+  {
+   "id": "p11",
+   "automatic_passed": true,
+   "automatic_after_accepted_notation": true,
    "body_ok": true,
+   "reviewed_passed": true,
    "note": "렌더러 문장(같은 해석의 규칙만 방식과 동일)",
    "accepted_unparsed": []
   },
-  "p12": {
+  {
+   "id": "p12",
+   "automatic_passed": true,
+   "automatic_after_accepted_notation": true,
    "body_ok": true,
+   "reviewed_passed": true,
    "note": "렌더러 문장(같은 해석의 규칙만 방식과 동일)",
    "accepted_unparsed": []
   },
-  "p13": {
+  {
+   "id": "p13",
+   "automatic_passed": true,
+   "automatic_after_accepted_notation": true,
    "body_ok": true,
+   "reviewed_passed": true,
    "note": "렌더러 문장(같은 해석의 규칙만 방식과 동일)",
    "accepted_unparsed": []
   }
- },
- "reading": "1-5·2-1과 같은 해석(HUMAN_REVIEW.ko.md를 적힌 그대로). 렌더러 문장은 규칙만 방식에서 Claude가 읽고 맞다고 본 문장과 글자까지 같은지 코드로 대조했고, 다른 문장만 따로 읽었다."
+ ],
+ "cases_file": "cases.jsonl"
 }

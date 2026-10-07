@@ -1,0 +1,59 @@
+{
+ "cases": 13,
+ "automatic_passed": {
+  "correct": 11,
+  "total": 13
+ },
+ "status": {
+  "correct": 11,
+  "total": 13
+ },
+ "decision": {
+  "correct": 11,
+  "total": 13
+ },
+ "numbers": {
+  "correct": 10,
+  "total": 10
+ },
+ "basis": {
+  "correct": 11,
+  "total": 13
+ },
+ "refusal_or_clarify": {
+  "correct": 1,
+  "total": 3
+ },
+ "sign_wording": {
+  "correct": 1,
+  "total": 1
+ },
+ "ungrounded_numbers": 0,
+ "cases_with_ungrounded": 0,
+ "unparsed_numbers": 0,
+ "format_errors": 1,
+ "evaluator_errors": 0,
+ "warnings": 0,
+ "model_attempts": 40,
+ "model_responses": 40,
+ "tool_calls": 14,
+ "model_latency_ms": {
+  "total": 171010.4,
+  "median_per_case": 12833.6
+ },
+ "case_wall_ms_total": 171093.7,
+ "budget_exceeded": 0,
+ "failed": [
+  "p10",
+  "p11"
+ ],
+ "tool_args_first_ok": {
+  "correct": 10,
+  "total": 12
+ },
+ "tool_args_any_ok": {
+  "correct": 12,
+  "total": 12
+ },
+ "network_requests": 0
+}

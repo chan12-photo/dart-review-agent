@@ -202,13 +202,13 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--only", nargs="+", help="question ids to run")
     parser.add_argument("--out", type=Path, help="directory for run.json, cases.jsonl, summary.json")
     args = parser.parse_args(argv)
-    if not CACHE.exists():
-        print("no cache: run scripts/fetch_dev_cache.py first")
-        return 2
     if (args.mode == "rules") == bool(args.model):
         parser.error("--model is required for oracle and full, and not used for rules")
     if args.out and args.out.exists():
         parser.error(f"{args.out} exists; results are never overwritten")
+    if not CACHE.exists():
+        print("no cache: run scripts/fetch_dev_cache.py first")
+        return 2
     client = DartClient(ResponseCache(CACHE), key_loader=no_key, offline=True)
     chat = OllamaChat(args.model) if args.model else None
     identity = chat.prepare() if chat else None

@@ -25,12 +25,18 @@ from typing import Any, Callable
 ROOT = Path(__file__).resolve().parents[1]
 sys.path[:0] = [str(ROOT), str(ROOT / "eval")]
 
+from dart_review.agent import MAX_MODEL_CALLS as AGENT_MAX_MODEL_CALLS, MAX_TOOL_CALLS as AGENT_MAX_TOOL_CALLS  # noqa: E402
+from dart_review.agent import DECISION_SCHEMA, agent_turn, tool_phase  # noqa: E402
 from dart_review.answer import ANSWER_SCHEMA  # noqa: E402
 from dart_review.cache import ResponseCache  # noqa: E402
 from dart_review.client import DartClient  # noqa: E402
 from dart_review.companies import DEV_COMPANIES, FS_DIVS  # noqa: E402
 from dart_review.llm import ModelError, OllamaChat  # noqa: E402
-from dart_review.prompts import FINAL_INSTRUCTION, PROMPT_VERSION, SYSTEM_PROMPT, oracle_message  # noqa: E402
+from dart_review.prompts import (  # noqa: E402
+    AGENT_PROMPT_VERSION, AGENT_SYSTEM_PROMPT, DECISION_INSTRUCTION, FINAL_INSTRUCTION, PROMPT_VERSION, SYSTEM_PROMPT,
+    oracle_message,
+)
+from dart_review.render import clarification_answer, structured_answer  # noqa: E402
 from dart_review.tools import TOOL_SPECS, ToolArgumentError, execute_tool, find_company  # noqa: E402
 from finalize import write_review_files  # noqa: E402
 from scoring import CaseScore, score_case, summarize  # noqa: E402
@@ -38,9 +44,9 @@ from scoring import CaseScore, score_case, summarize  # noqa: E402
 SPEC = ROOT / "eval" / "dev_questions.json"
 GOLD = ROOT / "eval" / "dev_gold.json"
 CACHE = ROOT / "cache"
-MODES = ("rules", "oracle", "full")
-MAX_MODEL_CALLS = 5  # per question in the full flow, including the final answer
-MAX_TOOL_CALLS = 3
+MODES = ("rules", "oracle", "full", "agent")
+MAX_MODEL_CALLS = AGENT_MAX_MODEL_CALLS  # per question in the full flow and agent modes, including the final request
+MAX_TOOL_CALLS = AGENT_MAX_TOOL_CALLS
 
 
 def interpretation_calls(question: dict[str, Any]) -> list[tuple[str, dict[str, Any]]]:
@@ -55,42 +61,12 @@ def interpretation_calls(question: dict[str, Any]) -> list[tuple[str, dict[str, 
             for account in accounts]
 
 
-def _value(fact: dict[str, Any]) -> dict[str, Any]:
-    return {"basis": fact["basis"], "start": fact["period"]["start"], "end": fact["period"]["end"], "amount": fact["amount"]}
-
-
 def rules_answer(question: dict[str, Any], results: list[dict[str, Any]]) -> dict[str, Any]:
-    """Mode ①: a fixed-template answer straight from the tool results."""
+    """Mode ①: the product's own renderer on the tool results of the correct reading."""
     expected = question["expected"]
-    company = DEV_COMPANIES[expected["corp_code"]]
     if expected["action"] == "clarify":
-        labels = " 또는 ".join(result["account_label"] for result in results)
-        ask = f"질문의 '이익'이 {labels} 중 어느 것인지 알려 주세요."
-        return {"status": "되묻기", "company": company, "account": None, "values": [], "change": None,
-                "change_pct": None, "answer": ask, "clarifying_question": ask}
-    result = results[0]
-    if result["tool"] == "side_by_side":
-        cfs, ofs = result["values"]
-        bigger = "크다" if result["difference"] >= 0 else "작다"
-        text = (f"{company} {result['account_label']} ({result['period']['label']}): 연결 {cfs['amount']:,}원, "
-                f"별도 {ofs['amount']:,}원. 연결이 별도보다 {abs(result['difference']):,}원 {bigger}. "
-                "같은 시점의 집계 범위 차이이며 시간에 따른 변화가 아니다.")
-        return {"status": "나란히 표시", "company": company, "account": result["account"],
-                "values": [_value(cfs), _value(ofs)], "change": None, "change_pct": None, "answer": text,
-                "clarifying_question": None}
-    status = result["status"]
-    if status in ("비교 가능", "확인 필요"):
-        current, base = result["current"], result["base"]
-        rate = f"{result['change_pct']}%, " if result["change_pct"] is not None else ""
-        text = (f"{company} {result['basis']} 기준 {result['account_label']}: {current['period']['label']} {current['amount']:,}원, "
-                f"{base['period']['label']} {base['amount']:,}원. 변화 {result['change']:,}원 ({rate}{result['direction']}).")
-        if status == "확인 필요":
-            text = "확인 필요: " + " / ".join(result["reasons"]) + "\n" + text
-        return {"status": status, "company": company, "account": result["account"],
-                "values": [_value(current), _value(base)], "change": result["change"],
-                "change_pct": result["change_pct"], "answer": text, "clarifying_question": None}
-    return {"status": status, "company": company, "account": result["account"], "values": [], "change": None,
-            "change_pct": None, "answer": f"{status}: " + " / ".join(result["reasons"]), "clarifying_question": None}
+        return clarification_answer(DEV_COMPANIES[expected["corp_code"]], [result["account"] for result in results])
+    return structured_answer(results[0])
 
 
 def _same_call(call: tuple[Any, Any], expected: tuple[str, dict[str, Any]]) -> bool:
@@ -122,7 +98,8 @@ def run_case(mode: str, question: dict[str, Any], gold: dict[str, Any], client: 
                               "replies": [], "tool_calls": [], "model_attempts": 0, "model_responses": 0,
                               "model_latency_ms": 0.0, "tool_call_count": 0, "budget_exceeded": False,
                               "tool_args_first_ok": None, "tool_args_any_ok": None, "model_error": None,
-                              "evaluator_error": None, "answer": None, "seen": []}
+                              "evaluator_error": None, "answer": None, "seen": [], "decision": None,
+                              "decision_error": None, "no_result": False, "explanation_dropped": None}
     seen = record["seen"]
 
     def ask(messages: list[dict[str, Any]], **kwargs: Any):
@@ -148,13 +125,21 @@ def run_case(mode: str, question: dict[str, Any], gold: dict[str, Any], client: 
                 messages = [{"role": "system", "content": SYSTEM_PROMPT},
                             {"role": "user", "content": oracle_message(question["question"], seen)}]
                 record["answer"] = ask(messages, schema=ANSWER_SCHEMA).content
-        else:
+        elif mode == "full":
             _run_full(question, client, record, ask)
+        else:  # agent: the 2-1 design (model decides, code writes the facts)
+            agent_turn(question["question"], client, record, ask)
     except ModelError as exc:
         record["model_error"] = str(exc)
     except Exception as exc:  # a bug in the evaluator, not a model mistake: recorded and reported, never hidden
         record["evaluator_error"] = f"{type(exc).__name__}: {exc}"
         record["evaluator_traceback"] = traceback.format_exc(limit=8)
+    if mode in ("full", "agent") and not record["evaluator_error"]:
+        try:  # also after a model error or an overrun: the calls made so far still count
+            tool_argument_metrics(question, record)
+        except Exception as exc:
+            record["evaluator_error"] = f"{type(exc).__name__} in tool metrics: {exc}"
+            record["evaluator_traceback"] = traceback.format_exc(limit=8)
     try:
         score = score_case(gold, record["answer"], seen, question["question"])
     except Exception as exc:
@@ -167,6 +152,10 @@ def run_case(mode: str, question: dict[str, Any], gold: dict[str, Any], client: 
         score.format_error = "evaluator error"
     elif record["budget_exceeded"]:
         score.format_error = "budget exceeded (no final answer)"
+    elif record["decision_error"]:
+        score.format_error = f"decision format error: {record['decision_error']}"
+    elif record["no_result"]:
+        score.format_error = "no successful tool result to answer from"
     if record["model_error"] or record["evaluator_error"] or record["budget_exceeded"]:
         score.automatic_passed = False
     record["score"] = score.to_dict()
@@ -175,46 +164,22 @@ def run_case(mode: str, question: dict[str, Any], gold: dict[str, Any], client: 
 
 
 def _run_full(question: dict[str, Any], client: DartClient, record: dict[str, Any], ask: Callable[..., Any]) -> None:
-    """Mode ③: tool calls until the model stops calling tools, then one structured final answer.
-
-    Over budget (model requests or tool calls), the question ends there without a final request, so no
-    tool call is ever left without its result in the conversation.
-    """
-    seen = record["seen"]
+    """Mode ③ (1-4 design): the model calls tools, then writes the whole answer JSON itself."""
     messages = [{"role": "system", "content": SYSTEM_PROMPT}, {"role": "user", "content": question["question"]}]
-    expected = interpretation_calls(question)[0] if question["expected"]["action"] != "clarify" else None
-    if expected:
-        record["tool_args_first_ok"] = record["tool_args_any_ok"] = False
-    while True:
-        if record["model_attempts"] >= MAX_MODEL_CALLS - 1:  # the last request is reserved for the final answer
-            record["budget_exceeded"] = True
-            return
-        reply = ask(messages, tools=TOOL_SPECS)
-        if not reply.tool_calls:
-            messages.append(reply.message())
-            break
-        if record["tool_call_count"] + len(reply.tool_calls) > MAX_TOOL_CALLS:
-            record["budget_exceeded"] = True
-            record["unexecuted_tool_calls"] = copy.deepcopy(reply.tool_calls)
-            return
-        messages.append(reply.message())
-        for call in reply.tool_calls:
-            function = call.get("function") if isinstance(call, dict) and isinstance(call.get("function"), dict) else {}
-            name, arguments = function.get("name"), function.get("arguments")
-            result = execute_tool(client, name, arguments) if function else {"error": "도구 호출 형식이 맞지 않는다"}
-            first = record["tool_call_count"] == 0
-            record["tool_call_count"] += 1
-            record["tool_calls"].append({"raw": copy.deepcopy(call), "name": name, "arguments": arguments, "result": result})
-            if expected:
-                matched = _same_call((name, arguments), expected)
-                if first:
-                    record["tool_args_first_ok"] = matched
-                record["tool_args_any_ok"] = record["tool_args_any_ok"] or (matched and "error" not in result)
-            seen.append(result)
-            messages.append({"role": "tool", "tool_name": name if isinstance(name, str) else "",
-                             "content": json.dumps(result, ensure_ascii=False)})
-    messages.append({"role": "user", "content": FINAL_INSTRUCTION})
-    record["answer"] = ask(messages, schema=ANSWER_SCHEMA).content
+    if tool_phase(messages, client, record, ask, max_model_calls=MAX_MODEL_CALLS, max_tool_calls=MAX_TOOL_CALLS):
+        messages.append({"role": "user", "content": FINAL_INSTRUCTION})
+        record["answer"] = ask(messages, schema=ANSWER_SCHEMA).content
+
+
+def tool_argument_metrics(question: dict[str, Any], record: dict[str, Any]) -> None:
+    """First tool call matches the correct reading; some successful call does (after recovery)."""
+    if question["expected"]["action"] == "clarify":
+        return
+    expected = interpretation_calls(question)[0]
+    calls = record["tool_calls"]
+    record["tool_args_first_ok"] = bool(calls) and _same_call((calls[0]["name"], calls[0]["arguments"]), expected)
+    record["tool_args_any_ok"] = any(_same_call((call["name"], call["arguments"]), expected) and "error" not in call["result"]
+                                     for call in calls)
 
 
 def _sha256(data: bytes) -> str:
@@ -233,7 +198,9 @@ def contract_hashes() -> dict[str, str]:
         return json.dumps(value, ensure_ascii=False, sort_keys=True).encode("utf-8")
     return {"gold": _sha256(GOLD.read_bytes()), "questions": _sha256(SPEC.read_bytes()),
             "system_prompt": _sha256(SYSTEM_PROMPT.encode("utf-8")), "final_instruction": _sha256(FINAL_INSTRUCTION.encode("utf-8")),
-            "tools": _sha256(text(TOOL_SPECS)), "answer_schema": _sha256(text(ANSWER_SCHEMA))}
+            "tools": _sha256(text(TOOL_SPECS)), "answer_schema": _sha256(text(ANSWER_SCHEMA)),
+            "agent_prompt": _sha256(AGENT_SYSTEM_PROMPT.encode("utf-8")), "decision_instruction": _sha256(DECISION_INSTRUCTION.encode("utf-8")),
+            "decision_schema": _sha256(text(DECISION_SCHEMA))}
 
 
 def run(mode: str, chat: Any, client: DartClient, only: list[str] | None = None,
@@ -281,7 +248,8 @@ def main(argv: list[str] | None = None) -> int:
     if args.out:
         # written as the run goes, so an interrupted run keeps every finished question
         args.out.mkdir(parents=True)
-        meta = {"mode": args.mode, "model": identity, "prompt_version": PROMPT_VERSION, "contract": contract_hashes(),
+        meta = {"mode": args.mode, "model": identity, "contract": contract_hashes(),
+                "prompt_version": AGENT_PROMPT_VERSION if args.mode == "agent" else PROMPT_VERSION,
                 "git": git, "budget": {"model_calls": MAX_MODEL_CALLS, "tool_calls": MAX_TOOL_CALLS},
                 "started_at": datetime.now(timezone.utc).isoformat(timespec="seconds")}
         (args.out / "run.json").write_text(json.dumps(meta, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")

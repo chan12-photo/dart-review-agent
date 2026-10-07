@@ -67,7 +67,7 @@ class ReplayChat:
 
 def new_record() -> dict[str, Any]:
     return {"requests": [], "replies": [], "tool_calls": [], "model_attempts": 0, "model_responses": 0,
-            "tool_call_count": 0, "seen": [], "no_result": False}
+            "tool_call_count": 0, "seen": [], "no_result": False, "answer": None}
 
 
 def answer(question: str, client: DartClient, chat: Any) -> dict[str, Any]:

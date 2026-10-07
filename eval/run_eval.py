@@ -28,6 +28,7 @@ sys.path[:0] = [str(ROOT), str(ROOT / "eval")]
 from dart_review.agent import MAX_MODEL_CALLS as AGENT_MAX_MODEL_CALLS, MAX_TOOL_CALLS as AGENT_MAX_TOOL_CALLS  # noqa: E402
 from dart_review.agent import DECISION_SCHEMA, agent_turn, tool_phase  # noqa: E402
 from dart_review.answer import ANSWER_SCHEMA  # noqa: E402
+from dart_review.baseline import baseline_turn  # noqa: E402
 from dart_review.cache import ResponseCache  # noqa: E402
 from dart_review.client import DartClient  # noqa: E402
 from dart_review.companies import DEV_COMPANIES, FS_DIVS  # noqa: E402
@@ -44,7 +45,9 @@ from scoring import CaseScore, score_case, summarize  # noqa: E402
 SPEC = ROOT / "eval" / "dev_questions.json"
 GOLD = ROOT / "eval" / "dev_gold.json"
 CACHE = ROOT / "cache"
-MODES = ("rules", "oracle", "full", "agent")
+MODES = ("rules", "oracle", "full", "agent", "baseline")
+MODEL_MODES = ("oracle", "full", "agent")
+PARAPHRASES = ROOT / "eval" / "dev_paraphrases.json"
 MAX_MODEL_CALLS = AGENT_MAX_MODEL_CALLS  # per question in the full flow and agent modes, including the final request
 MAX_TOOL_CALLS = AGENT_MAX_TOOL_CALLS
 
@@ -94,7 +97,8 @@ def run_case(mode: str, question: dict[str, Any], gold: dict[str, Any], client: 
              clock: Callable[[], float] = time.monotonic) -> dict[str, Any]:
     """Run one question. Model failures, evaluator bugs, and budget overruns fail only this question."""
     started = clock()
-    record: dict[str, Any] = {"id": question["id"], "mode": mode, "question": question["question"], "requests": [],
+    record: dict[str, Any] = {"id": question["id"], "base": question.get("base"), "mode": mode,
+                              "question": question["question"], "requests": [],
                               "replies": [], "tool_calls": [], "model_attempts": 0, "model_responses": 0,
                               "model_latency_ms": 0.0, "tool_call_count": 0, "budget_exceeded": False,
                               "tool_args_first_ok": None, "tool_args_any_ok": None, "model_error": None,
@@ -127,14 +131,16 @@ def run_case(mode: str, question: dict[str, Any], gold: dict[str, Any], client: 
                 record["answer"] = ask(messages, schema=ANSWER_SCHEMA).content
         elif mode == "full":
             _run_full(question, client, record, ask)
-        else:  # agent: the 2-1 design (model decides, code writes the facts)
+        elif mode == "agent":  # the 2-1 design (model decides, code writes the facts)
             agent_turn(question["question"], client, record, ask)
+        else:  # baseline: keyword rules, no model (roadmap 2-2)
+            baseline_turn(question["question"], client, record)
     except ModelError as exc:
         record["model_error"] = str(exc)
     except Exception as exc:  # a bug in the evaluator, not a model mistake: recorded and reported, never hidden
         record["evaluator_error"] = f"{type(exc).__name__}: {exc}"
         record["evaluator_traceback"] = traceback.format_exc(limit=8)
-    if mode in ("full", "agent") and not record["evaluator_error"]:
+    if mode in ("full", "agent", "baseline") and not record["evaluator_error"]:
         try:  # also after a model error or an overrun: the calls made so far still count
             tool_argument_metrics(question, record)
         except Exception as exc:
@@ -200,14 +206,28 @@ def contract_hashes() -> dict[str, str]:
             "system_prompt": _sha256(SYSTEM_PROMPT.encode("utf-8")), "final_instruction": _sha256(FINAL_INSTRUCTION.encode("utf-8")),
             "tools": _sha256(text(TOOL_SPECS)), "answer_schema": _sha256(text(ANSWER_SCHEMA)),
             "agent_prompt": _sha256(AGENT_SYSTEM_PROMPT.encode("utf-8")), "decision_instruction": _sha256(DECISION_INSTRUCTION.encode("utf-8")),
-            "decision_schema": _sha256(text(DECISION_SCHEMA))}
+            "decision_schema": _sha256(text(DECISION_SCHEMA)), "paraphrases": _sha256(PARAPHRASES.read_bytes())}
+
+
+def load_questions(question_set: str = "dev") -> tuple[list[dict[str, Any]], dict[str, dict[str, Any]]]:
+    """Questions and gold answers. A paraphrase keeps its base question's reading and gold, with new wording."""
+    spec = {question["id"]: question for question in json.loads(SPEC.read_text(encoding="utf-8"))["questions"]}
+    gold = {answer["id"]: answer for answer in json.loads(GOLD.read_text(encoding="utf-8"))["answers"]}
+    if question_set == "dev":
+        return list(spec.values()), gold
+    questions, golds = [], {}
+    for item in json.loads(PARAPHRASES.read_text(encoding="utf-8"))["questions"]:
+        question = {**copy.deepcopy(spec[item["base"]]), "id": item["id"], "question": item["question"], "base": item["base"]}
+        questions.append(question)
+        golds[item["id"]] = {**copy.deepcopy(gold[item["base"]]), "id": item["id"], "question": item["question"]}
+    return questions, golds
 
 
 def run(mode: str, chat: Any, client: DartClient, only: list[str] | None = None,
-        on_case: Callable[[dict[str, Any]], None] | None = None) -> tuple[list[dict[str, Any]], dict[str, Any]]:
-    spec = json.loads(SPEC.read_text(encoding="utf-8"))
-    gold = {answer["id"]: answer for answer in json.loads(GOLD.read_text(encoding="utf-8"))["answers"]}
-    questions = [question for question in spec["questions"] if not only or question["id"] in only]
+        on_case: Callable[[dict[str, Any]], None] | None = None,
+        question_set: str = "dev") -> tuple[list[dict[str, Any]], dict[str, Any]]:
+    questions, gold = load_questions(question_set)
+    questions = [question for question in questions if not only or question["id"] in only]
     cases = []
     for question in questions:
         case = run_case(mode, question, gold[question["id"]], client, chat)
@@ -228,9 +248,11 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--only", nargs="+", help="question ids to run")
     parser.add_argument("--out", type=Path, help="new directory for run.json, cases.jsonl, summary.json, review files")
     parser.add_argument("--allow-dirty", action="store_true", help="allow a model run with uncommitted changes")
+    parser.add_argument("--set", dest="question_set", choices=("dev", "paraphrase"), default="dev",
+                        help="dev: the 13 development questions; paraphrase: the same readings reworded")
     args = parser.parse_args(argv)
-    if (args.mode == "rules") == bool(args.model):
-        parser.error("--model is required for oracle and full, and not used for rules")
+    if (args.mode in MODEL_MODES) != bool(args.model):
+        parser.error("--model is required for oracle, full, and agent, and not used for rules and baseline")
     if args.model and not args.out:
         parser.error("model runs must be recorded: pass --out")
     if args.out and args.out.exists():
@@ -248,7 +270,7 @@ def main(argv: list[str] | None = None) -> int:
     if args.out:
         # written as the run goes, so an interrupted run keeps every finished question
         args.out.mkdir(parents=True)
-        meta = {"mode": args.mode, "model": identity, "contract": contract_hashes(),
+        meta = {"mode": args.mode, "question_set": args.question_set, "model": identity, "contract": contract_hashes(),
                 "prompt_version": AGENT_PROMPT_VERSION if args.mode == "agent" else PROMPT_VERSION,
                 "git": git, "budget": {"model_calls": MAX_MODEL_CALLS, "tool_calls": MAX_TOOL_CALLS},
                 "started_at": datetime.now(timezone.utc).isoformat(timespec="seconds")}
@@ -261,7 +283,7 @@ def main(argv: list[str] | None = None) -> int:
             handle.flush()
 
     try:
-        cases, summary = run(args.mode, chat, client, args.only, on_case=save)
+        cases, summary = run(args.mode, chat, client, args.only, on_case=save, question_set=args.question_set)
     finally:
         if handle:
             handle.close()

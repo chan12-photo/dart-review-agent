@@ -44,6 +44,9 @@ def _expected_summary(gold: dict[str, Any]) -> str:
 
 def review_sheet(cases: Sequence[dict[str, Any]]) -> str:
     gold = _gold()
+    for case in cases:  # a paraphrase is reviewed against its base question's gold
+        if case["id"] not in gold and case.get("base") in gold:
+            gold[case["id"]] = gold[case["base"]]
     lines = ["# 본문 검토지", "", "기준: eval/HUMAN_REVIEW.ko.md (공통 1~5번과 문항별 확인 사항). 판정은 human_review.json에 적는다.", ""]
     for case in cases:
         score, answer = case["score"], case.get("answer")

@@ -1,0 +1,12 @@
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+.DS_Store
+# Raw API responses and run logs stay local until their redistribution terms are confirmed.
+cache/
+runs/
+local_only/
+# Never commit credentials.
+.env
+*api_key*

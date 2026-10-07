@@ -1,0 +1,605 @@
+{
+  "version": 1,
+  "source": "eval/dev_questions.json",
+  "rules": "docs/GOLD_RULES.ko.md",
+  "status": "draft written by Claude on 2026-10-07; awaiting review by the user and Codex (docs/ROADMAP.ko.md)",
+  "answers": [
+    {
+      "id": "dev01",
+      "question": "삼성전자 2025년 매출액이 전년보다 얼마나 늘었어?",
+      "case_types": [
+        "정상 비교"
+      ],
+      "action": "compare",
+      "company": "삼성전자",
+      "corp_code": "00126380",
+      "status": "비교 가능",
+      "account": "revenue",
+      "account_label": "매출액",
+      "reason_keywords": [],
+      "basis": "연결",
+      "fs_div": "CFS",
+      "current_period": "2025-01-01~2025-12-31 (누적 12개월)",
+      "base_period": "2024-01-01~2024-12-31 (누적 12개월)",
+      "values": {
+        "current": {
+          "year": 2025,
+          "report": "사업보고서",
+          "report_code": "11011",
+          "fs_div": "CFS",
+          "status": "000",
+          "response_sha256": "d2888e542f9159cb087c7679efcd41e3d76cbf2df9e90260fa95549c7fee15e9",
+          "column": "thstrm",
+          "sj_div": "IS",
+          "account_id": "ifrs-full_Revenue",
+          "account_nm": "매출액",
+          "rcept_no": "20260310002820",
+          "currency": "KRW",
+          "amount": 333605938000000
+        },
+        "base": {
+          "year": 2025,
+          "report": "사업보고서",
+          "report_code": "11011",
+          "fs_div": "CFS",
+          "status": "000",
+          "response_sha256": "d2888e542f9159cb087c7679efcd41e3d76cbf2df9e90260fa95549c7fee15e9",
+          "column": "frmtrm",
+          "sj_div": "IS",
+          "account_id": "ifrs-full_Revenue",
+          "account_nm": "매출액",
+          "rcept_no": "20260310002820",
+          "currency": "KRW",
+          "amount": 300870903000000
+        }
+      },
+      "change": 32735035000000,
+      "change_pct": "10.88",
+      "direction": "증가"
+    },
+    {
+      "id": "dev02",
+      "question": "삼성전자 2025년 3분기말 자산총계를 작년 3분기말과 비교해 줘.",
+      "case_types": [
+        "전년 분기 추가 조회"
+      ],
+      "action": "compare",
+      "company": "삼성전자",
+      "corp_code": "00126380",
+      "status": "비교 가능",
+      "account": "total_assets",
+      "account_label": "자산총계",
+      "reason_keywords": [],
+      "basis": "연결",
+      "fs_div": "CFS",
+      "current_period": "2025-09-30 시점",
+      "base_period": "2024-09-30 시점",
+      "values": {
+        "current": {
+          "year": 2025,
+          "report": "3분기보고서",
+          "report_code": "11014",
+          "fs_div": "CFS",
+          "status": "000",
+          "response_sha256": "12373931fd0ecb290ec6b6ee161048259e50e5fac39e81982b3cb8d268e61b25",
+          "column": "thstrm",
+          "sj_div": "BS",
+          "account_id": "ifrs-full_Assets",
+          "account_nm": "자산총계",
+          "rcept_no": "20251114002447",
+          "currency": "KRW",
+          "amount": 523659586000000
+        },
+        "base": {
+          "year": 2024,
+          "report": "3분기보고서",
+          "report_code": "11014",
+          "fs_div": "CFS",
+          "status": "000",
+          "response_sha256": "419eef963a40cbc4d9107706ae9505afeb3e2da43aa6590896e1d3c3c96385af",
+          "column": "thstrm",
+          "sj_div": "BS",
+          "account_id": "ifrs-full_Assets",
+          "account_nm": "자산총계",
+          "rcept_no": "20241114002642",
+          "currency": "KRW",
+          "amount": 491307317000000
+        }
+      },
+      "change": 32352269000000,
+      "change_pct": "6.58",
+      "direction": "증가"
+    },
+    {
+      "id": "dev03",
+      "question": "삼성전자의 2025년 3분기까지 누적 영업활동현금흐름은 얼마이고, 작년 같은 기간보다 얼마나 늘었어?",
+      "case_types": [
+        "3개월·누적 함정"
+      ],
+      "action": "compare",
+      "company": "삼성전자",
+      "corp_code": "00126380",
+      "status": "비교 가능",
+      "account": "operating_cash_flow",
+      "account_label": "영업활동현금흐름",
+      "reason_keywords": [],
+      "basis": "연결",
+      "fs_div": "CFS",
+      "current_period": "2025-01-01~2025-09-30 (누적 9개월)",
+      "base_period": "2024-01-01~2024-09-30 (누적 9개월)",
+      "values": {
+        "current": {
+          "year": 2025,
+          "report": "3분기보고서",
+          "report_code": "11014",
+          "fs_div": "CFS",
+          "status": "000",
+          "response_sha256": "12373931fd0ecb290ec6b6ee161048259e50e5fac39e81982b3cb8d268e61b25",
+          "column": "thstrm",
+          "sj_div": "CF",
+          "account_id": "ifrs-full_CashFlowsFromUsedInOperatingActivities",
+          "account_nm": "영업활동현금흐름",
+          "rcept_no": "20251114002447",
+          "currency": "KRW",
+          "amount": 56515496000000
+        },
+        "base": {
+          "year": 2025,
+          "report": "3분기보고서",
+          "report_code": "11014",
+          "fs_div": "CFS",
+          "status": "000",
+          "response_sha256": "12373931fd0ecb290ec6b6ee161048259e50e5fac39e81982b3cb8d268e61b25",
+          "column": "frmtrm_q",
+          "sj_div": "CF",
+          "account_id": "ifrs-full_CashFlowsFromUsedInOperatingActivities",
+          "account_nm": "영업활동현금흐름",
+          "rcept_no": "20251114002447",
+          "currency": "KRW",
+          "amount": 50960350000000
+        }
+      },
+      "change": 5555146000000,
+      "change_pct": "10.90",
+      "direction": "증가"
+    },
+    {
+      "id": "dev04",
+      "question": "셀트리온의 2025년 3분기 누적 영업이익은 전년 같은 기간보다 얼마나 늘었어?",
+      "case_types": [
+        "3개월·누적 함정"
+      ],
+      "action": "compare",
+      "company": "셀트리온",
+      "corp_code": "00413046",
+      "status": "비교 가능",
+      "account": "operating_income",
+      "account_label": "영업이익",
+      "reason_keywords": [],
+      "basis": "연결",
+      "fs_div": "CFS",
+      "current_period": "2025-01-01~2025-09-30 (누적 9개월)",
+      "base_period": "2024-01-01~2024-09-30 (누적 9개월)",
+      "values": {
+        "current": {
+          "year": 2025,
+          "report": "3분기보고서",
+          "report_code": "11014",
+          "fs_div": "CFS",
+          "status": "000",
+          "response_sha256": "7e61187d2d2d9362d733bc38fc86b84a3a6703d9a10b8b1e3bd9c920370d5694",
+          "column": "thstrm_add",
+          "sj_div": "IS",
+          "account_id": "dart_OperatingIncomeLoss",
+          "account_nm": "영업이익",
+          "rcept_no": "20251114002699",
+          "currency": "KRW",
+          "amount": 693299607299
+        },
+        "base": {
+          "year": 2025,
+          "report": "3분기보고서",
+          "report_code": "11014",
+          "fs_div": "CFS",
+          "status": "000",
+          "response_sha256": "7e61187d2d2d9362d733bc38fc86b84a3a6703d9a10b8b1e3bd9c920370d5694",
+          "column": "frmtrm_add",
+          "sj_div": "IS",
+          "account_id": "dart_OperatingIncomeLoss",
+          "account_nm": "영업이익",
+          "rcept_no": "20251114002699",
+          "currency": "KRW",
+          "amount": 295611507111
+        }
+      },
+      "change": 397688100188,
+      "change_pct": "134.53",
+      "direction": "증가"
+    },
+    {
+      "id": "dev05",
+      "question": "삼성전자 2025년 연결 매출이랑 별도 매출은 각각 얼마야? 차이가 왜 이렇게 커?",
+      "case_types": [
+        "연결·별도 함정"
+      ],
+      "action": "side_by_side",
+      "company": "삼성전자",
+      "corp_code": "00126380",
+      "status": "비교 불가",
+      "account": "revenue",
+      "account_label": "매출액",
+      "reason_keywords": [
+        "연결과 별도"
+      ],
+      "period": "2025-01-01~2025-12-31 (누적 12개월)",
+      "values": {
+        "CFS": {
+          "year": 2025,
+          "report": "사업보고서",
+          "report_code": "11011",
+          "fs_div": "CFS",
+          "status": "000",
+          "response_sha256": "d2888e542f9159cb087c7679efcd41e3d76cbf2df9e90260fa95549c7fee15e9",
+          "column": "thstrm",
+          "sj_div": "IS",
+          "account_id": "ifrs-full_Revenue",
+          "account_nm": "매출액",
+          "rcept_no": "20260310002820",
+          "currency": "KRW",
+          "amount": 333605938000000
+        },
+        "OFS": {
+          "year": 2025,
+          "report": "사업보고서",
+          "report_code": "11011",
+          "fs_div": "OFS",
+          "status": "000",
+          "response_sha256": "49e4ac1514c31abbe13fadc23e7d979e7061c939864420255e33ad7ab5182361",
+          "column": "thstrm",
+          "sj_div": "IS",
+          "account_id": "ifrs-full_Revenue",
+          "account_nm": "매출액",
+          "rcept_no": "20260310002820",
+          "currency": "KRW",
+          "amount": 238043009000000
+        }
+      }
+    },
+    {
+      "id": "dev06",
+      "question": "카카오의 2023년 3분기 매출은 직전 분기보다 얼마나 늘었어?",
+      "case_types": [
+        "표준계정코드 없음",
+        "3개월·누적 함정"
+      ],
+      "action": "compare",
+      "company": "카카오",
+      "corp_code": "00258801",
+      "status": "비교 가능",
+      "account": "revenue",
+      "account_label": "매출액",
+      "reason_keywords": [],
+      "basis": "연결",
+      "fs_div": "CFS",
+      "current_period": "2023-07-01~2023-09-30 (3개월)",
+      "base_period": "2023-04-01~2023-06-30 (3개월)",
+      "values": {
+        "current": {
+          "year": 2023,
+          "report": "3분기보고서",
+          "report_code": "11014",
+          "fs_div": "CFS",
+          "status": "000",
+          "response_sha256": "28a25abd03b808628a62e534d4d8c42f834b3d4ad891db083f5f762cb6cc3b4f",
+          "column": "thstrm",
+          "sj_div": "CIS",
+          "account_id": "ifrs-full_GrossProfit",
+          "account_nm": "영업수익",
+          "rcept_no": "20231226000387",
+          "currency": "KRW",
+          "amount": 2160931354165
+        },
+        "base": {
+          "year": 2023,
+          "report": "반기보고서",
+          "report_code": "11012",
+          "fs_div": "CFS",
+          "status": "000",
+          "response_sha256": "513e596628c2e9ed870963184a622595cd6502ff6fc38076f2c7ef8c5a3cf820",
+          "column": "thstrm",
+          "sj_div": "CIS",
+          "account_id": "ifrs-full_GrossProfit",
+          "account_nm": "영업수익",
+          "rcept_no": "20230921000228",
+          "currency": "KRW",
+          "amount": 2042475603587
+        }
+      },
+      "change": 118455750578,
+      "change_pct": "5.80",
+      "direction": "증가"
+    },
+    {
+      "id": "dev07",
+      "question": "카카오의 2025년 영업이익은 전년 대비 몇 % 늘었어?",
+      "case_types": [
+        "재작성"
+      ],
+      "action": "compare",
+      "company": "카카오",
+      "corp_code": "00258801",
+      "status": "비교 가능",
+      "account": "operating_income",
+      "account_label": "영업이익",
+      "reason_keywords": [],
+      "basis": "연결",
+      "fs_div": "CFS",
+      "current_period": "2025-01-01~2025-12-31 (누적 12개월)",
+      "base_period": "2024-01-01~2024-12-31 (누적 12개월)",
+      "values": {
+        "current": {
+          "year": 2025,
+          "report": "사업보고서",
+          "report_code": "11011",
+          "fs_div": "CFS",
+          "status": "000",
+          "response_sha256": "dc8e875ffbc7151445edaf1466d6ea42214849265ec99628aecf6cf5eddf092a",
+          "column": "thstrm",
+          "sj_div": "CIS",
+          "account_id": "dart_OperatingIncomeLoss",
+          "account_nm": "영업이익",
+          "rcept_no": "20260318001423",
+          "currency": "KRW",
+          "amount": 732036535379
+        },
+        "base": {
+          "year": 2025,
+          "report": "사업보고서",
+          "report_code": "11011",
+          "fs_div": "CFS",
+          "status": "000",
+          "response_sha256": "dc8e875ffbc7151445edaf1466d6ea42214849265ec99628aecf6cf5eddf092a",
+          "column": "frmtrm",
+          "sj_div": "CIS",
+          "account_id": "dart_OperatingIncomeLoss",
+          "account_nm": "영업이익",
+          "rcept_no": "20260318001423",
+          "currency": "KRW",
+          "amount": 495277757353
+        }
+      },
+      "change": 236758778026,
+      "change_pct": "47.80",
+      "direction": "증가",
+      "base_as_originally_reported": {
+        "year": 2024,
+        "report": "사업보고서",
+        "report_code": "11011",
+        "fs_div": "CFS",
+        "status": "000",
+        "response_sha256": "541b0392a576f50a6dd11ad98334f60228d9cfe843282679a23ac76a5e0f9370",
+        "column": "thstrm",
+        "sj_div": "CIS",
+        "account_id": "dart_OperatingIncomeLoss",
+        "account_nm": "영업이익(손실)",
+        "rcept_no": "20250324000901",
+        "currency": "KRW",
+        "amount": 460212161525
+      }
+    },
+    {
+      "id": "dev08",
+      "question": "셀트리온 별도 기준으로 2025년 3분기말 부채총계가 1년 전보다 얼마나 늘었어?",
+      "case_types": [
+        "전년 분기 추가 조회",
+        "재작성"
+      ],
+      "action": "compare",
+      "company": "셀트리온",
+      "corp_code": "00413046",
+      "status": "확인 필요",
+      "account": "total_liabilities",
+      "account_label": "부채총계",
+      "reason_keywords": [
+        "재작성",
+        "2023-12-31"
+      ],
+      "basis": "별도",
+      "fs_div": "OFS",
+      "current_period": "2025-09-30 시점",
+      "base_period": "2024-09-30 시점",
+      "values": {
+        "current": {
+          "year": 2025,
+          "report": "3분기보고서",
+          "report_code": "11014",
+          "fs_div": "OFS",
+          "status": "000",
+          "response_sha256": "cdeea98a7142186bee7ee5c11ae3e2b456c57e9cac97fbfa239c00d35bdbcd84",
+          "column": "thstrm",
+          "sj_div": "BS",
+          "account_id": "ifrs-full_Liabilities",
+          "account_nm": "부채총계",
+          "rcept_no": "20251114002699",
+          "currency": "KRW",
+          "amount": 3275436431552
+        },
+        "base": {
+          "year": 2024,
+          "report": "3분기보고서",
+          "report_code": "11014",
+          "fs_div": "OFS",
+          "status": "000",
+          "response_sha256": "b6d5a4fb3a4097337d213511c7ac6bcc2fb899f7ffbb050b419b0e8c76ecc7bd",
+          "column": "thstrm",
+          "sj_div": "BS",
+          "account_id": "ifrs-full_Liabilities",
+          "account_nm": "부채총계",
+          "rcept_no": "20241114002862",
+          "currency": "KRW",
+          "amount": 2431791719869
+        }
+      },
+      "change": 843644711683,
+      "change_pct": "34.69",
+      "direction": "증가",
+      "restated_pair": [
+        {
+          "year": 2024,
+          "report": "3분기보고서",
+          "report_code": "11014",
+          "fs_div": "OFS",
+          "status": "000",
+          "response_sha256": "b6d5a4fb3a4097337d213511c7ac6bcc2fb899f7ffbb050b419b0e8c76ecc7bd",
+          "column": "frmtrm",
+          "sj_div": "BS",
+          "account_id": "ifrs-full_Liabilities",
+          "account_nm": "부채총계",
+          "rcept_no": "20241114002862",
+          "currency": "KRW",
+          "amount": 2230608519706
+        },
+        {
+          "year": 2024,
+          "report": "사업보고서",
+          "report_code": "11011",
+          "fs_div": "OFS",
+          "status": "000",
+          "response_sha256": "3af9a08c661b03cc528538957b46794d00fd97cd028c1aad42bf849bb23cd8f1",
+          "column": "frmtrm",
+          "sj_div": "BS",
+          "account_id": "ifrs-full_Liabilities",
+          "account_nm": "부채총계",
+          "rcept_no": "20250317000929",
+          "currency": "KRW",
+          "amount": 2256044979595
+        }
+      ]
+    },
+    {
+      "id": "dev09",
+      "question": "카카오의 2025년 당기순이익은 2024년과 비교하면 어떻게 달라졌어?",
+      "case_types": [
+        "부호 전환"
+      ],
+      "action": "compare",
+      "company": "카카오",
+      "corp_code": "00258801",
+      "status": "비교 가능",
+      "account": "net_income",
+      "account_label": "당기순이익",
+      "reason_keywords": [],
+      "basis": "연결",
+      "fs_div": "CFS",
+      "current_period": "2025-01-01~2025-12-31 (누적 12개월)",
+      "base_period": "2024-01-01~2024-12-31 (누적 12개월)",
+      "values": {
+        "current": {
+          "year": 2025,
+          "report": "사업보고서",
+          "report_code": "11011",
+          "fs_div": "CFS",
+          "status": "000",
+          "response_sha256": "dc8e875ffbc7151445edaf1466d6ea42214849265ec99628aecf6cf5eddf092a",
+          "column": "thstrm",
+          "sj_div": "CIS",
+          "account_id": "ifrs-full_ProfitLoss",
+          "account_nm": "당기순이익(손실)",
+          "rcept_no": "20260318001423",
+          "currency": "KRW",
+          "amount": 517959587282
+        },
+        "base": {
+          "year": 2025,
+          "report": "사업보고서",
+          "report_code": "11011",
+          "fs_div": "CFS",
+          "status": "000",
+          "response_sha256": "dc8e875ffbc7151445edaf1466d6ea42214849265ec99628aecf6cf5eddf092a",
+          "column": "frmtrm",
+          "sj_div": "CIS",
+          "account_id": "ifrs-full_ProfitLoss",
+          "account_nm": "당기순이익(손실)",
+          "rcept_no": "20260318001423",
+          "currency": "KRW",
+          "amount": -161870567171
+        }
+      },
+      "change": 679830154453,
+      "change_pct": null,
+      "direction": "흑자 전환"
+    },
+    {
+      "id": "dev10",
+      "question": "삼성전자 2025년 3분기(7~9월) 영업활동현금흐름을 작년 3분기와 비교해 줘.",
+      "case_types": [
+        "비교 불가"
+      ],
+      "action": "compare",
+      "company": "삼성전자",
+      "corp_code": "00126380",
+      "status": "비교 불가",
+      "account": "operating_cash_flow",
+      "account_label": "영업활동현금흐름",
+      "reason_keywords": [
+        "누적 값만"
+      ],
+      "basis": "연결",
+      "fs_div": "CFS",
+      "current_period": "2025-07-01~2025-09-30 (3개월)",
+      "base_period": "2024-07-01~2024-09-30 (3개월)",
+      "values": {}
+    },
+    {
+      "id": "dev11",
+      "question": "삼성전자 2014년 매출액을 2013년과 비교해 줘.",
+      "case_types": [
+        "데이터 없음"
+      ],
+      "action": "compare",
+      "company": "삼성전자",
+      "corp_code": "00126380",
+      "status": "데이터 없음",
+      "account": "revenue",
+      "account_label": "매출액",
+      "reason_keywords": [
+        "013"
+      ],
+      "basis": "연결",
+      "fs_div": "CFS",
+      "current_period": "2014-01-01~2014-12-31 (누적 12개월)",
+      "base_period": "2013-01-01~2013-12-31 (누적 12개월)",
+      "values": {
+        "current": {
+          "year": 2014,
+          "report": "사업보고서",
+          "report_code": "11011",
+          "fs_div": "CFS",
+          "status": "013",
+          "response_sha256": "5b9f448765008cd323ab5b94081c873aa00d39974e7ed5aa1964b00a19e8242b"
+        }
+      }
+    },
+    {
+      "id": "dev12",
+      "question": "셀트리온 2025년 이익이 전년보다 얼마나 늘었어?",
+      "case_types": [
+        "모호한 질문"
+      ],
+      "action": "clarify",
+      "company": "셀트리온",
+      "corp_code": "00413046",
+      "ambiguity": "account",
+      "options": [
+        {
+          "account": "operating_income",
+          "label": "영업이익"
+        },
+        {
+          "account": "net_income",
+          "label": "당기순이익"
+        }
+      ]
+    }
+  ]
+}

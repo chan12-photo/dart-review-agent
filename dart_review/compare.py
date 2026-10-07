@@ -109,7 +109,7 @@ def compare(current: Fact | None, base: Fact | None, restatements: Sequence[Rest
     missing = [note for fact in (current, base) if not fact.available
                for note in (fact.notes or (f"{fact.period.label()} 값이 없다",))]
     if missing:
-        return Comparison(NO_DATA, tuple(missing), (), current, base)
+        return Comparison(NO_DATA, tuple(dict.fromkeys(missing)), (), current, base)
     notes = list(current.notes + base.notes)
     if current.resolved_by == NAME or base.resolved_by == NAME:
         notes.append("표준계정ID가 아니라 계정명으로 찾은 값이 있다")

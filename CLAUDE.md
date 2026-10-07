@@ -1,7 +1,7 @@
 # Working rules for this repository
 
 - Explain progress, decisions, and questions to the user in Korean. Write code, comments, commit messages, and English documentation in English; files named `*.ko.md` are Korean.
-- At the start of each session, read `docs/ROADMAP.ko.md` (current state and the first unfinished task) and `docs/SCOPE.ko.md`. Before starting a task, tell the user the recommended effort mode listed for it (중간 / 높음 / 엑스트라).
+- At the start of each session, read `docs/ROADMAP.ko.md` (current state and the first unfinished task) and `docs/SCOPE.ko.md`. Before starting a task, tell the user the recommended effort mode listed for it (중간 / 높음 / 엑스트라) and whether the roadmap's Codex double-check plan applies (and at which step), so the user can arrange the review in advance.
 - One task per session where possible. At the end, update the task markers and the "현재 상태" section of the roadmap, then commit.
 - Ask the user before pushing, creating or renaming GitHub repositories, changing visibility, or using the stored `gh` login.
 - The OpenDART key lives only in `~/.config/opendart/api_key` (mode 600). Never print it, log it, write it into the repository, or put it in cache files or error messages. Check that no tracked file contains it before every commit.

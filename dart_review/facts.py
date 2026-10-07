@@ -8,6 +8,7 @@ from typing import Any
 
 from .accounts import AMBIGUOUS, ACCOUNTS, resolve_account
 from .client import NO_DATA, DartResponse
+from .companies import FS_DIVS, REPORT_CODES
 from .periods import Period, Source, column_periods
 
 _AMOUNT = re.compile(r"-?\d+")
@@ -76,7 +77,7 @@ def fact_from_response(response: DartResponse, account_key: str, column: str) ->
                     found.get("sj_div"), found.get("account_id"), found.get("account_nm"), resolved_by, notes)
 
     if response.status == NO_DATA:
-        return missing("no_data", f"OpenDART 013: {year}년 {report_code} {fs_div} 데이터 없음")
+        return missing("no_data", f"OpenDART 013: {year}년 {REPORT_CODES[report_code]} {FS_DIVS[fs_div]} 데이터 없음")
     rows = response.json().get("list", [])
     for row in rows:
         if (row.get("corp_code"), row.get("bsns_year"), row.get("reprt_code")) != (corp_code, str(year), report_code):

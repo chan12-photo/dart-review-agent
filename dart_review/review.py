@@ -45,6 +45,8 @@ def review_change(client: DartClient, corp_code: str, fs_div: str, account_key: 
     base_report = current_report if plan.same_report else fetch(plan.base.year, plan.base.report_code)
     current_fact = fact_from_response(current_report, account_key, plan.current.column)
     base_fact = fact_from_response(base_report, account_key, plan.base.column)
+    if not (current_fact.available and base_fact.available):
+        return compare(current_fact, base_fact)  # nothing to compare, so no restatement probe
     if plan.same_report:
         probes = [base_fact]
         own = own_source(base, sj_div)

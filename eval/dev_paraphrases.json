@@ -1,0 +1,20 @@
+{
+  "version": 1,
+  "status": "written by Claude on 2026-10-08 before any baseline or agent run on these questions; each has the same meaning and the same gold answer as its base question",
+  "purpose": "Robustness check for roadmap 2-2: the same 13 readings in different wording (reversed year order, synonyms, month ranges), to see how keyword rules and the agent cope with phrasing they were not written against.",
+  "questions": [
+    {"id": "p01", "base": "dev01", "question": "삼성전자 매출, 2024년이랑 2025년 비교하면 몇 퍼센트 성장했어?"},
+    {"id": "p02", "base": "dev02", "question": "삼성전자 총자산이 2025년 9월 말 기준으로 1년 전보다 얼마나 늘었는지 알려줘."},
+    {"id": "p03", "base": "dev03", "question": "삼성전자 2025년 1~9월 영업현금흐름, 전년 동기 대비 증감 알려줘."},
+    {"id": "p04", "base": "dev04", "question": "셀트리온 영업이익을 2025년 9월까지 누적 기준으로 작년 같은 기간이랑 비교해줘."},
+    {"id": "p05", "base": "dev05", "question": "삼성전자 2025년 매출을 연결이랑 별도로 나눠서 보여줘."},
+    {"id": "p06", "base": "dev06", "question": "카카오 2023년 7~9월 매출이 4~6월보다 얼마나 늘었어?"},
+    {"id": "p07", "base": "dev07", "question": "카카오 영업이익, 2024년에서 2025년 사이 증가율이 얼마야?"},
+    {"id": "p08", "base": "dev08", "question": "셀트리온 별도 재무제표 기준 부채총계를 2024년 9월 말과 2025년 9월 말로 비교해 줘."},
+    {"id": "p09", "base": "dev09", "question": "카카오 2025년 순이익 작년이랑 비교해 줘."},
+    {"id": "p10", "base": "dev10", "question": "삼성전자 2025년 7~9월 석 달 동안의 영업활동현금흐름을 2024년 같은 기간과 비교해 줘."},
+    {"id": "p11", "base": "dev11", "question": "삼성전자 2013년과 2014년 매출 비교해줘."},
+    {"id": "p12", "base": "dev12", "question": "셀트리온 2025년 이익, 전년 대비 어때?"},
+    {"id": "p13", "base": "dev13", "question": "삼성전자 별도 기준으로 2025년 1~6월 영업이익을 전년 1~6월과 비교해 줘."}
+  ]
+}

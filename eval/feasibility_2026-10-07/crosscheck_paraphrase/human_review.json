@@ -3,67 +3,67 @@
  "confirmed_by_user": false,
  "criteria": "eval/HUMAN_REVIEW.ko.md",
  "cases": {
-  "dev01": {
+  "p01": {
    "body_ok": true,
    "note": "렌더러 문장(규칙만 방식과 동일)",
    "accepted_unparsed": []
   },
-  "dev02": {
+  "p02": {
    "body_ok": true,
    "note": "렌더러 문장(규칙만 방식과 동일)",
    "accepted_unparsed": []
   },
-  "dev03": {
+  "p03": {
    "body_ok": true,
    "note": "렌더러 문장(규칙만 방식과 동일)",
    "accepted_unparsed": []
   },
-  "dev04": {
+  "p04": {
    "body_ok": true,
    "note": "렌더러 문장(규칙만 방식과 동일)",
    "accepted_unparsed": []
   },
-  "dev05": {
+  "p05": {
    "body_ok": true,
    "note": "렌더러 문장(규칙만 방식과 동일)",
    "accepted_unparsed": []
   },
-  "dev06": {
+  "p06": {
+   "body_ok": true,
+   "note": "두 해석이 달라 되물음. ① 전년 같은 기간과 비교 ② 직전 분기와 비교를 보여 주고 확정하지 않음. 질문에 대한 답은 아니지만 틀린 답을 내지 않음(자동 채점은 기대 상태와 달라 실패)",
+   "accepted_unparsed": []
+  },
+  "p07": {
    "body_ok": true,
    "note": "렌더러 문장(규칙만 방식과 동일)",
    "accepted_unparsed": []
   },
-  "dev07": {
+  "p08": {
    "body_ok": true,
    "note": "렌더러 문장(규칙만 방식과 동일)",
    "accepted_unparsed": []
   },
-  "dev08": {
+  "p09": {
    "body_ok": true,
    "note": "렌더러 문장(규칙만 방식과 동일)",
    "accepted_unparsed": []
   },
-  "dev09": {
+  "p10": {
    "body_ok": true,
    "note": "렌더러 문장(규칙만 방식과 동일)",
    "accepted_unparsed": []
   },
-  "dev10": {
+  "p11": {
    "body_ok": true,
    "note": "렌더러 문장(규칙만 방식과 동일)",
    "accepted_unparsed": []
   },
-  "dev11": {
+  "p12": {
    "body_ok": true,
    "note": "렌더러 문장(규칙만 방식과 동일)",
    "accepted_unparsed": []
   },
-  "dev12": {
-   "body_ok": true,
-   "note": "렌더러 문장(규칙만 방식과 동일)",
-   "accepted_unparsed": []
-  },
-  "dev13": {
+  "p13": {
    "body_ok": true,
    "note": "렌더러 문장(규칙만 방식과 동일)",
    "accepted_unparsed": []

@@ -1,0 +1,128 @@
+{
+ "mode": "crosscheck",
+ "reviewer": "Claude (1차, 2026-10-08)",
+ "confirmed_by_user": false,
+ "automatic_passed": 12,
+ "reviewed_passed": 12,
+ "total": 13,
+ "per_case": [
+  {
+   "id": "p01",
+   "automatic_passed": true,
+   "automatic_after_accepted_notation": true,
+   "body_ok": true,
+   "reviewed_passed": true,
+   "note": "렌더러 문장(규칙만 방식과 동일)",
+   "accepted_unparsed": []
+  },
+  {
+   "id": "p02",
+   "automatic_passed": true,
+   "automatic_after_accepted_notation": true,
+   "body_ok": true,
+   "reviewed_passed": true,
+   "note": "렌더러 문장(규칙만 방식과 동일)",
+   "accepted_unparsed": []
+  },
+  {
+   "id": "p03",
+   "automatic_passed": true,
+   "automatic_after_accepted_notation": true,
+   "body_ok": true,
+   "reviewed_passed": true,
+   "note": "렌더러 문장(규칙만 방식과 동일)",
+   "accepted_unparsed": []
+  },
+  {
+   "id": "p04",
+   "automatic_passed": true,
+   "automatic_after_accepted_notation": true,
+   "body_ok": true,
+   "reviewed_passed": true,
+   "note": "렌더러 문장(규칙만 방식과 동일)",
+   "accepted_unparsed": []
+  },
+  {
+   "id": "p05",
+   "automatic_passed": true,
+   "automatic_after_accepted_notation": true,
+   "body_ok": true,
+   "reviewed_passed": true,
+   "note": "렌더러 문장(규칙만 방식과 동일)",
+   "accepted_unparsed": []
+  },
+  {
+   "id": "p06",
+   "automatic_passed": false,
+   "automatic_after_accepted_notation": false,
+   "body_ok": true,
+   "reviewed_passed": false,
+   "note": "두 해석이 달라 되물음. ① 전년 같은 기간과 비교 ② 직전 분기와 비교를 보여 주고 확정하지 않음. 질문에 대한 답은 아니지만 틀린 답을 내지 않음(자동 채점은 기대 상태와 달라 실패)",
+   "accepted_unparsed": []
+  },
+  {
+   "id": "p07",
+   "automatic_passed": true,
+   "automatic_after_accepted_notation": true,
+   "body_ok": true,
+   "reviewed_passed": true,
+   "note": "렌더러 문장(규칙만 방식과 동일)",
+   "accepted_unparsed": []
+  },
+  {
+   "id": "p08",
+   "automatic_passed": true,
+   "automatic_after_accepted_notation": true,
+   "body_ok": true,
+   "reviewed_passed": true,
+   "note": "렌더러 문장(규칙만 방식과 동일)",
+   "accepted_unparsed": []
+  },
+  {
+   "id": "p09",
+   "automatic_passed": true,
+   "automatic_after_accepted_notation": true,
+   "body_ok": true,
+   "reviewed_passed": true,
+   "note": "렌더러 문장(규칙만 방식과 동일)",
+   "accepted_unparsed": []
+  },
+  {
+   "id": "p10",
+   "automatic_passed": true,
+   "automatic_after_accepted_notation": true,
+   "body_ok": true,
+   "reviewed_passed": true,
+   "note": "렌더러 문장(규칙만 방식과 동일)",
+   "accepted_unparsed": []
+  },
+  {
+   "id": "p11",
+   "automatic_passed": true,
+   "automatic_after_accepted_notation": true,
+   "body_ok": true,
+   "reviewed_passed": true,
+   "note": "렌더러 문장(규칙만 방식과 동일)",
+   "accepted_unparsed": []
+  },
+  {
+   "id": "p12",
+   "automatic_passed": true,
+   "automatic_after_accepted_notation": true,
+   "body_ok": true,
+   "reviewed_passed": true,
+   "note": "렌더러 문장(규칙만 방식과 동일)",
+   "accepted_unparsed": []
+  },
+  {
+   "id": "p13",
+   "automatic_passed": true,
+   "automatic_after_accepted_notation": true,
+   "body_ok": true,
+   "reviewed_passed": true,
+   "note": "렌더러 문장(규칙만 방식과 동일)",
+   "accepted_unparsed": []
+  }
+ ],
+ "cases_file": "cases.jsonl"
+}

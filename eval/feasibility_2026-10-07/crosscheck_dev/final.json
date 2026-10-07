@@ -1,0 +1,128 @@
+{
+ "mode": "crosscheck",
+ "reviewer": "Claude (1차, 2026-10-08)",
+ "confirmed_by_user": false,
+ "automatic_passed": 13,
+ "reviewed_passed": 13,
+ "total": 13,
+ "per_case": [
+  {
+   "id": "dev01",
+   "automatic_passed": true,
+   "automatic_after_accepted_notation": true,
+   "body_ok": true,
+   "reviewed_passed": true,
+   "note": "렌더러 문장(규칙만 방식과 동일)",
+   "accepted_unparsed": []
+  },
+  {
+   "id": "dev02",
+   "automatic_passed": true,
+   "automatic_after_accepted_notation": true,
+   "body_ok": true,
+   "reviewed_passed": true,
+   "note": "렌더러 문장(규칙만 방식과 동일)",
+   "accepted_unparsed": []
+  },
+  {
+   "id": "dev03",
+   "automatic_passed": true,
+   "automatic_after_accepted_notation": true,
+   "body_ok": true,
+   "reviewed_passed": true,
+   "note": "렌더러 문장(규칙만 방식과 동일)",
+   "accepted_unparsed": []
+  },
+  {
+   "id": "dev04",
+   "automatic_passed": true,
+   "automatic_after_accepted_notation": true,
+   "body_ok": true,
+   "reviewed_passed": true,
+   "note": "렌더러 문장(규칙만 방식과 동일)",
+   "accepted_unparsed": []
+  },
+  {
+   "id": "dev05",
+   "automatic_passed": true,
+   "automatic_after_accepted_notation": true,
+   "body_ok": true,
+   "reviewed_passed": true,
+   "note": "렌더러 문장(규칙만 방식과 동일)",
+   "accepted_unparsed": []
+  },
+  {
+   "id": "dev06",
+   "automatic_passed": true,
+   "automatic_after_accepted_notation": true,
+   "body_ok": true,
+   "reviewed_passed": true,
+   "note": "렌더러 문장(규칙만 방식과 동일)",
+   "accepted_unparsed": []
+  },
+  {
+   "id": "dev07",
+   "automatic_passed": true,
+   "automatic_after_accepted_notation": true,
+   "body_ok": true,
+   "reviewed_passed": true,
+   "note": "렌더러 문장(규칙만 방식과 동일)",
+   "accepted_unparsed": []
+  },
+  {
+   "id": "dev08",
+   "automatic_passed": true,
+   "automatic_after_accepted_notation": true,
+   "body_ok": true,
+   "reviewed_passed": true,
+   "note": "렌더러 문장(규칙만 방식과 동일)",
+   "accepted_unparsed": []
+  },
+  {
+   "id": "dev09",
+   "automatic_passed": true,
+   "automatic_after_accepted_notation": true,
+   "body_ok": true,
+   "reviewed_passed": true,
+   "note": "렌더러 문장(규칙만 방식과 동일)",
+   "accepted_unparsed": []
+  },
+  {
+   "id": "dev10",
+   "automatic_passed": true,
+   "automatic_after_accepted_notation": true,
+   "body_ok": true,
+   "reviewed_passed": true,
+   "note": "렌더러 문장(규칙만 방식과 동일)",
+   "accepted_unparsed": []
+  },
+  {
+   "id": "dev11",
+   "automatic_passed": true,
+   "automatic_after_accepted_notation": true,
+   "body_ok": true,
+   "reviewed_passed": true,
+   "note": "렌더러 문장(규칙만 방식과 동일)",
+   "accepted_unparsed": []
+  },
+  {
+   "id": "dev12",
+   "automatic_passed": true,
+   "automatic_after_accepted_notation": true,
+   "body_ok": true,
+   "reviewed_passed": true,
+   "note": "렌더러 문장(규칙만 방식과 동일)",
+   "accepted_unparsed": []
+  },
+  {
+   "id": "dev13",
+   "automatic_passed": true,
+   "automatic_after_accepted_notation": true,
+   "body_ok": true,
+   "reviewed_passed": true,
+   "note": "렌더러 문장(규칙만 방식과 동일)",
+   "accepted_unparsed": []
+  }
+ ],
+ "cases_file": "cases.jsonl"
+}

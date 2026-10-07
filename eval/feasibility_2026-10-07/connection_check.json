@@ -1,0 +1,453 @@
+{
+ "identity": {
+  "model": "gpt-oss:20b",
+  "digest": "17052f91a42e97930aa6e28a6c6c06a983e6a58dbb00434885a0cf5313e376f7",
+  "ollama_version": "0.34.4",
+  "quantization": "MXFP4",
+  "parameter_size": "20.9B",
+  "options": {
+   "temperature": 0,
+   "num_ctx": 8192,
+   "num_predict": 4096
+  },
+  "think": null,
+  "flags": {
+   "truncate": false,
+   "shift": false
+  }
+ },
+ "checks": {
+  "schema": {
+   "ok": true,
+   "parsed": {
+    "status": "되묻기",
+    "company": "가나다상사",
+    "account": null,
+    "values": [],
+    "change": null,
+    "change_pct": null,
+    "answer": "이익이 늘었는지 확인하려면 영업이익인지 당기순이익인지 알려주실 수 있나요?",
+    "clarifying_question": "영업이익을 말씀하시는 건가요, 아니면 당기순이익을 말씀하시는 건가요?"
+   },
+   "exchange": {
+    "request": {
+     "model": "gpt-oss:20b",
+     "messages": [
+      {
+       "role": "system",
+       "content": "정해진 JSON 형식으로만 답한다."
+      },
+      {
+       "role": "user",
+       "content": "가상의 회사 '가나다상사'에 대해 사용자가 '이익이 늘었어?'라고 물었다. 영업이익인지 당기순이익인지 알 수 없으니 status는 '되묻기', company는 '가나다상사', account·change·change_pct·values는 비워(null, []) 두고, answer와 clarifying_question에 되묻는 문장을 써라."
+      }
+     ],
+     "stream": false,
+     "options": {
+      "temperature": 0,
+      "num_ctx": 8192,
+      "num_predict": 4096
+     },
+     "truncate": false,
+     "shift": false,
+     "format": {
+      "type": "object",
+      "properties": {
+       "status": {
+        "type": "string",
+        "enum": [
+         "비교 가능",
+         "비교 불가",
+         "데이터 없음",
+         "확인 필요",
+         "나란히 표시",
+         "되묻기"
+        ]
+       },
+       "company": {
+        "type": "string"
+       },
+       "account": {
+        "type": [
+         "string",
+         "null"
+        ],
+        "enum": [
+         "revenue",
+         "operating_income",
+         "net_income",
+         "operating_cash_flow",
+         "total_assets",
+         "total_liabilities",
+         null
+        ]
+       },
+       "values": {
+        "type": "array",
+        "items": {
+         "type": "object",
+         "properties": {
+          "basis": {
+           "type": "string",
+           "enum": [
+            "연결",
+            "별도"
+           ]
+          },
+          "start": {
+           "type": [
+            "string",
+            "null"
+           ]
+          },
+          "end": {
+           "type": "string"
+          },
+          "amount": {
+           "type": "integer"
+          }
+         },
+         "required": [
+          "basis",
+          "start",
+          "end",
+          "amount"
+         ],
+         "additionalProperties": false
+        }
+       },
+       "change": {
+        "type": [
+         "integer",
+         "null"
+        ]
+       },
+       "change_pct": {
+        "type": [
+         "string",
+         "null"
+        ],
+        "pattern": "^-?[0-9]+\\.[0-9]{2}$"
+       },
+       "answer": {
+        "type": "string"
+       },
+       "clarifying_question": {
+        "type": [
+         "string",
+         "null"
+        ]
+       }
+      },
+      "required": [
+       "status",
+       "company",
+       "account",
+       "values",
+       "change",
+       "change_pct",
+       "answer",
+       "clarifying_question"
+      ],
+      "additionalProperties": false
+     }
+    },
+    "request_sha256": "7c262a71ad3688f3d531362bb06cc8b0a5c0b4b891440d853b784770446c8cec",
+    "response": {
+     "model": "gpt-oss:20b",
+     "created_at": "2026-10-07T14:38:42.245213Z",
+     "message": {
+      "role": "assistant",
+      "content": "{\"status\":\"되묻기\",\"company\":\"가나다상사\",\"account\":null,\"values\":[],\"change\":null,\"change_pct\":null,\"answer\":\"이익이 늘었는지 확인하려면 영업이익인지 당기순이익인지 알려주실 수 있나요?\",\"clarifying_question\":\"영업이익을 말씀하시는 건가요, 아니면 당기순이익을 말씀하시는 건가요?\"}",
+      "thinking": "We need to output JSON only. The user says: \"가상의 회사 '가나다상사'에 대해 사용자가 '이익이 늘었어?'라고 물었다. 영업이익인지 당기순이익인지 알 수 없으니 status는 '되묻기', company는 '가나다상사', account·change·change_pct·values는 비워(null, []) 두고, answer와 clarifying_question에 되묻는 문장을 써라.\"\n\nSo we need to produce JSON with keys: status, company, account, change, change_pct, values, answer, clarifying_question. The status is '되묻기', company is '가나다상사', account, change, change_pct, values are null or empty array. answer and clarifying_question should contain a question to clarify. The answer likely is a short statement like \"이익이 늘었는지 확인하려면 영업이익인지 당기순이익인지 알려주실 수 있나요?\" The clarifying_question maybe same. But we need to produce JSON. Let's produce:\n\n{\n  \"status\": \"되묻기\",\n  \"company\": \"가나다상사\",\n  \"account\": null,\n  \"change\": null,\n  \"change_pct\": null,\n  \"values\": [],\n  \"answer\": \"이익이 늘었는지 확인하려면 영업이익인지 당기순이익인지 알려주실 수 있나요?\",\n  \"clarifying_question\": \"영업이익을 말씀하시는 건가요, 아니면 당기순이익을 말씀하시는 건가요?\"\n}\n\nMake sure JSON is valid."
+     },
+     "done": true,
+     "done_reason": "stop",
+     "total_duration": 13131629292,
+     "load_duration": 5583387792,
+     "prompt_eval_count": 176,
+     "prompt_eval_cached_count": 0,
+     "prompt_eval_duration": 198950000,
+     "eval_count": 451,
+     "eval_duration": 7224967000
+    },
+    "error": null,
+    "elapsed_ms": 13160.0
+   }
+  },
+  "tools": {
+   "ok": true,
+   "tool_calls": [
+    {
+     "id": "call_wk21nnvu",
+     "function": {
+      "index": 0,
+      "name": "compare_values",
+      "arguments": {
+       "account": "revenue",
+       "base_period": {
+        "kind": "year_to_date",
+        "month": 12
+       },
+       "basis": "연간",
+       "company": "가나다상사",
+       "current_period": {
+        "kind": "year_to_date",
+        "month": 12
+       }
+      }
+     }
+    }
+   ],
+   "exchange": {
+    "request": {
+     "model": "gpt-oss:20b",
+     "messages": [
+      {
+       "role": "system",
+       "content": "필요하면 도구를 부른다."
+      },
+      {
+       "role": "user",
+       "content": "가나다상사의 2025년 연간 연결 매출을 2024년 연간과 compare_values 도구로 비교해 줘."
+      }
+     ],
+     "stream": false,
+     "options": {
+      "temperature": 0,
+      "num_ctx": 8192,
+      "num_predict": 4096
+     },
+     "truncate": false,
+     "shift": false,
+     "tools": [
+      {
+       "type": "function",
+       "function": {
+        "name": "compare_values",
+        "description": "한 회사·한 기준(연결 또는 별도)·한 계정의 두 기간 값을 비교 가능성 규칙에 따라 비교한다",
+        "parameters": {
+         "type": "object",
+         "properties": {
+          "company": {
+           "type": "string",
+           "description": "회사 이름 (예: 삼성전자)"
+          },
+          "account": {
+           "type": "string",
+           "enum": [
+            "revenue",
+            "operating_income",
+            "net_income",
+            "operating_cash_flow",
+            "total_assets",
+            "total_liabilities"
+           ],
+           "description": "revenue=매출액, operating_income=영업이익, net_income=당기순이익, operating_cash_flow=영업활동현금흐름, total_assets=자산총계, total_liabilities=부채총계"
+          },
+          "basis": {
+           "type": "string",
+           "enum": [
+            "연결",
+            "별도"
+           ]
+          },
+          "current_period": {
+           "type": "object",
+           "additionalProperties": false,
+           "description": "kind: instant(재무상태표의 시점), quarter(그 분기 3개월), year_to_date(연초부터 누적; 연간은 month=12)",
+           "properties": {
+            "kind": {
+             "type": "string",
+             "enum": [
+              "instant",
+              "quarter",
+              "year_to_date"
+             ]
+            },
+            "year": {
+             "type": "integer",
+             "minimum": 1990,
+             "maximum": 2100
+            },
+            "month": {
+             "type": "integer",
+             "enum": [
+              3,
+              6,
+              9,
+              12
+             ]
+            }
+           },
+           "required": [
+            "kind",
+            "year",
+            "month"
+           ]
+          },
+          "base_period": {
+           "type": "object",
+           "additionalProperties": false,
+           "description": "비교 기준이 되는 앞선 기간. kind: instant(재무상태표의 시점), quarter(그 분기 3개월), year_to_date(연초부터 누적; 연간은 month=12)",
+           "properties": {
+            "kind": {
+             "type": "string",
+             "enum": [
+              "instant",
+              "quarter",
+              "year_to_date"
+             ]
+            },
+            "year": {
+             "type": "integer",
+             "minimum": 1990,
+             "maximum": 2100
+            },
+            "month": {
+             "type": "integer",
+             "enum": [
+              3,
+              6,
+              9,
+              12
+             ]
+            }
+           },
+           "required": [
+            "kind",
+            "year",
+            "month"
+           ]
+          }
+         },
+         "required": [
+          "company",
+          "basis",
+          "account",
+          "current_period",
+          "base_period"
+         ],
+         "additionalProperties": false
+        }
+       }
+      },
+      {
+       "type": "function",
+       "function": {
+        "name": "side_by_side",
+        "description": "한 기간의 연결 값과 별도 값을 나란히 보여 준다(시간 변화 비교가 아니다)",
+        "parameters": {
+         "type": "object",
+         "properties": {
+          "company": {
+           "type": "string",
+           "description": "회사 이름 (예: 삼성전자)"
+          },
+          "account": {
+           "type": "string",
+           "enum": [
+            "revenue",
+            "operating_income",
+            "net_income",
+            "operating_cash_flow",
+            "total_assets",
+            "total_liabilities"
+           ],
+           "description": "revenue=매출액, operating_income=영업이익, net_income=당기순이익, operating_cash_flow=영업활동현금흐름, total_assets=자산총계, total_liabilities=부채총계"
+          },
+          "period": {
+           "type": "object",
+           "additionalProperties": false,
+           "description": "kind: instant(재무상태표의 시점), quarter(그 분기 3개월), year_to_date(연초부터 누적; 연간은 month=12)",
+           "properties": {
+            "kind": {
+             "type": "string",
+             "enum": [
+              "instant",
+              "quarter",
+              "year_to_date"
+             ]
+            },
+            "year": {
+             "type": "integer",
+             "minimum": 1990,
+             "maximum": 2100
+            },
+            "month": {
+             "type": "integer",
+             "enum": [
+              3,
+              6,
+              9,
+              12
+             ]
+            }
+           },
+           "required": [
+            "kind",
+            "year",
+            "month"
+           ]
+          }
+         },
+         "required": [
+          "company",
+          "account",
+          "period"
+         ],
+         "additionalProperties": false
+        }
+       }
+      }
+     ]
+    },
+    "request_sha256": "22494a987562204425e250471e6a3da721b4f0d343b01e76ff9e19534ec650fb",
+    "response": {
+     "model": "gpt-oss:20b",
+     "created_at": "2026-10-07T14:38:46.93613Z",
+     "message": {
+      "role": "assistant",
+      "content": "",
+      "thinking": "The user wants to compare the 2025 annual consolidated revenue of \"가나다상사\" with 2024 annual revenue using the compare_values tool. We need to call the function compare_values with appropriate arguments.\n\nWe need to specify account: \"revenue\". company: \"가나다상사\". base_period: 2024 annual. current_period: 2025 annual. basis: likely \"연간\" or \"year_to_date\"? The tool expects base_period and current_period as Record<string, any> with kind: instant, quarter, year_to_date. For annual, we can use kind: year_to_date with month=12. So base_period: {kind: \"year_to_date\", month: 12}. current_period: same. basis: maybe \"연간\" or \"year_to_date\"? The tool's basis parameter: \"basis: string\". Not sure what it expects. Possibly \"연간\" or \"year_to_date\". We'll set basis: \"연간\". Let's call.\n\n",
+      "tool_calls": [
+       {
+        "id": "call_wk21nnvu",
+        "function": {
+         "index": 0,
+         "name": "compare_values",
+         "arguments": {
+          "account": "revenue",
+          "base_period": {
+           "kind": "year_to_date",
+           "month": 12
+          },
+          "basis": "연간",
+          "company": "가나다상사",
+          "current_period": {
+           "kind": "year_to_date",
+           "month": 12
+          }
+         }
+        }
+       }
+      ]
+     },
+     "done": true,
+     "done_reason": "stop",
+     "total_duration": 4656160750,
+     "load_duration": 5675917,
+     "prompt_eval_count": 532,
+     "prompt_eval_cached_count": 0,
+     "prompt_eval_duration": 475571000,
+     "eval_count": 268,
+     "eval_duration": 4157992000
+    },
+    "error": null,
+    "elapsed_ms": 4659.5
+   }
+  }
+ },
+ "attempts": 2,
+ "responses": 2
+}

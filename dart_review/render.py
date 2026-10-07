@@ -166,3 +166,31 @@ def clarification_answer(company: str, accounts: list[str]) -> dict[str, Any]:
     return {"status": "되묻기", "company": company, "account": None, "values": [], "change": None,
             "change_pct": None, "answer": "질문이 여러 계정으로 읽혀서 먼저 확인하겠습니다. " + question,
             "clarifying_question": question}
+
+
+def markdown_report(answer: dict[str, Any], result: dict[str, Any] | None) -> str:
+    """A Markdown report: verification status, a table of the values with their sources, and the confirmed facts.
+
+    Every figure comes from the tool result; there is no free-text interpretation in this report.
+    """
+    lines = [f"## {answer['company']} {result['account_label'] if result else ''}".rstrip(), "",
+             f"**검증 상태:** {answer['status']}", ""]
+    facts = []
+    if result is not None:
+        if result.get("tool") == "side_by_side":
+            facts = [(value["basis"], value) for value in result.get("values", []) if value and value.get("amount") is not None]
+        else:
+            facts = [(label, result[key]) for label, key in (("비교 기간", "current"), ("기준 기간", "base"))
+                     if result.get(key) and result[key].get("amount") is not None]
+    if facts:
+        lines += ["| 구분 | 기준 | 기간 | 금액(원) | 보고서 | 접수번호 |", "|---|---|---|---:|---|---|"]
+        for label, fact in facts:
+            lines.append(f"| {label} | {fact['basis']} | {period_text(fact['period'])} | {fact['amount']:,} | {fact['report']} | {fact['rcept_no']} |")
+        if result.get("tool") != "side_by_side" and result.get("change") is not None:
+            rate = f"{result['change_pct']}%" if result.get("change_pct") is not None else "계산하지 않음"
+            lines += ["", f"**변화:** {result['change']:,}원 ({rate}, {result['direction']})"]
+        lines.append("")
+    lines += ["### 확정 사실 (도구 결과로 작성)", "", answer["answer"]]
+    if answer.get("clarifying_question"):
+        lines += ["", f"**확인 질문:** {answer['clarifying_question']}"]
+    return "\n".join(lines) + "\n"

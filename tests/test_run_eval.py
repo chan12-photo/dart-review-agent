@@ -186,7 +186,8 @@ class RunnerTests(unittest.TestCase):
                              {"run.json", "cases.jsonl", "summary.json", "review_sheet.md", "human_review.json"})
             meta = json.loads((out / "run.json").read_text(encoding="utf-8"))
             self.assertEqual(set(meta["contract"]), {"gold", "questions", "system_prompt", "final_instruction", "tools", "answer_schema",
-                                                     "agent_prompt", "decision_instruction", "decision_schema", "paraphrases"})
+                                                     "agent_prompt", "decision_instruction", "decision_schema", "paraphrases",
+                                                     "reading_prompt", "reading_schema"})
 
     def test_full_flow_clarification_without_tools(self):
         ask = {"status": "되묻기", "company": "셀트리온", "account": None, "values": [], "change": None, "change_pct": None,

@@ -29,6 +29,7 @@ from dart_review.agent import MAX_MODEL_CALLS as AGENT_MAX_MODEL_CALLS, MAX_TOOL
 from dart_review.agent import DECISION_SCHEMA, agent_turn, tool_phase  # noqa: E402
 from dart_review.answer import ANSWER_SCHEMA  # noqa: E402
 from dart_review.baseline import baseline_turn  # noqa: E402
+from dart_review.crosscheck import READING_PROMPT_VERSION, READING_SCHEMA, READING_SYSTEM_PROMPT, crosscheck_turn  # noqa: E402
 from dart_review.cache import ResponseCache  # noqa: E402
 from dart_review.client import DartClient  # noqa: E402
 from dart_review.companies import DEV_COMPANIES, FS_DIVS  # noqa: E402
@@ -45,8 +46,8 @@ from scoring import CaseScore, score_case, summarize  # noqa: E402
 SPEC = ROOT / "eval" / "dev_questions.json"
 GOLD = ROOT / "eval" / "dev_gold.json"
 CACHE = ROOT / "cache"
-MODES = ("rules", "oracle", "full", "agent", "baseline")
-MODEL_MODES = ("oracle", "full", "agent")
+MODES = ("rules", "oracle", "full", "agent", "baseline", "crosscheck")
+MODEL_MODES = ("oracle", "full", "agent", "crosscheck")
 PARAPHRASES = ROOT / "eval" / "dev_paraphrases.json"
 MAX_MODEL_CALLS = AGENT_MAX_MODEL_CALLS  # per question in the full flow and agent modes, including the final request
 MAX_TOOL_CALLS = AGENT_MAX_TOOL_CALLS
@@ -133,6 +134,8 @@ def run_case(mode: str, question: dict[str, Any], gold: dict[str, Any], client: 
             _run_full(question, client, record, ask)
         elif mode == "agent":  # the 2-1 design (model decides, code writes the facts)
             agent_turn(question["question"], client, record, ask)
+        elif mode == "crosscheck":  # design B: rules and model read independently, code answers if they agree
+            crosscheck_turn(question["question"], client, record, ask)
         else:  # baseline: keyword rules, no model (roadmap 2-2)
             baseline_turn(question["question"], client, record)
     except ModelError as exc:
@@ -140,7 +143,7 @@ def run_case(mode: str, question: dict[str, Any], gold: dict[str, Any], client: 
     except Exception as exc:  # a bug in the evaluator, not a model mistake: recorded and reported, never hidden
         record["evaluator_error"] = f"{type(exc).__name__}: {exc}"
         record["evaluator_traceback"] = traceback.format_exc(limit=8)
-    if mode in ("full", "agent", "baseline") and not record["evaluator_error"]:
+    if mode in ("full", "agent", "baseline", "crosscheck") and not record["evaluator_error"]:
         try:  # also after a model error or an overrun: the calls made so far still count
             tool_argument_metrics(question, record)
         except Exception as exc:
@@ -160,6 +163,8 @@ def run_case(mode: str, question: dict[str, Any], gold: dict[str, Any], client: 
         score.format_error = "budget exceeded (no final answer)"
     elif record["decision_error"]:
         score.format_error = f"decision format error: {record['decision_error']}"
+    elif record.get("output_blocked"):
+        score.format_error = f"output withheld: ungrounded numbers {record['output_blocked']}"
     elif record["no_result"]:
         score.format_error = "no successful tool result to answer from"
     if record["model_error"] or record["evaluator_error"] or record["budget_exceeded"]:
@@ -206,7 +211,8 @@ def contract_hashes() -> dict[str, str]:
             "system_prompt": _sha256(SYSTEM_PROMPT.encode("utf-8")), "final_instruction": _sha256(FINAL_INSTRUCTION.encode("utf-8")),
             "tools": _sha256(text(TOOL_SPECS)), "answer_schema": _sha256(text(ANSWER_SCHEMA)),
             "agent_prompt": _sha256(AGENT_SYSTEM_PROMPT.encode("utf-8")), "decision_instruction": _sha256(DECISION_INSTRUCTION.encode("utf-8")),
-            "decision_schema": _sha256(text(DECISION_SCHEMA)), "paraphrases": _sha256(PARAPHRASES.read_bytes())}
+            "decision_schema": _sha256(text(DECISION_SCHEMA)), "paraphrases": _sha256(PARAPHRASES.read_bytes()),
+            "reading_prompt": _sha256(READING_SYSTEM_PROMPT.encode("utf-8")), "reading_schema": _sha256(text(READING_SCHEMA))}
 
 
 def load_questions(question_set: str = "dev") -> tuple[list[dict[str, Any]], dict[str, dict[str, Any]]]:
@@ -271,7 +277,7 @@ def main(argv: list[str] | None = None) -> int:
         # written as the run goes, so an interrupted run keeps every finished question
         args.out.mkdir(parents=True)
         meta = {"mode": args.mode, "question_set": args.question_set, "model": identity, "contract": contract_hashes(),
-                "prompt_version": AGENT_PROMPT_VERSION if args.mode == "agent" else PROMPT_VERSION,
+                "prompt_version": {"agent": AGENT_PROMPT_VERSION, "crosscheck": READING_PROMPT_VERSION}.get(args.mode, PROMPT_VERSION),
                 "git": git, "budget": {"model_calls": MAX_MODEL_CALLS, "tool_calls": MAX_TOOL_CALLS},
                 "started_at": datetime.now(timezone.utc).isoformat(timespec="seconds")}
         (args.out / "run.json").write_text(json.dumps(meta, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")

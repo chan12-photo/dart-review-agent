@@ -11,6 +11,7 @@ from __future__ import annotations
 
 from dataclasses import asdict, dataclass, field
 from decimal import Decimal
+import json
 import re
 from statistics import median
 from typing import Any, Sequence
@@ -179,6 +180,19 @@ def score_case(gold: dict[str, Any], raw_answer: str | dict[str, Any] | None, se
     return score
 
 
+def _shown_status(case: dict[str, Any]) -> str | None:
+    """The status of the answer actually shown, or None when nothing readable was shown."""
+    if case["score"].get("format_error"):
+        return None
+    answer = case.get("answer")
+    if isinstance(answer, str):
+        try:
+            answer = json.loads(answer)
+        except ValueError:
+            return None
+    return answer.get("status") if isinstance(answer, dict) else None
+
+
 def _rate(flags: list[bool]) -> dict[str, Any]:
     return {"correct": sum(flags), "total": len(flags)}
 
@@ -210,6 +224,11 @@ def summarize(cases: Sequence[dict[str, Any]]) -> dict[str, Any]:
         "case_wall_ms_total": round(sum(case.get("wall_ms", 0) for case in cases), 1),
         "budget_exceeded": sum(1 for case in cases if case.get("budget_exceeded")),
         "failed": [score["id"] for score in scores if not score["automatic_passed"]],
+        # how the failures failed (added for design B; pass/fail is unchanged)
+        "confident_wrong": [case["score"]["id"] for case in cases if _shown_status(case) not in (None, "되묻기")
+                            and not case["score"]["automatic_passed"]],
+        "asked_back_instead": [case["score"]["id"] for case in cases if _shown_status(case) == "되묻기"
+                               and not case["score"]["automatic_passed"]],
     }
     for key in ("tool_args_first_ok", "tool_args_any_ok"):
         flags = [case[key] for case in cases if case.get(key) is not None]

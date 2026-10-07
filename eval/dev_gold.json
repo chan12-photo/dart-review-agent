@@ -17,10 +17,23 @@
       "account": "revenue",
       "account_label": "매출액",
       "reason_keywords": [],
+      "forbidden_terms": [],
+      "expected_status": "비교 가능",
+      "decision": "answer",
       "basis": "연결",
       "fs_div": "CFS",
       "current_period": "2025-01-01~2025-12-31 (누적 12개월)",
       "base_period": "2024-01-01~2024-12-31 (누적 12개월)",
+      "period_ranges": {
+        "current": {
+          "start": "2025-01-01",
+          "end": "2025-12-31"
+        },
+        "base": {
+          "start": "2024-01-01",
+          "end": "2024-12-31"
+        }
+      },
       "values": {
         "current": {
           "year": 2025,
@@ -31,6 +44,10 @@
           "response_sha256": "d2888e542f9159cb087c7679efcd41e3d76cbf2df9e90260fa95549c7fee15e9",
           "column": "thstrm",
           "period": "2025-01-01~2025-12-31 (누적 12개월)",
+          "period_range": {
+            "start": "2025-01-01",
+            "end": "2025-12-31"
+          },
           "sj_div": "IS",
           "account_id": "ifrs-full_Revenue",
           "account_nm": "매출액",
@@ -47,6 +64,10 @@
           "response_sha256": "d2888e542f9159cb087c7679efcd41e3d76cbf2df9e90260fa95549c7fee15e9",
           "column": "frmtrm",
           "period": "2024-01-01~2024-12-31 (누적 12개월)",
+          "period_range": {
+            "start": "2024-01-01",
+            "end": "2024-12-31"
+          },
           "sj_div": "IS",
           "account_id": "ifrs-full_Revenue",
           "account_nm": "매출액",
@@ -72,10 +93,23 @@
       "account": "total_assets",
       "account_label": "자산총계",
       "reason_keywords": [],
+      "forbidden_terms": [],
+      "expected_status": "비교 가능",
+      "decision": "answer",
       "basis": "연결",
       "fs_div": "CFS",
       "current_period": "2025-09-30 시점",
       "base_period": "2024-09-30 시점",
+      "period_ranges": {
+        "current": {
+          "start": null,
+          "end": "2025-09-30"
+        },
+        "base": {
+          "start": null,
+          "end": "2024-09-30"
+        }
+      },
       "values": {
         "current": {
           "year": 2025,
@@ -86,6 +120,10 @@
           "response_sha256": "12373931fd0ecb290ec6b6ee161048259e50e5fac39e81982b3cb8d268e61b25",
           "column": "thstrm",
           "period": "2025-09-30 시점",
+          "period_range": {
+            "start": null,
+            "end": "2025-09-30"
+          },
           "sj_div": "BS",
           "account_id": "ifrs-full_Assets",
           "account_nm": "자산총계",
@@ -102,6 +140,10 @@
           "response_sha256": "419eef963a40cbc4d9107706ae9505afeb3e2da43aa6590896e1d3c3c96385af",
           "column": "thstrm",
           "period": "2024-09-30 시점",
+          "period_range": {
+            "start": null,
+            "end": "2024-09-30"
+          },
           "sj_div": "BS",
           "account_id": "ifrs-full_Assets",
           "account_nm": "자산총계",
@@ -127,10 +169,23 @@
       "account": "operating_cash_flow",
       "account_label": "영업활동현금흐름",
       "reason_keywords": [],
+      "forbidden_terms": [],
+      "expected_status": "비교 가능",
+      "decision": "answer",
       "basis": "연결",
       "fs_div": "CFS",
       "current_period": "2025-01-01~2025-09-30 (누적 9개월)",
       "base_period": "2024-01-01~2024-09-30 (누적 9개월)",
+      "period_ranges": {
+        "current": {
+          "start": "2025-01-01",
+          "end": "2025-09-30"
+        },
+        "base": {
+          "start": "2024-01-01",
+          "end": "2024-09-30"
+        }
+      },
       "values": {
         "current": {
           "year": 2025,
@@ -141,6 +196,10 @@
           "response_sha256": "12373931fd0ecb290ec6b6ee161048259e50e5fac39e81982b3cb8d268e61b25",
           "column": "thstrm",
           "period": "2025-01-01~2025-09-30 (누적 9개월)",
+          "period_range": {
+            "start": "2025-01-01",
+            "end": "2025-09-30"
+          },
           "sj_div": "CF",
           "account_id": "ifrs-full_CashFlowsFromUsedInOperatingActivities",
           "account_nm": "영업활동현금흐름",
@@ -157,6 +216,10 @@
           "response_sha256": "12373931fd0ecb290ec6b6ee161048259e50e5fac39e81982b3cb8d268e61b25",
           "column": "frmtrm_q",
           "period": "2024-01-01~2024-09-30 (누적 9개월)",
+          "period_range": {
+            "start": "2024-01-01",
+            "end": "2024-09-30"
+          },
           "sj_div": "CF",
           "account_id": "ifrs-full_CashFlowsFromUsedInOperatingActivities",
           "account_nm": "영업활동현금흐름",
@@ -182,10 +245,23 @@
       "account": "operating_income",
       "account_label": "영업이익",
       "reason_keywords": [],
+      "forbidden_terms": [],
+      "expected_status": "비교 가능",
+      "decision": "answer",
       "basis": "연결",
       "fs_div": "CFS",
       "current_period": "2025-01-01~2025-09-30 (누적 9개월)",
       "base_period": "2024-01-01~2024-09-30 (누적 9개월)",
+      "period_ranges": {
+        "current": {
+          "start": "2025-01-01",
+          "end": "2025-09-30"
+        },
+        "base": {
+          "start": "2024-01-01",
+          "end": "2024-09-30"
+        }
+      },
       "values": {
         "current": {
           "year": 2025,
@@ -196,6 +272,10 @@
           "response_sha256": "7e61187d2d2d9362d733bc38fc86b84a3a6703d9a10b8b1e3bd9c920370d5694",
           "column": "thstrm_add",
           "period": "2025-01-01~2025-09-30 (누적 9개월)",
+          "period_range": {
+            "start": "2025-01-01",
+            "end": "2025-09-30"
+          },
           "sj_div": "IS",
           "account_id": "dart_OperatingIncomeLoss",
           "account_nm": "영업이익",
@@ -212,6 +292,10 @@
           "response_sha256": "7e61187d2d2d9362d733bc38fc86b84a3a6703d9a10b8b1e3bd9c920370d5694",
           "column": "frmtrm_add",
           "period": "2024-01-01~2024-09-30 (누적 9개월)",
+          "period_range": {
+            "start": "2024-01-01",
+            "end": "2024-09-30"
+          },
           "sj_div": "IS",
           "account_id": "dart_OperatingIncomeLoss",
           "account_nm": "영업이익",
@@ -239,7 +323,21 @@
       "reason_keywords": [
         "연결과 별도"
       ],
+      "forbidden_terms": [
+        "증가",
+        "성장",
+        "늘었",
+        "늘어",
+        "줄었",
+        "감소"
+      ],
+      "expected_status": "나란히 표시",
+      "decision": "side_by_side",
       "period": "2025-01-01~2025-12-31 (누적 12개월)",
+      "period_range": {
+        "start": "2025-01-01",
+        "end": "2025-12-31"
+      },
       "values": {
         "CFS": {
           "year": 2025,
@@ -250,6 +348,10 @@
           "response_sha256": "d2888e542f9159cb087c7679efcd41e3d76cbf2df9e90260fa95549c7fee15e9",
           "column": "thstrm",
           "period": "2025-01-01~2025-12-31 (누적 12개월)",
+          "period_range": {
+            "start": "2025-01-01",
+            "end": "2025-12-31"
+          },
           "sj_div": "IS",
           "account_id": "ifrs-full_Revenue",
           "account_nm": "매출액",
@@ -266,6 +368,10 @@
           "response_sha256": "49e4ac1514c31abbe13fadc23e7d979e7061c939864420255e33ad7ab5182361",
           "column": "thstrm",
           "period": "2025-01-01~2025-12-31 (누적 12개월)",
+          "period_range": {
+            "start": "2025-01-01",
+            "end": "2025-12-31"
+          },
           "sj_div": "IS",
           "account_id": "ifrs-full_Revenue",
           "account_nm": "매출액",
@@ -290,10 +396,23 @@
       "account": "revenue",
       "account_label": "매출액",
       "reason_keywords": [],
+      "forbidden_terms": [],
+      "expected_status": "비교 가능",
+      "decision": "answer",
       "basis": "연결",
       "fs_div": "CFS",
       "current_period": "2023-07-01~2023-09-30 (3개월)",
       "base_period": "2023-04-01~2023-06-30 (3개월)",
+      "period_ranges": {
+        "current": {
+          "start": "2023-07-01",
+          "end": "2023-09-30"
+        },
+        "base": {
+          "start": "2023-04-01",
+          "end": "2023-06-30"
+        }
+      },
       "values": {
         "current": {
           "year": 2023,
@@ -304,6 +423,10 @@
           "response_sha256": "28a25abd03b808628a62e534d4d8c42f834b3d4ad891db083f5f762cb6cc3b4f",
           "column": "thstrm",
           "period": "2023-07-01~2023-09-30 (3개월)",
+          "period_range": {
+            "start": "2023-07-01",
+            "end": "2023-09-30"
+          },
           "sj_div": "CIS",
           "account_id": "ifrs-full_GrossProfit",
           "account_nm": "영업수익",
@@ -320,6 +443,10 @@
           "response_sha256": "513e596628c2e9ed870963184a622595cd6502ff6fc38076f2c7ef8c5a3cf820",
           "column": "thstrm",
           "period": "2023-04-01~2023-06-30 (3개월)",
+          "period_range": {
+            "start": "2023-04-01",
+            "end": "2023-06-30"
+          },
           "sj_div": "CIS",
           "account_id": "ifrs-full_GrossProfit",
           "account_nm": "영업수익",
@@ -345,10 +472,23 @@
       "account": "operating_income",
       "account_label": "영업이익",
       "reason_keywords": [],
+      "forbidden_terms": [],
+      "expected_status": "비교 가능",
+      "decision": "answer",
       "basis": "연결",
       "fs_div": "CFS",
       "current_period": "2025-01-01~2025-12-31 (누적 12개월)",
       "base_period": "2024-01-01~2024-12-31 (누적 12개월)",
+      "period_ranges": {
+        "current": {
+          "start": "2025-01-01",
+          "end": "2025-12-31"
+        },
+        "base": {
+          "start": "2024-01-01",
+          "end": "2024-12-31"
+        }
+      },
       "values": {
         "current": {
           "year": 2025,
@@ -359,6 +499,10 @@
           "response_sha256": "dc8e875ffbc7151445edaf1466d6ea42214849265ec99628aecf6cf5eddf092a",
           "column": "thstrm",
           "period": "2025-01-01~2025-12-31 (누적 12개월)",
+          "period_range": {
+            "start": "2025-01-01",
+            "end": "2025-12-31"
+          },
           "sj_div": "CIS",
           "account_id": "dart_OperatingIncomeLoss",
           "account_nm": "영업이익",
@@ -375,6 +519,10 @@
           "response_sha256": "dc8e875ffbc7151445edaf1466d6ea42214849265ec99628aecf6cf5eddf092a",
           "column": "frmtrm",
           "period": "2024-01-01~2024-12-31 (누적 12개월)",
+          "period_range": {
+            "start": "2024-01-01",
+            "end": "2024-12-31"
+          },
           "sj_div": "CIS",
           "account_id": "dart_OperatingIncomeLoss",
           "account_nm": "영업이익",
@@ -395,6 +543,10 @@
         "response_sha256": "541b0392a576f50a6dd11ad98334f60228d9cfe843282679a23ac76a5e0f9370",
         "column": "thstrm",
         "period": "2024-01-01~2024-12-31 (누적 12개월)",
+        "period_range": {
+          "start": "2024-01-01",
+          "end": "2024-12-31"
+        },
         "sj_div": "CIS",
         "account_id": "dart_OperatingIncomeLoss",
         "account_nm": "영업이익(손실)",
@@ -420,10 +572,23 @@
         "재작성",
         "2023-12-31"
       ],
+      "forbidden_terms": [],
+      "expected_status": "확인 필요",
+      "decision": "answer",
       "basis": "별도",
       "fs_div": "OFS",
       "current_period": "2025-09-30 시점",
       "base_period": "2024-09-30 시점",
+      "period_ranges": {
+        "current": {
+          "start": null,
+          "end": "2025-09-30"
+        },
+        "base": {
+          "start": null,
+          "end": "2024-09-30"
+        }
+      },
       "values": {
         "current": {
           "year": 2025,
@@ -434,6 +599,10 @@
           "response_sha256": "cdeea98a7142186bee7ee5c11ae3e2b456c57e9cac97fbfa239c00d35bdbcd84",
           "column": "thstrm",
           "period": "2025-09-30 시점",
+          "period_range": {
+            "start": null,
+            "end": "2025-09-30"
+          },
           "sj_div": "BS",
           "account_id": "ifrs-full_Liabilities",
           "account_nm": "부채총계",
@@ -450,6 +619,10 @@
           "response_sha256": "b6d5a4fb3a4097337d213511c7ac6bcc2fb899f7ffbb050b419b0e8c76ecc7bd",
           "column": "thstrm",
           "period": "2024-09-30 시점",
+          "period_range": {
+            "start": null,
+            "end": "2024-09-30"
+          },
           "sj_div": "BS",
           "account_id": "ifrs-full_Liabilities",
           "account_nm": "부채총계",
@@ -473,6 +646,10 @@
             "response_sha256": "b6d5a4fb3a4097337d213511c7ac6bcc2fb899f7ffbb050b419b0e8c76ecc7bd",
             "column": "frmtrm",
             "period": "2023-12-31 시점",
+            "period_range": {
+              "start": null,
+              "end": "2023-12-31"
+            },
             "sj_div": "BS",
             "account_id": "ifrs-full_Liabilities",
             "account_nm": "부채총계",
@@ -489,6 +666,10 @@
             "response_sha256": "3af9a08c661b03cc528538957b46794d00fd97cd028c1aad42bf849bb23cd8f1",
             "column": "frmtrm",
             "period": "2023-12-31 시점",
+            "period_range": {
+              "start": null,
+              "end": "2023-12-31"
+            },
             "sj_div": "BS",
             "account_id": "ifrs-full_Liabilities",
             "account_nm": "부채총계",
@@ -512,10 +693,23 @@
       "account": "net_income",
       "account_label": "당기순이익",
       "reason_keywords": [],
+      "forbidden_terms": [],
+      "expected_status": "비교 가능",
+      "decision": "answer",
       "basis": "연결",
       "fs_div": "CFS",
       "current_period": "2025-01-01~2025-12-31 (누적 12개월)",
       "base_period": "2024-01-01~2024-12-31 (누적 12개월)",
+      "period_ranges": {
+        "current": {
+          "start": "2025-01-01",
+          "end": "2025-12-31"
+        },
+        "base": {
+          "start": "2024-01-01",
+          "end": "2024-12-31"
+        }
+      },
       "values": {
         "current": {
           "year": 2025,
@@ -526,6 +720,10 @@
           "response_sha256": "dc8e875ffbc7151445edaf1466d6ea42214849265ec99628aecf6cf5eddf092a",
           "column": "thstrm",
           "period": "2025-01-01~2025-12-31 (누적 12개월)",
+          "period_range": {
+            "start": "2025-01-01",
+            "end": "2025-12-31"
+          },
           "sj_div": "CIS",
           "account_id": "ifrs-full_ProfitLoss",
           "account_nm": "당기순이익(손실)",
@@ -542,6 +740,10 @@
           "response_sha256": "dc8e875ffbc7151445edaf1466d6ea42214849265ec99628aecf6cf5eddf092a",
           "column": "frmtrm",
           "period": "2024-01-01~2024-12-31 (누적 12개월)",
+          "period_range": {
+            "start": "2024-01-01",
+            "end": "2024-12-31"
+          },
           "sj_div": "CIS",
           "account_id": "ifrs-full_ProfitLoss",
           "account_nm": "당기순이익(손실)",
@@ -569,10 +771,23 @@
       "reason_keywords": [
         "누적 값만"
       ],
+      "forbidden_terms": [],
+      "expected_status": "비교 불가",
+      "decision": "refuse",
       "basis": "연결",
       "fs_div": "CFS",
       "current_period": "2025-07-01~2025-09-30 (3개월)",
       "base_period": "2024-07-01~2024-09-30 (3개월)",
+      "period_ranges": {
+        "current": {
+          "start": "2025-07-01",
+          "end": "2025-09-30"
+        },
+        "base": {
+          "start": "2024-07-01",
+          "end": "2024-09-30"
+        }
+      },
       "values": {}
     },
     {
@@ -590,10 +805,23 @@
       "reason_keywords": [
         "013"
       ],
+      "forbidden_terms": [],
+      "expected_status": "데이터 없음",
+      "decision": "refuse",
       "basis": "연결",
       "fs_div": "CFS",
       "current_period": "2014-01-01~2014-12-31 (누적 12개월)",
       "base_period": "2013-01-01~2013-12-31 (누적 12개월)",
+      "period_ranges": {
+        "current": {
+          "start": "2014-01-01",
+          "end": "2014-12-31"
+        },
+        "base": {
+          "start": "2013-01-01",
+          "end": "2013-12-31"
+        }
+      },
       "values": {
         "current": {
           "year": 2014,
@@ -614,6 +842,8 @@
       "action": "clarify",
       "company": "셀트리온",
       "corp_code": "00413046",
+      "expected_status": "되묻기",
+      "decision": "clarify",
       "ambiguity": "account",
       "options": [
         {
@@ -640,10 +870,23 @@
       "account": "operating_income",
       "account_label": "영업이익",
       "reason_keywords": [],
+      "forbidden_terms": [],
+      "expected_status": "비교 가능",
+      "decision": "answer",
       "basis": "별도",
       "fs_div": "OFS",
       "current_period": "2025-01-01~2025-06-30 (누적 6개월)",
       "base_period": "2024-01-01~2024-06-30 (누적 6개월)",
+      "period_ranges": {
+        "current": {
+          "start": "2025-01-01",
+          "end": "2025-06-30"
+        },
+        "base": {
+          "start": "2024-01-01",
+          "end": "2024-06-30"
+        }
+      },
       "values": {
         "current": {
           "year": 2025,
@@ -654,6 +897,10 @@
           "response_sha256": "0b70afa73bfd5d1b508224b12412c8866a0cd8c60368d15bb3cad825644c88b5",
           "column": "thstrm_add",
           "period": "2025-01-01~2025-06-30 (누적 6개월)",
+          "period_range": {
+            "start": "2025-01-01",
+            "end": "2025-06-30"
+          },
           "sj_div": "IS",
           "account_id": "dart_OperatingIncomeLoss",
           "account_nm": "영업이익",
@@ -670,6 +917,10 @@
           "response_sha256": "0b70afa73bfd5d1b508224b12412c8866a0cd8c60368d15bb3cad825644c88b5",
           "column": "frmtrm_add",
           "period": "2024-01-01~2024-06-30 (누적 6개월)",
+          "period_range": {
+            "start": "2024-01-01",
+            "end": "2024-06-30"
+          },
           "sj_div": "IS",
           "account_id": "dart_OperatingIncomeLoss",
           "account_nm": "영업이익",

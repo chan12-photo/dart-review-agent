@@ -85,15 +85,25 @@ def period_end(period: tuple[int, int, int]) -> date:
     return date(year, month, calendar.monthrange(year, month)[1])
 
 
-def period_label(period: tuple[int, int, int]) -> str:
+def period_start(period: tuple[int, int, int]) -> date | None:
     year, month, months = period
-    end = period_end(period)
     if months == 0:
-        return f"{end.isoformat()} 시점"
+        return None
     first = year * 12 + month - months
-    start = date(first // 12, first % 12 + 1, 1)
-    cumulative = "누적 " if start.month == 1 and months > 3 else ""
-    return f"{start.isoformat()}~{end.isoformat()} ({cumulative}{months}개월)"
+    return date(first // 12, first % 12 + 1, 1)
+
+
+def period_range(period: tuple[int, int, int]) -> dict[str, str | None]:
+    start = period_start(period)
+    return {"start": start.isoformat() if start else None, "end": period_end(period).isoformat()}
+
+
+def period_label(period: tuple[int, int, int]) -> str:
+    end, start = period_end(period), period_start(period)
+    if start is None:
+        return f"{end.isoformat()} 시점"
+    cumulative = "누적 " if start.month == 1 and period[2] > 3 else ""
+    return f"{start.isoformat()}~{end.isoformat()} ({cumulative}{period[2]}개월)"
 
 
 def read_cell(client: DartClient, corp_code: str, fs_div: str, cell: dict[str, Any]) -> dict[str, Any]:
@@ -119,7 +129,8 @@ def read_cell(client: DartClient, corp_code: str, fs_div: str, cell: dict[str, A
         raise GoldError(f"{corp_code} {fs_div} {cell}: amount {text!r} is not an integer")
     if not row.get("currency"):
         raise GoldError(f"{corp_code} {fs_div} {cell}: no currency")
-    found.update(column=cell["column"], period=period_label(cell_period(cell)), sj_div=row["sj_div"],
+    covered = cell_period(cell)
+    found.update(column=cell["column"], period=period_label(covered), period_range=period_range(covered), sj_div=row["sj_div"],
                  account_id=row["account_id"], account_nm=row["account_nm"], rcept_no=row["rcept_no"],
                  currency=row["currency"], amount=int(text))
     return found
@@ -174,15 +185,21 @@ def build_question(client: DartClient, question: dict[str, Any]) -> dict[str, An
     gold: dict[str, Any] = {"id": question_id, "question": question["question"], "case_types": question["case_types"],
                             "action": expected["action"], "company": DEV_COMPANIES[corp_code], "corp_code": corp_code}
     if expected["action"] == "clarify":
-        gold.update(ambiguity=expected["ambiguity"],
+        gold.update(expected_status="되묻기", decision="clarify", ambiguity=expected["ambiguity"],
                     options=[{"account": key, "label": ACCOUNTS[key].label} for key in expected["options"]])
         return gold
     gold.update(status=expected["status"], account=expected["account"], account_label=ACCOUNTS[expected["account"]].label,
-                reason_keywords=expected.get("reason_keywords", []))
+                reason_keywords=expected.get("reason_keywords", []), forbidden_terms=expected.get("forbidden_terms", []))
+    if expected["action"] == "side_by_side":
+        gold.update(expected_status="나란히 표시", decision="side_by_side")
+    else:
+        gold.update(expected_status=expected["status"],
+                    decision="answer" if expected["status"] in ("비교 가능", "확인 필요") else "refuse")
     evidence = expected.get("evidence", {})
     if expected["action"] == "side_by_side":
         period = spec_period(expected["period"])
         gold["period"] = period_label(period)
+        gold["period_range"] = period_range(period)
         for fs_div, cell in evidence.items():
             require_period(question_id, fs_div, cell, period)
         gold["values"] = {fs_div: read_cell(client, corp_code, fs_div, cell) for fs_div, cell in evidence.items()}
@@ -192,7 +209,8 @@ def build_question(client: DartClient, question: dict[str, Any]) -> dict[str, An
     fs_div = expected["fs_div"]
     periods = {role: spec_period(expected[role]) for role in ("current", "base")}
     gold.update(basis=FS_DIVS[fs_div], fs_div=fs_div, current_period=period_label(periods["current"]),
-                base_period=period_label(periods["base"]))
+                base_period=period_label(periods["base"]),
+                period_ranges={role: period_range(period) for role, period in periods.items()})
     values = {}
     for role in ("current", "base"):
         if role in evidence:

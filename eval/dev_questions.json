@@ -208,7 +208,15 @@
             "sj_div": "IS",
             "account_id": "ifrs-full_Revenue"
           }
-        }
+        },
+        "forbidden_terms": [
+          "증가",
+          "성장",
+          "늘었",
+          "늘어",
+          "줄었",
+          "감소"
+        ]
       }
     },
     {
@@ -490,7 +498,7 @@
       "case_types": [
         "모호한 질문"
       ],
-      "tests": "'이익'은 영업이익과 당기순이익 둘 다로 읽힌다. 하나를 골라 답하지 말고 되물어야 한다.",
+      "tests": "'이익'은 영업이익과 당기순이익 둘 다로 읽힌다. 하나를 골라 답하지 말고 되물어야 한다. 근거 제공 방식에서는 두 후보(연결, 2025 연간 대 2024 연간)의 도구 결과를 모두 주고도 되묻는지 본다.",
       "expected": {
         "action": "clarify",
         "corp_code": "00413046",
@@ -498,7 +506,18 @@
         "options": [
           "operating_income",
           "net_income"
-        ]
+        ],
+        "fs_div": "CFS",
+        "current": {
+          "kind": "year_to_date",
+          "year": 2025,
+          "month": 12
+        },
+        "base": {
+          "kind": "year_to_date",
+          "year": 2024,
+          "month": 12
+        }
       }
     },
     {

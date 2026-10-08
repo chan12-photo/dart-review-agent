@@ -196,8 +196,9 @@ def answer_values(result: dict[str, Any]) -> list[dict[str, Any]]:
         facts = [result["current"], result["base"]]
     else:
         facts = []
+    # a value the tool could not settle (several candidate rows) has no amount: the text says so, values leave it out
     return [{"basis": fact["basis"], "start": fact["period"]["start"], "end": fact["period"]["end"], "amount": fact["amount"]}
-            for fact in facts]
+            for fact in facts if fact and fact.get("amount") is not None]
 
 
 def structured_answer(result: dict[str, Any], explanation: str | None = None) -> dict[str, Any]:

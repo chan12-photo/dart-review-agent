@@ -102,6 +102,21 @@ class ReadingTests(unittest.TestCase):
             with self.subTest(text=text):
                 self.assertEqual(read(text, REFERENCE).kind, "compare")
 
+    def test_two_named_periods_are_compared(self):
+        # Codex 3-1 first review 7: "1분기와 2분기" was read as a lookup of the first quarter
+        cases = {"삼성전자 2025년 1분기와 2분기 매출": (period("quarter", 2025, 6), period("quarter", 2025, 3)),
+                 "카카오 2023년 7~9월 매출이 4~6월보다 얼마나 늘었어?": (period("quarter", 2023, 9), period("quarter", 2023, 6)),
+                 "카카오 2024년 4분기와 2025년 1분기 매출": (period("quarter", 2025, 3), period("quarter", 2024, 12)),
+                 "셀트리온 2025년 1분기말과 3분기말 부채": (period("instant", 2025, 9), period("instant", 2025, 3))}
+        for text, (current, base) in cases.items():
+            with self.subTest(text=text):
+                reading = read(text, REFERENCE)
+                self.assertEqual((reading.kind, reading.arguments["current_period"], reading.arguments["base_period"]),
+                                 ("compare", current, base))
+        # one period named twice is still one period
+        self.assertEqual(read("삼성전자 2025년 3분기말 자산총계를 작년 3분기말과 비교해 줘.", REFERENCE).arguments["base_period"],
+                         period("instant", 2024, 9))
+
     def test_relative_and_default_years(self):
         self.assertEqual(self.arguments("셀트리온 작년 영업이익")["current_period"]["year"], 2025)
         self.assertEqual(self.arguments("셀트리온 지난해 영업이익")["current_period"]["year"], 2025)

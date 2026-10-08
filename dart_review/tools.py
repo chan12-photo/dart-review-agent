@@ -219,7 +219,9 @@ def lookup_value(client: DartClient, company: Any, basis: Any, account: Any, per
         else:
             output["later"] = fact_dict(later)
             restated = find_restatements([fact, later])
-            if restated:
+            if later.currency != fact.currency:  # Codex 3-1 first review 6: never "일치" across currencies
+                reasons.append(f"{later_label}의 같은 기간 값과 통화가 달라({fact.currency}, {later.currency}) 비교하지 못했다")
+            elif restated:
                 reasons += [item.describe() for item in restated]
             else:
                 notes.append(f"{later_label}의 같은 기간 값과 일치한다")

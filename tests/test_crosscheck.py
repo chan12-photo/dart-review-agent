@@ -131,8 +131,9 @@ class CrosscheckRunTests(unittest.TestCase):
         self.assertTrue(all(case["readings"]["used"] == "both" for case in cases))
 
     def test_disagreement_asks_back_instead_of_answering(self):
-        # the rules read "7~9월 … 4~6월보다" as a year-over-year comparison; a correct model reads the previous quarter
-        record = self.case("dev06", ScriptedChat([reply(model_reading("dev06"))]), "카카오 2023년 7~9월 매출이 4~6월보다 얼마나 늘었어?")
+        # the rules do not know "바로 앞 분기" and read a year-over-year comparison; a correct model reads the previous
+        # quarter. (p06's "7~9월 … 4~6월보다" was this example until the rules learned two named periods.)
+        record = self.case("dev06", ScriptedChat([reply(model_reading("dev06"))]), "카카오의 2023년 3분기 매출은 바로 앞 분기보다 얼마나 늘었어?")
         self.assertFalse(record["readings"]["agree"])
         self.assertEqual(record["answer"]["status"], "되묻기")
         self.assertIn("전년 같은 기간과", record["answer"]["clarifying_question"])
@@ -145,7 +146,7 @@ class CrosscheckRunTests(unittest.TestCase):
         # policy 2026-10-08 (review B4): with p06's wording the rules alone gave a confident wrong comparison
         for content in ("not json", json.dumps(model_reading("dev01", account=[]))):
             with self.subTest(content=content):
-                record = self.case("dev06", ScriptedChat([Reply(content)]), "카카오 2023년 7~9월 매출이 4~6월보다 얼마나 늘었어?")
+                record = self.case("dev06", ScriptedChat([Reply(content)]), "카카오의 2023년 3분기 매출은 바로 앞 분기보다 얼마나 늘었어?")
                 self.assertEqual(record["readings"]["used"], "rule only (withheld)")
                 self.assertIsNone(record["answer"])
                 self.assertTrue(record["no_result"])
@@ -215,8 +216,10 @@ class CrosscheckRunTests(unittest.TestCase):
         self.assertIn("| 비교 기간 | 연결 | 2025년 연간(1~12월) | 333,605,938,000,000 |", report)
 
     def test_confident_wrong_answers_are_counted(self):
-        cases, summary = run_eval.run("baseline", None, self.client, question_set="paraphrase")
-        self.assertEqual(summary["confident_wrong"], ["p06"])
+        question = copy.deepcopy(SPEC["dev06"])
+        question["question"] = "카카오의 2023년 3분기 매출은 바로 앞 분기보다 얼마나 늘었어?"
+        case = run_eval.run_case("baseline", question, GOLD["dev06"], self.client)
+        self.assertEqual(run_eval.summarize([case])["confident_wrong"], ["dev06"])
 
 
 @unittest.skipUnless(run_eval.CACHE.exists(), "run scripts/fetch_dev_cache.py first")

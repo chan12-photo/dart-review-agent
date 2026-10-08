@@ -134,6 +134,30 @@ def default_year_note(question: str, reference_date: date) -> str | None:
     return f"연도를 말하지 않아 가장 최근 사업보고서 연도({latest_annual_year(reference_date)}년)로 봤습니다."
 
 
+_FLOW_NAMES = re.compile(r"(?:(\d{4})\s*년\s*)?(?:([1-4])\s*분기(?!\s*(?:말|누적|까지))|(\d{1,2})\s*[~∼-]\s*(\d{1,2})\s*월)")
+_POINT_NAMES = re.compile(r"(?:(\d{4})\s*년\s*)?(?:([1-4])\s*분기\s*말|(3|6|9|12)\s*월\s*말)")
+
+
+def _named_periods(text: str, balance_sheet: bool, first_year: int) -> list[dict[str, Any]]:
+    """Periods named one by one, in order ("2025년 1분기와 2분기", "7~9월 … 4~6월"); Codex 3-1 first review 7.
+
+    A period without its own four-digit year takes the year named before it, or ``first_year``.
+    """
+    periods, year = [], first_year
+    for match in (_POINT_NAMES if balance_sheet else _FLOW_NAMES).finditer(text):
+        year = int(match.group(1)) if match.group(1) else year
+        if balance_sheet:
+            period = {"kind": "instant", "year": year, "month": int(match.group(2)) * 3 if match.group(2) else int(match.group(3))}
+        elif match.group(2):
+            period = {"kind": "quarter", "year": year, "month": int(match.group(2)) * 3}
+        else:
+            first, last = int(match.group(3)), int(match.group(4))
+            period = {"kind": "year_to_date" if first == 1 else "quarter", "year": year, "month": last}
+        if period not in periods:
+            periods.append(period)
+    return periods
+
+
 _COMPARISON = re.compile(r"보다|대비|비교|전년|전기|직전|증감|증가|감소|늘었|늘어|늘린|줄었|줄어|변화|성장|차이")
 
 
@@ -171,7 +195,7 @@ def read(question: str, reference_date: date | None = None) -> Reading:
     reference_date = reference_date or date.today()
     text = question.replace(" ", " ")
     compact = text.replace(" ", "")
-    match = resolve_company(compact)
+    match = resolve_company(text)  # with its spaces: a name must stand as a word (company_names._bounded)
     if match.kind == "none":
         return Reading("unreadable", reason="회사 이름을 찾지 못함")
     if match.kind in ("unsupported", "sealed", "several"):
@@ -203,6 +227,12 @@ def read(question: str, reference_date: date | None = None) -> Reading:
     if "연결" in compact and "별도" in compact:
         return Reading("side_by_side", {"company": company, "account": account, "period": current}, company)
     basis = "별도" if "별도" in compact else "연결"
+    named = _named_periods(text, account in BALANCE_SHEET, years[0])
+    if len(named) == 2:  # two periods named one by one are compared, later against earlier
+        base, current = sorted(named, key=lambda period: (period["year"], period["month"]))
+        if base != current:
+            return Reading("compare", {"company": company, "basis": basis, "account": account,
+                                       "current_period": current, "base_period": base}, company)
     if not _COMPARISON.search(compact) and len(years) == 1:
         return Reading("lookup", {"company": company, "basis": basis, "account": account, "period": current}, company)
     if re.search(r"(직전|전)\s*분기", text) and kind == "quarter":

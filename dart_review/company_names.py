@@ -56,11 +56,37 @@ def terms(company_set: CompanySet | None = None) -> dict[str, tuple[str, str | N
     return _TERMS[company_set.name]
 
 
+# Particles that may follow a name directly ("삼전의", "엔솔은"). Codex 3-1 first review 8.
+_JOINERS = ("와", "과", "랑", "하고", "및")
+_PARTICLES = ("에서", "으로", "하고", "이랑", "의", "은", "는", "이", "가", "을", "를", "과", "와", "랑", "도", "에", "로", "만")
+
+
+def _prepared(text: str) -> tuple[str, str, list[int]]:
+    """(text as compared but with spaces kept, the same without spaces, where each kept letter came from)."""
+    spaced = (text or "").replace("(주)", "").replace("㈜", "").replace("주식회사", "").casefold()
+    where = [index for index, letter in enumerate(spaced) if not letter.isspace()]
+    return spaced, "".join(spaced[index] for index in where), where
+
+
+def _bounded(spaced: str, start: int, end: int) -> bool:
+    """A supported name, alias, or group stands as a word: not part of a longer name such as 삼전순약 or 엔솔바이오."""
+    before = spaced[start - 1] if start > 0 else " "
+    if before.isalpha() and not spaced[:start].endswith(_JOINERS):
+        return False  # a name may follow a joining particle: "카카오와셀트리온"
+    rest = spaced[end:]
+    if not rest or not rest[0].isalpha():
+        return True  # the end, a space, punctuation, or a digit ("삼성전자2025년")
+    return rest.startswith(_PARTICLES)
+
+
 def resolve_company(text: str) -> CompanyMatch:
+    """The company ``text`` names. Registered full names (the vocabulary) match anywhere and the longest wins;
+    a supported name, an alias, or a group name must also stand as a word (``_bounded``)."""
     company_set = active_set()
     known = terms(company_set)
-    compact = normalize_company(text)
-    spans = [(match.start(), match.end(), term) for term in known for match in re.finditer(re.escape(term), compact)]
+    spaced, compact, where = _prepared(text)
+    spans = [(match.start(), match.end(), term) for term in known for match in re.finditer(re.escape(term), compact)
+             if known[term][0] == "unsupported" or _bounded(spaced, where[match.start()], where[match.end() - 1] + 1)]
     outer = [span for span in spans
              if not any(other[0] <= span[0] and span[1] <= other[1] and other[1] - other[0] > span[1] - span[0]
                         for other in spans)]

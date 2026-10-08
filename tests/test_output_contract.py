@@ -138,3 +138,40 @@ class FinalBoundaryTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class StructuredAnswerContractTests(unittest.TestCase):
+    """Codex 3-1 first review 5: a value without an amount must not break the answer schema."""
+
+    def test_a_missing_amount_is_left_out_of_values_and_the_answer_parses(self):
+        from dart_review.answer import parse_answer
+        answer = structured_answer(comparison(fact(None), fact(100 * 10 ** 8, PRIOR)))
+        self.assertEqual([value["amount"] for value in answer["values"]], [100 * 10 ** 8])
+        parsed = parse_answer(answer)
+        self.assertEqual(parsed.status, "확인 필요")
+        self.assertIn("값은 확정하지 못했습니다", parsed.answer)
+
+
+class LaterReportCurrencyTests(unittest.TestCase):
+    """Codex 3-1 first review 6: a later figure in another currency is never called "일치"."""
+
+    def test_a_later_value_in_another_currency_needs_review(self):
+        from dart_review import tools
+        from dart_review.facts import Fact
+        from dart_review.periods import Source, year_to_date
+
+        def fake(response, account_key, column):
+            later = column != "thstrm"
+            return Fact("00126380", "CFS", account_key, Source(2025 if later else 2024, "11011", column),
+                        year_to_date(2024, 12), 100, "USD" if later else "KRW", "2" if later else "1",
+                        "IS", "ifrs-full_Revenue", "매출액", "account_id")
+
+        class Client:
+            def financial_statements(self, *args):
+                return None
+
+        with mock.patch.object(tools, "fact_from_response", fake):
+            result = tools.lookup_value(Client(), "삼성전자", "연결", "revenue", {"kind": "year_to_date", "year": 2024, "month": 12})
+        self.assertEqual(result["status"], "확인 필요")
+        self.assertFalse(any("일치" in note for note in result["notes"]))
+        self.assertTrue(any("통화" in reason for reason in result["reasons"]))

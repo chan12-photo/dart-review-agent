@@ -92,7 +92,8 @@ def build_lookup(client: DartClient, question: dict[str, Any]) -> dict[str, Any]
             raise GoldError(f"{question_id}: the later report is the same kind of report a year later")
         later = read_cell(client, corp_code, fs_div, later_spec)
         current = gold["values"]["current"]
-        restated = later["amount"] != current["amount"]
+        # needs review when the later report differs in amount or in currency (checked here, apart from the product)
+        restated = later["amount"] != current["amount"] or later["currency"] != current["currency"]
         if restated != (status == "확인 필요"):
             raise GoldError(f"{question_id}: the later figure {'differs' if restated else 'agrees'}, status {status}")
         gold["later"] = later

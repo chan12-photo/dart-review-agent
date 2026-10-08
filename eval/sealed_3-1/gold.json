@@ -1,0 +1,1838 @@
+{
+  "version": 1,
+  "source": "eval/sealed_3-1/questions.json",
+  "reference_date": "2026-10-08",
+  "answers": [
+    {
+      "id": "C01",
+      "question": "NAVER 2025년 매출액이 전년보다 얼마나 늘었어?",
+      "case_types": [
+        "정상 비교"
+      ],
+      "action": "compare",
+      "company": "NAVER",
+      "corp_code": "00266961",
+      "status": "비교 가능",
+      "account": "revenue",
+      "account_label": "매출액",
+      "reason_keywords": [],
+      "forbidden_terms": [],
+      "expected_status": "비교 가능",
+      "decision": "answer",
+      "basis": "연결",
+      "fs_div": "CFS",
+      "current_period": "2025-01-01~2025-12-31 (누적 12개월)",
+      "base_period": "2024-01-01~2024-12-31 (누적 12개월)",
+      "period_ranges": {
+        "current": {
+          "start": "2025-01-01",
+          "end": "2025-12-31"
+        },
+        "base": {
+          "start": "2024-01-01",
+          "end": "2024-12-31"
+        }
+      },
+      "values": {
+        "current": {
+          "year": 2025,
+          "report": "사업보고서",
+          "report_code": "11011",
+          "fs_div": "CFS",
+          "status": "000",
+          "response_sha256": "ae20afd65172b966cdc1f69ebddc0ab6ca0a9d9224cd55f69f15ca1f3458df8c",
+          "column": "thstrm",
+          "period": "2025-01-01~2025-12-31 (누적 12개월)",
+          "period_range": {
+            "start": "2025-01-01",
+            "end": "2025-12-31"
+          },
+          "sj_div": "CIS",
+          "account_id": "ifrs-full_Revenue",
+          "account_nm": "영업수익",
+          "rcept_no": "20260313001021",
+          "currency": "KRW",
+          "amount": 12035007218975
+        },
+        "base": {
+          "year": 2025,
+          "report": "사업보고서",
+          "report_code": "11011",
+          "fs_div": "CFS",
+          "status": "000",
+          "response_sha256": "ae20afd65172b966cdc1f69ebddc0ab6ca0a9d9224cd55f69f15ca1f3458df8c",
+          "column": "frmtrm",
+          "period": "2024-01-01~2024-12-31 (누적 12개월)",
+          "period_range": {
+            "start": "2024-01-01",
+            "end": "2024-12-31"
+          },
+          "sj_div": "CIS",
+          "account_id": "ifrs-full_Revenue",
+          "account_nm": "영업수익",
+          "rcept_no": "20260313001021",
+          "currency": "KRW",
+          "amount": 10737719264647
+        }
+      },
+      "change": 1297287954328,
+      "change_pct": "12.08",
+      "direction": "증가",
+      "bundle": "A",
+      "author": "claude"
+    },
+    {
+      "id": "C02",
+      "question": "NAVER 2025년 3분기 영업이익을 전년 같은 분기와 비교해 줘.",
+      "case_types": [
+        "3개월"
+      ],
+      "action": "compare",
+      "company": "NAVER",
+      "corp_code": "00266961",
+      "status": "비교 가능",
+      "account": "operating_income",
+      "account_label": "영업이익",
+      "reason_keywords": [],
+      "forbidden_terms": [],
+      "expected_status": "비교 가능",
+      "decision": "answer",
+      "basis": "연결",
+      "fs_div": "CFS",
+      "current_period": "2025-07-01~2025-09-30 (3개월)",
+      "base_period": "2024-07-01~2024-09-30 (3개월)",
+      "period_ranges": {
+        "current": {
+          "start": "2025-07-01",
+          "end": "2025-09-30"
+        },
+        "base": {
+          "start": "2024-07-01",
+          "end": "2024-09-30"
+        }
+      },
+      "values": {
+        "current": {
+          "year": 2025,
+          "report": "3분기보고서",
+          "report_code": "11014",
+          "fs_div": "CFS",
+          "status": "000",
+          "response_sha256": "7091702e6812fe86c571d799b9bea206ed07f8fc992c6be830034226ed278198",
+          "column": "thstrm",
+          "period": "2025-07-01~2025-09-30 (3개월)",
+          "period_range": {
+            "start": "2025-07-01",
+            "end": "2025-09-30"
+          },
+          "sj_div": "CIS",
+          "account_id": "dart_OperatingIncomeLoss",
+          "account_nm": "영업이익",
+          "rcept_no": "20251114001436",
+          "currency": "KRW",
+          "amount": 570646831171
+        },
+        "base": {
+          "year": 2025,
+          "report": "3분기보고서",
+          "report_code": "11014",
+          "fs_div": "CFS",
+          "status": "000",
+          "response_sha256": "7091702e6812fe86c571d799b9bea206ed07f8fc992c6be830034226ed278198",
+          "column": "frmtrm_q",
+          "period": "2024-07-01~2024-09-30 (3개월)",
+          "period_range": {
+            "start": "2024-07-01",
+            "end": "2024-09-30"
+          },
+          "sj_div": "CIS",
+          "account_id": "dart_OperatingIncomeLoss",
+          "account_nm": "영업이익",
+          "rcept_no": "20251114001436",
+          "currency": "KRW",
+          "amount": 525269664443
+        }
+      },
+      "change": 45377166728,
+      "change_pct": "8.64",
+      "direction": "증가",
+      "bundle": "A",
+      "author": "claude"
+    },
+    {
+      "id": "C03",
+      "question": "NAVER 2025년 연결 매출이랑 별도 매출 나란히 보여줘.",
+      "case_types": [
+        "연결·별도 나란히"
+      ],
+      "action": "side_by_side",
+      "company": "NAVER",
+      "corp_code": "00266961",
+      "status": "비교 불가",
+      "account": "revenue",
+      "account_label": "매출액",
+      "reason_keywords": [
+        "연결과 별도"
+      ],
+      "forbidden_terms": [],
+      "expected_status": "나란히 표시",
+      "decision": "side_by_side",
+      "period": "2025-01-01~2025-12-31 (누적 12개월)",
+      "period_range": {
+        "start": "2025-01-01",
+        "end": "2025-12-31"
+      },
+      "values": {
+        "CFS": {
+          "year": 2025,
+          "report": "사업보고서",
+          "report_code": "11011",
+          "fs_div": "CFS",
+          "status": "000",
+          "response_sha256": "ae20afd65172b966cdc1f69ebddc0ab6ca0a9d9224cd55f69f15ca1f3458df8c",
+          "column": "thstrm",
+          "period": "2025-01-01~2025-12-31 (누적 12개월)",
+          "period_range": {
+            "start": "2025-01-01",
+            "end": "2025-12-31"
+          },
+          "sj_div": "CIS",
+          "account_id": "ifrs-full_Revenue",
+          "account_nm": "영업수익",
+          "rcept_no": "20260313001021",
+          "currency": "KRW",
+          "amount": 12035007218975
+        },
+        "OFS": {
+          "year": 2025,
+          "report": "사업보고서",
+          "report_code": "11011",
+          "fs_div": "OFS",
+          "status": "000",
+          "response_sha256": "e568a51efa4cafb3b0546b0977df3626f1688326e199131dd5058e24c3242f6d",
+          "column": "thstrm",
+          "period": "2025-01-01~2025-12-31 (누적 12개월)",
+          "period_range": {
+            "start": "2025-01-01",
+            "end": "2025-12-31"
+          },
+          "sj_div": "CIS",
+          "account_id": "ifrs-full_Revenue",
+          "account_nm": "영업수익",
+          "rcept_no": "20260313001021",
+          "currency": "KRW",
+          "amount": 7019329989860
+        }
+      },
+      "allowed_difference": 5015677229115,
+      "bundle": "A",
+      "author": "claude"
+    },
+    {
+      "id": "C04",
+      "question": "NAVER 2014년 당기순이익을 2013년과 비교해 줘.",
+      "case_types": [
+        "데이터 없음"
+      ],
+      "action": "compare",
+      "company": "NAVER",
+      "corp_code": "00266961",
+      "status": "데이터 없음",
+      "account": "net_income",
+      "account_label": "당기순이익",
+      "reason_keywords": [
+        "013"
+      ],
+      "forbidden_terms": [],
+      "expected_status": "데이터 없음",
+      "decision": "refuse",
+      "basis": "연결",
+      "fs_div": "CFS",
+      "current_period": "2014-01-01~2014-12-31 (누적 12개월)",
+      "base_period": "2013-01-01~2013-12-31 (누적 12개월)",
+      "period_ranges": {
+        "current": {
+          "start": "2014-01-01",
+          "end": "2014-12-31"
+        },
+        "base": {
+          "start": "2013-01-01",
+          "end": "2013-12-31"
+        }
+      },
+      "values": {
+        "current": {
+          "year": 2014,
+          "report": "사업보고서",
+          "report_code": "11011",
+          "fs_div": "CFS",
+          "status": "013",
+          "response_sha256": "5b9f448765008cd323ab5b94081c873aa00d39974e7ed5aa1964b00a19e8242b"
+        }
+      },
+      "bundle": "A",
+      "author": "claude"
+    },
+    {
+      "id": "C05",
+      "question": "CJ제일제당 2025년 3분기까지 누적 영업활동현금흐름을 작년 같은 기간과 비교해 줘.",
+      "case_types": [
+        "누적 현금흐름"
+      ],
+      "action": "compare",
+      "company": "CJ제일제당",
+      "corp_code": "00635134",
+      "status": "비교 가능",
+      "account": "operating_cash_flow",
+      "account_label": "영업활동현금흐름",
+      "reason_keywords": [],
+      "forbidden_terms": [],
+      "expected_status": "비교 가능",
+      "decision": "answer",
+      "basis": "연결",
+      "fs_div": "CFS",
+      "current_period": "2025-01-01~2025-09-30 (누적 9개월)",
+      "base_period": "2024-01-01~2024-09-30 (누적 9개월)",
+      "period_ranges": {
+        "current": {
+          "start": "2025-01-01",
+          "end": "2025-09-30"
+        },
+        "base": {
+          "start": "2024-01-01",
+          "end": "2024-09-30"
+        }
+      },
+      "values": {
+        "current": {
+          "year": 2025,
+          "report": "3분기보고서",
+          "report_code": "11014",
+          "fs_div": "CFS",
+          "status": "000",
+          "response_sha256": "bdcf98f42a510eeeb0177f2641c1eb9bf79caa6d9ec466c101c21f57a26ed406",
+          "column": "thstrm",
+          "period": "2025-01-01~2025-09-30 (누적 9개월)",
+          "period_range": {
+            "start": "2025-01-01",
+            "end": "2025-09-30"
+          },
+          "sj_div": "CF",
+          "account_id": "ifrs-full_CashFlowsFromUsedInOperatingActivities",
+          "account_nm": "영업활동현금흐름",
+          "rcept_no": "20251114001338",
+          "currency": "KRW",
+          "amount": 1445217904000
+        },
+        "base": {
+          "year": 2025,
+          "report": "3분기보고서",
+          "report_code": "11014",
+          "fs_div": "CFS",
+          "status": "000",
+          "response_sha256": "bdcf98f42a510eeeb0177f2641c1eb9bf79caa6d9ec466c101c21f57a26ed406",
+          "column": "frmtrm_q",
+          "period": "2024-01-01~2024-09-30 (누적 9개월)",
+          "period_range": {
+            "start": "2024-01-01",
+            "end": "2024-09-30"
+          },
+          "sj_div": "CF",
+          "account_id": "ifrs-full_CashFlowsFromUsedInOperatingActivities",
+          "account_nm": "영업활동현금흐름",
+          "rcept_no": "20251114001338",
+          "currency": "KRW",
+          "amount": 1465524403000
+        }
+      },
+      "change": -20306499000,
+      "change_pct": "-1.39",
+      "direction": "감소",
+      "bundle": "A",
+      "author": "claude"
+    },
+    {
+      "id": "C06",
+      "question": "CJ제일제당 2025년 3분기말 부채총계를 작년 3분기말과 비교해 줘.",
+      "case_types": [
+        "전년 분기말 추가 조회"
+      ],
+      "action": "compare",
+      "company": "CJ제일제당",
+      "corp_code": "00635134",
+      "status": "확인 필요",
+      "account": "total_liabilities",
+      "account_label": "부채총계",
+      "reason_keywords": [
+        "재작성"
+      ],
+      "forbidden_terms": [],
+      "expected_status": "확인 필요",
+      "decision": "answer",
+      "basis": "연결",
+      "fs_div": "CFS",
+      "current_period": "2025-09-30 시점",
+      "base_period": "2024-09-30 시점",
+      "period_ranges": {
+        "current": {
+          "start": null,
+          "end": "2025-09-30"
+        },
+        "base": {
+          "start": null,
+          "end": "2024-09-30"
+        }
+      },
+      "values": {
+        "current": {
+          "year": 2025,
+          "report": "3분기보고서",
+          "report_code": "11014",
+          "fs_div": "CFS",
+          "status": "000",
+          "response_sha256": "bdcf98f42a510eeeb0177f2641c1eb9bf79caa6d9ec466c101c21f57a26ed406",
+          "column": "thstrm",
+          "period": "2025-09-30 시점",
+          "period_range": {
+            "start": null,
+            "end": "2025-09-30"
+          },
+          "sj_div": "BS",
+          "account_id": "ifrs-full_Liabilities",
+          "account_nm": "부채총계",
+          "rcept_no": "20251114001338",
+          "currency": "KRW",
+          "amount": 18424319801000
+        },
+        "base": {
+          "year": 2024,
+          "report": "3분기보고서",
+          "report_code": "11014",
+          "fs_div": "CFS",
+          "status": "000",
+          "response_sha256": "9ac69a3c0065473e94b611448ed57d28e94df19b4e0eea4e064526e28a806cfb",
+          "column": "thstrm",
+          "period": "2024-09-30 시점",
+          "period_range": {
+            "start": null,
+            "end": "2024-09-30"
+          },
+          "sj_div": "BS",
+          "account_id": "ifrs-full_Liabilities",
+          "account_nm": "부채총계",
+          "rcept_no": "20241114001160",
+          "currency": "KRW",
+          "amount": 16952500240000
+        }
+      },
+      "change": 1471819561000,
+      "change_pct": "8.68",
+      "direction": "증가",
+      "restated_pair": {
+        "period": "2024-12-31 시점",
+        "cells": [
+          {
+            "year": 2024,
+            "report": "사업보고서",
+            "report_code": "11011",
+            "fs_div": "CFS",
+            "status": "000",
+            "response_sha256": "202aa9e9aed98be067cc7cd6425772ae028081e4bba8a498731d56dcce2bab2e",
+            "column": "thstrm",
+            "period": "2024-12-31 시점",
+            "period_range": {
+              "start": null,
+              "end": "2024-12-31"
+            },
+            "sj_div": "BS",
+            "account_id": "ifrs-full_Liabilities",
+            "account_nm": "부채총계",
+            "rcept_no": "20250321001604",
+            "currency": "KRW",
+            "amount": 17907211781000
+          },
+          {
+            "year": 2025,
+            "report": "3분기보고서",
+            "report_code": "11014",
+            "fs_div": "CFS",
+            "status": "000",
+            "response_sha256": "bdcf98f42a510eeeb0177f2641c1eb9bf79caa6d9ec466c101c21f57a26ed406",
+            "column": "frmtrm",
+            "period": "2024-12-31 시점",
+            "period_range": {
+              "start": null,
+              "end": "2024-12-31"
+            },
+            "sj_div": "BS",
+            "account_id": "ifrs-full_Liabilities",
+            "account_nm": "부채총계",
+            "rcept_no": "20251114001338",
+            "currency": "KRW",
+            "amount": 17906800341000
+          }
+        ]
+      },
+      "bundle": "A",
+      "author": "claude"
+    },
+    {
+      "id": "C07",
+      "question": "CJ제일제당 2025년 3분기(7~9월) 영업활동현금흐름을 작년 3분기와 비교해 줘.",
+      "case_types": [
+        "비교 불가"
+      ],
+      "action": "compare",
+      "company": "CJ제일제당",
+      "corp_code": "00635134",
+      "status": "비교 불가",
+      "account": "operating_cash_flow",
+      "account_label": "영업활동현금흐름",
+      "reason_keywords": [
+        "누적 값만"
+      ],
+      "forbidden_terms": [],
+      "expected_status": "비교 불가",
+      "decision": "refuse",
+      "basis": "연결",
+      "fs_div": "CFS",
+      "current_period": "2025-07-01~2025-09-30 (3개월)",
+      "base_period": "2024-07-01~2024-09-30 (3개월)",
+      "period_ranges": {
+        "current": {
+          "start": "2025-07-01",
+          "end": "2025-09-30"
+        },
+        "base": {
+          "start": "2024-07-01",
+          "end": "2024-09-30"
+        }
+      },
+      "values": {},
+      "bundle": "A",
+      "author": "claude"
+    },
+    {
+      "id": "C08",
+      "question": "CJ제일제당 2024년 별도 기준 당기순이익 알려줘.",
+      "case_types": [
+        "값 조회, 별도"
+      ],
+      "action": "lookup",
+      "company": "CJ제일제당",
+      "corp_code": "00635134",
+      "status": "값 확인",
+      "expected_status": "값 확인",
+      "decision": "answer",
+      "account": "net_income",
+      "account_label": "당기순이익",
+      "basis": "별도",
+      "fs_div": "OFS",
+      "period": "2024-01-01~2024-12-31 (누적 12개월)",
+      "period_range": {
+        "start": "2024-01-01",
+        "end": "2024-12-31"
+      },
+      "reason_keywords": [],
+      "forbidden_terms": [],
+      "values": {
+        "current": {
+          "year": 2024,
+          "report": "사업보고서",
+          "report_code": "11011",
+          "fs_div": "OFS",
+          "status": "000",
+          "response_sha256": "ba902085c66f8b566c22ce41903e63fd83aa8f7086f6717f27e94d76f886b6fb",
+          "column": "thstrm",
+          "period": "2024-01-01~2024-12-31 (누적 12개월)",
+          "period_range": {
+            "start": "2024-01-01",
+            "end": "2024-12-31"
+          },
+          "sj_div": "CIS",
+          "account_id": "ifrs-full_ProfitLoss",
+          "account_nm": "당기순이익",
+          "rcept_no": "20250321001604",
+          "currency": "KRW",
+          "amount": -137812105000
+        }
+      },
+      "later": {
+        "year": 2025,
+        "report": "사업보고서",
+        "report_code": "11011",
+        "fs_div": "OFS",
+        "status": "000",
+        "response_sha256": "c56ec9b05ca01499e008d7553a45c46974f5b38e91ba13684a0c24cf5ebb6096",
+        "column": "frmtrm",
+        "period": "2024-01-01~2024-12-31 (누적 12개월)",
+        "period_range": {
+          "start": "2024-01-01",
+          "end": "2024-12-31"
+        },
+        "sj_div": "CIS",
+        "account_id": "ifrs-full_ProfitLoss",
+        "account_nm": "당기순이익(손실)",
+        "rcept_no": "20260316001116",
+        "currency": "KRW",
+        "amount": -137812105000
+      },
+      "bundle": "A",
+      "author": "claude"
+    },
+    {
+      "id": "C09",
+      "question": "이마트 2025년 상반기 매출을 작년 상반기와 비교해 줘.",
+      "case_types": [
+        "누적 6개월"
+      ],
+      "action": "compare",
+      "company": "이마트",
+      "corp_code": "00872984",
+      "status": "비교 가능",
+      "account": "revenue",
+      "account_label": "매출액",
+      "reason_keywords": [],
+      "forbidden_terms": [],
+      "expected_status": "비교 가능",
+      "decision": "answer",
+      "basis": "연결",
+      "fs_div": "CFS",
+      "current_period": "2025-01-01~2025-06-30 (누적 6개월)",
+      "base_period": "2024-01-01~2024-06-30 (누적 6개월)",
+      "period_ranges": {
+        "current": {
+          "start": "2025-01-01",
+          "end": "2025-06-30"
+        },
+        "base": {
+          "start": "2024-01-01",
+          "end": "2024-06-30"
+        }
+      },
+      "values": {
+        "current": {
+          "year": 2025,
+          "report": "반기보고서",
+          "report_code": "11012",
+          "fs_div": "CFS",
+          "status": "000",
+          "response_sha256": "08bbc6eb7ccea199e5687388e4ab9c0330993a7691b9b6769f37109b261a912b",
+          "column": "thstrm_add",
+          "period": "2025-01-01~2025-06-30 (누적 6개월)",
+          "period_range": {
+            "start": "2025-01-01",
+            "end": "2025-06-30"
+          },
+          "sj_div": "IS",
+          "account_id": "ifrs-full_Revenue",
+          "account_nm": "매출액",
+          "rcept_no": "20250814001869",
+          "currency": "KRW",
+          "amount": 14257898057440
+        },
+        "base": {
+          "year": 2025,
+          "report": "반기보고서",
+          "report_code": "11012",
+          "fs_div": "CFS",
+          "status": "000",
+          "response_sha256": "08bbc6eb7ccea199e5687388e4ab9c0330993a7691b9b6769f37109b261a912b",
+          "column": "frmtrm_add",
+          "period": "2024-01-01~2024-06-30 (누적 6개월)",
+          "period_range": {
+            "start": "2024-01-01",
+            "end": "2024-06-30"
+          },
+          "sj_div": "IS",
+          "account_id": "ifrs-full_Revenue",
+          "account_nm": "매출액",
+          "rcept_no": "20250814001869",
+          "currency": "KRW",
+          "amount": 14262699165737
+        }
+      },
+      "change": -4801108297,
+      "change_pct": "-0.03",
+      "direction": "감소",
+      "bundle": "A",
+      "author": "claude"
+    },
+    {
+      "id": "C10",
+      "question": "이마트 2025년 영업이익은 전년 대비 어떻게 변했어?",
+      "case_types": [
+        "정상 비교"
+      ],
+      "action": "compare",
+      "company": "이마트",
+      "corp_code": "00872984",
+      "status": "비교 가능",
+      "account": "operating_income",
+      "account_label": "영업이익",
+      "reason_keywords": [],
+      "forbidden_terms": [],
+      "expected_status": "비교 가능",
+      "decision": "answer",
+      "basis": "연결",
+      "fs_div": "CFS",
+      "current_period": "2025-01-01~2025-12-31 (누적 12개월)",
+      "base_period": "2024-01-01~2024-12-31 (누적 12개월)",
+      "period_ranges": {
+        "current": {
+          "start": "2025-01-01",
+          "end": "2025-12-31"
+        },
+        "base": {
+          "start": "2024-01-01",
+          "end": "2024-12-31"
+        }
+      },
+      "values": {
+        "current": {
+          "year": 2025,
+          "report": "사업보고서",
+          "report_code": "11011",
+          "fs_div": "CFS",
+          "status": "000",
+          "response_sha256": "1f35bd1104407ae9cbdc911f24293cdac661549a9b29959e94c78eff140b0ac7",
+          "column": "thstrm",
+          "period": "2025-01-01~2025-12-31 (누적 12개월)",
+          "period_range": {
+            "start": "2025-01-01",
+            "end": "2025-12-31"
+          },
+          "sj_div": "IS",
+          "account_id": "dart_OperatingIncomeLoss",
+          "account_nm": "영업이익(손실)",
+          "rcept_no": "20260318001024",
+          "currency": "KRW",
+          "amount": 322541170250
+        },
+        "base": {
+          "year": 2025,
+          "report": "사업보고서",
+          "report_code": "11011",
+          "fs_div": "CFS",
+          "status": "000",
+          "response_sha256": "1f35bd1104407ae9cbdc911f24293cdac661549a9b29959e94c78eff140b0ac7",
+          "column": "frmtrm",
+          "period": "2024-01-01~2024-12-31 (누적 12개월)",
+          "period_range": {
+            "start": "2024-01-01",
+            "end": "2024-12-31"
+          },
+          "sj_div": "IS",
+          "account_id": "dart_OperatingIncomeLoss",
+          "account_nm": "영업이익(손실)",
+          "rcept_no": "20260318001024",
+          "currency": "KRW",
+          "amount": 47098144142
+        }
+      },
+      "change": 275443026108,
+      "change_pct": "584.83",
+      "direction": "증가",
+      "bundle": "A",
+      "author": "claude"
+    },
+    {
+      "id": "C11",
+      "question": "이마트 2025년 말 자산총계 알려줘.",
+      "case_types": [
+        "값 조회, 재무상태표"
+      ],
+      "action": "lookup",
+      "company": "이마트",
+      "corp_code": "00872984",
+      "status": "값 확인",
+      "expected_status": "값 확인",
+      "decision": "answer",
+      "account": "total_assets",
+      "account_label": "자산총계",
+      "basis": "연결",
+      "fs_div": "CFS",
+      "period": "2025-12-31 시점",
+      "period_range": {
+        "start": null,
+        "end": "2025-12-31"
+      },
+      "reason_keywords": [],
+      "forbidden_terms": [],
+      "values": {
+        "current": {
+          "year": 2025,
+          "report": "사업보고서",
+          "report_code": "11011",
+          "fs_div": "CFS",
+          "status": "000",
+          "response_sha256": "1f35bd1104407ae9cbdc911f24293cdac661549a9b29959e94c78eff140b0ac7",
+          "column": "thstrm",
+          "period": "2025-12-31 시점",
+          "period_range": {
+            "start": null,
+            "end": "2025-12-31"
+          },
+          "sj_div": "BS",
+          "account_id": "ifrs-full_Assets",
+          "account_nm": "자산총계",
+          "rcept_no": "20260318001024",
+          "currency": "KRW",
+          "amount": 33503615741472
+        }
+      },
+      "later_missing": "not_cached",
+      "bundle": "A",
+      "author": "claude"
+    },
+    {
+      "id": "C12",
+      "question": "이마트 2025년 4분기 매출 알려줘.",
+      "case_types": [
+        "조회 불가"
+      ],
+      "action": "lookup",
+      "company": "이마트",
+      "corp_code": "00872984",
+      "status": "조회 불가",
+      "expected_status": "조회 불가",
+      "decision": "refuse",
+      "account": "revenue",
+      "account_label": "매출액",
+      "basis": "연결",
+      "fs_div": "CFS",
+      "period": "2025-10-01~2025-12-31 (3개월)",
+      "period_range": {
+        "start": "2025-10-01",
+        "end": "2025-12-31"
+      },
+      "reason_keywords": [
+        "4분기"
+      ],
+      "forbidden_terms": [],
+      "values": {},
+      "bundle": "A",
+      "author": "claude"
+    },
+    {
+      "id": "C13",
+      "question": "LG에너지솔루션 2025년 2분기 매출을 직전 분기와 비교해 줘.",
+      "case_types": [
+        "직전 분기"
+      ],
+      "action": "compare",
+      "company": "LG에너지솔루션",
+      "corp_code": "01515323",
+      "status": "비교 가능",
+      "account": "revenue",
+      "account_label": "매출액",
+      "reason_keywords": [],
+      "forbidden_terms": [],
+      "expected_status": "비교 가능",
+      "decision": "answer",
+      "basis": "연결",
+      "fs_div": "CFS",
+      "current_period": "2025-04-01~2025-06-30 (3개월)",
+      "base_period": "2025-01-01~2025-03-31 (3개월)",
+      "period_ranges": {
+        "current": {
+          "start": "2025-04-01",
+          "end": "2025-06-30"
+        },
+        "base": {
+          "start": "2025-01-01",
+          "end": "2025-03-31"
+        }
+      },
+      "values": {
+        "current": {
+          "year": 2025,
+          "report": "반기보고서",
+          "report_code": "11012",
+          "fs_div": "CFS",
+          "status": "000",
+          "response_sha256": "d08ef61319987ced478badf23e8a8d0f0d2ddfb8d36b54bf7ac6989f143a3b37",
+          "column": "thstrm",
+          "period": "2025-04-01~2025-06-30 (3개월)",
+          "period_range": {
+            "start": "2025-04-01",
+            "end": "2025-06-30"
+          },
+          "sj_div": "IS",
+          "account_id": "ifrs-full_Revenue",
+          "account_nm": "매출액",
+          "rcept_no": "20250814001590",
+          "currency": "KRW",
+          "amount": 5565408000000
+        },
+        "base": {
+          "year": 2025,
+          "report": "1분기보고서",
+          "report_code": "11013",
+          "fs_div": "CFS",
+          "status": "000",
+          "response_sha256": "d1519b6df52af9a63df4cbd174549c1b564766e50e9d95e22b3d0fc09914855d",
+          "column": "thstrm",
+          "period": "2025-01-01~2025-03-31 (3개월)",
+          "period_range": {
+            "start": "2025-01-01",
+            "end": "2025-03-31"
+          },
+          "sj_div": "IS",
+          "account_id": "ifrs-full_Revenue",
+          "account_nm": "매출액",
+          "rcept_no": "20250515000407",
+          "currency": "KRW",
+          "amount": 6264995000000
+        }
+      },
+      "change": -699587000000,
+      "change_pct": "-11.17",
+      "direction": "감소",
+      "bundle": "A",
+      "author": "claude"
+    },
+    {
+      "id": "C14",
+      "question": "LG에너지솔루션 2025년 당기순이익을 2024년과 비교해 줘.",
+      "case_types": [
+        "정상 비교"
+      ],
+      "action": "compare",
+      "company": "LG에너지솔루션",
+      "corp_code": "01515323",
+      "status": "비교 가능",
+      "account": "net_income",
+      "account_label": "당기순이익",
+      "reason_keywords": [],
+      "forbidden_terms": [],
+      "expected_status": "비교 가능",
+      "decision": "answer",
+      "basis": "연결",
+      "fs_div": "CFS",
+      "current_period": "2025-01-01~2025-12-31 (누적 12개월)",
+      "base_period": "2024-01-01~2024-12-31 (누적 12개월)",
+      "period_ranges": {
+        "current": {
+          "start": "2025-01-01",
+          "end": "2025-12-31"
+        },
+        "base": {
+          "start": "2024-01-01",
+          "end": "2024-12-31"
+        }
+      },
+      "values": {
+        "current": {
+          "year": 2025,
+          "report": "사업보고서",
+          "report_code": "11011",
+          "fs_div": "CFS",
+          "status": "000",
+          "response_sha256": "c705fb31e291bee0c93d9af6d6018cae2d2def09d12fa88a31082abbb4be2457",
+          "column": "thstrm",
+          "period": "2025-01-01~2025-12-31 (누적 12개월)",
+          "period_range": {
+            "start": "2025-01-01",
+            "end": "2025-12-31"
+          },
+          "sj_div": "IS",
+          "account_id": "ifrs-full_ProfitLoss",
+          "account_nm": "당기순이익(손실)",
+          "rcept_no": "20260312000217",
+          "currency": "KRW",
+          "amount": 80803000000
+        },
+        "base": {
+          "year": 2025,
+          "report": "사업보고서",
+          "report_code": "11011",
+          "fs_div": "CFS",
+          "status": "000",
+          "response_sha256": "c705fb31e291bee0c93d9af6d6018cae2d2def09d12fa88a31082abbb4be2457",
+          "column": "frmtrm",
+          "period": "2024-01-01~2024-12-31 (누적 12개월)",
+          "period_range": {
+            "start": "2024-01-01",
+            "end": "2024-12-31"
+          },
+          "sj_div": "IS",
+          "account_id": "ifrs-full_ProfitLoss",
+          "account_nm": "당기순이익(손실)",
+          "rcept_no": "20260312000217",
+          "currency": "KRW",
+          "amount": 338602000000
+        }
+      },
+      "change": -257799000000,
+      "change_pct": "-76.14",
+      "direction": "감소",
+      "bundle": "A",
+      "author": "claude"
+    },
+    {
+      "id": "C15",
+      "question": "LG에너지솔루션 2025년 상반기 연결 영업이익과 별도 영업이익을 나란히 보여줘.",
+      "case_types": [
+        "연결·별도 나란히"
+      ],
+      "action": "side_by_side",
+      "company": "LG에너지솔루션",
+      "corp_code": "01515323",
+      "status": "비교 불가",
+      "account": "operating_income",
+      "account_label": "영업이익",
+      "reason_keywords": [
+        "연결과 별도"
+      ],
+      "forbidden_terms": [],
+      "expected_status": "나란히 표시",
+      "decision": "side_by_side",
+      "period": "2025-01-01~2025-06-30 (누적 6개월)",
+      "period_range": {
+        "start": "2025-01-01",
+        "end": "2025-06-30"
+      },
+      "values": {
+        "CFS": {
+          "year": 2025,
+          "report": "반기보고서",
+          "report_code": "11012",
+          "fs_div": "CFS",
+          "status": "000",
+          "response_sha256": "d08ef61319987ced478badf23e8a8d0f0d2ddfb8d36b54bf7ac6989f143a3b37",
+          "column": "thstrm_add",
+          "period": "2025-01-01~2025-06-30 (누적 6개월)",
+          "period_range": {
+            "start": "2025-01-01",
+            "end": "2025-06-30"
+          },
+          "sj_div": "IS",
+          "account_id": "dart_OperatingIncomeLoss",
+          "account_nm": "영업이익",
+          "rcept_no": "20250814001590",
+          "currency": "KRW",
+          "amount": 866832000000
+        },
+        "OFS": {
+          "year": 2025,
+          "report": "반기보고서",
+          "report_code": "11012",
+          "fs_div": "OFS",
+          "status": "000",
+          "response_sha256": "0c70261ac3e79b61574f910c4679d616493ba9c3f2f32cf06fe768f1b0b47f65",
+          "column": "thstrm_add",
+          "period": "2025-01-01~2025-06-30 (누적 6개월)",
+          "period_range": {
+            "start": "2025-01-01",
+            "end": "2025-06-30"
+          },
+          "sj_div": "IS",
+          "account_id": "dart_OperatingIncomeLoss",
+          "account_nm": "영업이익",
+          "rcept_no": "20250814001590",
+          "currency": "KRW",
+          "amount": -527378000000
+        }
+      },
+      "allowed_difference": 1394210000000,
+      "bundle": "A",
+      "author": "claude"
+    },
+    {
+      "id": "C16",
+      "question": "LG에너지솔루션 2025년 1분기 영업활동현금흐름 알려줘.",
+      "case_types": [
+        "값 조회, 1분기 현금흐름"
+      ],
+      "action": "lookup",
+      "company": "LG에너지솔루션",
+      "corp_code": "01515323",
+      "status": "값 확인",
+      "expected_status": "값 확인",
+      "decision": "answer",
+      "account": "operating_cash_flow",
+      "account_label": "영업활동현금흐름",
+      "basis": "연결",
+      "fs_div": "CFS",
+      "period": "2025-01-01~2025-03-31 (3개월)",
+      "period_range": {
+        "start": "2025-01-01",
+        "end": "2025-03-31"
+      },
+      "reason_keywords": [],
+      "forbidden_terms": [],
+      "values": {
+        "current": {
+          "year": 2025,
+          "report": "1분기보고서",
+          "report_code": "11013",
+          "fs_div": "CFS",
+          "status": "000",
+          "response_sha256": "d1519b6df52af9a63df4cbd174549c1b564766e50e9d95e22b3d0fc09914855d",
+          "column": "thstrm",
+          "period": "2025-01-01~2025-03-31 (3개월)",
+          "period_range": {
+            "start": "2025-01-01",
+            "end": "2025-03-31"
+          },
+          "sj_div": "CF",
+          "account_id": "ifrs-full_CashFlowsFromUsedInOperatingActivities",
+          "account_nm": "영업활동현금흐름",
+          "rcept_no": "20250515000407",
+          "currency": "KRW",
+          "amount": 1162033000000
+        }
+      },
+      "later": {
+        "year": 2026,
+        "report": "1분기보고서",
+        "report_code": "11013",
+        "fs_div": "CFS",
+        "status": "000",
+        "response_sha256": "17bcbf1cc07aaabd3e025c3b77a11d191985d37017ffe874a5fa9fdb3286d0f6",
+        "column": "frmtrm_q",
+        "period": "2025-01-01~2025-03-31 (3개월)",
+        "period_range": {
+          "start": "2025-01-01",
+          "end": "2025-03-31"
+        },
+        "sj_div": "CF",
+        "account_id": "ifrs-full_CashFlowsFromUsedInOperatingActivities",
+        "account_nm": "영업활동현금흐름",
+        "rcept_no": "20260514001046",
+        "currency": "KRW",
+        "amount": 1162033000000
+      },
+      "bundle": "A",
+      "author": "claude"
+    },
+    {
+      "id": "C17",
+      "question": "LG화학 2025년 매출 알려줘.",
+      "case_types": [
+        "범위 밖 회사"
+      ],
+      "action": "out_of_scope",
+      "company": "LG화학",
+      "account": null,
+      "forbidden_terms": [],
+      "expected_status": "범위 밖",
+      "decision": "refuse",
+      "scope": "company",
+      "bundle": "C",
+      "author": "claude"
+    },
+    {
+      "id": "C18",
+      "question": "이마트 2025년 매출총이익을 전년과 비교해 줘.",
+      "case_types": [
+        "범위 밖 계정"
+      ],
+      "action": "out_of_scope",
+      "company": "이마트",
+      "account": null,
+      "forbidden_terms": [],
+      "expected_status": "범위 밖",
+      "decision": "refuse",
+      "scope": "account",
+      "bundle": "C",
+      "author": "claude"
+    },
+    {
+      "id": "C19",
+      "question": "NAVER와 이마트 2025년 영업이익 비교해 줘.",
+      "case_types": [
+        "회사 여러 개"
+      ],
+      "action": "out_of_scope",
+      "company": "NAVER, 이마트",
+      "account": null,
+      "forbidden_terms": [],
+      "expected_status": "범위 밖",
+      "decision": "refuse",
+      "scope": "companies",
+      "bundle": "C",
+      "author": "claude"
+    },
+    {
+      "id": "C20",
+      "question": "CJ 2025년 영업이익 알려줘.",
+      "case_types": [
+        "그룹 이름"
+      ],
+      "action": "clarify_company",
+      "company": "CJ",
+      "account": null,
+      "forbidden_terms": [],
+      "expected_status": "되묻기",
+      "decision": "clarify",
+      "options": [
+        {
+          "account": null,
+          "label": "CJ제일제당"
+        }
+      ],
+      "bundle": "C",
+      "author": "claude"
+    },
+    {
+      "id": "C21",
+      "question": "LG에너지솔루션 2025년 이익이 얼마나 늘었어?",
+      "case_types": [
+        "계정 모호"
+      ],
+      "action": "clarify",
+      "company": "LG에너지솔루션",
+      "corp_code": "01515323",
+      "expected_status": "되묻기",
+      "decision": "clarify",
+      "ambiguity": "account",
+      "options": [
+        {
+          "account": "operating_income",
+          "label": "영업이익"
+        },
+        {
+          "account": "net_income",
+          "label": "당기순이익"
+        }
+      ],
+      "bundle": "C",
+      "author": "claude"
+    },
+    {
+      "id": "C22",
+      "question": "이마트 2025년 매출이랑 영업이익 전부 알려줘.",
+      "case_types": [
+        "계정 여러 개"
+      ],
+      "action": "out_of_scope",
+      "company": "이마트",
+      "account": null,
+      "forbidden_terms": [],
+      "expected_status": "범위 밖",
+      "decision": "refuse",
+      "scope": "accounts",
+      "bundle": "C",
+      "author": "claude"
+    },
+    {
+      "id": "U01",
+      "question": "네이버 작년 매출 얼마였어?",
+      "case_types": [
+        "사용자 작성"
+      ],
+      "action": "lookup",
+      "company": "NAVER",
+      "corp_code": "00266961",
+      "status": "값 확인",
+      "expected_status": "값 확인",
+      "decision": "answer",
+      "account": "revenue",
+      "account_label": "매출액",
+      "basis": "연결",
+      "fs_div": "CFS",
+      "period": "2025-01-01~2025-12-31 (누적 12개월)",
+      "period_range": {
+        "start": "2025-01-01",
+        "end": "2025-12-31"
+      },
+      "reason_keywords": [],
+      "forbidden_terms": [],
+      "values": {
+        "current": {
+          "year": 2025,
+          "report": "사업보고서",
+          "report_code": "11011",
+          "fs_div": "CFS",
+          "status": "000",
+          "response_sha256": "ae20afd65172b966cdc1f69ebddc0ab6ca0a9d9224cd55f69f15ca1f3458df8c",
+          "column": "thstrm",
+          "period": "2025-01-01~2025-12-31 (누적 12개월)",
+          "period_range": {
+            "start": "2025-01-01",
+            "end": "2025-12-31"
+          },
+          "sj_div": "CIS",
+          "account_id": "ifrs-full_Revenue",
+          "account_nm": "영업수익",
+          "rcept_no": "20260313001021",
+          "currency": "KRW",
+          "amount": 12035007218975
+        }
+      },
+      "later_missing": "not_cached",
+      "bundle": "B",
+      "author": "user"
+    },
+    {
+      "id": "U02",
+      "question": "CJ제일제당은 작년에 영업이익 얼마나 냈어?",
+      "case_types": [
+        "사용자 작성"
+      ],
+      "action": "lookup",
+      "company": "CJ제일제당",
+      "corp_code": "00635134",
+      "status": "값 확인",
+      "expected_status": "값 확인",
+      "decision": "answer",
+      "account": "operating_income",
+      "account_label": "영업이익",
+      "basis": "연결",
+      "fs_div": "CFS",
+      "period": "2025-01-01~2025-12-31 (누적 12개월)",
+      "period_range": {
+        "start": "2025-01-01",
+        "end": "2025-12-31"
+      },
+      "reason_keywords": [],
+      "forbidden_terms": [],
+      "values": {
+        "current": {
+          "year": 2025,
+          "report": "사업보고서",
+          "report_code": "11011",
+          "fs_div": "CFS",
+          "status": "000",
+          "response_sha256": "08b6b569977623bcc88905df52a99f825eb8f94b053c09f1223c1d6b3ffaa839",
+          "column": "thstrm",
+          "period": "2025-01-01~2025-12-31 (누적 12개월)",
+          "period_range": {
+            "start": "2025-01-01",
+            "end": "2025-12-31"
+          },
+          "sj_div": "CIS",
+          "account_id": "dart_OperatingIncomeLoss",
+          "account_nm": "영업이익(손실)",
+          "rcept_no": "20260316001116",
+          "currency": "KRW",
+          "amount": 1233604641000
+        }
+      },
+      "later_missing": "not_cached",
+      "bundle": "B",
+      "author": "user"
+    },
+    {
+      "id": "U03",
+      "question": "이마트 지난해 순이익이 얼마인지 알려줘.",
+      "case_types": [
+        "사용자 작성"
+      ],
+      "action": "lookup",
+      "company": "이마트",
+      "corp_code": "00872984",
+      "status": "값 확인",
+      "expected_status": "값 확인",
+      "decision": "answer",
+      "account": "net_income",
+      "account_label": "당기순이익",
+      "basis": "연결",
+      "fs_div": "CFS",
+      "period": "2025-01-01~2025-12-31 (누적 12개월)",
+      "period_range": {
+        "start": "2025-01-01",
+        "end": "2025-12-31"
+      },
+      "reason_keywords": [],
+      "forbidden_terms": [],
+      "values": {
+        "current": {
+          "year": 2025,
+          "report": "사업보고서",
+          "report_code": "11011",
+          "fs_div": "CFS",
+          "status": "000",
+          "response_sha256": "1f35bd1104407ae9cbdc911f24293cdac661549a9b29959e94c78eff140b0ac7",
+          "column": "thstrm",
+          "period": "2025-01-01~2025-12-31 (누적 12개월)",
+          "period_range": {
+            "start": "2025-01-01",
+            "end": "2025-12-31"
+          },
+          "sj_div": "IS",
+          "account_id": "ifrs-full_ProfitLoss",
+          "account_nm": "당기순이익(손실)",
+          "rcept_no": "20260318001024",
+          "currency": "KRW",
+          "amount": 246338918347
+        }
+      },
+      "later_missing": "not_cached",
+      "bundle": "B",
+      "author": "user"
+    },
+    {
+      "id": "U04",
+      "question": "LG에너지솔루션 작년 영업활동 현금흐름은 어느 정도였지?",
+      "case_types": [
+        "사용자 작성"
+      ],
+      "action": "lookup",
+      "company": "LG에너지솔루션",
+      "corp_code": "01515323",
+      "status": "값 확인",
+      "expected_status": "값 확인",
+      "decision": "answer",
+      "account": "operating_cash_flow",
+      "account_label": "영업활동현금흐름",
+      "basis": "연결",
+      "fs_div": "CFS",
+      "period": "2025-01-01~2025-12-31 (누적 12개월)",
+      "period_range": {
+        "start": "2025-01-01",
+        "end": "2025-12-31"
+      },
+      "reason_keywords": [],
+      "forbidden_terms": [],
+      "values": {
+        "current": {
+          "year": 2025,
+          "report": "사업보고서",
+          "report_code": "11011",
+          "fs_div": "CFS",
+          "status": "000",
+          "response_sha256": "c705fb31e291bee0c93d9af6d6018cae2d2def09d12fa88a31082abbb4be2457",
+          "column": "thstrm",
+          "period": "2025-01-01~2025-12-31 (누적 12개월)",
+          "period_range": {
+            "start": "2025-01-01",
+            "end": "2025-12-31"
+          },
+          "sj_div": "CF",
+          "account_id": "ifrs-full_CashFlowsFromUsedInOperatingActivities",
+          "account_nm": "영업활동현금흐름",
+          "rcept_no": "20260312000217",
+          "currency": "KRW",
+          "amount": 4432277000000
+        }
+      },
+      "later_missing": "not_cached",
+      "bundle": "B",
+      "author": "user"
+    },
+    {
+      "id": "U05",
+      "question": "네이버 작년 말 자산 규모가 얼마나 돼?",
+      "case_types": [
+        "사용자 작성"
+      ],
+      "action": "lookup",
+      "company": "NAVER",
+      "corp_code": "00266961",
+      "status": "값 확인",
+      "expected_status": "값 확인",
+      "decision": "answer",
+      "account": "total_assets",
+      "account_label": "자산총계",
+      "basis": "연결",
+      "fs_div": "CFS",
+      "period": "2025-12-31 시점",
+      "period_range": {
+        "start": null,
+        "end": "2025-12-31"
+      },
+      "reason_keywords": [],
+      "forbidden_terms": [],
+      "values": {
+        "current": {
+          "year": 2025,
+          "report": "사업보고서",
+          "report_code": "11011",
+          "fs_div": "CFS",
+          "status": "000",
+          "response_sha256": "ae20afd65172b966cdc1f69ebddc0ab6ca0a9d9224cd55f69f15ca1f3458df8c",
+          "column": "thstrm",
+          "period": "2025-12-31 시점",
+          "period_range": {
+            "start": null,
+            "end": "2025-12-31"
+          },
+          "sj_div": "BS",
+          "account_id": "ifrs-full_Assets",
+          "account_nm": "자산총계",
+          "rcept_no": "20260313001021",
+          "currency": "KRW",
+          "amount": 41084496327318
+        }
+      },
+      "later_missing": "not_cached",
+      "bundle": "B",
+      "author": "user"
+    },
+    {
+      "id": "U06",
+      "question": "혹시 이마트 2025년 말 부채 총액도 알 수 있어?",
+      "case_types": [
+        "사용자 작성"
+      ],
+      "action": "lookup",
+      "company": "이마트",
+      "corp_code": "00872984",
+      "status": "값 확인",
+      "expected_status": "값 확인",
+      "decision": "answer",
+      "account": "total_liabilities",
+      "account_label": "부채총계",
+      "basis": "연결",
+      "fs_div": "CFS",
+      "period": "2025-12-31 시점",
+      "period_range": {
+        "start": null,
+        "end": "2025-12-31"
+      },
+      "reason_keywords": [],
+      "forbidden_terms": [],
+      "values": {
+        "current": {
+          "year": 2025,
+          "report": "사업보고서",
+          "report_code": "11011",
+          "fs_div": "CFS",
+          "status": "000",
+          "response_sha256": "1f35bd1104407ae9cbdc911f24293cdac661549a9b29959e94c78eff140b0ac7",
+          "column": "thstrm",
+          "period": "2025-12-31 시점",
+          "period_range": {
+            "start": null,
+            "end": "2025-12-31"
+          },
+          "sj_div": "BS",
+          "account_id": "ifrs-full_Liabilities",
+          "account_nm": "부채총계",
+          "rcept_no": "20260318001024",
+          "currency": "KRW",
+          "amount": 19806707040792
+        }
+      },
+      "later_missing": "not_cached",
+      "bundle": "B",
+      "author": "user"
+    },
+    {
+      "id": "U07",
+      "question": "LG에너지솔루션 2025년 매출, 2024년보다 늘었어?",
+      "case_types": [
+        "사용자 작성"
+      ],
+      "action": "compare",
+      "company": "LG에너지솔루션",
+      "corp_code": "01515323",
+      "status": "비교 가능",
+      "account": "revenue",
+      "account_label": "매출액",
+      "reason_keywords": [],
+      "forbidden_terms": [],
+      "expected_status": "비교 가능",
+      "decision": "answer",
+      "basis": "연결",
+      "fs_div": "CFS",
+      "current_period": "2025-01-01~2025-12-31 (누적 12개월)",
+      "base_period": "2024-01-01~2024-12-31 (누적 12개월)",
+      "period_ranges": {
+        "current": {
+          "start": "2025-01-01",
+          "end": "2025-12-31"
+        },
+        "base": {
+          "start": "2024-01-01",
+          "end": "2024-12-31"
+        }
+      },
+      "values": {
+        "current": {
+          "year": 2025,
+          "report": "사업보고서",
+          "report_code": "11011",
+          "fs_div": "CFS",
+          "status": "000",
+          "response_sha256": "c705fb31e291bee0c93d9af6d6018cae2d2def09d12fa88a31082abbb4be2457",
+          "column": "thstrm",
+          "period": "2025-01-01~2025-12-31 (누적 12개월)",
+          "period_range": {
+            "start": "2025-01-01",
+            "end": "2025-12-31"
+          },
+          "sj_div": "IS",
+          "account_id": "ifrs-full_Revenue",
+          "account_nm": "매출액",
+          "rcept_no": "20260312000217",
+          "currency": "KRW",
+          "amount": 23671759000000
+        },
+        "base": {
+          "year": 2025,
+          "report": "사업보고서",
+          "report_code": "11011",
+          "fs_div": "CFS",
+          "status": "000",
+          "response_sha256": "c705fb31e291bee0c93d9af6d6018cae2d2def09d12fa88a31082abbb4be2457",
+          "column": "frmtrm",
+          "period": "2024-01-01~2024-12-31 (누적 12개월)",
+          "period_range": {
+            "start": "2024-01-01",
+            "end": "2024-12-31"
+          },
+          "sj_div": "IS",
+          "account_id": "ifrs-full_Revenue",
+          "account_nm": "매출액",
+          "rcept_no": "20260312000217",
+          "currency": "KRW",
+          "amount": 25619585000000
+        }
+      },
+      "change": -1947826000000,
+      "change_pct": "-7.60",
+      "direction": "감소",
+      "bundle": "B",
+      "author": "user"
+    },
+    {
+      "id": "U08",
+      "question": "CJ제일제당 영업이익은 작년이 재작년보다 괜찮았어?",
+      "case_types": [
+        "사용자 작성"
+      ],
+      "action": "compare",
+      "company": "CJ제일제당",
+      "corp_code": "00635134",
+      "status": "비교 가능",
+      "account": "operating_income",
+      "account_label": "영업이익",
+      "reason_keywords": [],
+      "forbidden_terms": [],
+      "expected_status": "비교 가능",
+      "decision": "answer",
+      "basis": "연결",
+      "fs_div": "CFS",
+      "current_period": "2025-01-01~2025-12-31 (누적 12개월)",
+      "base_period": "2024-01-01~2024-12-31 (누적 12개월)",
+      "period_ranges": {
+        "current": {
+          "start": "2025-01-01",
+          "end": "2025-12-31"
+        },
+        "base": {
+          "start": "2024-01-01",
+          "end": "2024-12-31"
+        }
+      },
+      "values": {
+        "current": {
+          "year": 2025,
+          "report": "사업보고서",
+          "report_code": "11011",
+          "fs_div": "CFS",
+          "status": "000",
+          "response_sha256": "08b6b569977623bcc88905df52a99f825eb8f94b053c09f1223c1d6b3ffaa839",
+          "column": "thstrm",
+          "period": "2025-01-01~2025-12-31 (누적 12개월)",
+          "period_range": {
+            "start": "2025-01-01",
+            "end": "2025-12-31"
+          },
+          "sj_div": "CIS",
+          "account_id": "dart_OperatingIncomeLoss",
+          "account_nm": "영업이익(손실)",
+          "rcept_no": "20260316001116",
+          "currency": "KRW",
+          "amount": 1233604641000
+        },
+        "base": {
+          "year": 2025,
+          "report": "사업보고서",
+          "report_code": "11011",
+          "fs_div": "CFS",
+          "status": "000",
+          "response_sha256": "08b6b569977623bcc88905df52a99f825eb8f94b053c09f1223c1d6b3ffaa839",
+          "column": "frmtrm",
+          "period": "2024-01-01~2024-12-31 (누적 12개월)",
+          "period_range": {
+            "start": "2024-01-01",
+            "end": "2024-12-31"
+          },
+          "sj_div": "CIS",
+          "account_id": "dart_OperatingIncomeLoss",
+          "account_nm": "영업이익(손실)",
+          "rcept_no": "20260316001116",
+          "currency": "KRW",
+          "amount": 1452067669000
+        }
+      },
+      "change": -218463028000,
+      "change_pct": "-15.04",
+      "direction": "감소",
+      "bundle": "B",
+      "author": "user"
+    },
+    {
+      "id": "U09",
+      "question": "네이버 올해 2분기 매출 얼마 나왔어?",
+      "case_types": [
+        "사용자 작성"
+      ],
+      "action": "lookup",
+      "company": "NAVER",
+      "corp_code": "00266961",
+      "status": "값 확인",
+      "expected_status": "값 확인",
+      "decision": "answer",
+      "account": "revenue",
+      "account_label": "매출액",
+      "basis": "연결",
+      "fs_div": "CFS",
+      "period": "2026-04-01~2026-06-30 (3개월)",
+      "period_range": {
+        "start": "2026-04-01",
+        "end": "2026-06-30"
+      },
+      "reason_keywords": [],
+      "forbidden_terms": [],
+      "values": {
+        "current": {
+          "year": 2026,
+          "report": "반기보고서",
+          "report_code": "11012",
+          "fs_div": "CFS",
+          "status": "000",
+          "response_sha256": "9530dd3c6019f50a21be068247e51216270536fc36ff14182e587aac2cf9dc6f",
+          "column": "thstrm",
+          "period": "2026-04-01~2026-06-30 (3개월)",
+          "period_range": {
+            "start": "2026-04-01",
+            "end": "2026-06-30"
+          },
+          "sj_div": "CIS",
+          "account_id": "ifrs-full_Revenue",
+          "account_nm": "영업수익",
+          "rcept_no": "20260814002266",
+          "currency": "KRW",
+          "amount": 3388755080295
+        }
+      },
+      "later_missing": "not_cached",
+      "bundle": "B",
+      "author": "user"
+    },
+    {
+      "id": "U10",
+      "question": "이마트 올해 상반기 영업이익 좀 찾아줘.",
+      "case_types": [
+        "사용자 작성"
+      ],
+      "action": "lookup",
+      "company": "이마트",
+      "corp_code": "00872984",
+      "status": "값 확인",
+      "expected_status": "값 확인",
+      "decision": "answer",
+      "account": "operating_income",
+      "account_label": "영업이익",
+      "basis": "연결",
+      "fs_div": "CFS",
+      "period": "2026-01-01~2026-06-30 (누적 6개월)",
+      "period_range": {
+        "start": "2026-01-01",
+        "end": "2026-06-30"
+      },
+      "reason_keywords": [],
+      "forbidden_terms": [],
+      "values": {
+        "current": {
+          "year": 2026,
+          "report": "반기보고서",
+          "report_code": "11012",
+          "fs_div": "CFS",
+          "status": "000",
+          "response_sha256": "2bfde57b7df6ce00a40cff0a876c923c7c950b579709216323b35db254c878ab",
+          "column": "thstrm_add",
+          "period": "2026-01-01~2026-06-30 (누적 6개월)",
+          "period_range": {
+            "start": "2026-01-01",
+            "end": "2026-06-30"
+          },
+          "sj_div": "IS",
+          "account_id": "dart_OperatingIncomeLoss",
+          "account_nm": "영업이익(손실)",
+          "rcept_no": "20260814002794",
+          "currency": "KRW",
+          "amount": 135285430495
+        }
+      },
+      "later_missing": "not_cached",
+      "bundle": "B",
+      "author": "user"
+    },
+    {
+      "id": "U11",
+      "question": "삼성전자 작년 매출은 얼마나 돼?",
+      "case_types": [
+        "사용자 작성"
+      ],
+      "action": "out_of_scope",
+      "company": "삼성전자",
+      "account": null,
+      "forbidden_terms": [],
+      "expected_status": "범위 밖",
+      "decision": "refuse",
+      "scope": "company",
+      "bundle": "C",
+      "author": "user"
+    },
+    {
+      "id": "U12",
+      "question": "네이버랑 이마트, 작년 매출은 어디가 더 컸어?",
+      "case_types": [
+        "사용자 작성"
+      ],
+      "action": "out_of_scope",
+      "company": "NAVER, 이마트",
+      "account": null,
+      "forbidden_terms": [],
+      "expected_status": "범위 밖",
+      "decision": "refuse",
+      "scope": "companies",
+      "bundle": "C",
+      "author": "user"
+    },
+    {
+      "id": "U13",
+      "question": "CJ제일제당 작년 매출이랑 영업이익 둘 다 알려줘.",
+      "case_types": [
+        "사용자 작성"
+      ],
+      "action": "out_of_scope",
+      "company": "CJ제일제당",
+      "account": null,
+      "forbidden_terms": [],
+      "expected_status": "범위 밖",
+      "decision": "refuse",
+      "scope": "accounts",
+      "bundle": "C",
+      "author": "user"
+    },
+    {
+      "id": "U14",
+      "question": "LG는 작년에 순이익 얼마 남겼어?",
+      "case_types": [
+        "사용자 작성"
+      ],
+      "action": "clarify_company",
+      "company": "LG",
+      "account": null,
+      "forbidden_terms": [],
+      "expected_status": "되묻기",
+      "decision": "clarify",
+      "options": [
+        {
+          "account": null,
+          "label": "LG에너지솔루션"
+        }
+      ],
+      "bundle": "C",
+      "author": "user"
+    }
+  ]
+}

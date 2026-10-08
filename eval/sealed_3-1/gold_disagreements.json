@@ -1,0 +1,17 @@
+{
+ "about": "contract 4.5: each item is decided by re-reading the raw cells and approved by the user before any model run",
+ "items": [
+  {
+   "id": "C06",
+   "question": "CJ제일제당 2025년 3분기말 부채총계를 작년 3분기말과 비교해 줘.",
+   "gold_status": "비교 가능",
+   "problems": [
+    "status: rules 확인 필요, gold 비교 가능"
+   ],
+   "decision": "정답 수정: 비교 가능 → 확인 필요 (제품 규칙이 맞음)",
+   "reason": "원본 재확인: 2024-12-31 연결 부채총계가 2024 사업보고서(접수번호 20250321001604)와 2025 1분기 보고서에서는 17,907,211,781,000, 2025 반기·3분기 보고서(20251114001338 등)에서는 17,906,800,341,000. 비교하는 두 보고서(2024 3분기 20241114001160, 2025 3분기 20251114001338) 사이에 재작성이 있으므로 GOLD_RULES에 따라 확인 필요. 처음 정답은 데이터를 확인하지 않고 비교 가능으로 적은 Claude의 오류다. 모델 실행 전에 발견.",
+   "approved_by_user": false,
+   "resolved_by": "Claude (원본 재확인)"
+  }
+ ]
+}

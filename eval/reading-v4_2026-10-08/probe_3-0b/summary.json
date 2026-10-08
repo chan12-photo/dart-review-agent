@@ -1,0 +1,26 @@
+{
+ "questions": 13,
+ "rule_correct": 12,
+ "model_correct": 13,
+ "by_path": {
+  "both": [
+   "q01",
+   "q02",
+   "q03",
+   "q04",
+   "q05",
+   "q06",
+   "q07",
+   "q08",
+   "q10",
+   "q11",
+   "q12",
+   "q13"
+  ],
+  "model only": [
+   "q09"
+  ]
+ },
+ "errors": [],
+ "network_requests": 0
+}

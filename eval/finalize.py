@@ -11,6 +11,7 @@ the rounding rule cannot be overridden.
 
 from __future__ import annotations
 
+import hashlib
 import json
 from pathlib import Path
 import sys
@@ -24,6 +25,9 @@ PASS_THRESHOLD = {"oracle": 0.8}  # SCOPE section 10: with the right evidence, 8
 
 class ReviewError(ValueError):
     pass
+
+
+FAILURE_KINDS = ("수치", "설명")
 
 
 def _gold() -> dict[str, dict[str, Any]]:
@@ -52,8 +56,10 @@ def _expected_summary(gold: dict[str, Any]) -> str:
     return " / ".join(part for part in parts if part)
 
 
-def review_sheet(cases: Sequence[dict[str, Any]]) -> str:
-    gold = _gold()
+def review_sheet(cases: Sequence[dict[str, Any]], golds: dict[str, dict[str, Any]] | None = None) -> str:
+    """The sheet a reviewer reads. ``golds``: the run's own gold answers (a question file's gold, e.g. the 3-1
+    sealed set); without it the development and lookup gold files are used (Codex 3-1 second review 1)."""
+    gold = dict(golds) if golds is not None else _gold()
     for case in cases:  # a paraphrase is reviewed against its base question's gold
         if case["id"] not in gold and case.get("base") in gold:
             gold[case["id"]] = gold[case["base"]]
@@ -83,11 +89,12 @@ def review_sheet(cases: Sequence[dict[str, Any]]) -> str:
 
 def review_template(cases: Sequence[dict[str, Any]]) -> dict[str, Any]:
     return {"reviewer": "", "confirmed_by_user": False, "criteria": "eval/HUMAN_REVIEW.ko.md",
-            "cases": {case["id"]: {"body_ok": None, "note": "", "accepted_unparsed": []} for case in cases}}
+            "cases": {case["id"]: {"body_ok": None, "failure_kind": None, "note": "", "accepted_unparsed": []}
+                      for case in cases}}
 
 
-def write_review_files(folder: Path, cases: Sequence[dict[str, Any]]) -> None:
-    (folder / "review_sheet.md").write_text(review_sheet(cases), encoding="utf-8")
+def write_review_files(folder: Path, cases: Sequence[dict[str, Any]], golds: dict[str, dict[str, Any]] | None = None) -> None:
+    (folder / "review_sheet.md").write_text(review_sheet(cases, golds), encoding="utf-8")
     template = folder / "human_review.json"
     if not template.exists():
         template.write_text(json.dumps(review_template(cases), ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
@@ -112,8 +119,14 @@ def final_scores(cases: Sequence[dict[str, Any]], review: dict[str, Any], mode: 
         accepted = entry.get("accepted_unparsed", [])
         automatic = case["score"]["automatic_passed"]
         corrected = automatic or _passes_after_accepting(case["score"], accepted)
+        # a failed text says why: "수치" (a figure, period, basis, company, or account is wrong) or "설명" (the
+        # figures are right but a reason is missing or a cause is asserted) - Codex 3-1 second review 5
+        kind = entry.get("failure_kind")
+        if entry["body_ok"] is False and kind not in FAILURE_KINDS:
+            raise ReviewError(f"{case['id']}: a failed text needs failure_kind {FAILURE_KINDS}")
         per_case.append({"id": case["id"], "automatic_passed": automatic, "automatic_after_accepted_notation": corrected,
                          "body_ok": entry["body_ok"], "reviewed_passed": corrected and entry["body_ok"],
+                         "failure_kind": kind if entry["body_ok"] is False else None,
                          "note": entry.get("note", ""), "accepted_unparsed": accepted})
     if missing:
         raise ReviewError(f"body_ok must be true or false for every question; missing: {missing}")
@@ -139,8 +152,21 @@ def main(argv: list[str] | None = None) -> int:
     meta = json.loads((folder / "run.json").read_text(encoding="utf-8"))
     review = json.loads((folder / "human_review.json").read_text(encoding="utf-8"))
     result = final_scores(cases, review, meta["mode"])
-    result["cases_file"] = cases_name
-    (folder / ("final.json" if cases_name == "cases.jsonl" else f"final_{Path(cases_name).stem}.json")).write_text(json.dumps(result, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+    # tie the review to the exact run it judged (Codex 3-1 second review 3)
+    result.update(cases_file=cases_name, cases_sha256=hashlib.sha256((folder / cases_name).read_bytes()).hexdigest(),
+                  run_sha256=hashlib.sha256((folder / "run.json").read_bytes()).hexdigest(),
+                  review_sha256=hashlib.sha256((folder / "human_review.json").read_bytes()).hexdigest())
+    base = "final" if cases_name == "cases.jsonl" else f"final_{Path(cases_name).stem}"
+    out, version = folder / f"{base}.json", 1
+    while out.exists():  # a re-review never overwrites: it is a new version, with its reason
+        version += 1
+        out = folder / f"{base}_v{version}.json"
+    if version > 1:
+        if not review.get("revision_reason"):
+            print(f"{base}.json exists: a revised review needs 'revision_reason' in human_review.json")
+            return 2
+        result["revision"] = {"version": version, "reason": review["revision_reason"]}
+    out.write_text(json.dumps(result, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
     print(json.dumps({key: value for key, value in result.items() if key != "per_case"}, ensure_ascii=False, indent=1))
     return 0
 

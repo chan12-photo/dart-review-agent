@@ -91,11 +91,11 @@ class JudgeTests(unittest.TestCase):
     @staticmethod
     def review(runs, confirmed=True, overrides=None):
         overrides = overrides or {}
-        return {method: {"confirmed_by_user": confirmed,
+        return {method: {"confirmed_by_user": confirmed, "mode": meta.get("mode"), "cases_sha256": meta["_cases_sha256"],
                          "per_case": [{"id": case["id"], "automatic_passed": case["score"]["automatic_passed"],
                                        "reviewed_passed": overrides.get((method, case["id"]), case["score"]["automatic_passed"])}
                                       for case in cases]}
-                for method, (_, cases) in runs.items()}
+                for method, (meta, cases) in runs.items()}
 
     def test_keys_survive_the_file_round_trip(self):
         runs = self.runs()
@@ -141,7 +141,7 @@ class JudgeTests(unittest.TestCase):
             "methods missing": ({key: value for key, value in runs.items() if key != "model_only"}, None),
             "no human review": (runs, {}),
             "not confirmed by the user": (runs, self.review(runs, confirmed=False)),
-            "differ from the ones the runs recorded": (self.runs_recording({**self.meta["contract"], "lookup_gold": "old"}), None),
+            "differ from the ones the run recorded": (self.runs_recording({**self.meta["contract"], "lookup_gold": "old"}), None),
             "the model differs": (self.runs(model={**self.meta["model"], "digest": "other"}), None),
             "without recorded reading keys": (self.runs(no_keys), None),
         }
@@ -151,6 +151,22 @@ class JudgeTests(unittest.TestCase):
                 self.assertEqual(report["verdict"], "판정 보류")
                 self.assertTrue(any(expected in problem for problem in report["problems"]), report["problems"])
                 self.assertNotIn("checks", report)
+
+    def test_second_review_gaps_are_closed(self):
+        # 2: one run recorded other sealed-set hashes; 3: a review that names another run; 5: an explanation failure
+        runs = self.runs()
+        other = self.runs(contract={**self.meta["contract"], "set_questions": "other"})
+        report = judge.judge(other, self.review(other))
+        self.assertTrue(any("set_questions differs between runs" in problem for problem in report["problems"]), report["problems"])
+        review = self.review(runs)
+        review["baseline"]["cases_sha256"] = "0" * 64
+        report = judge.judge(runs, review)
+        self.assertTrue(any("the review names another run" in problem for problem in report["problems"]), report["problems"])
+        review = self.review(runs, overrides={("crosscheck", "L01"): False})
+        next(item for item in review["crosscheck"]["per_case"] if item["id"] == "L01")["failure_kind"] = "설명"
+        report = judge.judge(runs, review)
+        self.assertEqual(report["outcomes"]["crosscheck"]["L01"], "설명 실패")
+        self.assertEqual(report["checks"]["잘못된 수치 답 0"]["value"], 0)
 
     def test_a_criterion_that_cannot_be_applied_is_not_a_pass(self):
         questions, golds = self.real_load_questions("lookup")  # no bundle C: the out-of-scope criterion has nothing to count
@@ -225,3 +241,9 @@ class FreezeTests(unittest.TestCase):
             record.write_text(json.dumps({"commit": "HEAD"}), encoding="utf-8")
             with mock.patch.object(run_eval, "FREEZE_FILE", record):
                 self.assertEqual(run_eval.frozen_differences("HEAD"), [])
+            # the product against P (here the first commit), the evaluator against P2 (here HEAD)
+            record.write_text(json.dumps({"commit": first[0], "evaluator_commit": "HEAD"}), encoding="utf-8")
+            with mock.patch.object(run_eval, "FREEZE_FILE", record):
+                changed = run_eval.frozen_differences("HEAD")
+                self.assertIn("dart_review/crosscheck.py", changed)
+                self.assertNotIn("eval/judge.py", changed)

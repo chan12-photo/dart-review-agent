@@ -248,15 +248,25 @@ FROZEN_PATHS = ("dart_review", "eval/run_eval.py", "eval/scoring.py", "eval/judg
 
 
 def frozen_differences(commit: str = "HEAD", working_tree: bool = False) -> list[str]:
-    """Frozen files that differ from the freeze commit P (empty when they match, or before P exists)."""
+    """Frozen files that differ from their freeze commit (empty when they all match).
+
+    The product (dart_review/) is compared with P. The evaluator files are compared with the evaluator
+    amendment commit P2 when the freeze record names one (Codex 3-1 second review: fixes to the evaluator
+    made before any model run), otherwise with P.
+    """
     if not FREEZE_FILE.exists():
         return ["no freeze record (eval/freeze_3-1.json)"]
-    frozen = json.loads(FREEZE_FILE.read_text(encoding="utf-8"))["commit"]
-    command = ["git", "diff", "--name-only", frozen] + ([] if working_tree else [commit]) + ["--", *FROZEN_PATHS]
-    result = subprocess.run(command, cwd=ROOT, capture_output=True, text=True)
-    if result.returncode != 0:
-        return [f"git diff failed: {result.stderr.strip()}"]
-    return result.stdout.split()
+    record = json.loads(FREEZE_FILE.read_text(encoding="utf-8"))
+    groups = ((record["commit"], ("dart_review",)),
+              (record.get("evaluator_commit", record["commit"]), tuple(path for path in FROZEN_PATHS if path != "dart_review")))
+    changed = []
+    for frozen, paths in groups:
+        command = ["git", "diff", "--name-only", frozen] + ([] if working_tree else [commit]) + ["--", *paths]
+        result = subprocess.run(command, cwd=ROOT, capture_output=True, text=True)
+        if result.returncode != 0:
+            return [f"git diff failed: {result.stderr.strip()}"]
+        changed += result.stdout.split()
+    return changed
 
 
 def company_set_hash() -> str:
@@ -413,7 +423,7 @@ def _main(parser: argparse.ArgumentParser, args: argparse.Namespace) -> int:
     print(json.dumps(summary, ensure_ascii=False, indent=1))
     if args.out:
         (args.out / "summary.json").write_text(json.dumps(summary, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
-        write_review_files(args.out, cases)
+        write_review_files(args.out, cases, load_questions(args.question_set)[1])
     return 1 if summary["evaluator_errors"] else 0
 
 

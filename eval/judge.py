@@ -26,6 +26,7 @@ from __future__ import annotations
 
 import argparse
 from collections import Counter
+import hashlib
 import json
 from pathlib import Path
 import sys
@@ -40,7 +41,8 @@ from dart_review.crosscheck import canonical  # noqa: E402
 
 ANSWER_STATUSES = ("값 확인", "비교 가능", "확인 필요", "나란히 표시")
 REFUSAL_STATUSES = ("범위 밖", "비교 불가", "조회 불가", "데이터 없음")
-OUTCOMES = ("정답 제공", "맞는 거절", "맞는 되묻기", "불필요한 되묻기", "잘못된 되묻기", "보류·무응답", "잘못된 수치 답", "잘못된 거절")
+OUTCOMES = ("정답 제공", "맞는 거절", "맞는 되묻기", "불필요한 되묻기", "잘못된 되묻기", "보류·무응답", "잘못된 수치 답", "잘못된 거절",
+            "설명 실패")
 SOLVED = ("정답 제공", "맞는 거절", "맞는 되묻기")
 COSTS = ("불필요한 되묻기", "보류·무응답", "잘못된 거절")
 # docs/EVAL_CONTRACT_3-1.ko.md section 10 (decided by the user before any sealed data)
@@ -87,8 +89,12 @@ def shown_answer(case: dict[str, Any]) -> dict[str, Any] | None:
     return answer if isinstance(answer, dict) and case["score"].get("format_error") is None else None
 
 
-def outcome(case: dict[str, Any], gold: dict[str, Any], passed: bool) -> str:
-    """One cell of the outcome table (contract section 8), from what was shown."""
+def outcome(case: dict[str, Any], gold: dict[str, Any], passed: bool, failure_kind: str | None = None) -> str:
+    """One cell of the outcome table (contract section 8), from what was shown.
+
+    An answer whose automatic score passed but whose text failed review for its explanation only ("설명") is
+    "설명 실패", not a wrong figure (Codex 3-1 second review 5).
+    """
     answer = shown_answer(case)
     if answer is None:
         return "보류·무응답"
@@ -100,14 +106,19 @@ def outcome(case: dict[str, Any], gold: dict[str, Any], passed: bool) -> str:
     if status in REFUSAL_STATUSES:
         return "맞는 거절" if decision == "refuse" and passed else "잘못된 거절"
     if status in ANSWER_STATUSES:
-        return "정답 제공" if passed else "잘못된 수치 답"
+        if passed:
+            return "정답 제공"
+        if failure_kind == "설명" and case["score"].get("automatic_passed"):
+            return "설명 실패"
+        return "잘못된 수치 답"
     return "잘못된 수치 답"  # an unknown status shown to the user is never counted as safe
 
 
 def load_run(folder: Path) -> tuple[dict[str, Any], list[dict[str, Any]]]:
     meta = json.loads((folder / "run.json").read_text(encoding="utf-8"))
-    with (folder / "cases.jsonl").open(encoding="utf-8") as lines:
-        return meta, [json.loads(line) for line in lines]
+    data = (folder / "cases.jsonl").read_bytes()
+    meta["_cases_sha256"] = hashlib.sha256(data).hexdigest()  # what a human review must name (second review 3)
+    return meta, [json.loads(line) for line in data.decode("utf-8").splitlines() if line]
 
 
 def check_runs(runs: dict[str, tuple[dict[str, Any], list[dict[str, Any]]]], gold_ids: list[str]) -> list[str]:
@@ -121,7 +132,8 @@ def check_runs(runs: dict[str, tuple[dict[str, Any], list[dict[str, Any]]]], gol
     commits = {mode: (meta.get("git") or {}).get("commit") for mode, meta in metas.items()}
     if len(set(commits.values())) != 1:
         problems.append(f"the runs ran different code: {commits}")
-    shared = ("questions", "gold", "lookup_questions", "lookup_gold", "reading_prompt", "reading_schema", "company_set")
+    shared = ("questions", "gold", "lookup_questions", "lookup_gold", "set_questions", "set_gold", "reading_prompt",
+              "reading_schema", "company_set")
     for key in shared:
         values = {mode: (meta.get("contract") or {}).get(key) for mode, meta in metas.items()}
         if len(set(values.values())) != 1:
@@ -155,10 +167,11 @@ def check_contract(runs: dict[str, tuple[dict[str, Any], list[dict[str, Any]]]],
         problems.append(f"methods missing: {missing}")
     meta = runs["crosscheck"][0]
     current = run_eval.contract_hashes(meta.get("question_set", "dev"))
-    recorded = meta.get("contract") or {}
-    changed = [key for key in HASHED_FILES if key in current and recorded.get(key) != current[key]]
-    if changed:
-        problems.append(f"the files read now differ from the ones the runs recorded: {changed}")
+    for method, (method_meta, _) in runs.items():  # every run, not only the cross-check one (second review 2)
+        recorded = method_meta.get("contract") or {}
+        changed = [key for key in HASHED_FILES if key in current and recorded.get(key) != current[key]]
+        if changed:
+            problems.append(f"{method}: the files read now differ from the ones the run recorded: {changed}")
     models = {method: {key: (runs[method][0].get("model") or {}).get(key) for key in ("model", "digest", "options", "think")}
               for method in ("crosscheck", "model_only") if method in runs}
     if len({json.dumps(model, sort_keys=True) for model in models.values()}) > 1:
@@ -183,6 +196,11 @@ def check_contract(runs: dict[str, tuple[dict[str, Any], list[dict[str, Any]]]],
             problems.append(f"{method}: the review belongs to another run (automatic scores differ: {mismatched})")
         if any(not isinstance(item.get("reviewed_passed"), bool) for item in reviewed.values()):
             problems.append(f"{method}: a reviewed result is not true or false")
+        run_meta = runs[method][0]
+        if final.get("mode") != run_meta.get("mode") or final.get("cases_sha256") != run_meta.get("_cases_sha256"):
+            problems.append(f"{method}: the review names another run (mode {final.get('mode')}, cases "
+                            f"{str(final.get('cases_sha256'))[:12]}) than this one ({run_meta.get('mode')}, "
+                            f"{str(run_meta.get('_cases_sha256'))[:12]})")
     if meta.get("company_set") == "sealed-3-1":
         changed = run_eval.frozen_differences((meta.get("git") or {}).get("commit") or "HEAD")
         if changed:
@@ -219,8 +237,10 @@ def judge(runs: dict[str, tuple[dict[str, Any], list[dict[str, Any]]]], finals: 
         expected = {question_id: freeze(expected_key(question)) for question_id, question in by_id.items()}
     outcomes: dict[str, dict[str, str]] = {}
     for mode, (_, cases) in runs.items():
-        reviewed = {item["id"]: item["reviewed_passed"] for item in (finals.get(mode) or {}).get("per_case", [])}
-        outcomes[mode] = {case["id"]: outcome(case, golds[case["id"]], reviewed.get(case["id"], case["score"]["automatic_passed"]))
+        reviewed = {item["id"]: item for item in (finals.get(mode) or {}).get("per_case", [])}
+        outcomes[mode] = {case["id"]: outcome(case, golds[case["id"]],
+                                              reviewed.get(case["id"], {}).get("reviewed_passed", case["score"]["automatic_passed"]),
+                                              reviewed.get(case["id"], {}).get("failure_kind"))
                           for case in cases}
     cross = {case["id"]: case for case in runs["crosscheck"][1]}
 

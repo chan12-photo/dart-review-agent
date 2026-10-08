@@ -34,7 +34,10 @@
 |---|---|---|
 | ① 계약 확정 | 완료 | Codex 1차 검토 12건 반영([응답](reviews/3-1_contract_codex_response.ko.md)) |
 | ② 제품 고정 | **완료 (2026-10-08)** | **P = `c18207595e0d84a3228e7471423aa178129ca151`**. 기록 파일 `eval/freeze_3-1.json`.<br>· 고정 대상: `dart_review/` 전체(규칙, 프롬프트 reading-v4, 사전, 회사 집합, 모델 옵션), `eval/run_eval.py`, `scoring.py`, `judge.py`, `finalize.py`, `rescore.py`.<br>· 평가 집합 실행과 엄격 판정은 이 경로들이 P와 다르면 거부한다 |
-| ③ 질문 고정 | 진행 전 | |
+| ③ 질문 고정 | 완료 | 사용자 해시 약속 `af39eab`, Claude 22문항 `c7ee8f5`, 대량 평가 약속 `4f8a383` |
+| ④ 데이터 수집 | 완료 | 152건(정상 144, 2014년 013 8건), 기준 날짜 2026-10-08, `ec15d40` |
+| ⑤ 정답 작성 | 완료 | 정답 `6e16d0b`(기대 결정 파일을 보기 전). C06 정답 수정 사용자 승인. 기대 결정 비교 13/14, U13은 계약대로 거절 유지 `4dc2467` |
+| ⑥ 사전 등록 | Codex 2차 검토 대기 | [요청문](reviews/3-1_preregistration_codex_request.ko.md) |
 
 ## 2. 대상
 

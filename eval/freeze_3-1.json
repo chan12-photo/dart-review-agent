@@ -1,0 +1,24 @@
+{
+ "commit": "c18207595e0d84a3228e7471423aa178129ca151",
+ "date": "2026-10-08",
+ "contract": "docs/EVAL_CONTRACT_3-1.ko.md section 1, step 2",
+ "frozen_paths": [
+  "dart_review",
+  "eval/run_eval.py",
+  "eval/scoring.py",
+  "eval/judge.py",
+  "eval/finalize.py",
+  "eval/rescore.py"
+ ],
+ "git_objects": {
+  "dart_review": "bbfd0c42519d1d3b3c103ce9087acbd4ba261f64",
+  "eval/run_eval.py": "ec1e3f3ed6b53c7b2b541a08a62464e68c929691",
+  "eval/scoring.py": "60b4b7f4533a7315602c8728ab5e61deaced76df",
+  "eval/judge.py": "498a3753c995928b2cdca040b5d23da82cc82be5",
+  "eval/finalize.py": "eca1d542605a93e92da76f9d344c4fd952f3f531",
+  "eval/rescore.py": "203d45ef4434f8c14368c64aeef2815f6c645c6b"
+ },
+ "prompt_version": "reading-v4",
+ "model_options": "temperature 0, num_ctx 8192, num_predict 4096, think unset",
+ "rule": "nothing under these paths changes until the 3-1 report; evaluation-set runs and the strict judge refuse other code"
+}

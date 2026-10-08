@@ -1,0 +1,223 @@
+{
+ "reviewer": "",
+ "confirmed_by_user": false,
+ "criteria": "eval/HUMAN_REVIEW.ko.md",
+ "cases": {
+  "C01": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "C02": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "C03": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "C04": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "C05": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "C06": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "C07": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "C08": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "C09": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "C10": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "C11": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "C12": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "C13": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "C14": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "C15": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "C16": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "C17": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "C18": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "C19": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "C20": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "C21": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "C22": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "U01": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "U02": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "U03": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "U04": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "U05": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "U06": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "U07": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "U08": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "U09": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "U10": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "U11": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "U12": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "U13": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "U14": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  }
+ }
+}

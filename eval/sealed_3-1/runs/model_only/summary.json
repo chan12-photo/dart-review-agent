@@ -1,0 +1,112 @@
+{
+ "cases": 36,
+ "automatic_passed": {
+  "correct": 31,
+  "total": 36
+ },
+ "status": {
+  "correct": 34,
+  "total": 36
+ },
+ "decision": {
+  "correct": 34,
+  "total": 36
+ },
+ "numbers": {
+  "correct": 21,
+  "total": 23
+ },
+ "basis": {
+  "correct": 33,
+  "total": 36
+ },
+ "refusal_or_clarify": {
+  "correct": 13,
+  "total": 13
+ },
+ "sign_wording": {
+  "correct": 0,
+  "total": 0
+ },
+ "ungrounded_numbers": 2,
+ "cases_with_ungrounded": 2,
+ "unparsed_numbers": 0,
+ "format_errors": 0,
+ "evaluator_errors": 0,
+ "warnings": 0,
+ "model_attempts": 36,
+ "model_responses": 36,
+ "tool_calls": 26,
+ "model_latency_ms": {
+  "total": 726885.9,
+  "median_per_case": 19337.8
+ },
+ "case_wall_ms_total": 727635.9,
+ "budget_exceeded": 0,
+ "failed": [
+  "C06",
+  "U07",
+  "U11",
+  "U12",
+  "U14"
+ ],
+ "confident_wrong": [
+  "C06",
+  "U07",
+  "U11",
+  "U12"
+ ],
+ "asked_back_instead": [
+  "U14"
+ ],
+ "length_stops": [],
+ "reading_paths": {
+  "model only": [
+   "C01",
+   "C02",
+   "C03",
+   "C04",
+   "C05",
+   "C06",
+   "C07",
+   "C08",
+   "C09",
+   "C10",
+   "C11",
+   "C12",
+   "C13",
+   "C14",
+   "C15",
+   "C16",
+   "C17",
+   "C18",
+   "C19",
+   "C20",
+   "C21",
+   "C22",
+   "U01",
+   "U02",
+   "U03",
+   "U04",
+   "U05",
+   "U06",
+   "U07",
+   "U08",
+   "U09",
+   "U10",
+   "U11",
+   "U12",
+   "U13",
+   "U14"
+  ]
+ },
+ "tool_args_first_ok": {
+  "correct": 24,
+  "total": 26
+ },
+ "tool_args_any_ok": {
+  "correct": 24,
+  "total": 26
+ },
+ "network_requests": 0
+}

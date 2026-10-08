@@ -1,0 +1,59 @@
+{
+ "cases": 36,
+ "automatic_passed": {
+  "correct": 36,
+  "total": 36
+ },
+ "status": {
+  "correct": 36,
+  "total": 36
+ },
+ "decision": {
+  "correct": 36,
+  "total": 36
+ },
+ "numbers": {
+  "correct": 23,
+  "total": 23
+ },
+ "basis": {
+  "correct": 36,
+  "total": 36
+ },
+ "refusal_or_clarify": {
+  "correct": 13,
+  "total": 13
+ },
+ "sign_wording": {
+  "correct": 0,
+  "total": 0
+ },
+ "ungrounded_numbers": 0,
+ "cases_with_ungrounded": 0,
+ "unparsed_numbers": 0,
+ "format_errors": 0,
+ "evaluator_errors": 0,
+ "warnings": 0,
+ "model_attempts": 0,
+ "model_responses": 0,
+ "tool_calls": 26,
+ "model_latency_ms": {
+  "total": 0.0,
+  "median_per_case": 0.0
+ },
+ "case_wall_ms_total": 255.4,
+ "budget_exceeded": 0,
+ "failed": [],
+ "confident_wrong": [],
+ "asked_back_instead": [],
+ "length_stops": [],
+ "tool_args_first_ok": {
+  "correct": 26,
+  "total": 26
+ },
+ "tool_args_any_ok": {
+  "correct": 26,
+  "total": 26
+ },
+ "network_requests": 0
+}

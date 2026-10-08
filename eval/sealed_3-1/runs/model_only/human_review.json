@@ -1,222 +1,222 @@
 {
- "reviewer": "",
+ "reviewer": "Claude 1차 (2026-10-08), 사용자 확인 전",
  "confirmed_by_user": false,
  "criteria": "eval/HUMAN_REVIEW.ko.md",
  "cases": {
   "C01": {
-   "body_ok": null,
+   "body_ok": true,
    "failure_kind": null,
    "note": "",
    "accepted_unparsed": []
   },
   "C02": {
-   "body_ok": null,
+   "body_ok": true,
    "failure_kind": null,
    "note": "",
    "accepted_unparsed": []
   },
   "C03": {
-   "body_ok": null,
+   "body_ok": true,
    "failure_kind": null,
    "note": "",
    "accepted_unparsed": []
   },
   "C04": {
-   "body_ok": null,
+   "body_ok": true,
    "failure_kind": null,
    "note": "",
    "accepted_unparsed": []
   },
   "C05": {
-   "body_ok": null,
+   "body_ok": true,
    "failure_kind": null,
    "note": "",
    "accepted_unparsed": []
   },
   "C06": {
-   "body_ok": null,
-   "failure_kind": null,
-   "note": "",
+   "body_ok": false,
+   "failure_kind": "수치",
+   "note": "모델이 3분기말(시점)을 3분기 3개월로 읽음. 본문이 말하는 기간이 정답과 다름(공통 2번). 상태로도 잘못된 거절",
    "accepted_unparsed": []
   },
   "C07": {
-   "body_ok": null,
+   "body_ok": true,
    "failure_kind": null,
    "note": "",
    "accepted_unparsed": []
   },
   "C08": {
-   "body_ok": null,
+   "body_ok": true,
    "failure_kind": null,
    "note": "",
    "accepted_unparsed": []
   },
   "C09": {
-   "body_ok": null,
+   "body_ok": true,
    "failure_kind": null,
    "note": "",
    "accepted_unparsed": []
   },
   "C10": {
-   "body_ok": null,
+   "body_ok": true,
    "failure_kind": null,
    "note": "",
    "accepted_unparsed": []
   },
   "C11": {
-   "body_ok": null,
+   "body_ok": true,
    "failure_kind": null,
    "note": "",
    "accepted_unparsed": []
   },
   "C12": {
-   "body_ok": null,
+   "body_ok": true,
    "failure_kind": null,
    "note": "",
    "accepted_unparsed": []
   },
   "C13": {
-   "body_ok": null,
+   "body_ok": true,
    "failure_kind": null,
    "note": "",
    "accepted_unparsed": []
   },
   "C14": {
-   "body_ok": null,
+   "body_ok": true,
    "failure_kind": null,
    "note": "",
    "accepted_unparsed": []
   },
   "C15": {
-   "body_ok": null,
+   "body_ok": true,
    "failure_kind": null,
    "note": "",
    "accepted_unparsed": []
   },
   "C16": {
-   "body_ok": null,
+   "body_ok": true,
    "failure_kind": null,
    "note": "",
    "accepted_unparsed": []
   },
   "C17": {
-   "body_ok": null,
+   "body_ok": true,
    "failure_kind": null,
    "note": "",
    "accepted_unparsed": []
   },
   "C18": {
-   "body_ok": null,
+   "body_ok": true,
    "failure_kind": null,
    "note": "",
    "accepted_unparsed": []
   },
   "C19": {
-   "body_ok": null,
+   "body_ok": true,
    "failure_kind": null,
    "note": "",
    "accepted_unparsed": []
   },
   "C20": {
-   "body_ok": null,
+   "body_ok": true,
    "failure_kind": null,
-   "note": "",
+   "note": "조사 어색('CJ'은). 공통 기준 밖, 통과",
    "accepted_unparsed": []
   },
   "C21": {
-   "body_ok": null,
+   "body_ok": true,
    "failure_kind": null,
    "note": "",
    "accepted_unparsed": []
   },
   "C22": {
-   "body_ok": null,
+   "body_ok": true,
    "failure_kind": null,
    "note": "",
    "accepted_unparsed": []
   },
   "U01": {
-   "body_ok": null,
+   "body_ok": true,
    "failure_kind": null,
    "note": "",
    "accepted_unparsed": []
   },
   "U02": {
-   "body_ok": null,
+   "body_ok": true,
    "failure_kind": null,
    "note": "",
    "accepted_unparsed": []
   },
   "U03": {
-   "body_ok": null,
+   "body_ok": true,
    "failure_kind": null,
    "note": "",
    "accepted_unparsed": []
   },
   "U04": {
-   "body_ok": null,
+   "body_ok": true,
    "failure_kind": null,
    "note": "",
    "accepted_unparsed": []
   },
   "U05": {
-   "body_ok": null,
+   "body_ok": true,
    "failure_kind": null,
    "note": "",
    "accepted_unparsed": []
   },
   "U06": {
-   "body_ok": null,
+   "body_ok": true,
    "failure_kind": null,
    "note": "",
    "accepted_unparsed": []
   },
   "U07": {
-   "body_ok": null,
-   "failure_kind": null,
-   "note": "",
+   "body_ok": false,
+   "failure_kind": "수치",
+   "note": "모델이 매출을 2025-12-31 시점으로 읽음. 본문이 말하는 기간이 정답과 다름(공통 2번). 상태로도 잘못된 거절",
    "accepted_unparsed": []
   },
   "U08": {
-   "body_ok": null,
+   "body_ok": true,
    "failure_kind": null,
    "note": "",
    "accepted_unparsed": []
   },
   "U09": {
-   "body_ok": null,
+   "body_ok": true,
    "failure_kind": null,
    "note": "",
    "accepted_unparsed": []
   },
   "U10": {
-   "body_ok": null,
+   "body_ok": true,
    "failure_kind": null,
    "note": "",
    "accepted_unparsed": []
   },
   "U11": {
-   "body_ok": null,
+   "body_ok": true,
    "failure_kind": null,
-   "note": "",
+   "note": "본문(범위 밖 거절)은 맞음. 해석 문장의 '2025년'(작년)을 채점기가 근거 없는 숫자로 셈: 제품은 해석 연도를 허용(EVAL_DESIGN 12), 채점기는 질문의 4자리 연도만 허용하는 불일치",
    "accepted_unparsed": []
   },
   "U12": {
-   "body_ok": null,
-   "failure_kind": null,
-   "note": "",
+   "body_ok": false,
+   "failure_kind": "설명",
+   "note": "회사 두 개를 물었는데 '다루지 않는 회사라' 답하지 않는다고 함. 실제 원인은 회사 여러 개(공통 4번 범위 밖 이유 틀림)",
    "accepted_unparsed": []
   },
   "U13": {
-   "body_ok": null,
+   "body_ok": true,
    "failure_kind": null,
    "note": "",
    "accepted_unparsed": []
   },
   "U14": {
-   "body_ok": null,
+   "body_ok": true,
    "failure_kind": null,
-   "note": "",
+   "note": "본문(그룹 되묻기)은 맞음. 해석 문장에 모델의 오독(당기순이익, 12월 31일 시점)이 보이지만 답은 회사 되묻기. '2025년'이 근거 없는 숫자로 잡힌 것은 U11과 같은 채점기 불일치",
    "accepted_unparsed": []
   }
  }

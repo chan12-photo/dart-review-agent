@@ -1,222 +1,222 @@
 {
- "reviewer": "",
+ "reviewer": "Claude 1차 (2026-10-08), 사용자 확인 전",
  "confirmed_by_user": false,
  "criteria": "eval/HUMAN_REVIEW.ko.md",
  "cases": {
   "C01": {
-   "body_ok": null,
+   "body_ok": true,
    "failure_kind": null,
    "note": "",
    "accepted_unparsed": []
   },
   "C02": {
-   "body_ok": null,
+   "body_ok": true,
    "failure_kind": null,
    "note": "",
    "accepted_unparsed": []
   },
   "C03": {
-   "body_ok": null,
+   "body_ok": true,
    "failure_kind": null,
    "note": "",
    "accepted_unparsed": []
   },
   "C04": {
-   "body_ok": null,
+   "body_ok": true,
    "failure_kind": null,
    "note": "",
    "accepted_unparsed": []
   },
   "C05": {
-   "body_ok": null,
+   "body_ok": true,
    "failure_kind": null,
    "note": "",
    "accepted_unparsed": []
   },
   "C06": {
-   "body_ok": null,
+   "body_ok": true,
    "failure_kind": null,
-   "note": "",
+   "note": "재작성을 관찰로 말하고 기준 변경을 단정하지 않음",
    "accepted_unparsed": []
   },
   "C07": {
-   "body_ok": null,
+   "body_ok": true,
    "failure_kind": null,
    "note": "",
    "accepted_unparsed": []
   },
   "C08": {
-   "body_ok": null,
+   "body_ok": true,
    "failure_kind": null,
    "note": "",
    "accepted_unparsed": []
   },
   "C09": {
-   "body_ok": null,
+   "body_ok": true,
    "failure_kind": null,
    "note": "",
    "accepted_unparsed": []
   },
   "C10": {
-   "body_ok": null,
+   "body_ok": true,
    "failure_kind": null,
    "note": "",
    "accepted_unparsed": []
   },
   "C11": {
-   "body_ok": null,
+   "body_ok": true,
    "failure_kind": null,
    "note": "",
    "accepted_unparsed": []
   },
   "C12": {
-   "body_ok": null,
+   "body_ok": true,
    "failure_kind": null,
    "note": "",
    "accepted_unparsed": []
   },
   "C13": {
-   "body_ok": null,
+   "body_ok": true,
    "failure_kind": null,
    "note": "",
    "accepted_unparsed": []
   },
   "C14": {
-   "body_ok": null,
+   "body_ok": true,
    "failure_kind": null,
    "note": "",
    "accepted_unparsed": []
   },
   "C15": {
-   "body_ok": null,
+   "body_ok": true,
    "failure_kind": null,
    "note": "",
    "accepted_unparsed": []
   },
   "C16": {
-   "body_ok": null,
+   "body_ok": true,
    "failure_kind": null,
    "note": "",
    "accepted_unparsed": []
   },
   "C17": {
-   "body_ok": null,
+   "body_ok": true,
    "failure_kind": null,
    "note": "",
    "accepted_unparsed": []
   },
   "C18": {
-   "body_ok": null,
+   "body_ok": true,
    "failure_kind": null,
    "note": "",
    "accepted_unparsed": []
   },
   "C19": {
-   "body_ok": null,
+   "body_ok": true,
    "failure_kind": null,
    "note": "",
    "accepted_unparsed": []
   },
   "C20": {
-   "body_ok": null,
+   "body_ok": true,
    "failure_kind": null,
-   "note": "",
+   "note": "조사 어색('CJ'은). 공통 기준 밖, 통과",
    "accepted_unparsed": []
   },
   "C21": {
-   "body_ok": null,
+   "body_ok": true,
    "failure_kind": null,
    "note": "",
    "accepted_unparsed": []
   },
   "C22": {
-   "body_ok": null,
+   "body_ok": true,
    "failure_kind": null,
    "note": "",
    "accepted_unparsed": []
   },
   "U01": {
-   "body_ok": null,
+   "body_ok": true,
    "failure_kind": null,
    "note": "",
    "accepted_unparsed": []
   },
   "U02": {
-   "body_ok": null,
+   "body_ok": true,
    "failure_kind": null,
    "note": "",
    "accepted_unparsed": []
   },
   "U03": {
-   "body_ok": null,
+   "body_ok": true,
    "failure_kind": null,
    "note": "",
    "accepted_unparsed": []
   },
   "U04": {
-   "body_ok": null,
+   "body_ok": true,
    "failure_kind": null,
    "note": "",
    "accepted_unparsed": []
   },
   "U05": {
-   "body_ok": null,
+   "body_ok": true,
    "failure_kind": null,
    "note": "",
    "accepted_unparsed": []
   },
   "U06": {
-   "body_ok": null,
+   "body_ok": true,
    "failure_kind": null,
    "note": "",
    "accepted_unparsed": []
   },
   "U07": {
-   "body_ok": null,
+   "body_ok": true,
    "failure_kind": null,
-   "note": "",
+   "note": "답이 있는데 되물음(상태로 실패, 불필요한 되묻기). 모델이 매출을 시점 값(12월 31일)으로 읽어 선택지 ②가 의미 없는 해석으로 보임. 되묻기 본문은 숫자를 내놓지 않고 단정하지 않아 공통 4번은 지킴",
    "accepted_unparsed": []
   },
   "U08": {
-   "body_ok": null,
+   "body_ok": true,
    "failure_kind": null,
-   "note": "",
+   "note": "2024 값 재작성을 참고로 밝힘, 같은 보고서 값 비교",
    "accepted_unparsed": []
   },
   "U09": {
-   "body_ok": null,
+   "body_ok": true,
    "failure_kind": null,
    "note": "",
    "accepted_unparsed": []
   },
   "U10": {
-   "body_ok": null,
+   "body_ok": true,
    "failure_kind": null,
    "note": "",
    "accepted_unparsed": []
   },
   "U11": {
-   "body_ok": null,
+   "body_ok": true,
    "failure_kind": null,
    "note": "",
    "accepted_unparsed": []
   },
   "U12": {
-   "body_ok": null,
+   "body_ok": true,
    "failure_kind": null,
    "note": "",
    "accepted_unparsed": []
   },
   "U13": {
-   "body_ok": null,
+   "body_ok": true,
    "failure_kind": null,
    "note": "",
    "accepted_unparsed": []
   },
   "U14": {
-   "body_ok": null,
+   "body_ok": true,
    "failure_kind": null,
-   "note": "",
+   "note": "조사 어색('LG'은). 공통 기준 밖, 통과",
    "accepted_unparsed": []
   }
  }

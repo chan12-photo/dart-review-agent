@@ -21,7 +21,10 @@ docs/reviews/roadmap_proposal_codex_response.ko.md section 5):
   answer alone, with a note saying so.
 
 Both readers may refuse an account the tool does not cover ("unsupported");
-a refusal is final only when both refuse (review B7/C1).
+a refusal is final only when both refuse (review B7/C1). Since reading-v3
+(EVAL_DESIGN 12) a question may also be a value lookup, a group name is asked
+back, and the company of both readings is resolved by the same function
+(dart_review/company_names.py).
 
 Before anything is shown, every number in the text is checked against the
 tool results (roadmap 2-3); years may also come from the question and from
@@ -35,14 +38,18 @@ import json
 from typing import Any, Callable
 
 from .accounts import ACCOUNTS
-from .baseline import Reading, read
+from .baseline import Reading, default_year_note, latest_annual_year, read
+from .company_names import resolve_company
 from .companies import DEV_COMPANIES
 from .numbers import allowed_from, check_text, question_years, ungrounded
-from .render import clarification_answer, period_text, structured_answer, unsupported_answer
-from .tools import BASIS_CODES, PERIOD_KINDS, ToolArgumentError, execute_tool, find_company, parse_period, period_dict
+from .render import (
+    clarification_answer, company_clarification_answer, period_text, structured_answer, unsupported_answer,
+)
+from .tools import BASIS_CODES, PERIOD_KINDS, ToolArgumentError, execute_tool, parse_period, period_dict
 
-READING_PROMPT_VERSION = "reading-v2"  # v2 (3-0b): unsupported action, reference date
-ACTIONS = ("compare", "side_by_side", "clarify", "unsupported")
+# v2 (3-0b): unsupported action, reference date. v3 (EVAL_DESIGN 12): lookup action, company names, default year
+READING_PROMPT_VERSION = "reading-v3"
+ACTIONS = ("compare", "side_by_side", "lookup", "clarify", "unsupported")
 
 _PERIOD = {"type": "object", "properties": {"kind": {"type": "string", "enum": list(PERIOD_KINDS)},
                                             "year": {"type": "integer"},
@@ -66,18 +73,19 @@ READING_SCHEMA: dict[str, Any] = {
 # A template: {reference_date} is filled in by reading_prompt(); contract hashes cover the template.
 READING_SYSTEM_PROMPT = """너는 한국 상장사 재무 비교 질문을 해석한다. 답을 쓰지 말고, 질문이 무엇을 비교해 달라는지만 정해진 JSON으로 적는다.
 
-- action: compare(한 기준·한 계정의 두 기간 비교), side_by_side(같은 기간의 연결 값과 별도 값을 나란히), clarify(질문이 두 가지 이상의 계정으로 읽혀 먼저 물어야 함, 예: "이익"은 영업이익일 수도 당기순이익일 수도 있다), unsupported(질문한 계정이 아래 여섯 계정 중 하나가 아님).
-- unsupported: 질문의 계정이 여섯 계정과 다른 계정이면 고른다. 이름에 여섯 계정의 일부가 들어 있어도 다른 계정이면 unsupported다(예: 현금및현금성자산은 자산총계가 아니고, 이익잉여금은 당기순이익이 아니다). 비슷한 계정으로 바꿔 읽지 않는다. 이때 나머지 칸은 질문에서 읽은 대로 채운다.
-- company: 질문의 회사 이름. basis: 연결 또는 별도(언급이 없으면 연결). account: revenue=매출액, operating_income=영업이익, net_income=당기순이익, operating_cash_flow=영업활동현금흐름, total_assets=자산총계, total_liabilities=부채총계.
+- action: compare(한 기준·한 계정의 두 기간 비교), side_by_side(같은 기간의 연결 값과 별도 값을 나란히), lookup(비교 표현 없이 한 기간의 값 하나를 묻는 질문, 예: "매출 알려줘"), clarify(질문이 두 가지 이상의 계정으로 읽혀 먼저 물어야 함, 예: "이익"은 영업이익일 수도 당기순이익일 수도 있다), unsupported(이 도구가 답하지 않는 질문).
+- unsupported: 질문의 계정이 여섯 계정과 다른 계정이면 고른다. 이름에 여섯 계정의 일부가 들어 있어도 다른 계정이면 unsupported다(예: 현금및현금성자산은 자산총계가 아니고, 이익잉여금은 당기순이익이 아니다). 비슷한 계정으로 바꿔 읽지 않는다. 계정을 둘 이상 묻거나("전부" 포함) 회사를 둘 이상 물어도 unsupported다. 이때 나머지 칸은 질문에서 읽은 대로 채운다.
+- company: 질문에 나온 회사 이름을 쓴다. 널리 쓰는 줄임말만 정식 이름으로 바꾼다(삼전 → 삼성전자). 이름이 비슷한 다른 회사로 바꾸지 않는다(예: 삼성물산은 삼성전자가 아니다). "삼성"처럼 그룹 이름만 있으면 그대로 쓴다. basis: 연결 또는 별도(언급이 없으면 연결). account: revenue=매출액, operating_income=영업이익, net_income=당기순이익, operating_cash_flow=영업활동현금흐름, total_assets=자산총계, total_liabilities=부채총계.
 - 기간: kind는 instant(재무상태표의 시점), quarter(그 분기 3개월), year_to_date(연초부터 누적, 연간은 month 12). month는 3, 6, 9, 12.
   - "N년 매출"은 N년 연간. "3분기 매출"·"7~9월"은 quarter, month 9. "3분기 누적"·"3분기까지"·"1~9월"·"9월까지 누적"은 year_to_date, month 9. "상반기"·"1~6월"은 year_to_date, month 6. "3분기말 자산"·"9월 말 자산"은 instant, month 9. 자산·부채의 연도만 있으면 그해 말(instant, month 12).
   - current_period는 비교하려는 나중 기간, base_period는 그 기준이 되는 앞 기간이다. "전년보다", "1년 전"은 같은 종류의 전년 기간, "직전 분기"는 바로 앞 분기다. 두 연도가 나오면 나중 연도가 current다.
-- 기준 날짜는 {reference_date}이다. 질문에 연도가 없으면 이 날짜로 정한다: "올해"는 기준 날짜의 연도, "작년"·"지난해"는 그 전년, "재작년"은 2년 전이다.
-- side_by_side면 current_period에 그 기간을 넣고 base_period는 같은 값으로 둔다. clarify면 clarify_accounts에 후보 계정을 모두 넣고, 나머지 칸은 질문에서 읽은 대로 채운다."""
+- 기준 날짜는 {reference_date}이다. 질문에 연도가 없으면 이 날짜로 정한다: "올해"는 기준 날짜의 연도, "작년"·"지난해"는 그 전년, "재작년"은 2년 전이다. 연도를 나타내는 말이 전혀 없으면 {default_year}년으로 본다(가장 최근 사업보고서 연도).
+- side_by_side와 lookup이면 current_period에 그 기간을 넣고 base_period는 같은 값으로 둔다. clarify면 clarify_accounts에 후보 계정을 모두 넣고, 나머지 칸은 질문에서 읽은 대로 채운다."""
 
 
 def reading_prompt(reference_date: date) -> str:
-    return READING_SYSTEM_PROMPT.replace("{reference_date}", reference_date.isoformat())
+    return (READING_SYSTEM_PROMPT.replace("{reference_date}", reference_date.isoformat())
+            .replace("{default_year}", str(latest_annual_year(reference_date))))
 
 
 def reading_messages(question: str, reference_date: date) -> list[dict[str, str]]:
@@ -126,10 +134,8 @@ def _period_key(spec: Any) -> tuple | None:
 
 
 def _corp(name: Any) -> str | None:
-    try:
-        return find_company(name)
-    except ToolArgumentError:
-        return None
+    match = resolve_company(name) if isinstance(name, str) else None
+    return match.corp_code if match and match.kind == "company" else None
 
 
 def canonical(kind: str, arguments: dict[str, Any] | None, company: str, options: Any = ()) -> tuple | None:
@@ -139,9 +145,16 @@ def canonical(kind: str, arguments: dict[str, Any] | None, company: str, options
     accounts (in any order); the periods they carry are placeholders and are
     not compared (review B5).
     """
-    corp = _corp(company)
-    if corp is None:
+    match = resolve_company(company) if isinstance(company, str) else None
+    if match is None or match.kind == "none":
         return None
+    if match.kind == "group":
+        return ("clarify_company", match.name)
+    if match.kind != "company":
+        return ("unsupported", "company")  # another company, an evaluation company, or several companies
+    corp = match.corp_code
+    if kind == "clarify_company":
+        return None  # the rules ask back only for a group name, handled above
     if kind == "clarify":
         candidates = tuple(sorted({key for key in options if _member(key, ACCOUNTS)}))
         return ("clarify", corp, candidates) if len(candidates) >= 2 else None
@@ -149,10 +162,14 @@ def canonical(kind: str, arguments: dict[str, Any] | None, company: str, options
         return ("unsupported", corp)
     if not isinstance(arguments, dict):
         return None
-    if kind == "side_by_side":
+    if kind in ("side_by_side", "lookup"):
         period = _period_key(arguments.get("period"))
         account = arguments.get("account")
-        return ("side_by_side", corp, account, period) if period and _member(account, ACCOUNTS) else None
+        if not (period and _member(account, ACCOUNTS)):
+            return None
+        if kind == "lookup":
+            return ("lookup", corp, arguments.get("basis"), account, period) if _member(arguments.get("basis"), BASIS_CODES) else None
+        return ("side_by_side", corp, account, period)
     current, base = _period_key(arguments.get("current_period")), _period_key(arguments.get("base_period"))
     if kind != "compare" or current is None or base is None or not _member(arguments.get("basis"), BASIS_CODES) \
             or not _member(arguments.get("account"), ACCOUNTS):
@@ -168,6 +185,9 @@ def model_to_reading(data: dict[str, Any]) -> Reading:
         return Reading("clarify", company=company, options=tuple(data["clarify_accounts"]))
     if data["action"] == "side_by_side":
         return Reading("side_by_side", {"company": company, "account": data["account"], "period": data["current_period"]}, company)
+    if data["action"] == "lookup":
+        return Reading("lookup", {"company": company, "basis": data["basis"], "account": data["account"],
+                                  "period": data["current_period"]}, company)
     return Reading("compare", {"company": company, "basis": data["basis"], "account": data["account"],
                                "current_period": data["current_period"], "base_period": data["base_period"]}, company)
 
@@ -183,8 +203,15 @@ def describe(reading: Reading, with_company: bool = False) -> str:
 
 def _describe(reading: Reading) -> str:
     if reading.kind == "unsupported":
-        term = (reading.arguments or {}).get("term")
-        return f"다루지 않는 계정({term})을 묻는 질문" if term else "다루지 않는 계정을 묻는 질문"
+        arguments = reading.arguments or {}
+        term, scope = arguments.get("term"), arguments.get("scope")
+        what = {"company": "다루지 않는 회사", "companies": "회사 여러 개", "accounts": "계정 여러 개"}.get(scope, "다루지 않는 계정")
+        if not term and resolve_company(reading.company).kind != "company":
+            what = "다루지 않는 회사"
+        particle = "을" if what.endswith("계정") else "를"  # the particle follows the noun before the parentheses
+        return f"{what}({term}){particle} 묻는 질문" if term else f"{what}{particle} 묻는 질문"
+    if reading.kind == "clarify_company":
+        return f"회사({reading.company})를 먼저 확인해야 하는 질문"
     if reading.kind == "clarify":
         labels = [ACCOUNTS[key].label for key in reading.options if key in ACCOUNTS]
         return f"{'·'.join(labels)} 중 어느 것인지 먼저 확인해야 하는 질문" if labels else "계정을 먼저 확인해야 하는 질문"
@@ -193,6 +220,8 @@ def _describe(reading: Reading) -> str:
     label = label.label if label else "계정"
     if reading.kind == "side_by_side":
         return f"{period_text(period_dict(parse_period(arguments['period'], 'period')))} {label}의 연결·별도 값을 나란히 보기"
+    if reading.kind == "lookup":
+        return f"{arguments['basis']} 기준 {label}, {period_text(period_dict(parse_period(arguments['period'], 'period')))} 값 조회"
     current, base = arguments["current_period"], arguments["base_period"]
     current_text = period_text(period_dict(parse_period(current, "current_period")))
     if base["kind"] == current["kind"] and base["month"] == current["month"] and base["year"] == current["year"] - 1:
@@ -250,7 +279,7 @@ def crosscheck_turn(question: str, client: Any, record: dict[str, Any], ask: Cal
                     reference_date: date | None = None) -> None:
     """Read ``question`` twice, compare, and fill ``record``. ``ask`` None is the explicit rules-only mode."""
     reference_date = reference_date or date.today()
-    rule = read(question)
+    rule = read(question, reference_date)
     readings: dict[str, Any] = {"rule": {"kind": rule.kind, "arguments": rule.arguments, "reason": rule.reason},
                                 "model": None, "agree": None, "used": None, "reference_date": reference_date.isoformat()}
     record["readings"] = readings
@@ -305,12 +334,21 @@ def crosscheck_turn(question: str, client: Any, record: dict[str, Any], ask: Cal
         record["no_result"] = True
         return
     company = _company_name(chosen)
-    if chosen.kind == "unsupported":
-        answer = unsupported_answer(company, (rule.arguments or {}).get("term") if rule.kind == "unsupported" else None)
+    key = rule_key if chosen is rule else model_key  # dispatch on what was resolved, not on the reading's label
+    if key[0] == "unsupported":
+        if rule.kind == "unsupported" and rule_key == key:
+            answer = unsupported_answer(rule.company, rule.arguments["term"], rule.arguments["scope"])
+        elif key == ("unsupported", "company"):
+            answer = unsupported_answer(chosen.company, chosen.company, "company")
+        else:
+            answer = unsupported_answer(company, None, "any")
+    elif key[0] == "clarify_company":
+        group = resolve_company(chosen.company)
+        answer = company_clarification_answer(group.name, list(group.candidates))
     elif chosen.kind == "clarify":
         answer = clarification_answer(company, list(chosen.options))
     else:
-        name = "side_by_side" if chosen.kind == "side_by_side" else "compare_values"
+        name = {"side_by_side": "side_by_side", "lookup": "lookup_value"}.get(chosen.kind, "compare_values")
         result = execute_tool(client, name, chosen.arguments)
         record["tool_call_count"] += 1
         record["tool_calls"].append({"raw": None, "name": name, "arguments": chosen.arguments, "result": result})
@@ -319,6 +357,9 @@ def crosscheck_turn(question: str, client: Any, record: dict[str, Any], ask: Cal
             record["no_result"] = True
             return
         answer = structured_answer(result)
+        year_note = default_year_note(question, reference_date)
+        if year_note:
+            answer["answer"] = year_note + "\n" + answer["answer"]
     if header:
         answer["answer"] = header + "\n" + answer["answer"]
     if note:

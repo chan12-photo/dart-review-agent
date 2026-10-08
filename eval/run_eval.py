@@ -38,7 +38,10 @@ from dart_review.prompts import (  # noqa: E402
     AGENT_PROMPT_VERSION, AGENT_SYSTEM_PROMPT, DECISION_INSTRUCTION, FINAL_INSTRUCTION, PROMPT_VERSION, SYSTEM_PROMPT,
     oracle_message,
 )
-from dart_review.render import clarification_answer, structured_answer  # noqa: E402
+from dart_review.render import (  # noqa: E402
+    clarification_answer, company_clarification_answer, structured_answer, unsupported_answer,
+)
+from dart_review.tools import LOOKUP_SPEC as LOOKUP_SPEC_TOOL  # noqa: E402
 from dart_review.tools import TOOL_SPECS, ToolArgumentError, execute_tool, find_company  # noqa: E402
 from finalize import write_review_files  # noqa: E402
 from scoring import CaseScore, score_case, summarize  # noqa: E402
@@ -49,6 +52,8 @@ CACHE = ROOT / "cache"
 MODES = ("rules", "oracle", "full", "agent", "baseline", "crosscheck")
 MODEL_MODES = ("oracle", "full", "agent", "crosscheck")
 PARAPHRASES = ROOT / "eval" / "dev_paraphrases.json"
+LOOKUP_SPEC = ROOT / "eval" / "dev_lookup.json"  # value lookups and company names (EVAL_DESIGN 12.4)
+LOOKUP_GOLD = ROOT / "eval" / "dev_lookup_gold.json"
 MAX_MODEL_CALLS = AGENT_MAX_MODEL_CALLS  # per question in the full flow and agent modes, including the final request
 MAX_TOOL_CALLS = AGENT_MAX_TOOL_CALLS
 
@@ -56,7 +61,12 @@ MAX_TOOL_CALLS = AGENT_MAX_TOOL_CALLS
 def interpretation_calls(question: dict[str, Any]) -> list[tuple[str, dict[str, Any]]]:
     """The tool calls the correct reading of the question makes (from the hand-written expectations)."""
     expected = question["expected"]
+    if expected["action"] in ("clarify_company", "out_of_scope"):
+        return []  # answered without a tool
     company = DEV_COMPANIES[expected["corp_code"]]
+    if expected["action"] == "lookup":
+        return [("lookup_value", {"company": company, "basis": FS_DIVS[expected["fs_div"]], "account": expected["account"],
+                                  "period": expected["period"]})]
     if expected["action"] == "side_by_side":
         return [("side_by_side", {"company": company, "account": expected["account"], "period": expected["period"]})]
     accounts = expected["options"] if expected["action"] == "clarify" else [expected["account"]]
@@ -70,6 +80,10 @@ def rules_answer(question: dict[str, Any], results: list[dict[str, Any]]) -> dic
     expected = question["expected"]
     if expected["action"] == "clarify":
         return clarification_answer(DEV_COMPANIES[expected["corp_code"]], [result["account"] for result in results])
+    if expected["action"] == "clarify_company":
+        return company_clarification_answer(expected["company"], expected["options"])
+    if expected["action"] == "out_of_scope":
+        return unsupported_answer(expected["company"], None, "any")
     return structured_answer(results[0])
 
 
@@ -137,7 +151,7 @@ def run_case(mode: str, question: dict[str, Any], gold: dict[str, Any], client: 
         elif mode == "crosscheck":  # design B: rules and model read independently, code answers if they agree
             crosscheck_turn(question["question"], client, record, ask, reference_date)
         else:  # baseline: keyword rules, no model (roadmap 2-2)
-            baseline_turn(question["question"], client, record)
+            baseline_turn(question["question"], client, record, reference_date)
     except ModelError as exc:
         record["model_error"] = str(exc)
     except Exception as exc:  # a bug in the evaluator, not a model mistake: recorded and reported, never hidden
@@ -184,7 +198,7 @@ def _run_full(question: dict[str, Any], client: DartClient, record: dict[str, An
 
 def tool_argument_metrics(question: dict[str, Any], record: dict[str, Any]) -> None:
     """First tool call matches the correct reading; some successful call does (after recovery)."""
-    if question["expected"]["action"] == "clarify":
+    if question["expected"]["action"] in ("clarify", "clarify_company", "out_of_scope"):
         return
     expected = interpretation_calls(question)[0]
     calls = record["tool_calls"]
@@ -212,7 +226,9 @@ def contract_hashes() -> dict[str, str]:
             "tools": _sha256(text(TOOL_SPECS)), "answer_schema": _sha256(text(ANSWER_SCHEMA)),
             "agent_prompt": _sha256(AGENT_SYSTEM_PROMPT.encode("utf-8")), "decision_instruction": _sha256(DECISION_INSTRUCTION.encode("utf-8")),
             "decision_schema": _sha256(text(DECISION_SCHEMA)), "paraphrases": _sha256(PARAPHRASES.read_bytes()),
-            "reading_prompt": _sha256(READING_SYSTEM_PROMPT.encode("utf-8")), "reading_schema": _sha256(text(READING_SCHEMA))}
+            "reading_prompt": _sha256(READING_SYSTEM_PROMPT.encode("utf-8")), "reading_schema": _sha256(text(READING_SCHEMA)),
+            "lookup_questions": _sha256(LOOKUP_SPEC.read_bytes()), "lookup_gold": _sha256(LOOKUP_GOLD.read_bytes()),
+            "lookup_tool": _sha256(text(LOOKUP_SPEC_TOOL))}
 
 
 def load_questions(question_set: str = "dev") -> tuple[list[dict[str, Any]], dict[str, dict[str, Any]]]:
@@ -221,6 +237,10 @@ def load_questions(question_set: str = "dev") -> tuple[list[dict[str, Any]], dic
     gold = {answer["id"]: answer for answer in json.loads(GOLD.read_text(encoding="utf-8"))["answers"]}
     if question_set == "dev":
         return list(spec.values()), gold
+    if question_set == "lookup":
+        questions = json.loads(LOOKUP_SPEC.read_text(encoding="utf-8"))["questions"]
+        golds = {answer["id"]: answer for answer in json.loads(LOOKUP_GOLD.read_text(encoding="utf-8"))["answers"]}
+        return questions, golds
     questions, golds = [], {}
     for item in json.loads(PARAPHRASES.read_text(encoding="utf-8"))["questions"]:
         question = {**copy.deepcopy(spec[item["base"]]), "id": item["id"], "question": item["question"], "base": item["base"]}
@@ -254,8 +274,9 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--only", nargs="+", help="question ids to run")
     parser.add_argument("--out", type=Path, help="new directory for run.json, cases.jsonl, summary.json, review files")
     parser.add_argument("--allow-dirty", action="store_true", help="allow a model run with uncommitted changes")
-    parser.add_argument("--set", dest="question_set", choices=("dev", "paraphrase"), default="dev",
-                        help="dev: the 13 development questions; paraphrase: the same readings reworded")
+    parser.add_argument("--set", dest="question_set", choices=("dev", "paraphrase", "lookup"), default="dev",
+                        help="dev: the 13 development questions; paraphrase: the same readings reworded; "
+                             "lookup: the 16 value-lookup and company-name questions (EVAL_DESIGN 12.4)")
     parser.add_argument("--reference-date", type=date.fromisoformat, default=date.today(),
                         help="the date the crosscheck reading prompt treats as today (YYYY-MM-DD; default: today)")
     args = parser.parse_args(argv)

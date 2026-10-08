@@ -97,8 +97,13 @@ class ReadingTests(unittest.TestCase):
         self.assertIn("직전 분기와", describe(read(SPEC["dev06"]["question"])))
         self.assertIn("나란히", describe(read(SPEC["dev05"]["question"])))
 
-    def test_unusable_company_is_no_reading(self):
-        self.assertIsNone(canonical("compare", model_reading("dev01"), "NAVER"))
+    def test_companies_outside_the_development_set(self):
+        # EVAL_DESIGN 12.3: an evaluation company, another company, or several companies are out of scope
+        for company in ("NAVER", "카카오뱅크", "카카오, 셀트리온"):
+            with self.subTest(company=company):
+                self.assertEqual(canonical("compare", model_reading("dev01"), company), ("unsupported", "company"))
+        self.assertEqual(canonical("compare", model_reading("dev01"), "삼성"), ("clarify_company", "삼성"))
+        self.assertIsNone(canonical("compare", model_reading("dev01"), "어느 회사"))
 
 
 @unittest.skipUnless(run_eval.CACHE.exists(), "run scripts/fetch_dev_cache.py first")
@@ -148,7 +153,7 @@ class CrosscheckRunTests(unittest.TestCase):
                 self.assertIn("모델 해석을 얻지 못해", record["withheld_reason"])
 
     def test_model_only_answers_start_with_the_reading(self):
-        question = "삼성전자 매출, 작년과 재작년을 비교해 줘"  # the rules find no year
+        question = "삼성전자 2025년 판매 실적, 전년과 비교해 줘"  # the rules find no account ("판매 실적")
         record = self.case("dev01", ScriptedChat([reply(model_reading("dev01"))]), question)
         self.assertEqual(record["readings"]["used"], "model only")
         text = record["answer"]["answer"]
@@ -232,7 +237,7 @@ class UnsupportedAccountTests(unittest.TestCase):
     def test_both_refuse(self):
         record = self.turn("삼성전자 2025년 유동자산을 전년 말과 비교해 줘.", json.dumps(model_reading("dev01", action="unsupported")))
         self.assertEqual(record["readings"]["used"], "both")
-        self.assertEqual(record["answer"]["status"], "비교 불가")
+        self.assertEqual(record["answer"]["status"], "범위 밖")
         self.assertIn("다루지 않는 계정이라 답하지 않습니다: 유동자산", record["answer"]["answer"])
         self.assertEqual(record["tool_call_count"], 0)
 
@@ -256,10 +261,10 @@ class UnsupportedAccountTests(unittest.TestCase):
         self.assertEqual(record["readings"]["used"], "both")
 
     def test_model_only_refusal(self):
-        record = self.turn("삼전 2025년 유동자산 전년 대비", json.dumps(model_reading("dev01", action="unsupported")))
+        record = self.turn("Samsung Electronics 2025년 유동자산 전년 대비", json.dumps(model_reading("dev01", action="unsupported")))
         self.assertEqual(record["readings"]["rule"]["reason"], "회사 이름을 찾지 못함")
         self.assertEqual(record["readings"]["used"], "model only")
-        self.assertEqual(record["answer"]["status"], "비교 불가")
+        self.assertEqual(record["answer"]["status"], "범위 밖")
         self.assertTrue(record["answer"]["answer"].startswith("이렇게 이해했습니다: 다루지 않는 계정을 묻는 질문."))
 
 

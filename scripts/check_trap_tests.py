@@ -91,7 +91,7 @@ def base_from_its_own_report(current, base, sj_div):
 
 def account_by_substring(text):
     """The keyword rule before 3-0b: the first supported keyword anywhere in the text."""
-    return next((key for key, words in baseline.ACCOUNT_KEYWORDS if any(word in text for word in words)), None), None
+    return next((key for key, words in baseline.ACCOUNT_KEYWORDS if any(word in text for word in words)), None), None, ()
 
 
 MUTATIONS = [

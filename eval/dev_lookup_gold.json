@@ -1,0 +1,635 @@
+{
+  "version": 1,
+  "source": "eval/dev_lookup.json",
+  "rules": "docs/EVAL_DESIGN.ko.md 12절 (값 조회, 회사 이름). 기준 날짜 2026-10-08: 연도가 없으면 2025년(가장 최근 사업보고서 연도).",
+  "status": "개발용 (Claude 작성, 2026-10-08). 실행 전 커밋. 3-1 봉인 평가 세트가 아니다.",
+  "reference_date": "2026-10-08",
+  "answers": [
+    {
+      "id": "L01",
+      "question": "삼성전자 매출 알려줘",
+      "case_types": [
+        "기본 연도"
+      ],
+      "action": "lookup",
+      "company": "삼성전자",
+      "corp_code": "00126380",
+      "status": "값 확인",
+      "expected_status": "값 확인",
+      "decision": "answer",
+      "account": "revenue",
+      "account_label": "매출액",
+      "basis": "연결",
+      "fs_div": "CFS",
+      "period": "2025-01-01~2025-12-31 (누적 12개월)",
+      "period_range": {
+        "start": "2025-01-01",
+        "end": "2025-12-31"
+      },
+      "reason_keywords": [],
+      "forbidden_terms": [],
+      "values": {
+        "current": {
+          "year": 2025,
+          "report": "사업보고서",
+          "report_code": "11011",
+          "fs_div": "CFS",
+          "status": "000",
+          "response_sha256": "d2888e542f9159cb087c7679efcd41e3d76cbf2df9e90260fa95549c7fee15e9",
+          "column": "thstrm",
+          "period": "2025-01-01~2025-12-31 (누적 12개월)",
+          "period_range": {
+            "start": "2025-01-01",
+            "end": "2025-12-31"
+          },
+          "sj_div": "IS",
+          "account_id": "ifrs-full_Revenue",
+          "account_nm": "매출액",
+          "rcept_no": "20260310002820",
+          "currency": "KRW",
+          "amount": 333605938000000
+        }
+      },
+      "later_missing": "not_cached"
+    },
+    {
+      "id": "L02",
+      "question": "삼전 2024년 영업이익 얼마야?",
+      "case_types": [
+        "약칭",
+        "이후 보고서와 일치"
+      ],
+      "action": "lookup",
+      "company": "삼성전자",
+      "corp_code": "00126380",
+      "status": "값 확인",
+      "expected_status": "값 확인",
+      "decision": "answer",
+      "account": "operating_income",
+      "account_label": "영업이익",
+      "basis": "연결",
+      "fs_div": "CFS",
+      "period": "2024-01-01~2024-12-31 (누적 12개월)",
+      "period_range": {
+        "start": "2024-01-01",
+        "end": "2024-12-31"
+      },
+      "reason_keywords": [],
+      "forbidden_terms": [],
+      "values": {
+        "current": {
+          "year": 2024,
+          "report": "사업보고서",
+          "report_code": "11011",
+          "fs_div": "CFS",
+          "status": "000",
+          "response_sha256": "02ba33663741fcc4eee745dee38553c443f07e9736dead9bf16ab31002241ccc",
+          "column": "thstrm",
+          "period": "2024-01-01~2024-12-31 (누적 12개월)",
+          "period_range": {
+            "start": "2024-01-01",
+            "end": "2024-12-31"
+          },
+          "sj_div": "IS",
+          "account_id": "dart_OperatingIncomeLoss",
+          "account_nm": "영업이익",
+          "rcept_no": "20250311001085",
+          "currency": "KRW",
+          "amount": 32725961000000
+        }
+      },
+      "later": {
+        "year": 2025,
+        "report": "사업보고서",
+        "report_code": "11011",
+        "fs_div": "CFS",
+        "status": "000",
+        "response_sha256": "d2888e542f9159cb087c7679efcd41e3d76cbf2df9e90260fa95549c7fee15e9",
+        "column": "frmtrm",
+        "period": "2024-01-01~2024-12-31 (누적 12개월)",
+        "period_range": {
+          "start": "2024-01-01",
+          "end": "2024-12-31"
+        },
+        "sj_div": "IS",
+        "account_id": "dart_OperatingIncomeLoss",
+        "account_nm": "영업이익",
+        "rcept_no": "20260310002820",
+        "currency": "KRW",
+        "amount": 32725961000000
+      }
+    },
+    {
+      "id": "L03",
+      "question": "카카오 2025년 3분기 매출 알려줘",
+      "case_types": [
+        "분기 3개월"
+      ],
+      "action": "lookup",
+      "company": "카카오",
+      "corp_code": "00258801",
+      "status": "값 확인",
+      "expected_status": "값 확인",
+      "decision": "answer",
+      "account": "revenue",
+      "account_label": "매출액",
+      "basis": "연결",
+      "fs_div": "CFS",
+      "period": "2025-07-01~2025-09-30 (3개월)",
+      "period_range": {
+        "start": "2025-07-01",
+        "end": "2025-09-30"
+      },
+      "reason_keywords": [],
+      "forbidden_terms": [],
+      "values": {
+        "current": {
+          "year": 2025,
+          "report": "3분기보고서",
+          "report_code": "11014",
+          "fs_div": "CFS",
+          "status": "000",
+          "response_sha256": "0980363f8142647a127ca5b7dd443f70080ce6329b306c5f502694c2d075b946",
+          "column": "thstrm",
+          "period": "2025-07-01~2025-09-30 (3개월)",
+          "period_range": {
+            "start": "2025-07-01",
+            "end": "2025-09-30"
+          },
+          "sj_div": "CIS",
+          "account_id": "ifrs-full_Revenue",
+          "account_nm": "영업수익",
+          "rcept_no": "20251114002572",
+          "currency": "KRW",
+          "amount": 2086580139318
+        }
+      },
+      "later_missing": "not_cached"
+    },
+    {
+      "id": "L04",
+      "question": "셀트리온 2025년 3분기말 부채총계는?",
+      "case_types": [
+        "재무상태표 시점",
+        "다시 싣는 보고서 없음"
+      ],
+      "action": "lookup",
+      "company": "셀트리온",
+      "corp_code": "00413046",
+      "status": "값 확인",
+      "expected_status": "값 확인",
+      "decision": "answer",
+      "account": "total_liabilities",
+      "account_label": "부채총계",
+      "basis": "연결",
+      "fs_div": "CFS",
+      "period": "2025-09-30 시점",
+      "period_range": {
+        "start": null,
+        "end": "2025-09-30"
+      },
+      "reason_keywords": [],
+      "forbidden_terms": [],
+      "values": {
+        "current": {
+          "year": 2025,
+          "report": "3분기보고서",
+          "report_code": "11014",
+          "fs_div": "CFS",
+          "status": "000",
+          "response_sha256": "7e61187d2d2d9362d733bc38fc86b84a3a6703d9a10b8b1e3bd9c920370d5694",
+          "column": "thstrm",
+          "period": "2025-09-30 시점",
+          "period_range": {
+            "start": null,
+            "end": "2025-09-30"
+          },
+          "sj_div": "BS",
+          "account_id": "ifrs-full_Liabilities",
+          "account_nm": "부채총계",
+          "rcept_no": "20251114002699",
+          "currency": "KRW",
+          "amount": 4238625480741
+        }
+      },
+      "later_missing": "no_column"
+    },
+    {
+      "id": "L05",
+      "question": "카카오 2023년 3분기 매출 알려줘",
+      "case_types": [
+        "재작성",
+        "표준계정ID 오표기"
+      ],
+      "action": "lookup",
+      "company": "카카오",
+      "corp_code": "00258801",
+      "status": "확인 필요",
+      "expected_status": "확인 필요",
+      "decision": "answer",
+      "account": "revenue",
+      "account_label": "매출액",
+      "basis": "연결",
+      "fs_div": "CFS",
+      "period": "2023-07-01~2023-09-30 (3개월)",
+      "period_range": {
+        "start": "2023-07-01",
+        "end": "2023-09-30"
+      },
+      "reason_keywords": [
+        "재작성"
+      ],
+      "forbidden_terms": [],
+      "values": {
+        "current": {
+          "year": 2023,
+          "report": "3분기보고서",
+          "report_code": "11014",
+          "fs_div": "CFS",
+          "status": "000",
+          "response_sha256": "28a25abd03b808628a62e534d4d8c42f834b3d4ad891db083f5f762cb6cc3b4f",
+          "column": "thstrm",
+          "period": "2023-07-01~2023-09-30 (3개월)",
+          "period_range": {
+            "start": "2023-07-01",
+            "end": "2023-09-30"
+          },
+          "sj_div": "CIS",
+          "account_id": "ifrs-full_GrossProfit",
+          "account_nm": "영업수익",
+          "rcept_no": "20231226000387",
+          "currency": "KRW",
+          "amount": 2160931354165
+        }
+      },
+      "later": {
+        "year": 2024,
+        "report": "3분기보고서",
+        "report_code": "11014",
+        "fs_div": "CFS",
+        "status": "000",
+        "response_sha256": "81abdcb4ee7363e45e9825a9fd62f52582653c1bc0dc3455bd910048636a823d",
+        "column": "frmtrm_q",
+        "period": "2023-07-01~2023-09-30 (3개월)",
+        "period_range": {
+          "start": "2023-07-01",
+          "end": "2023-09-30"
+        },
+        "sj_div": "CIS",
+        "account_id": "ifrs-full_Revenue",
+        "account_nm": "영업수익",
+        "rcept_no": "20241226000456",
+        "currency": "KRW",
+        "amount": 2011471714310
+      }
+    },
+    {
+      "id": "L06",
+      "question": "셀트리온 2023년 말 별도 부채총계 알려줘",
+      "case_types": [
+        "재작성",
+        "별도 기준"
+      ],
+      "action": "lookup",
+      "company": "셀트리온",
+      "corp_code": "00413046",
+      "status": "확인 필요",
+      "expected_status": "확인 필요",
+      "decision": "answer",
+      "account": "total_liabilities",
+      "account_label": "부채총계",
+      "basis": "별도",
+      "fs_div": "OFS",
+      "period": "2023-12-31 시점",
+      "period_range": {
+        "start": null,
+        "end": "2023-12-31"
+      },
+      "reason_keywords": [
+        "재작성"
+      ],
+      "forbidden_terms": [],
+      "values": {
+        "current": {
+          "year": 2023,
+          "report": "사업보고서",
+          "report_code": "11011",
+          "fs_div": "OFS",
+          "status": "000",
+          "response_sha256": "e365a92c333f9d5c111a11947068b05f87ef29f6a2c7e8182d6beff44bbbf615",
+          "column": "thstrm",
+          "period": "2023-12-31 시점",
+          "period_range": {
+            "start": null,
+            "end": "2023-12-31"
+          },
+          "sj_div": "BS",
+          "account_id": "ifrs-full_Liabilities",
+          "account_nm": "부채총계",
+          "rcept_no": "20240318000913",
+          "currency": "KRW",
+          "amount": 2230608519706
+        }
+      },
+      "later": {
+        "year": 2024,
+        "report": "사업보고서",
+        "report_code": "11011",
+        "fs_div": "OFS",
+        "status": "000",
+        "response_sha256": "3af9a08c661b03cc528538957b46794d00fd97cd028c1aad42bf849bb23cd8f1",
+        "column": "frmtrm",
+        "period": "2023-12-31 시점",
+        "period_range": {
+          "start": null,
+          "end": "2023-12-31"
+        },
+        "sj_div": "BS",
+        "account_id": "ifrs-full_Liabilities",
+        "account_nm": "부채총계",
+        "rcept_no": "20250317000929",
+        "currency": "KRW",
+        "amount": 2256044979595
+      }
+    },
+    {
+      "id": "L07",
+      "question": "카카오 2025년 4분기 매출 알려줘",
+      "case_types": [
+        "조회 불가"
+      ],
+      "action": "lookup",
+      "company": "카카오",
+      "corp_code": "00258801",
+      "status": "조회 불가",
+      "expected_status": "조회 불가",
+      "decision": "refuse",
+      "account": "revenue",
+      "account_label": "매출액",
+      "basis": "연결",
+      "fs_div": "CFS",
+      "period": "2025-10-01~2025-12-31 (3개월)",
+      "period_range": {
+        "start": "2025-10-01",
+        "end": "2025-12-31"
+      },
+      "reason_keywords": [
+        "4분기"
+      ],
+      "forbidden_terms": [],
+      "values": {}
+    },
+    {
+      "id": "L08",
+      "question": "삼성전자 2025년 3분기 영업활동현금흐름 알려줘",
+      "case_types": [
+        "조회 불가"
+      ],
+      "action": "lookup",
+      "company": "삼성전자",
+      "corp_code": "00126380",
+      "status": "조회 불가",
+      "expected_status": "조회 불가",
+      "decision": "refuse",
+      "account": "operating_cash_flow",
+      "account_label": "영업활동현금흐름",
+      "basis": "연결",
+      "fs_div": "CFS",
+      "period": "2025-07-01~2025-09-30 (3개월)",
+      "period_range": {
+        "start": "2025-07-01",
+        "end": "2025-09-30"
+      },
+      "reason_keywords": [
+        "누적 값만"
+      ],
+      "forbidden_terms": [],
+      "values": {}
+    },
+    {
+      "id": "L09",
+      "question": "삼성전자 2014년 매출 알려줘",
+      "case_types": [
+        "데이터 없음"
+      ],
+      "action": "lookup",
+      "company": "삼성전자",
+      "corp_code": "00126380",
+      "status": "데이터 없음",
+      "expected_status": "데이터 없음",
+      "decision": "refuse",
+      "account": "revenue",
+      "account_label": "매출액",
+      "basis": "연결",
+      "fs_div": "CFS",
+      "period": "2014-01-01~2014-12-31 (누적 12개월)",
+      "period_range": {
+        "start": "2014-01-01",
+        "end": "2014-12-31"
+      },
+      "reason_keywords": [
+        "013"
+      ],
+      "forbidden_terms": [],
+      "values": {
+        "current": {
+          "year": 2014,
+          "report": "사업보고서",
+          "report_code": "11011",
+          "fs_div": "CFS",
+          "status": "013",
+          "response_sha256": "5b9f448765008cd323ab5b94081c873aa00d39974e7ed5aa1964b00a19e8242b"
+        }
+      }
+    },
+    {
+      "id": "L10",
+      "question": "삼성 2025년 매출 알려줘",
+      "case_types": [
+        "그룹 이름"
+      ],
+      "action": "clarify_company",
+      "company": "삼성",
+      "account": null,
+      "forbidden_terms": [],
+      "expected_status": "되묻기",
+      "decision": "clarify",
+      "options": [
+        {
+          "account": null,
+          "label": "삼성전자"
+        }
+      ]
+    },
+    {
+      "id": "L11",
+      "question": "카카오뱅크 2025년 순이익 알려줘",
+      "case_types": [
+        "범위 밖 회사"
+      ],
+      "action": "out_of_scope",
+      "company": "카카오뱅크",
+      "account": null,
+      "forbidden_terms": [],
+      "expected_status": "범위 밖",
+      "decision": "refuse",
+      "scope": "company"
+    },
+    {
+      "id": "L12",
+      "question": "카카오 2025년 매출 영업이익 순이익 전부 알려줘",
+      "case_types": [
+        "계정 여러 개"
+      ],
+      "action": "out_of_scope",
+      "company": "카카오",
+      "account": null,
+      "forbidden_terms": [],
+      "expected_status": "범위 밖",
+      "decision": "refuse",
+      "scope": "accounts"
+    },
+    {
+      "id": "L13",
+      "question": "셀트리온 작년 영업이익 얼마야?",
+      "case_types": [
+        "상대 연도"
+      ],
+      "action": "lookup",
+      "company": "셀트리온",
+      "corp_code": "00413046",
+      "status": "값 확인",
+      "expected_status": "값 확인",
+      "decision": "answer",
+      "account": "operating_income",
+      "account_label": "영업이익",
+      "basis": "연결",
+      "fs_div": "CFS",
+      "period": "2025-01-01~2025-12-31 (누적 12개월)",
+      "period_range": {
+        "start": "2025-01-01",
+        "end": "2025-12-31"
+      },
+      "reason_keywords": [],
+      "forbidden_terms": [],
+      "values": {
+        "current": {
+          "year": 2025,
+          "report": "사업보고서",
+          "report_code": "11011",
+          "fs_div": "CFS",
+          "status": "000",
+          "response_sha256": "8ee80e255ea845e6467577339a4bfca5e232eaf81a7495f5d75eb348ebff4acb",
+          "column": "thstrm",
+          "period": "2025-01-01~2025-12-31 (누적 12개월)",
+          "period_range": {
+            "start": "2025-01-01",
+            "end": "2025-12-31"
+          },
+          "sj_div": "IS",
+          "account_id": "dart_OperatingIncomeLoss",
+          "account_nm": "영업이익",
+          "rcept_no": "20260316001415",
+          "currency": "KRW",
+          "amount": 1168471345595
+        }
+      },
+      "later_missing": "not_cached"
+    },
+    {
+      "id": "L14",
+      "question": "카카오 2025년 유동자산 알려줘",
+      "case_types": [
+        "범위 밖 계정"
+      ],
+      "action": "out_of_scope",
+      "company": "카카오",
+      "account": null,
+      "forbidden_terms": [],
+      "expected_status": "범위 밖",
+      "decision": "refuse",
+      "scope": "account"
+    },
+    {
+      "id": "L15",
+      "question": "카카오 2024년 별도 영업이익 알려줘",
+      "case_types": [
+        "별도 기준",
+        "이후 보고서와 일치"
+      ],
+      "action": "lookup",
+      "company": "카카오",
+      "corp_code": "00258801",
+      "status": "값 확인",
+      "expected_status": "값 확인",
+      "decision": "answer",
+      "account": "operating_income",
+      "account_label": "영업이익",
+      "basis": "별도",
+      "fs_div": "OFS",
+      "period": "2024-01-01~2024-12-31 (누적 12개월)",
+      "period_range": {
+        "start": "2024-01-01",
+        "end": "2024-12-31"
+      },
+      "reason_keywords": [],
+      "forbidden_terms": [],
+      "values": {
+        "current": {
+          "year": 2024,
+          "report": "사업보고서",
+          "report_code": "11011",
+          "fs_div": "OFS",
+          "status": "000",
+          "response_sha256": "457dbdcd0bbcb7676d16cf7dca216674479dfb57d2d7207a909ad08edab87805",
+          "column": "thstrm",
+          "period": "2024-01-01~2024-12-31 (누적 12개월)",
+          "period_range": {
+            "start": "2024-01-01",
+            "end": "2024-12-31"
+          },
+          "sj_div": "CIS",
+          "account_id": "dart_OperatingIncomeLoss",
+          "account_nm": "영업이익(손실)",
+          "rcept_no": "20250324000901",
+          "currency": "KRW",
+          "amount": 491969958048
+        }
+      },
+      "later": {
+        "year": 2025,
+        "report": "사업보고서",
+        "report_code": "11011",
+        "fs_div": "OFS",
+        "status": "000",
+        "response_sha256": "757687016220068ff1040fab7bd4e846267755bf292e43cdc4aecda63defb7a0",
+        "column": "frmtrm",
+        "period": "2024-01-01~2024-12-31 (누적 12개월)",
+        "period_range": {
+          "start": "2024-01-01",
+          "end": "2024-12-31"
+        },
+        "sj_div": "CIS",
+        "account_id": "dart_OperatingIncomeLoss",
+        "account_nm": "영업이익",
+        "rcept_no": "20260318001423",
+        "currency": "KRW",
+        "amount": 491969958048
+      }
+    },
+    {
+      "id": "L16",
+      "question": "삼성전자랑 카카오 2025년 매출 알려줘",
+      "case_types": [
+        "회사 여러 개"
+      ],
+      "action": "out_of_scope",
+      "company": "삼성전자, 카카오",
+      "account": null,
+      "forbidden_terms": [],
+      "expected_status": "범위 밖",
+      "decision": "refuse",
+      "scope": "companies"
+    }
+  ]
+}

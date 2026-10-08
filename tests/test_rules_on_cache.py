@@ -196,3 +196,10 @@ class VocabularyTests(unittest.TestCase):
         result = subprocess.run([sys.executable, str(script), "--check"], capture_output=True, text=True)
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
 
+    def test_the_committed_company_vocabulary_matches_the_company_list(self):
+        import subprocess
+        import sys
+        script = Path(__file__).resolve().parents[1] / "scripts" / "build_company_vocabulary.py"
+        result = subprocess.run([sys.executable, str(script), "--check"], capture_output=True, text=True)
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+

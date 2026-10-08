@@ -27,20 +27,29 @@ are general readings of the defaults table in docs/GOLD_RULES.ko.md section
      otherwise the whole year.
 6. Base period: the same kind in the base year, or the previous quarter
    for "직전 분기" / "전 분기".
+7. (3-1 preparation, EVAL_DESIGN 12) Company by the longest name
+   (dart_review/company_names.py): another company whose name contains a
+   supported one, or several companies, is out of scope; a group name alone
+   is asked back. Two or more different accounts are out of scope. Without
+   a four-digit year, 올해/작년/재작년 are read from the reference date, and
+   with no year at all the latest annual report year is used. With no
+   comparison word and at most one year the question is a value lookup.
 The facts are then written by the same renderer as the agent's answers.
 """
 
 from __future__ import annotations
 
 from dataclasses import dataclass
+from datetime import date
 import json
 from pathlib import Path
 import re
 from typing import Any
 
 from .accounts import ACCOUNTS, normalize_term
+from .company_names import resolve_company
 from .companies import DEV_COMPANIES
-from .render import clarification_answer, structured_answer, unsupported_answer
+from .render import clarification_answer, company_clarification_answer, structured_answer, unsupported_answer
 from .tools import execute_tool
 
 VOCABULARY_FILE = Path(__file__).with_name("account_vocabulary.json")
@@ -68,15 +77,15 @@ UNSUPPORTED_TERMS = _unsupported_terms()
 
 @dataclass
 class Reading:
-    kind: str  # "compare", "side_by_side", "clarify", "unsupported", or "unreadable"
+    kind: str  # "compare", "side_by_side", "lookup", "clarify", "clarify_company", "unsupported", or "unreadable"
     arguments: dict[str, Any] | None = None
     company: str = ""
     options: tuple[str, ...] = ()
     reason: str = ""
 
 
-def _account(text: str) -> tuple[str | None, str | None]:
-    """(supported account, None), (None, unsupported account name), or (None, None).
+def _account(text: str) -> tuple[str | None, str | None, tuple[str, ...]]:
+    """(account, None, ()), (None, unsupported account name, ()), (None, None, several accounts), or (None, None, ()).
 
     Every keyword and vocabulary name found in ``text`` is a span; a span
     inside a longer one does not count, so 자산 inside 유동자산 is not read
@@ -92,9 +101,40 @@ def _account(text: str) -> tuple[str | None, str | None]:
     refused = sorted(span for span in outer if span[2] is None)
     if refused:
         start, end, _ = refused[0]
-        return None, text[start:end]
-    found = {span[2] for span in outer}
-    return next((key for key, _ in ACCOUNT_KEYWORDS if key in found), None), None
+        return None, text[start:end], ()
+    found = [key for key, _ in ACCOUNT_KEYWORDS if key in {span[2] for span in outer}]
+    if len(found) > 1:
+        return None, None, tuple(found)
+    return (found[0] if found else None), None, ()
+
+
+def latest_annual_year(reference_date: date) -> int:
+    """The latest year whose annual report is due by ``reference_date`` (due by the end of March)."""
+    return reference_date.year - 1 if (reference_date.month, reference_date.day) >= (4, 1) else reference_date.year - 2
+
+
+def _years(text: str, reference_date: date) -> list[int]:
+    explicit = sorted({int(year) for year in re.findall(r"(\d{4})\s*년", text)})
+    if explicit:
+        return explicit
+    relative = set()
+    if re.search(r"올해|금년", text):
+        relative.add(reference_date.year)
+    if re.search(r"(?<!재)작년|지난\s*해", text):
+        relative.add(reference_date.year - 1)
+    if "재작년" in text:
+        relative.add(reference_date.year - 2)
+    return sorted(relative)
+
+
+def default_year_note(question: str, reference_date: date) -> str | None:
+    """The note shown when the question names no year (EVAL_DESIGN 12.2)."""
+    if _years(question, reference_date):
+        return None
+    return f"연도를 말하지 않아 가장 최근 사업보고서 연도({latest_annual_year(reference_date)}년)로 봤습니다."
+
+
+_COMPARISON = re.compile(r"보다|대비|비교|전년|전기|직전|증감|증가|감소|늘었|늘어|늘린|줄었|줄어|변화|성장|차이")
 
 
 def _month_point(text: str) -> int:
@@ -127,22 +167,32 @@ def _flow_period(text: str) -> tuple[str, int]:
     return "year_to_date", 12
 
 
-def read(question: str) -> Reading:
+def read(question: str, reference_date: date | None = None) -> Reading:
+    reference_date = reference_date or date.today()
     text = question.replace(" ", " ")
     compact = text.replace(" ", "")
-    company = next((name for name in DEV_COMPANIES.values() if name.replace(" ", "") in compact), "")
-    if not company:
+    match = resolve_company(compact)
+    if match.kind == "none":
         return Reading("unreadable", reason="회사 이름을 찾지 못함")
-    account, unsupported = _account(compact)
+    if match.kind in ("unsupported", "sealed", "several"):
+        scope = "companies" if match.kind == "several" else "company"
+        return Reading("unsupported", {"term": match.name, "scope": scope}, match.name,
+                       reason=f"{'회사 여러 개' if match.kind == 'several' else '지원하지 않는 회사'}: {match.name}")
+    if match.kind == "group":
+        return Reading("clarify_company", company=match.name, options=match.candidates)
+    company = DEV_COMPANIES[match.corp_code]
+    account, unsupported, several = _account(compact)
     if unsupported:
-        return Reading("unsupported", {"term": unsupported}, company, reason=f"지원하지 않는 계정: {unsupported}")
+        return Reading("unsupported", {"term": unsupported, "scope": "account"}, company,
+                       reason=f"지원하지 않는 계정: {unsupported}")
+    if several:
+        labels = ", ".join(ACCOUNTS[key].label for key in several)
+        return Reading("unsupported", {"term": labels, "scope": "accounts"}, company, reason=f"계정 여러 개: {labels}")
     if account is None:
         if "이익" in compact:
             return Reading("clarify", company=company, options=("operating_income", "net_income"))
         return Reading("unreadable", company=company, reason="계정을 찾지 못함")
-    years = sorted({int(year) for year in re.findall(r"(\d{4})\s*년", text)})
-    if not years:
-        return Reading("unreadable", company=company, reason="연도를 찾지 못함")
+    years = _years(text, reference_date) or [latest_annual_year(reference_date)]
     current_year = years[-1]
     base_year = years[0] if len(years) > 1 else current_year - 1
     if account in BALANCE_SHEET:
@@ -152,30 +202,36 @@ def read(question: str) -> Reading:
     current = {"kind": kind, "year": current_year, "month": month}
     if "연결" in compact and "별도" in compact:
         return Reading("side_by_side", {"company": company, "account": account, "period": current}, company)
+    basis = "별도" if "별도" in compact else "연결"
+    if not _COMPARISON.search(compact) and len(years) == 1:
+        return Reading("lookup", {"company": company, "basis": basis, "account": account, "period": current}, company)
     if re.search(r"(직전|전)\s*분기", text) and kind == "quarter":
         base = {"kind": "quarter", "year": current_year if month > 3 else current_year - 1,
                 "month": month - 3 if month > 3 else 12}
     else:
         base = {"kind": kind, "year": base_year, "month": month}
-    basis = "별도" if "별도" in compact else "연결"
     return Reading("compare", {"company": company, "basis": basis, "account": account,
                                "current_period": current, "base_period": base}, company)
 
 
-def baseline_turn(question: str, client: Any, record: dict[str, Any]) -> None:
+def baseline_turn(question: str, client: Any, record: dict[str, Any], reference_date: date | None = None) -> None:
     """Fill ``record`` the way the agent does, without a model."""
-    reading = read(question)
+    reference_date = reference_date or date.today()
+    reading = read(question, reference_date)
     record["baseline_reading"] = {"kind": reading.kind, "arguments": reading.arguments, "reason": reading.reason}
     if reading.kind == "unreadable":
         record["no_result"] = True
         return
     if reading.kind == "unsupported":
-        record["answer"] = unsupported_answer(reading.company, reading.arguments["term"])
+        record["answer"] = unsupported_answer(reading.company, reading.arguments["term"], reading.arguments["scope"])
+        return
+    if reading.kind == "clarify_company":
+        record["answer"] = company_clarification_answer(reading.company, list(reading.options))
         return
     if reading.kind == "clarify":
         record["answer"] = clarification_answer(reading.company, list(reading.options))
         return
-    name = "side_by_side" if reading.kind == "side_by_side" else "compare_values"
+    name = {"side_by_side": "side_by_side", "lookup": "lookup_value"}.get(reading.kind, "compare_values")
     result = execute_tool(client, name, reading.arguments)
     record["tool_call_count"] += 1
     record["tool_calls"].append({"raw": None, "name": name, "arguments": reading.arguments, "result": result})
@@ -183,4 +239,8 @@ def baseline_turn(question: str, client: Any, record: dict[str, Any]) -> None:
     if "error" in result:
         record["no_result"] = True
         return
-    record["answer"] = structured_answer(result)
+    answer = structured_answer(result)
+    note = default_year_note(question, reference_date)
+    if note:
+        answer["answer"] = note + "\n" + answer["answer"]
+    record["answer"] = answer

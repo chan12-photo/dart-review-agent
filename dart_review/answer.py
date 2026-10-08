@@ -10,10 +10,11 @@ from typing import Any
 
 from .accounts import ACCOUNTS
 
-STATUSES = ("비교 가능", "비교 불가", "데이터 없음", "확인 필요", "나란히 표시", "되묻기")
+# 값 확인, 조회 불가, 범위 밖 added for value lookups (EVAL_DESIGN 12.1)
+STATUSES = ("비교 가능", "비교 불가", "데이터 없음", "확인 필요", "나란히 표시", "되묻기", "값 확인", "조회 불가", "범위 밖")
 BASIS_NAMES = ("연결", "별도")
-DECISIONS = {"비교 가능": "answer", "확인 필요": "answer", "나란히 표시": "side_by_side",
-             "비교 불가": "refuse", "데이터 없음": "refuse", "되묻기": "clarify"}
+DECISIONS = {"비교 가능": "answer", "확인 필요": "answer", "나란히 표시": "side_by_side", "값 확인": "answer",
+             "비교 불가": "refuse", "데이터 없음": "refuse", "조회 불가": "refuse", "범위 밖": "refuse", "되묻기": "clarify"}
 _RATE = re.compile(r"-?\d+\.\d{2}")
 
 ANSWER_SCHEMA: dict[str, Any] = {

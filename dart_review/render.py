@@ -144,7 +144,37 @@ def render_side_by_side(result: dict[str, Any]) -> str:
             "시간에 따른 변화가 아닙니다.")
 
 
+def _source(fact: dict[str, Any]) -> str:
+    return f"{fact['report']}, 접수번호 {fact['rcept_no']}"
+
+
+def render_lookup(result: dict[str, Any]) -> str:
+    """The factual answer for a lookup_value result (EVAL_DESIGN 12.2): one value and where it was filed."""
+    status, period = result["status"], period_text(result["period"])
+    value, later = result.get("value") or {}, result.get("later") or {}
+    if status == "조회 불가":
+        reasons = " ".join(f"{reason}." for reason in result.get("reasons", []))
+        alternative = _alternative({"reasons": result.get("reasons", []), "requested": {"current": result["period"]}})
+        return f"{_subject(result)} ({period})는 조회하지 않습니다. 이유: {reasons} {alternative}".strip()
+    if status == "데이터 없음":
+        return (f"{_subject(result)} ({period}): OpenDART가 이 기간의 재무제표를 제공하지 않아 조회 결과가 없습니다. "
+                "오류가 아니라 자료가 없는 것입니다.")
+    lines = []
+    if status == "확인 필요":
+        lines.append("확인이 필요합니다. " + " ".join(f"{reason}." for reason in result.get("reasons", [])))
+    if value.get("amount") is not None:
+        lines.append(f"{_subject(result)}: {period} {format_amount(value['amount'], value.get('currency'))} ({_source(value)}).")
+    else:
+        lines.append(f"{_subject(result)}: {period} 값은 확정하지 못했습니다.")
+    if later.get("amount") is not None and later["amount"] != value.get("amount"):
+        lines.append(f"같은 기간의 이후 보고서 값: {format_amount(later['amount'], later.get('currency'))} ({_source(later)}).")
+    lines += [f"참고: {note}" for note in result.get("notes", [])]
+    return "\n".join(lines)
+
+
 def render_result(result: dict[str, Any]) -> str:
+    if result.get("tool") == "lookup_value":
+        return render_lookup(result)
     return render_side_by_side(result) if result.get("tool") == "side_by_side" else render_comparison(result)
 
 
@@ -157,7 +187,10 @@ def clarifying_question(accounts: list[str]) -> str:
 
 def answer_values(result: dict[str, Any]) -> list[dict[str, Any]]:
     """The structured values behind a rendered answer (only when it reports amounts)."""
-    if result.get("tool") == "side_by_side":
+    if result.get("tool") == "lookup_value":
+        value = result.get("value") or {}
+        facts = [value] if result["status"] in ("값 확인", "확인 필요") and value.get("amount") is not None else []
+    elif result.get("tool") == "side_by_side":
         facts = result.get("values", []) if result["status"] == SIDE_BY_SIDE else []
     elif result["status"] in ("비교 가능", "확인 필요"):
         facts = [result["current"], result["base"]]
@@ -172,7 +205,7 @@ def structured_answer(result: dict[str, Any], explanation: str | None = None) ->
     text = render_result(result)
     if explanation:
         text += "\n\n해석(모델): " + explanation
-    side = result.get("tool") == "side_by_side"
+    side = result.get("tool") in ("side_by_side", "lookup_value")
     reports_change = not side and result["status"] in ("비교 가능", "확인 필요")
     return {"status": result["status"], "company": result["company"], "account": result["account"],
             "values": answer_values(result), "change": result["change"] if reports_change else None,
@@ -187,14 +220,37 @@ def clarification_answer(company: str, accounts: list[str]) -> dict[str, Any]:
             "clarifying_question": question}
 
 
-def unsupported_answer(company: str, term: str | None = None) -> dict[str, Any]:
-    """A refusal for an account this tool does not cover (review B7/C1)."""
-    supported = ", ".join(account.label for account in ACCOUNTS.values())
-    what = f": {term}" if term else ""
-    return {"status": "비교 불가", "company": company, "account": None, "values": [], "change": None,
-            "change_pct": None,
-            "answer": f"{company}: 이 도구가 다루지 않는 계정이라 답하지 않습니다{what}. 다룰 수 있는 계정은 {supported}입니다.",
-            "clarifying_question": None}
+SUPPORTED_ACCOUNTS = ", ".join(account.label for account in ACCOUNTS.values())
+
+
+def unsupported_answer(company: str, term: str | None = None, scope: str = "account") -> dict[str, Any]:
+    """A refusal for a question outside the tool's scope (review B7/C1, EVAL_DESIGN 12.1-12.3).
+
+    ``scope``: "account" (an account it does not cover), "accounts" (several
+    accounts at once), "company" (a company it does not cover), "companies"
+    (several companies at once), or "any" (only the model's reading says so).
+    """
+    from .companies import DEV_COMPANIES
+    companies = ", ".join(DEV_COMPANIES.values())
+    text = {
+        "account": f"{company}: 이 도구가 다루지 않는 계정이라 답하지 않습니다: {term}. 다룰 수 있는 계정은 {SUPPORTED_ACCOUNTS}입니다.",
+        "accounts": f"{company}: 한 번에 계정 하나만 답합니다(질문한 계정: {term}). 계정을 하나씩 물어봐 주세요.",
+        "company": f"{term}: 이 도구가 다루지 않는 회사라 답하지 않습니다. 다룰 수 있는 회사는 {companies}입니다.",
+        "companies": f"한 번에 회사 하나만 답합니다(질문한 회사: {term}). 회사를 하나씩 물어봐 주세요.",
+        "any": f"{company}: 이 도구가 다루는 범위(회사 하나, 계정 하나: {SUPPORTED_ACCOUNTS}) 밖의 질문이라 답하지 않습니다.",
+    }[scope if term or scope == "any" else "any"]
+    shown = term if scope in ("company", "companies") and term else company
+    return {"status": "범위 밖", "company": shown, "account": None, "values": [], "change": None, "change_pct": None,
+            "answer": text, "clarifying_question": None}
+
+
+def company_clarification_answer(group: str, candidates: list[str]) -> dict[str, Any]:
+    """Ask which company a group name means (EVAL_DESIGN 12.3)."""
+    from .companies import DEV_COMPANIES
+    offer = f"말씀하신 회사가 {candidates[0]}인가요?" if len(candidates) == 1 else f"{', '.join(candidates)} 중 어느 회사인가요?"
+    question = f"'{group}'은 여러 회사를 뜻할 수 있습니다. {offer} 다룰 수 있는 회사는 {', '.join(DEV_COMPANIES.values())}입니다."
+    return {"status": "되묻기", "company": group, "account": None, "values": [], "change": None, "change_pct": None,
+            "answer": "회사를 먼저 확인하겠습니다. " + question, "clarifying_question": question}
 
 
 def markdown_report(answer: dict[str, Any], result: dict[str, Any] | None) -> str:
@@ -208,6 +264,9 @@ def markdown_report(answer: dict[str, Any], result: dict[str, Any] | None) -> st
     if result is not None:
         if result.get("tool") == "side_by_side":
             facts = [(value["basis"], value) for value in result.get("values", []) if value and value.get("amount") is not None]
+        elif result.get("tool") == "lookup_value":
+            facts = [(label, result[key]) for label, key in (("조회 값", "value"), ("이후 보고서", "later"))
+                     if result.get(key) and result[key].get("amount") is not None]
         else:
             facts = [(label, result[key]) for label, key in (("비교 기간", "current"), ("기준 기간", "base"))
                      if result.get(key) and result[key].get("amount") is not None]

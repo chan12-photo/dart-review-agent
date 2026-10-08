@@ -21,10 +21,11 @@ from unittest import mock
 ROOT = Path(__file__).resolve().parents[1]
 sys.path[:0] = [str(ROOT), str(ROOT / "tests")]
 
-from dart_review import accounts, compare, periods, review  # noqa: E402
+from dart_review import accounts, baseline, compare, periods, review  # noqa: E402
 from dart_review.periods import (  # noqa: E402
     ANNUAL, REPORT_END_MONTH, Plan, instant, own_source, quarter, year_to_date,
 )
+import test_baseline  # noqa: E402
 import test_rules  # noqa: E402
 import test_rules_on_cache  # noqa: E402
 
@@ -88,6 +89,11 @@ def base_from_its_own_report(current, base, sj_div):
     return Plan(own_source(current, sj_div), own_source(base, sj_div))
 
 
+def account_by_substring(text):
+    """The keyword rule before 3-0b: the first supported keyword anywhere in the text."""
+    return next((key for key, words in baseline.ACCOUNT_KEYWORDS if any(word in text for word in words)), None), None
+
+
 MUTATIONS = [
     ("연결·별도 구분 무시", "structural_issues", ignore_fs_div, "test_trap_consolidated_vs_separate"),
     ("손익 당기를 누적으로 읽음", "column_periods", naive_columns(thstrm_is_year_to_date), "test_trap_three_months_vs_year_to_date"),
@@ -104,6 +110,9 @@ MUTATIONS = [
      "test_name_with_a_conflicting_standard_id_needs_review"),
     ("확인하지 못한 보고서 사이를 같은 기준으로 간주", "_linked", unchecked_reports_are_linked,
      "test_an_unusable_bridge_report_needs_review"),
+    # added in 3-0b (docs/reviews/roadmap_proposal_codex_result.ko.md B7)
+    ("계정 키워드를 부분 문자열로 찾음 (유동자산→자산총계)", "_account", account_by_substring,
+     "test_unsupported_accounts_are_refused_not_narrowed"),
 ]
 
 
@@ -116,7 +125,7 @@ def patch_everywhere(stack: ExitStack, name: str, replacement) -> None:
 
 
 def _home(name: str) -> str:
-    for module in ("periods", "accounts", "compare", "facts", "review"):
+    for module in ("periods", "accounts", "compare", "facts", "review", "baseline"):
         if name in vars(sys.modules["dart_review." + module]):
             return module
     raise KeyError(name)
@@ -124,7 +133,7 @@ def _home(name: str) -> str:
 
 def run_tests() -> tuple[int, set[str]]:
     suite = unittest.TestSuite(unittest.defaultTestLoader.loadTestsFromModule(module)
-                               for module in (test_rules, test_rules_on_cache))
+                               for module in (test_rules, test_rules_on_cache, test_baseline))
     result = unittest.TestResult()
     suite.run(result)
     # a failing subTest is reported as a _SubTest wrapping the test case

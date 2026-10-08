@@ -185,3 +185,14 @@ class WholeCacheTests(CacheTestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+@unittest.skipUnless(CACHE.exists(), "run scripts/fetch_dev_cache.py first")
+class VocabularyTests(unittest.TestCase):
+    def test_the_committed_account_vocabulary_matches_the_cache(self):
+        import subprocess
+        import sys
+        script = Path(__file__).resolve().parents[1] / "scripts" / "build_account_vocabulary.py"
+        result = subprocess.run([sys.executable, str(script), "--check"], capture_output=True, text=True)
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+

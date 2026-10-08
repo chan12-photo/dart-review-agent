@@ -39,6 +39,23 @@ class ReadingTests(unittest.TestCase):
         self.assertEqual((reading.kind, reading.options), ("clarify", ("operating_income", "net_income")))
         self.assertEqual(self.arguments("카카오 2024년 순이익")["account"], "net_income")
 
+    def test_unsupported_accounts_are_refused_not_narrowed(self):
+        # review B7/C1: a supported keyword inside a longer account name is not that account
+        cases = {"삼성전자 2025년 투자활동현금흐름 전년 대비": "투자활동현금흐름", "카카오 2025년 유동자산": "유동자산",
+                 "셀트리온 2025년 매출원가가 늘었어?": "매출원가", "카카오 2025년 기타비유동부채": "기타비유동부채",
+                 "삼성전자 2025년 계속영업당기순이익": "계속영업당기순이익", "카카오 2025년 자본총계": "자본총계",
+                 "셀트리온 작년 이익잉여금": "이익잉여금"}
+        for text, term in cases.items():
+            with self.subTest(text=text):
+                reading = read(text)
+                self.assertEqual((reading.kind, reading.arguments), ("unsupported", {"term": term}))
+        # supported names that contain other keywords stay supported
+        for text, account in {"삼성전자 2025년 자산총계": "total_assets", "삼성전자 2025년 총자산": "total_assets",
+                              "카카오 2025년 영업현금흐름": "operating_cash_flow", "카카오 2025년 당기순이익(손실)": "net_income",
+                              "카카오 2025년 연결당기순이익": "net_income", "셀트리온 2025년 매출액": "revenue"}.items():
+            with self.subTest(text=text):
+                self.assertEqual(self.arguments(text)["account"], account)
+
     def test_years(self):
         arguments = self.arguments("카카오 2023년과 2025년 매출")
         self.assertEqual((arguments["current_period"]["year"], arguments["base_period"]["year"]), (2025, 2023))

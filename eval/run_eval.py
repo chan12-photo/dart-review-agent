@@ -12,7 +12,7 @@ from __future__ import annotations
 
 import argparse
 import copy
-from datetime import datetime, timezone
+from datetime import date, datetime, timezone
 import hashlib
 import json
 from pathlib import Path
@@ -95,7 +95,7 @@ def _same_call(call: tuple[Any, Any], expected: tuple[str, dict[str, Any]]) -> b
 
 
 def run_case(mode: str, question: dict[str, Any], gold: dict[str, Any], client: DartClient, chat: Any = None,
-             clock: Callable[[], float] = time.monotonic) -> dict[str, Any]:
+             clock: Callable[[], float] = time.monotonic, reference_date: date | None = None) -> dict[str, Any]:
     """Run one question. Model failures, evaluator bugs, and budget overruns fail only this question."""
     started = clock()
     record: dict[str, Any] = {"id": question["id"], "base": question.get("base"), "mode": mode,
@@ -135,7 +135,7 @@ def run_case(mode: str, question: dict[str, Any], gold: dict[str, Any], client: 
         elif mode == "agent":  # the 2-1 design (model decides, code writes the facts)
             agent_turn(question["question"], client, record, ask)
         elif mode == "crosscheck":  # design B: rules and model read independently, code answers if they agree
-            crosscheck_turn(question["question"], client, record, ask)
+            crosscheck_turn(question["question"], client, record, ask, reference_date)
         else:  # baseline: keyword rules, no model (roadmap 2-2)
             baseline_turn(question["question"], client, record)
     except ModelError as exc:
@@ -231,12 +231,12 @@ def load_questions(question_set: str = "dev") -> tuple[list[dict[str, Any]], dic
 
 def run(mode: str, chat: Any, client: DartClient, only: list[str] | None = None,
         on_case: Callable[[dict[str, Any]], None] | None = None,
-        question_set: str = "dev") -> tuple[list[dict[str, Any]], dict[str, Any]]:
+        question_set: str = "dev", reference_date: date | None = None) -> tuple[list[dict[str, Any]], dict[str, Any]]:
     questions, gold = load_questions(question_set)
     questions = [question for question in questions if not only or question["id"] in only]
     cases = []
     for question in questions:
-        case = run_case(mode, question, gold[question["id"]], client, chat)
+        case = run_case(mode, question, gold[question["id"]], client, chat, reference_date=reference_date)
         cases.append(case)
         if on_case:
             on_case(case)
@@ -256,6 +256,8 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--allow-dirty", action="store_true", help="allow a model run with uncommitted changes")
     parser.add_argument("--set", dest="question_set", choices=("dev", "paraphrase"), default="dev",
                         help="dev: the 13 development questions; paraphrase: the same readings reworded")
+    parser.add_argument("--reference-date", type=date.fromisoformat, default=date.today(),
+                        help="the date the crosscheck reading prompt treats as today (YYYY-MM-DD; default: today)")
     args = parser.parse_args(argv)
     if (args.mode in MODEL_MODES) != bool(args.model):
         parser.error("--model is required for oracle, full, and agent, and not used for rules and baseline")
@@ -279,6 +281,7 @@ def main(argv: list[str] | None = None) -> int:
         meta = {"mode": args.mode, "question_set": args.question_set, "model": identity, "contract": contract_hashes(),
                 "prompt_version": {"agent": AGENT_PROMPT_VERSION, "crosscheck": READING_PROMPT_VERSION}.get(args.mode, PROMPT_VERSION),
                 "git": git, "budget": {"model_calls": MAX_MODEL_CALLS, "tool_calls": MAX_TOOL_CALLS},
+                "reference_date": args.reference_date.isoformat(),
                 "started_at": datetime.now(timezone.utc).isoformat(timespec="seconds")}
         (args.out / "run.json").write_text(json.dumps(meta, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
         handle = (args.out / "cases.jsonl").open("w", encoding="utf-8")
@@ -289,7 +292,8 @@ def main(argv: list[str] | None = None) -> int:
             handle.flush()
 
     try:
-        cases, summary = run(args.mode, chat, client, args.only, on_case=save, question_set=args.question_set)
+        cases, summary = run(args.mode, chat, client, args.only, on_case=save, question_set=args.question_set,
+                             reference_date=args.reference_date)
     finally:
         if handle:
             handle.close()

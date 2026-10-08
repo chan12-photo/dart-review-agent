@@ -78,6 +78,11 @@ def normalize_name(name: str) -> str:
     return re.sub(r"\s+", "", name or "")
 
 
+def normalize_term(name: str) -> str:
+    """An account name as a term in a question: parenthesized parts removed, Hangul letters only."""
+    return re.sub(r"[^가-힣]", "", re.sub(r"\([^)]*\)", "", name or ""))
+
+
 @dataclass(frozen=True)
 class Resolution:
     account: Account

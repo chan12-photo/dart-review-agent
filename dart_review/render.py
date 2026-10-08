@@ -187,6 +187,16 @@ def clarification_answer(company: str, accounts: list[str]) -> dict[str, Any]:
             "clarifying_question": question}
 
 
+def unsupported_answer(company: str, term: str | None = None) -> dict[str, Any]:
+    """A refusal for an account this tool does not cover (review B7/C1)."""
+    supported = ", ".join(account.label for account in ACCOUNTS.values())
+    what = f": {term}" if term else ""
+    return {"status": "비교 불가", "company": company, "account": None, "values": [], "change": None,
+            "change_pct": None,
+            "answer": f"{company}: 이 도구가 다루지 않는 계정이라 답하지 않습니다{what}. 다룰 수 있는 계정은 {supported}입니다.",
+            "clarifying_question": None}
+
+
 def markdown_report(answer: dict[str, Any], result: dict[str, Any] | None) -> str:
     """A Markdown report: verification status, a table of the values with their sources, and the confirmed facts.
 

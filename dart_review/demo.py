@@ -4,16 +4,19 @@ Recorded inputs, committed under demo/:
 - demo/opendart/: OpenDART responses in the response-cache layout, trimmed to
   the rows of the six target accounts (see demo/README.md);
 - demo/model_replies.json: the model's recorded reading for each question,
-  with the SHA-256 of the exact messages it was given.
+  with the SHA-256 of the exact messages and of the schema it was given, the
+  prompt version, and the reference date the prompt used.
 
 The replay runs the real cross-check code (rules, comparison, rendering,
 output check). Only the model is replaced, and the replay stops if the
-messages built now differ from the recorded ones (a prompt or question
-change), so the demo cannot silently drift from what was recorded.
+messages or the schema built now differ from the recorded ones (a prompt,
+schema, or question change), so the demo cannot silently drift from what was
+recorded.
 """
 
 from __future__ import annotations
 
+from datetime import date
 import hashlib
 import json
 from pathlib import Path
@@ -21,7 +24,7 @@ from typing import Any
 
 from .cache import ResponseCache
 from .client import DartClient
-from .crosscheck import crosscheck_turn, ungrounded_in_text
+from .crosscheck import READING_PROMPT_VERSION, crosscheck_turn, ungrounded_in_text
 from .llm import ModelError, Reply
 from .render import markdown_report
 
@@ -41,7 +44,8 @@ class ReplayMismatch(ModelError):
     pass
 
 
-def messages_sha256(messages: list[dict[str, Any]]) -> str:
+def messages_sha256(messages: Any) -> str:
+    """SHA-256 of JSON data (the messages or the schema of a request), key order ignored."""
     return hashlib.sha256(json.dumps(messages, ensure_ascii=False, sort_keys=True).encode("utf-8")).hexdigest()
 
 
@@ -61,6 +65,8 @@ class ReplayChat:
             raise ReplayMismatch(f"no recorded reply for: {question}")
         if messages_sha256(messages) != recorded["messages_sha256"]:
             raise ReplayMismatch("the messages differ from the recording (prompt or question changed)")
+        if messages_sha256(schema) != recorded["schema_sha256"]:
+            raise ReplayMismatch("the schema differs from the recording")
         self.last_exchange = {"request": {"messages": messages}, "response": {"content": recorded["content"]}, "error": None}
         return Reply(recorded["content"])
 
@@ -70,8 +76,8 @@ def new_record() -> dict[str, Any]:
             "tool_call_count": 0, "seen": [], "no_result": False, "answer": None}
 
 
-def answer(question: str, client: DartClient, chat: Any) -> dict[str, Any]:
-    """One cross-checked answer, as the demo and the CLI show it."""
+def answer(question: str, client: DartClient, chat: Any, reference_date: date | None = None) -> dict[str, Any]:
+    """One cross-checked answer, as the demo and the CLI show it. ``chat`` None is the rules-only mode (--no-model)."""
     record = new_record()
 
     def ask(messages, **kwargs):
@@ -80,7 +86,7 @@ def answer(question: str, client: DartClient, chat: Any) -> dict[str, Any]:
         record["model_responses"] += 1
         return reply
 
-    crosscheck_turn(question, client, record, ask)
+    crosscheck_turn(question, client, record, ask if chat is not None else None, reference_date)
     result = record["seen"][-1] if record["seen"] else None
     report = markdown_report(record["answer"], result) if record["answer"] else None
     if report is not None:
@@ -89,7 +95,8 @@ def answer(question: str, client: DartClient, chat: Any) -> dict[str, Any]:
         if blocked:
             record["output_blocked"], record["no_result"], record["answer"], report = blocked, True, None, None
     return {"question": question, "answer": record["answer"], "report": report, "readings": record.get("readings"),
-            "withheld": record.get("output_blocked"), "no_result": record["no_result"], "seen": record["seen"]}
+            "withheld": record.get("output_blocked"), "withheld_reason": record.get("withheld_reason"),
+            "no_result": record["no_result"], "seen": record["seen"]}
 
 
 def run_demo(demo_dir: Path = DEMO_DIR) -> tuple[list[dict[str, Any]], DartClient]:
@@ -97,6 +104,10 @@ def run_demo(demo_dir: Path = DEMO_DIR) -> tuple[list[dict[str, Any]], DartClien
         raise RuntimeError("the demo never needs the OpenDART key")
 
     client = DartClient(ResponseCache(demo_dir / "opendart"), key_loader=no_key, offline=True)
-    replies = json.loads((demo_dir / "model_replies.json").read_text(encoding="utf-8"))["replies"]
-    chat = ReplayChat(replies)
-    return [answer(question, client, chat) for question in DEMO_QUESTIONS], client
+    recording = json.loads((demo_dir / "model_replies.json").read_text(encoding="utf-8"))
+    if recording.get("prompt_version") != READING_PROMPT_VERSION:
+        raise ReplayMismatch(f"the recorded readings are for prompt {recording.get('prompt_version', 'reading-v1')}, "
+                             f"not {READING_PROMPT_VERSION}: re-record them (scripts/build_demo_fixtures.py)")
+    chat = ReplayChat(recording["replies"])
+    reference_date = date.fromisoformat(recording["reference_date"])
+    return [answer(question, client, chat, reference_date) for question in DEMO_QUESTIONS], client

@@ -47,6 +47,7 @@ def reply(data):
 class ReadingTests(unittest.TestCase):
     def test_parse_model_reading(self):
         self.assertEqual(parse_model_reading(json.dumps(model_reading("dev01"), ensure_ascii=False))["action"], "compare")
+        self.assertEqual(parse_model_reading(json.dumps(model_reading("dev01", action="unsupported")))["action"], "unsupported")
         for bad in ("x", "{}", json.dumps({**model_reading("dev01"), "action": "answer"}),
                     json.dumps({**model_reading("dev01"), "clarify_accounts": ["profit"]}),
                     # review B2: wrong types used to pass and crash canonical() with an unhashable list
@@ -135,14 +136,43 @@ class CrosscheckRunTests(unittest.TestCase):
         summary = run_eval.summarize([record])
         self.assertEqual((summary["confident_wrong"], summary["asked_back_instead"]), ([], ["dev06"]))
 
-    def test_one_reader_answers_with_a_visible_note(self):
-        record = self.case("dev01", ScriptedChat([Reply("not json")]))
-        self.assertEqual(record["readings"]["used"], "rule only")
+    def test_rules_alone_do_not_answer_when_the_model_fails(self):
+        # policy 2026-10-08 (review B4): with p06's wording the rules alone gave a confident wrong comparison
+        for content in ("not json", json.dumps(model_reading("dev01", account=[]))):
+            with self.subTest(content=content):
+                record = self.case("dev06", ScriptedChat([Reply(content)]), "카카오 2023년 7~9월 매출이 4~6월보다 얼마나 늘었어?")
+                self.assertEqual(record["readings"]["used"], "rule only (withheld)")
+                self.assertIsNone(record["answer"])
+                self.assertTrue(record["no_result"])
+                self.assertEqual(record["tool_call_count"], 0)
+                self.assertIn("모델 해석을 얻지 못해", record["withheld_reason"])
+
+    def test_model_only_answers_start_with_the_reading(self):
+        question = "삼성전자 매출, 작년과 재작년을 비교해 줘"  # the rules find no year
+        record = self.case("dev01", ScriptedChat([reply(model_reading("dev01"))]), question)
+        self.assertEqual(record["readings"]["used"], "model only")
+        text = record["answer"]["answer"]
+        self.assertTrue(text.startswith("이렇게 이해했습니다: 연결 기준 매출액, 2025년 연간(1~12월)을 전년 같은 기간과 비교."), text)
+        self.assertNotIn("output_blocked", record)
+        self.assertEqual(record["proposed_years"], [2024, 2025])
+
+    def test_explicit_rules_only_mode_answers_with_a_note(self):
+        record = {"tool_calls": [], "tool_call_count": 0, "seen": [], "no_result": False, "answer": None}
+        crosscheck.crosscheck_turn(SPEC["dev01"]["question"], self.client, record, None)
+        self.assertEqual(record["readings"]["used"], "rules only (--no-model)")
         self.assertIn("규칙 해석 하나로만", record["answer"]["answer"])
-        self.assertTrue(record["score"]["automatic_passed"])
-        record = self.case("dev01", ScriptedChat([reply(model_reading("dev01"))]), "삼성전자 매출, 작년과 올해를 비교해 줘")
-        self.assertEqual(record["readings"]["used"], "model only")  # the rules find no year
-        self.assertIn("모델 해석 하나로만", record["answer"]["answer"])
+        self.assertEqual(record["answer"]["status"], "비교 가능")
+
+    def test_the_reference_date_is_in_the_prompt_and_the_record(self):
+        from datetime import date
+        chat = ScriptedChat([reply(model_reading("dev01"))])
+        record = {"tool_calls": [], "tool_call_count": 0, "seen": [], "no_result": False, "answer": None}
+        crosscheck.crosscheck_turn(SPEC["dev01"]["question"], self.client, record, chat.chat, date(2026, 10, 8))
+        system = chat.calls[0]["messages"][0]["content"] if hasattr(chat, "calls") and chat.calls else crosscheck.reading_prompt(date(2026, 10, 8))
+        self.assertIn("기준 날짜는 2026-10-08이다", system)
+        self.assertNotIn("{reference_date}", system)
+        self.assertEqual(record["readings"]["reference_date"], "2026-10-08")
+
 
     def test_both_readings_fail(self):
         record = self.case("dev01", ScriptedChat([Reply("not json")]), "삼성전자 매출 알려줘")
@@ -182,6 +212,55 @@ class CrosscheckRunTests(unittest.TestCase):
     def test_confident_wrong_answers_are_counted(self):
         cases, summary = run_eval.run("baseline", None, self.client, question_set="paraphrase")
         self.assertEqual(summary["confident_wrong"], ["p06"])
+
+
+@unittest.skipUnless(run_eval.CACHE.exists(), "run scripts/fetch_dev_cache.py first")
+class UnsupportedAccountTests(unittest.TestCase):
+    """Review B7/C1: an account outside the six is refused, never read as a supported one."""
+
+    def setUp(self):
+        self.client = DartClient(ResponseCache(run_eval.CACHE), key_loader=lambda: (_ for _ in ()).throw(AssertionError()), offline=True)
+
+    def tearDown(self):
+        self.assertEqual(self.client.network_requests, 0)
+
+    def turn(self, question, content):
+        record = {"tool_calls": [], "tool_call_count": 0, "seen": [], "no_result": False, "answer": None}
+        crosscheck.crosscheck_turn(question, self.client, record, ScriptedChat([Reply(content)]).chat)
+        return record
+
+    def test_both_refuse(self):
+        record = self.turn("삼성전자 2025년 유동자산을 전년 말과 비교해 줘.", json.dumps(model_reading("dev01", action="unsupported")))
+        self.assertEqual(record["readings"]["used"], "both")
+        self.assertEqual(record["answer"]["status"], "비교 불가")
+        self.assertIn("다루지 않는 계정이라 답하지 않습니다: 유동자산", record["answer"]["answer"])
+        self.assertEqual(record["tool_call_count"], 0)
+
+    def test_the_review_counterexample_is_no_longer_answered(self):
+        # the rules used to read 투자활동현금흐름 as 영업활동현금흐름; a model with the same misreading made it an answer
+        record = self.turn("삼성전자 2025년 투자활동현금흐름을 전년과 비교해 줘", json.dumps(model_reading("dev01", account="operating_cash_flow")))
+        self.assertEqual(record["readings"]["rule"]["kind"], "unsupported")
+        self.assertEqual(record["readings"]["used"], "neither (asked back)")
+        self.assertEqual(record["answer"]["status"], "되묻기")
+        self.assertIn("다루지 않는 계정(투자활동현금흐름)을 묻는 질문", record["answer"]["clarifying_question"])
+        self.assertEqual(record["tool_call_count"], 0)
+
+    def test_a_model_refusal_against_a_rule_reading_asks_back(self):
+        record = self.turn(SPEC["dev01"]["question"], json.dumps(model_reading("dev01", action="unsupported")))
+        self.assertEqual(record["answer"]["status"], "되묻기")
+        self.assertIn("다루지 않는 계정을 묻는 질문", record["answer"]["clarifying_question"])
+
+    def test_the_rules_refuse_before_looking_for_a_year(self):
+        record = self.turn("삼성전자 작년 이익잉여금이 재작년보다 늘었어?", json.dumps(model_reading("dev01", action="unsupported")))
+        self.assertEqual(record["readings"]["rule"]["reason"], "지원하지 않는 계정: 이익잉여금")
+        self.assertEqual(record["readings"]["used"], "both")
+
+    def test_model_only_refusal(self):
+        record = self.turn("삼전 2025년 유동자산 전년 대비", json.dumps(model_reading("dev01", action="unsupported")))
+        self.assertEqual(record["readings"]["rule"]["reason"], "회사 이름을 찾지 못함")
+        self.assertEqual(record["readings"]["used"], "model only")
+        self.assertEqual(record["answer"]["status"], "비교 불가")
+        self.assertTrue(record["answer"]["answer"].startswith("이렇게 이해했습니다: 다루지 않는 계정을 묻는 질문."))
 
 
 if __name__ == "__main__":

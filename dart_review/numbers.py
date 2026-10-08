@@ -81,10 +81,14 @@ _KOREAN_AMOUNT = re.compile(
     + rf"(?:(?P<won>\d[\d,]*)\s*(?=원{_NOT_WORD}))?"
     rf"(?:원{_NOT_WORD})?"
 )
+# A receipt number or a date never carries a unit: digits followed by one are
+# an amount, a rate, or a multiple, and are left to those kinds (review B1:
+# "20250930%" used to be read as a date and grounded by the period end).
+_NO_UNIT = rf"(?!\s*(?:%|퍼센트|배|[천백십]?\s*[조억만]|원{_NOT_WORD}))"
 _PATTERNS: list[tuple[str, re.Pattern[str]]] = [
-    ("receipt", re.compile(rf"(?<!\d)\d{{14}}(?!\d)(?!\s*원{_NOT_WORD})")),
-    ("date", re.compile(r"(?<!\d)(\d{4})[-./](\d{1,2})[-./](\d{1,2})(?!\d)")),
-    ("compact_date", re.compile(rf"(?<![\d,])(\d{{4}})(\d{{2}})(\d{{2}})(?![\d,])(?!\s*원{_NOT_WORD})")),
+    ("receipt", re.compile(rf"(?<!\d)\d{{14}}(?!\d){_NO_UNIT}")),
+    ("date", re.compile(rf"(?<!\d)(\d{{4}})[-./](\d{{1,2}})[-./](\d{{1,2}})(?!\d){_NO_UNIT}")),
+    ("compact_date", re.compile(rf"(?<![\d,])(\d{{4}})(\d{{2}})(\d{{2}})(?![\d,]){_NO_UNIT}")),
     ("percent", re.compile(rf"([{NEGATIVE}+]\s*)?({_NUM})\s*(%p|%|퍼센트포인트|퍼센트)")),
     ("ratio", re.compile(rf"({_NUM})\s*배")),
     ("korean_amount", _KOREAN_AMOUNT),

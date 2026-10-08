@@ -48,7 +48,12 @@ class ReadingTests(unittest.TestCase):
     def test_parse_model_reading(self):
         self.assertEqual(parse_model_reading(json.dumps(model_reading("dev01"), ensure_ascii=False))["action"], "compare")
         for bad in ("x", "{}", json.dumps({**model_reading("dev01"), "action": "answer"}),
-                    json.dumps({**model_reading("dev01"), "clarify_accounts": ["profit"]})):
+                    json.dumps({**model_reading("dev01"), "clarify_accounts": ["profit"]}),
+                    # review B2: wrong types used to pass and crash canonical() with an unhashable list
+                    *(json.dumps({**model_reading("dev01"), field: value}, ensure_ascii=False)
+                      for field, value in (("account", []), ("basis", []), ("action", ["compare"]), ("company", 3),
+                                           ("account", "profit"), ("basis", "합계"), ("current_period", "2025"),
+                                           ("base_period", None)))):
             with self.subTest(bad=bad):
                 with self.assertRaises(ReadingError):
                     parse_model_reading(bad)
@@ -58,7 +63,28 @@ class ReadingTests(unittest.TestCase):
             with self.subTest(question_id=question_id):
                 rule = read(SPEC[question_id]["question"])
                 model = model_to_reading(model_reading(question_id))
-                self.assertEqual(canonical(rule.kind, rule.arguments, rule.company), canonical(model.kind, model.arguments, model.company))
+                key = canonical(rule.kind, rule.arguments, rule.company, rule.options)
+                self.assertIsNotNone(key)
+                self.assertEqual(key, canonical(model.kind, model.arguments, model.company, model.options))
+
+    def test_clarifying_readings_must_offer_the_same_candidates(self):
+        # review B5: ("clarify", company) used to match any two candidate lists
+        rule = read(SPEC["dev12"]["question"])
+        same = model_to_reading(model_reading("dev12", clarify_accounts=["net_income", "operating_income"]))
+        other = model_to_reading(model_reading("dev12", clarify_accounts=["revenue", "total_assets"]))
+        rule_key = canonical(rule.kind, rule.arguments, rule.company, rule.options)
+        self.assertEqual(rule_key, canonical(same.kind, same.arguments, same.company, same.options))
+        self.assertNotEqual(rule_key, canonical(other.kind, other.arguments, other.company, other.options))
+        self.assertIsNone(canonical("clarify", None, rule.company, ["net_income"]))  # one candidate is not a question
+
+    def test_disagreement_names_the_company_when_the_readings_differ_in_it(self):
+        samsung = model_to_reading(model_reading("dev01"))
+        kakao = model_to_reading(model_reading("dev01", company="카카오"))
+        question = crosscheck.disagreement_answer(samsung.company, samsung, kakao)["clarifying_question"]
+        self.assertIn("① 삼성전자, ", question)
+        self.assertIn("② 카카오, ", question)
+        other_period = model_to_reading(model_reading("dev01", base_period={"kind": "year_to_date", "year": 2023, "month": 12}))
+        self.assertNotIn("삼성전자", crosscheck.disagreement_answer(samsung.company, samsung, other_period)["clarifying_question"])
 
     def test_a_different_base_period_is_a_different_reading(self):
         rule = read(SPEC["dev01"]["question"])

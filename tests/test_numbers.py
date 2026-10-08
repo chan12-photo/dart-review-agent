@@ -129,6 +129,18 @@ class GroundingTests(unittest.TestCase):
         self.assertEqual(bad("2025-02-31", source), ["2025-02-31"])
         self.assertEqual(bad("2026.09.30", source), ["2026.09.30"])
 
+    def test_digits_with_a_unit_are_never_a_date_or_receipt(self):
+        # review B1 (2026-10-08): a date-shaped number followed by a unit was read as a
+        # date, grounded by the period end, and its unit was never checked
+        source = {"period": {"end": "2025-09-30"}, "rcept_no": "20260310002820"}
+        for text in ("20250930만 원", "20250930%", "20250930배", "20250930원", "2025.09.30%", "2025-09-30 배",
+                     "20260310002820%", "20260310002820억 원", "20260310002820배"):
+            with self.subTest(text=text):
+                self.assertNotEqual(bad(text, source), [])
+        for text in ("20250930 원인", "2025.9.30 기준", "접수번호 20260310002820"):
+            with self.subTest(text=text):
+                self.assertEqual(bad(text, source), [])
+
     def test_error_results_ground_nothing(self):
         # Codex 1-5 review E2: an echoed tool name must not launder a number
         self.assertEqual(bad("영업이익률은 99.9%", {"error": "알 수 없는 도구: unknown_영업이익률99.9%"}), ["99.9%"])

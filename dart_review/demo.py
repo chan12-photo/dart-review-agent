@@ -21,7 +21,7 @@ from typing import Any
 
 from .cache import ResponseCache
 from .client import DartClient
-from .crosscheck import crosscheck_turn
+from .crosscheck import crosscheck_turn, ungrounded_in_text
 from .llm import ModelError, Reply
 from .render import markdown_report
 
@@ -83,6 +83,11 @@ def answer(question: str, client: DartClient, chat: Any) -> dict[str, Any]:
     crosscheck_turn(question, client, record, ask)
     result = record["seen"][-1] if record["seen"] else None
     report = markdown_report(record["answer"], result) if record["answer"] else None
+    if report is not None:
+        # the last boundary: check the whole report as shown, table and change line included (review B6)
+        blocked = ungrounded_in_text(report, record["seen"], question, record.get("proposed_years", ()))
+        if blocked:
+            record["output_blocked"], record["no_result"], record["answer"], report = blocked, True, None, None
     return {"question": question, "answer": record["answer"], "report": report, "readings": record.get("readings"),
             "withheld": record.get("output_blocked"), "no_result": record["no_result"], "seen": record["seen"]}
 

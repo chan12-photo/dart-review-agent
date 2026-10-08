@@ -33,6 +33,18 @@ def format_won(amount: int) -> str:
     return f"{sign}{value:,}원"
 
 
+def format_amount(amount: int, currency: str | None) -> str:
+    """An amount in won only when the filing says KRW; otherwise the exact figure with its currency, never called 원."""
+    if currency == "KRW":
+        return format_won(amount)
+    return f"{amount:,} ({currency} 단위)" if currency else f"{amount:,} (통화 미확인)"
+
+
+def _common_currency(*facts: dict[str, Any] | None) -> str | None:
+    currencies = {fact.get("currency") for fact in facts if fact}
+    return currencies.pop() if len(currencies) == 1 else None
+
+
 def period_text(period: dict[str, Any]) -> str:
     """A tool period ({start, end, label}) in plain Korean that names its kind."""
     end = date.fromisoformat(period["end"])
@@ -59,13 +71,14 @@ def _subject(result: dict[str, Any], basis: str | None = None) -> str:
 
 def _direction_sentence(result: dict[str, Any], base_period: str) -> str:
     change, rate, direction = result["change"], result["change_pct"], result["direction"]
+    amount = format_amount(abs(change), _common_currency(result.get("current"), result.get("base")))
     if rate is not None:
-        return f"{base_period}보다 {format_won(abs(change))}({rate.lstrip('-')}%) {direction}했습니다." \
+        return f"{base_period}보다 {amount}({rate.lstrip('-')}%) {direction}했습니다." \
             if direction in ("증가", "감소") else f"{base_period}과 같습니다(변동 없음)."
     if direction in ("흑자 전환", "적자 전환", "적자 축소", "적자 확대", "적자 지속"):
-        return (f"{base_period}보다 {format_won(abs(change))} {'늘어' if change > 0 else '줄어'} {direction}했습니다. "
+        return (f"{base_period}보다 {amount} {'늘어' if change > 0 else '줄어'} {direction}했습니다. "
                 "기준 값이 0 이하이거나 부호가 바뀌어 변화율은 계산하지 않습니다.")
-    return (f"{base_period}보다 {format_won(abs(change))} {direction}했습니다. "
+    return (f"{base_period}보다 {amount} {direction}했습니다. "
             "기준 값이 0 이하이거나 부호가 바뀌어 변화율은 계산하지 않습니다.")
 
 
@@ -88,14 +101,20 @@ def render_comparison(result: dict[str, Any]) -> str:
     status = result["status"]
     requested = result.get("requested", {})
     if status in ("비교 가능", "확인 필요"):
-        current, base = result["current"], result["base"]
-        current_period, base_period = period_text(current["period"]), period_text(base["period"])
+        facts = [(period_text(fact["period"]), fact) for fact in (result["current"], result["base"])]
         lines = []
         if status == "확인 필요":
             lines.append("확인이 필요합니다. " + " ".join(f"{reason}." for reason in result["reasons"]))
-        lines.append(f"{_subject(result)}: {current_period} {format_won(current['amount'])}, "
-                     f"{base_period} {format_won(base['amount'])}.")
-        lines.append(_direction_sentence(result, base_period))
+        # a value under review may have no amount (several candidate rows): say so, never format a missing number
+        known = [f"{period} {format_amount(fact['amount'], fact.get('currency'))}" for period, fact in facts
+                 if fact.get("amount") is not None]
+        unknown = [period for period, fact in facts if fact.get("amount") is None]
+        if known:
+            lines.append(f"{_subject(result)}: {', '.join(known)}.")
+        if unknown:
+            lines.append(f"{_subject(result)}: {', '.join(unknown)} 값은 확정하지 못했습니다.")
+        if result.get("change") is not None:
+            lines.append(_direction_sentence(result, facts[1][0]))
         # the rate note repeats the direction sentence above, so it is left out
         lines += [f"참고: {note}" for note in result.get("notes", []) if "변화율을 계산하지 않는다" not in note]
         return "\n".join(lines)
@@ -113,15 +132,15 @@ def render_side_by_side(result: dict[str, Any]) -> str:
     period = period_text(result["period"])
     subject = f"{result['company']} {period} {result['account_label']}"
     if result["status"] != SIDE_BY_SIDE:
-        values = ", ".join(f"{value['basis']} {format_won(value['amount'])}" for value in result.get("values", [])
+        values = ", ".join(f"{value['basis']} {format_amount(value['amount'], value.get('currency'))}" for value in result.get("values", [])
                            if value and value.get("amount") is not None)
         reasons = " ".join(f"{reason}." for reason in result.get("reasons", []))
         return f"{subject}: {values}. {result['status']}: {reasons}".replace(": .", ":")
     consolidated, separate = result["values"]
-    difference = result["difference"]
+    difference, currency = result["difference"], _common_currency(consolidated, separate)
     bigger = "큽니다" if difference >= 0 else "작습니다"
-    return (f"{subject}: 연결 {format_won(consolidated['amount'])}, 별도 {format_won(separate['amount'])}.\n"
-            f"연결이 별도보다 {format_won(abs(difference))} {bigger}. 같은 기간·같은 통화에서 집계 범위가 다른 데서 오는 차이이며, "
+    return (f"{subject}: 연결 {format_amount(consolidated['amount'], currency)}, 별도 {format_amount(separate['amount'], currency)}.\n"
+            f"연결이 별도보다 {format_amount(abs(difference), currency)} {bigger}. 같은 기간·같은 통화에서 집계 범위가 다른 데서 오는 차이이며, "
             "시간에 따른 변화가 아닙니다.")
 
 
@@ -183,12 +202,16 @@ def markdown_report(answer: dict[str, Any], result: dict[str, Any] | None) -> st
             facts = [(label, result[key]) for label, key in (("비교 기간", "current"), ("기준 기간", "base"))
                      if result.get(key) and result[key].get("amount") is not None]
     if facts:
-        lines += ["| 구분 | 기준 | 기간 | 금액(원) | 보고서 | 접수번호 |", "|---|---|---|---:|---|---|"]
+        won = all(fact.get("currency") == "KRW" for _, fact in facts)  # otherwise each amount carries its currency
+        lines += [f"| 구분 | 기준 | 기간 | {'금액(원)' if won else '금액'} | 보고서 | 접수번호 |", "|---|---|---|---:|---|---|"]
         for label, fact in facts:
-            lines.append(f"| {label} | {fact['basis']} | {period_text(fact['period'])} | {fact['amount']:,} | {fact['report']} | {fact['rcept_no']} |")
+            amount = f"{fact['amount']:,}" if won else f"{fact['amount']:,} {fact.get('currency') or '(통화 미확인)'}"
+            lines.append(f"| {label} | {fact['basis']} | {period_text(fact['period'])} | {amount} | {fact['report']} | {fact['rcept_no']} |")
         if result.get("tool") != "side_by_side" and result.get("change") is not None:
             rate = f"{result['change_pct']}%" if result.get("change_pct") is not None else "계산하지 않음"
-            lines += ["", f"**변화:** {result['change']:,}원 ({rate}, {result['direction']})"]
+            currency = _common_currency(result.get("current"), result.get("base"))
+            change = f"{result['change']:,}원" if currency == "KRW" else f"{result['change']:,} {currency or '(통화 미확인)'}"
+            lines += ["", f"**변화:** {change} ({rate}, {result['direction']})"]
         lines.append("")
     lines += ["### 확정 사실 (도구 결과로 작성)", "", answer["answer"]]
     if answer.get("clarifying_question"):

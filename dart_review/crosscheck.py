@@ -61,6 +61,11 @@ class ReadingError(ValueError):
     pass
 
 
+def _member(value: Any, allowed: Any) -> bool:
+    """``value in allowed`` for a string only (a list or dict would be unhashable or never equal)."""
+    return isinstance(value, str) and value in allowed
+
+
 def parse_model_reading(content: str) -> dict[str, Any]:
     try:
         data = json.loads(content)
@@ -68,8 +73,17 @@ def parse_model_reading(content: str) -> dict[str, Any]:
         raise ReadingError("the reading is not JSON") from None
     if not isinstance(data, dict) or set(data) != set(READING_SCHEMA["required"]):
         raise ReadingError("the reading must have exactly the schema fields")
-    if data["action"] not in ("compare", "side_by_side", "clarify"):
+    # the schema is a request to the server, not a guarantee: check every type before use (review B2)
+    if not _member(data["action"], ("compare", "side_by_side", "clarify")):
         raise ReadingError(f"unknown action {data['action']!r}")
+    if not isinstance(data["company"], str):
+        raise ReadingError("company must be a string")
+    if not _member(data["basis"], BASIS_CODES):
+        raise ReadingError("basis must be 연결 or 별도")
+    if not _member(data["account"], ACCOUNTS):
+        raise ReadingError("account must be an account key")
+    if not all(isinstance(data[field], dict) for field in ("current_period", "base_period")):
+        raise ReadingError("periods must be objects")
     accounts = data["clarify_accounts"]
     if not isinstance(accounts, list) or not all(isinstance(key, str) and key in ACCOUNTS for key in accounts):
         raise ReadingError("clarify_accounts must list account keys")
@@ -91,21 +105,28 @@ def _corp(name: Any) -> str | None:
         return None
 
 
-def canonical(kind: str, arguments: dict[str, Any] | None, company: str) -> tuple | None:
-    """A comparable form of a reading, or None when it is not usable."""
+def canonical(kind: str, arguments: dict[str, Any] | None, company: str, options: Any = ()) -> tuple | None:
+    """A comparable form of a reading, or None when it is not usable.
+
+    Two clarifying readings agree only when they offer the same candidate
+    accounts (in any order); the periods they carry are placeholders and are
+    not compared (review B5).
+    """
     corp = _corp(company)
     if corp is None:
         return None
     if kind == "clarify":
-        return ("clarify", corp)
+        candidates = tuple(sorted({key for key in options if _member(key, ACCOUNTS)}))
+        return ("clarify", corp, candidates) if len(candidates) >= 2 else None
     if not isinstance(arguments, dict):
         return None
     if kind == "side_by_side":
         period = _period_key(arguments.get("period"))
-        return ("side_by_side", corp, arguments.get("account"), period) if period else None
+        account = arguments.get("account")
+        return ("side_by_side", corp, account, period) if period and _member(account, ACCOUNTS) else None
     current, base = _period_key(arguments.get("current_period")), _period_key(arguments.get("base_period"))
-    if kind != "compare" or current is None or base is None or arguments.get("basis") not in BASIS_CODES \
-            or arguments.get("account") not in ACCOUNTS:
+    if kind != "compare" or current is None or base is None or not _member(arguments.get("basis"), BASIS_CODES) \
+            or not _member(arguments.get("account"), ACCOUNTS):
         return None
     return ("compare", corp, arguments["basis"], arguments["account"], current, base)
 
@@ -120,10 +141,19 @@ def model_to_reading(data: dict[str, Any]) -> Reading:
                                "current_period": data["current_period"], "base_period": data["base_period"]}, company)
 
 
-def describe(reading: Reading) -> str:
-    """One reading in words, with the base period relative to the current one where possible."""
+def describe(reading: Reading, with_company: bool = False) -> str:
+    """One reading in words, with the base period relative to the current one where possible.
+
+    ``with_company`` names the company, for when the two readings differ in it (review B5).
+    """
+    prefix = f"{reading.company}, " if with_company else ""
+    return prefix + _describe(reading)
+
+
+def _describe(reading: Reading) -> str:
     if reading.kind == "clarify":
-        return "계정을 먼저 확인해야 하는 질문"
+        labels = [ACCOUNTS[key].label for key in reading.options if key in ACCOUNTS]
+        return f"{'·'.join(labels)} 중 어느 것인지 먼저 확인해야 하는 질문" if labels else "계정을 먼저 확인해야 하는 질문"
     arguments = reading.arguments
     label = ACCOUNTS.get(arguments.get("account"), None)
     label = label.label if label else "계정"
@@ -142,17 +172,39 @@ def describe(reading: Reading) -> str:
 
 
 def disagreement_answer(company: str, first: Reading, second: Reading) -> dict[str, Any]:
-    question = f"질문을 두 가지로 읽을 수 있습니다. ① {describe(first)} ② {describe(second)}. 어느 쪽으로 볼까요?"
+    named = _corp(first.company) != _corp(second.company)
+    question = (f"질문을 두 가지로 읽을 수 있습니다. ① {describe(first, named)} ② {describe(second, named)}. "
+                "어느 쪽으로 볼까요?")
     return {"status": "되묻기", "company": company, "account": None, "values": [], "change": None, "change_pct": None,
             "answer": "답하기 전에 확인이 필요합니다. " + question, "clarifying_question": question}
 
 
-def ungrounded_in_answer(answer: dict[str, Any], seen: list[Any], question: str) -> list[str]:
-    """Roadmap 2-3: numbers in the text to be shown that no tool result supports."""
+def candidate_years(*readings: Reading | None) -> set[int]:
+    """The years two readings propose. They may appear in a clarifying question, labeled as readings, never as facts."""
+    years = set()
+    for reading in readings:
+        for name in ("current_period", "base_period", "period"):
+            spec = (reading.arguments or {}).get(name) if reading else None
+            if isinstance(spec, dict) and isinstance(spec.get("year"), int) and not isinstance(spec["year"], bool):
+                years.add(spec["year"])
+    return years
+
+
+def ungrounded_in_text(text: str, seen: list[Any], question: str, proposed_years: Any = ()) -> list[str]:
+    """Numbers in ``text`` that no successful tool result supports.
+
+    Years may also come from the question and from the readings being
+    proposed; amounts, rates, and receipts only from tool results.
+    """
     allowed = allowed_from(*seen)
-    allowed.years |= question_years(question)
-    text = answer["answer"] + "\n" + (answer.get("clarifying_question") or "")
+    allowed.years |= question_years(question) | set(proposed_years)
     return [mention.text for mention in ungrounded(check_text(text, allowed))]
+
+
+def ungrounded_in_answer(answer: dict[str, Any], seen: list[Any], question: str, proposed_years: Any = ()) -> list[str]:
+    """Roadmap 2-3: numbers in the text to be shown that no tool result supports."""
+    text = answer["answer"] + "\n" + (answer.get("clarifying_question") or "")
+    return ungrounded_in_text(text, seen, question, proposed_years)
 
 
 def crosscheck_turn(question: str, client: Any, record: dict[str, Any], ask: Callable[..., Any]) -> None:
@@ -169,14 +221,23 @@ def crosscheck_turn(question: str, client: Any, record: dict[str, Any], ask: Cal
         readings["model"] = {"kind": model.kind, "arguments": model.arguments, "options": list(model.options)}
     except ReadingError as exc:
         readings["model_error"] = str(exc)
-    rule_key = canonical(rule.kind, rule.arguments, rule.company) if rule.kind != "unreadable" else None
-    model_key = canonical(model.kind, model.arguments, model.company) if model else None
+    rule_key = canonical(rule.kind, rule.arguments, rule.company, rule.options) if rule.kind != "unreadable" else None
+    model_key = canonical(model.kind, model.arguments, model.company, model.options) if model else None
     note = None
     if rule_key and model_key:
         readings["agree"] = rule_key == model_key
         if not readings["agree"]:
             readings["used"] = "neither (asked back)"
-            record["answer"] = disagreement_answer(rule.company, rule, model)
+            # the question names the model's periods: check it too (review B6/C2), with only
+            # the readings' years allowed besides the question's, and no tool figures at all
+            record["proposed_years"] = sorted(candidate_years(rule, model))
+            answer = disagreement_answer(rule.company, rule, model)
+            blocked = ungrounded_in_answer(answer, record["seen"], question, record["proposed_years"])
+            if blocked:
+                record["output_blocked"] = blocked
+                record["no_result"] = True
+                return
+            record["answer"] = answer
             return
         chosen, readings["used"] = rule, "both"
     elif rule_key or model_key:

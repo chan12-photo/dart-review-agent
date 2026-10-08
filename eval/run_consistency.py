@@ -25,7 +25,7 @@ def expected_key(question: dict) -> tuple | None:
     name, arguments = (run_eval.interpretation_calls(question) or [(None, None)])[0]
     action = question["expected"]["action"]
     if action == "clarify":
-        return ("clarify",) + canonical("clarify", None, arguments["company"])[1:]
+        return canonical("clarify", None, arguments["company"], question["expected"]["options"])
     return canonical("side_by_side" if action == "side_by_side" else "compare", arguments, arguments["company"])
 
 
@@ -46,7 +46,7 @@ def main(argv: list[str]) -> int:
                     reply = chat.chat([{"role": "system", "content": READING_SYSTEM_PROMPT},
                                        {"role": "user", "content": question["question"]}], schema=READING_SCHEMA)
                     reading = model_to_reading(parse_model_reading(reply.content))
-                    keys.append(canonical(reading.kind, reading.arguments, reading.company))
+                    keys.append(canonical(reading.kind, reading.arguments, reading.company, reading.options))
                 except (ReadingError, ModelError):
                     keys.append(None)
             rows.append({"id": question["id"], "distinct": len({json.dumps(key) for key in keys}),

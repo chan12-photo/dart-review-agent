@@ -18,6 +18,7 @@ from typing import Any, Sequence
 
 ROOT = Path(__file__).resolve().parents[1]
 GOLD = ROOT / "eval" / "dev_gold.json"
+LOOKUP_GOLD = ROOT / "eval" / "dev_lookup_gold.json"  # value-lookup questions (EVAL_DESIGN 12.4), ids L01...
 PASS_THRESHOLD = {"oracle": 0.8}  # SCOPE section 10: with the right evidence, 80% or more
 
 
@@ -26,7 +27,13 @@ class ReviewError(ValueError):
 
 
 def _gold() -> dict[str, dict[str, Any]]:
-    return {answer["id"]: answer for answer in json.loads(GOLD.read_text(encoding="utf-8"))["answers"]}
+    answers = {}
+    for path in (GOLD, LOOKUP_GOLD):
+        for answer in json.loads(path.read_text(encoding="utf-8"))["answers"]:
+            if answer["id"] in answers:
+                raise ReviewError(f"question id {answer['id']} is in two gold files")
+            answers[answer["id"]] = answer
+    return answers
 
 
 def _expected_summary(gold: dict[str, Any]) -> str:
@@ -39,6 +46,9 @@ def _expected_summary(gold: dict[str, Any]) -> str:
         parts.append(gold["period"])
     if gold.get("direction"):
         parts.append(gold["direction"])
+    if gold.get("scope"):
+        parts.append({"company": "다루지 않는 회사", "companies": "회사 여러 개", "accounts": "계정 여러 개",
+                      "account": "다루지 않는 계정"}[gold["scope"]] + f" ({gold['company']})")
     return " / ".join(part for part in parts if part)
 
 

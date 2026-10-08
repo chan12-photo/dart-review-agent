@@ -159,6 +159,19 @@ class LookupAnswerTests(unittest.TestCase):
         self.assertEqual((rec["readings"]["used"], rec["answer"]["status"]), ("both", "범위 밖"))
         self.assertIn("한 번에 계정 하나만 답합니다", rec["answer"]["answer"])
 
+    def test_review_files_cover_lookup_questions(self):
+        # the lookup baseline run of 2026-10-08 stopped at this step (finalize knew only dev_gold.json)
+        import tempfile
+        from finalize import write_review_files
+        import run_eval
+        cases, _ = run_eval.run("baseline", None, self.client, question_set="lookup", reference_date=REFERENCE)
+        with tempfile.TemporaryDirectory() as folder:
+            write_review_files(Path(folder), cases)
+            sheet = (Path(folder) / "review_sheet.md").read_text(encoding="utf-8")
+        self.assertIn("## L16", sheet)
+        self.assertIn("범위 밖 / 회사 여러 개 (삼성전자, 카카오)", sheet)
+        self.assertIn("되묻기 (삼성전자)", sheet)
+
     def test_every_rules_answer_has_only_grounded_numbers(self):
         from dart_review.crosscheck import ungrounded_in_answer
         for question in SPEC["questions"]:

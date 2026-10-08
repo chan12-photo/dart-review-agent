@@ -1,8 +1,14 @@
 # dart-review-agent
 
-**Status: work in progress (draft README, 2026-10-08).** Results below are from self-authored development questions; the sealed, pre-registered evaluation has not been run yet. Korean version: [README.ko.md](README.ko.md).
+A local tool that **looks up and compares** financial figures of Korean listed companies from their filed statements (OpenDART). It compares two periods only when the comparison is sound: same consolidated/separate basis, same period length, same currency, no unexplained restatement. Otherwise it refuses or asks back, and says why. Korean version: [README.ko.md](README.ko.md).
 
-A local tool that answers questions like *"How much did Samsung Electronics' revenue grow in 2025?"* from OpenDART financial statements. It compares figures across periods only when the comparison is sound (same consolidated/separate basis, same period length, same currency, no unexplained restatement), and refuses or asks back otherwise. Every financial figure it shows comes from a verified tool result.
+**v0.1 (2026-10-09).** In one line: **a verified rule-based financial comparison tool, plus an experiment in cross-checking it with an LLM.** A sealed, pre-registered evaluation found:
+- the product gave **no wrong figure**;
+- the keyword rules alone read every question correctly;
+- **the LLM did not improve accuracy**;
+- the model on its own misread questions.
+
+`dart_review/` in v0.1 is identical to the frozen commit P (`c182075`) that was evaluated.
 
 ```text
 $ python -m dart_review demo        # no API key, no model server, no network
@@ -14,16 +20,63 @@ $ python -m dart_review demo        # no API key, no model server, no network
 **변화:** 32,735,035,000,000원 (10.88%, 증가)
 ```
 
+## Sealed evaluation (3-1, pre-registered)
+
+- Four companies never used in development (NAVER, CJ CheilJedang, E-MART, LG Energy Solution) and 36 questions:
+  - 14 written by the user without seeing the data;
+  - 22 written by Claude.
+- Questions, gold answers, criteria, and the frozen product commit were committed before any run (pre-registration R = `c9a4a55`). Each of three methods then ran once.
+
+| Method | 23 figure questions correct | 13 refuse/clarify correct | **Wrong figures** | Other failures | Model time |
+|---|---:|---:|---:|---|---:|
+| Keyword rules only | **23** | 13 | **0** | none | 0 |
+| **Cross-checked (product)** | 22 | 13 | **0** | 1 unnecessary clarification | 8.7 min |
+| Model reading only | 21 | 10 | **0** | 4 wrong refusals, 1 wrong clarification (2 of these from a scorer mismatch) | 12.1 min |
+
+- **The official verdict is "criteria not met".**
+  - All four criteria on the product were met: 0 wrong figures, 22/23 solved (criterion ≥ 70%), 4.3% unnecessary-clarification cost (criterion ≤ 25%), 10/10 on out-of-scope and ambiguous questions.
+  - The miss came from the "model reading only" comparison method. It prefixes answers with "이렇게 이해했습니다: …2025년…" ("Here is how I read it"), and the frozen scorer counted that year as an ungrounded number.
+  - This is a mismatch between the product design (reading years are allowed) and the scorer. Two independent reviews before the run did not catch it. The scorer was not changed after the run; the result with the year allowed is reported only as a sensitivity check.
+- **The LLM added nothing.** Rules wrong and model right: 0. Wrong answers the cross-check prevented: 0. Instead, a model misreading (revenue read as a point-in-time value) turned one answerable question into a clarifying question.
+- **What happened when the model read alone:**
+  - it refused answerable questions after misreading the period or the account;
+  - it gave a wrong reason for a refusal ("unsupported company" when the question named several companies);
+  - at temperature 0, byte-identical requests got different readings in different runs.
+- **How much "0" means:**
+  - It is an observation on these 36 questions. With 0 errors in 22 answered figure questions, the 95% upper bound is about 13%.
+  - Most questions were plain 2024–2026 lookups and comparisons. Few hard cases appeared: restatements, sign changes, mislabeled account ids.
+  - So the rules getting everything right says more about the questions staying inside the rules' range than about the rules being strong.
+
+Full report (Korean): [eval/sealed_3-1/REPORT.md](eval/sealed_3-1/REPORT.md). Contract: [docs/EVAL_CONTRACT_3-1.ko.md](docs/EVAL_CONTRACT_3-1.ko.md).
+
+## What it does
+
+| Feature | Example question | Answer |
+|---|---|---|
+| Value lookup | "삼성전자 매출 알려줘" (Samsung's revenue) | value, period, basis (consolidated/separate), report and receipt number; checked for restatement against the same report type a year later |
+| Period comparison | "카카오 2024년 3분기 매출은 전년 같은 분기보다 얼마나 줄었어?" | both values, change, rate, direction (e.g. turned to profit when the sign changes) |
+| Consolidated vs separate | "삼성전자 연결 매출이랑 별도 매출 보여줘" | both values and the gap, explained only as a difference in scope, never a guessed cause |
+| Asking back | "삼성전자 이익이 얼마나 늘었어?", "삼성 매출 알려줘" | asks whether operating income or net income is meant, or which company |
+| Refusal with a reason | "삼성전자 유동자산 알려줘", "카카오뱅크 매출 알려줘", "삼성전자 2014년 매출 비교해 줘" | names the unsupported account or company; a period OpenDART does not provide is reported as no data, not as an error |
+
+- **Companies:** 3 for development (Samsung Electronics, Kakao, Celltrion). The evaluation runner (`eval/run_eval.py --companies sealed-3-1`) uses the four sealed ones. Financial companies are excluded because their statements are structured differently.
+- **Accounts:** 6 (revenue, operating income, net income, operating cash flow, total assets, total liabilities).
+- **Periods:** annual, three-month quarters, year to date, point in time.
+- **Data checked:** development companies 2023–2025, evaluation companies 2022–2026.
+- **Company aliases:** read from a fixed table ("삼전" in development; "네이버", "엔솔" and others for evaluation). A different company whose name contains a supported one (e.g. 카카오뱅크) is never read as that company.
+
 ## Why this is harder than it looks
 
-The same OpenDART column means different things depending on the report and the statement. These were checked against 72 cached reports ([data notes](docs/DATA_NOTES.ko.md)):
+The same OpenDART column means different things depending on the report and the statement. These were checked against 72 cached development reports ([data notes](docs/DATA_NOTES.ko.md)):
 
 - In quarterly income statements `thstrm` is the three months; in quarterly cash flow statements it is already year to date.
 - In quarterly balance sheets the "prior period" column is the **prior year end**, not the same quarter of the prior year.
-- Later reports **restate** earlier figures (Kakao, Celltrion): Kakao's Q3 2024 revenue change is −4.48% against the restated prior figure and −11.08% against the originally filed one.
+- Later reports **restate** earlier figures (Kakao, Celltrion, and CJ CheilJedang's liabilities in the sealed evaluation).
+  - Kakao's Q3 2024 revenue change is −4.48% against the restated prior figure.
+  - Against the originally filed figure it is −11.08%.
 - Account ids can be wrong: Kakao's 2023 quarterly revenue is tagged `ifrs-full_GrossProfit`.
 
-The rules for all of these are code, tested on the real cache, and each trap test was shown to fail when its rule is replaced by a naive version (11 of 11 caught).
+The rules for all of these are code, tested on the real cache. Each trap test was shown to fail when its rule is replaced by a naive version (11 of 11 caught, `scripts/check_trap_tests.py`).
 
 ## How it works (cross-checked reading)
 
@@ -33,55 +86,63 @@ question ──► keyword rules ──► reading A ─┐
                                           └─ no ──► show both readings and ask which one was meant
 ```
 
-- Two readers interpret the question separately: keyword rules and a local model (`gpt-oss:20b` via Ollama, one structured reading request with a reference date in the prompt). If they agree, code answers; if not, it asks back. Both were built by one author from one table of defaults, so their errors are not guaranteed to be independent.
-- When only one reader produces a reading:
-  - if the model's reading is missing, nothing is answered. The rules alone are not trusted with an answer; they confidently misread paraphrase p06.
-  - if the rules cannot read the question and the model can (e.g. "last year's revenue" with no year, or the synonym "순익"), the answer starts with the model's reading in code-written words ("이렇게 이해했습니다: …"), so a misreading is visible.
+- **Two readers interpret the question separately.**
+  - One is the keyword rules.
+  - The other is a local model (`gpt-oss:20b` via Ollama), asked once for a structured reading, with a reference date in the prompt.
+  - If they agree, code answers; if not, it asks back.
+  - Both were built by one author from one table of defaults, so their errors are not guaranteed to be independent.
+- **When only one reader produces a reading:**
+  - if the model's reading is missing, nothing is answered;
+  - if the rules cannot read the question and the model can (e.g. the synonym "순익"), the answer starts with the model's reading in code-written words ("이렇게 이해했습니다: …"), so a misreading is visible;
   - `--no-model` is an explicit rules-only mode chosen by the user, and the answer says so.
-- An account outside the six supported ones is refused, never read as a similar supported account. This includes names that contain a supported one, such as 유동자산 (current assets, not total assets) or 매출원가 (cost of sales, not revenue). A refusal is final only when both readers refuse.
-- Every factual sentence (amounts, periods, basis, reasons) is written by code from the tool result; the model writes no sentence.
-- Before anything is shown, every number in the text and in the Markdown report is checked:
+- **An unsupported account is refused, never read as a similar supported one.** This includes names that contain a supported one, such as 유동자산 (current assets, not total assets) or 매출원가 (cost of sales, not revenue).
+- **Code writes every sentence.** Every factual sentence (amounts, periods, basis, reasons) is written by code from the tool result; the model writes none.
+- **Numbers are checked before anything is shown**, in the text and in the Markdown report:
   - amounts, rates, and receipt numbers must be in the tool results;
-  - years must be in the tool results or the question; in a clarifying question and in the "이렇게 이해했습니다" line they may also come from the periods the readings propose, since those sentences are shown as readings.
-  - An answer with an ungrounded number is withheld.
-- The number check only confirms that the same value appears in the evidence. It does not prove that a figure is attached to the right period or that an explanation is right; renderer tests and human review cover that.
+  - years must be in the tool results or the question; in a clarifying question and in the "이렇게 이해했습니다" line they may also come from the periods the readings propose;
+  - an answer with an ungrounded number is withheld;
+  - the check only confirms that the same value appears in the evidence. Whether it is attached to the right period is covered by renderer tests and human review.
 
-## How we got here (measured, including what failed)
+## How we got here (including what failed)
 
-All on 13 development questions plus 13 paraphrases written before the comparison runs. "Final" is after a first-pass human review of the visible text against criteria fixed before each run. Full report: [eval/feasibility_2026-10-07/REPORT.md](eval/feasibility_2026-10-07/REPORT.md).
+The design was chosen on 13 development questions plus 13 paraphrases ([report](eval/feasibility_2026-10-07/REPORT.md)).
 
 | Design | Result | What it showed |
 |---|---|---|
-| Model writes the whole answer from correct tool results | automatic 11/13, **final 1/13** | Structured fields were right (numbers 10/10), but the visible text was often one word or omitted the basis or reason |
-| Agent: model calls tools and decides, code writes the facts | 23/26 | Better, but decision-stage failures and an explanation asserting an unsupported cause |
-| Keyword rules only (baseline) | 25/26 | **Beat the agent**, but its one failure was a confident wrong comparison |
-| **Cross-checked reading (current)** | **25/26, 0 confident wrong answers** | The baseline's misreading became a clarifying question; 26 model requests for 26 questions |
+| Model writes the whole answer from correct tool results | automatic 11/13, **1/13 after reviewing the text** | Structured fields were right, but the text was often one word or omitted the basis or reason |
+| Agent: model calls tools and decides | 23/26 | Decision-stage failures; an explanation asserting an unsupported cause |
+| Keyword rules only | 25/26 | **Beat the agent**, but its one failure was a confident wrong comparison |
+| **Cross-checked reading (current)** | **25/26, 0 confident wrong answers** | The rules' misreading became a clarifying question |
 
-The agent did not beat the keyword baseline; the design was changed accordingly. Sampling the model three times at temperature 0.7 found no misreading that the cross-check misses, at three times the cost, so it was not adopted.
+- The agent did not beat the keyword baseline, so the design was changed.
+- At this stage the cross-check stopped one misreading by the rules. In the sealed evaluation there was none to stop.
 
-**Fixes after an independent review (2026-10-08):** a Codex review found three problems:
-- a path that answered from the rules alone when the model failed;
-- rules that read unsupported accounts as similar supported ones;
-- report and clarifying output that skipped the number check.
+## How it was evaluated
 
-After the fixes, the same 26 questions gave the same answers and model readings (25/26, 0 confident wrong answers). On 13 unscored probe questions ([report](eval/3-0b_2026-10-08/REPORT.md)):
-- both readers refused five unsupported accounts;
-- the model's reading correctly answered two questions the rules could not read ("last year's revenue", the synonym "순익");
-- the model misread one question: it read last year's operating income as a point-in-time value. No wrong figure was shown, but a question that could have been answered was refused.
+- **Pre-registration:** the contract, the frozen product (P), and the questions were committed before any data was seen. The user's questions were committed first only as a hash.
+- **Gold answers:** computed separately from the raw cells, then compared with the product's rules.
+  - The one disagreement (C06) was resolved by re-reading the raw data: a restatement was found, the gold answer was corrected, and the user approved.
+  - Because the comparison with the product prompted that re-check, the correction is not fully independent. The report says so and gives the sensitivity.
+- **Judging:** Claude reviewed the visible text of each method first; the user confirmed. A strict judge (`eval/judge.py`) then ran once. It withholds a verdict if any hash does not match.
+- **Independent reviews:** five reviews by another agent (Codex) were reproduced and applied ([docs/reviews/](docs/reviews/)). Before the run they caught evaluator defects such as a crash in review-sheet generation and a missing cross-run check of the sealed hashes.
 
-**Limitations of these numbers:**
-- One author wrote the questions, paraphrases, probe questions, rules, and prompts.
-- The scope is narrow: 3 companies, 6 accounts, 2023–2025.
-- The model results come from a single run at temperature 0.
-- The human review is a first pass by Claude, not yet confirmed by the user.
-- The fair test is the sealed evaluation on four other companies (roadmap 3-1).
+## Limitations
+
+- 7 companies, 6 accounts, one run per method.
+- The sealed questions were easy. 22 of 36 were written by someone who knew the product design (Claude).
+- Human review is a first pass by Claude confirmed by the user; there is no independent third reviewer.
+- The local model is not deterministic even at temperature 0.
+- Not covered: financial companies' statements, questions about several companies or accounts at once, explaining *why* a figure changed.
+- The next evaluation is a large template evaluation, committed to before the results were known (contract section 11). The scorer's reading-year mismatch is fixed from that evaluation on.
 
 ## Quick start
+
+Python 3.10+, standard library only.
 
 ```bash
 python -m dart_review demo
 python -m unittest discover -s tests
-python -m dart_review ask "삼성전자 2025년 매출액이 전년보다 얼마나 늘었어?" --no-model --cache demo/opendart --offline
+python -m dart_review ask "삼성전자 매출 알려줘" --no-model --cache demo/opendart --offline
 ```
 
 With your own OpenDART key in `~/.config/opendart/api_key` (mode 600) and a local Ollama with `gpt-oss:20b`:
@@ -91,24 +152,32 @@ python scripts/fetch_dev_cache.py
 python -m dart_review ask "카카오 2024년 3분기 매출은 전년 같은 분기보다 얼마나 줄었어?"
 ```
 
-Python 3.10+, standard library only.
-
 ## Repository map
 
 | Path | What |
 |---|---|
-| `dart_review/` | client and cache, period/account/comparability rules, tools, renderer, number check, cross-check, CLI, and the account-name vocabulary used to refuse unsupported accounts (`account_vocabulary.json`, names from the development cache only) |
-| `eval/` | development questions and gold answers, scorer, runners, run records |
+| `dart_review/` | client and cache, period/account/comparability rules, company-name matching, tools, renderer, number check, cross-check, CLI |
+| `eval/` | questions and gold answers, gold builders, scorer, judge, run records; the sealed evaluation is in `eval/sealed_3-1/` |
 | `demo/` | trimmed OpenDART responses and recorded model readings for the replay demo |
-| `docs/` | scope, roadmap, data notes, gold rules, evaluation design, independent reviews (Korean) |
+| `docs/` | scope, roadmap, data notes, gold rules, evaluation design and contract, independent reviews, pre-publication check (Korean) |
+| `scripts/` | cache fetching, demo fixtures and vocabularies, trap-test check, public-safety scans |
+
+## Data source and use
+
+- **Data source: Financial Supervisory Service, OpenDART (opendart.fss.or.kr).**
+- Raw responses are not in the repository (`cache/` is git-ignored). The repository holds only:
+  - the trimmed demo responses (target-account rows only, 73 of 1,012 rows);
+  - the account rows and figures that appear in gold answers and run records.
+- The OpenDART terms of use (effective 2020-01-21) have no clause forbidding redistribution of disclosed data; copyright matters not covered there follow the Copyright Act and the Public Data Act (Article 16 ④). This is a pre-publication check, not legal advice ([pre-publication check](docs/PUBLICATION_CHECK.ko.md)).
+- The output of this tool is not investment advice.
 
 ## Safety and reproducibility
 
-- The OpenDART key is read only from `~/.config/opendart/api_key` and never logged, cached, or committed. A public-safety scan (`scripts/check_public_safety.py`: key values, personal data, local paths) is part of the commit routine; it is not enforced by a git hook.
-- Raw API responses stay out of the repository (`cache/` is git-ignored) until their redistribution terms are checked; the demo carries only the rows of the six target accounts.
-- Four evaluation companies are sealed: development code refuses them. While choosing them, their account row counts and names were seen; no amounts were.
-- Evaluation contracts were committed before each run; three independent reviews by another agent (Codex) were reproduced and applied ([docs/reviews/](docs/reviews/)).
-- Every evaluation run (`eval/`) records the exact request, the raw response, model digest, the hashes of prompts, tools, and gold, and (since the 3-0b runs) the reference date. The `ask` command does not keep a request log yet.
+- The OpenDART key is read only from `~/.config/opendart/api_key` and never logged, cached, or committed.
+- Two scans ran before publication, both with 0 findings:
+  - the current files (`scripts/check_public_safety.py`);
+  - the whole git history (`scripts/check_history_safety.py`, including a match against the local key value).
+- Every evaluation run records the exact request, the raw response, the model digest, hashes of prompts, tools, and gold, and the reference date. The `ask` command keeps no request log.
 
 ## License
 

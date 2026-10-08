@@ -3,7 +3,8 @@ __pycache__/
 .venv/
 .pytest_cache/
 .DS_Store
-# Raw API responses and run logs stay local until their redistribution terms are confirmed.
+# Raw API responses and run logs stay local; only trimmed rows are published
+# (docs/PUBLICATION_CHECK.ko.md). Committed run records are force-added.
 cache/
 runs/
 local_only/

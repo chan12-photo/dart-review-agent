@@ -206,3 +206,22 @@ class RescorePathTests(unittest.TestCase):
                 for line in (folder / "cases.jsonl").read_text(encoding="utf-8").splitlines():
                     case = json.loads(line)
                     self.assertEqual(rescore.rescore_case(case, gold[case["id"]])["score"], case["score"])
+
+
+class FreezeTests(unittest.TestCase):
+    def test_frozen_differences_reports_changed_files(self):
+        import subprocess
+        with mock.patch.object(run_eval, "FREEZE_FILE", Path("/nonexistent/freeze.json")):
+            self.assertEqual(run_eval.frozen_differences(), ["no freeze record (eval/freeze_3-1.json)"])
+        first = subprocess.run(["git", "rev-list", "--max-parents=0", "HEAD"], cwd=ROOT, capture_output=True, text=True).stdout.split()
+        if not first:
+            self.skipTest("not a git checkout")
+        import tempfile
+        with tempfile.TemporaryDirectory() as folder:
+            record = Path(folder) / "freeze.json"
+            record.write_text(json.dumps({"commit": first[0]}), encoding="utf-8")
+            with mock.patch.object(run_eval, "FREEZE_FILE", record):
+                self.assertIn("dart_review/crosscheck.py", run_eval.frozen_differences())  # the first commit predates it
+            record.write_text(json.dumps({"commit": "HEAD"}), encoding="utf-8")
+            with mock.patch.object(run_eval, "FREEZE_FILE", record):
+                self.assertEqual(run_eval.frozen_differences("HEAD"), [])

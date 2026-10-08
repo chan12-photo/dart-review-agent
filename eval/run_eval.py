@@ -243,6 +243,22 @@ def contract_hashes(question_set: str = "dev") -> dict[str, str]:
                 "set_gold": _sha256(set_files(question_set)[1].read_bytes())} if question_set.startswith(FILE_SET) else {})}
 
 
+FREEZE_FILE = ROOT / "eval" / "freeze_3-1.json"  # written right after the freeze commit P (EVAL_CONTRACT_3-1 1절 ②)
+FROZEN_PATHS = ("dart_review", "eval/run_eval.py", "eval/scoring.py", "eval/judge.py", "eval/finalize.py", "eval/rescore.py")
+
+
+def frozen_differences(commit: str = "HEAD", working_tree: bool = False) -> list[str]:
+    """Frozen files that differ from the freeze commit P (empty when they match, or before P exists)."""
+    if not FREEZE_FILE.exists():
+        return ["no freeze record (eval/freeze_3-1.json)"]
+    frozen = json.loads(FREEZE_FILE.read_text(encoding="utf-8"))["commit"]
+    command = ["git", "diff", "--name-only", frozen] + ([] if working_tree else [commit]) + ["--", *FROZEN_PATHS]
+    result = subprocess.run(command, cwd=ROOT, capture_output=True, text=True)
+    if result.returncode != 0:
+        return [f"git diff failed: {result.stderr.strip()}"]
+    return result.stdout.split()
+
+
 def company_set_hash() -> str:
     """The active company set: its names, aliases, groups, refused companies, and name vocabulary."""
     company_set = active_set()
@@ -357,6 +373,10 @@ def _main(parser: argparse.ArgumentParser, args: argparse.Namespace) -> int:
     if args.companies != "development" and (git["dirty"] or args.allow_dirty or not args.out):
         # EVAL_CONTRACT_3-1 sections 1 and 7: every evaluation run, with or without a model, is recorded from committed code
         parser.error("an evaluation-set run must be recorded (--out) from a clean, committed tree; --allow-dirty is refused")
+    if args.companies != "development":
+        changed = frozen_differences(working_tree=True)
+        if changed:
+            parser.error(f"the product differs from the freeze commit P: {changed}")
     if not CACHE.exists():
         print("no cache: run scripts/fetch_dev_cache.py first")
         return 2

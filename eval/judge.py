@@ -184,6 +184,9 @@ def check_contract(runs: dict[str, tuple[dict[str, Any], list[dict[str, Any]]]],
         if any(not isinstance(item.get("reviewed_passed"), bool) for item in reviewed.values()):
             problems.append(f"{method}: a reviewed result is not true or false")
     if meta.get("company_set") == "sealed-3-1":
+        changed = run_eval.frozen_differences((meta.get("git") or {}).get("commit") or "HEAD")
+        if changed:
+            problems.append(f"the runs' code differs from the freeze commit P: {changed}")
         found: dict[str, Counter] = {}
         for question in questions.values():
             found.setdefault(question.get("bundle"), Counter())[question.get("author")] += 1

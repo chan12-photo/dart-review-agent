@@ -5,6 +5,7 @@ import json
 from pathlib import Path
 import sys
 import unittest
+from unittest import mock
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "eval"))
@@ -38,58 +39,139 @@ class OutcomeTests(unittest.TestCase):
 
 @unittest.skipUnless(LOOKUP_RUN.exists(), "needs the committed lookup baseline run")
 class JudgeTests(unittest.TestCase):
+    """Strict judging on synthetic runs that go through real cases.jsonl files (Codex 3-1 first review 2, 3)."""
+
+    BUNDLE_C = {"L10", "L11", "L12", "L14", "L16"}  # the out-of-scope and company questions of the lookup set
+
     def setUp(self):
+        import tempfile
+        self.temp = tempfile.TemporaryDirectory()
         meta, cases = judge.load_run(LOOKUP_RUN)
-        meta = {**meta, "git": {"commit": "c0ffee", "dirty": False}}
-        questions = {question["id"]: question for question in run_eval.load_questions("lookup")[0]}
-        for item in cases:  # both readers right, as if from a cross-check run
-            key = judge.expected_key(questions[item["id"]])
-            item["readings"] = {"used": "both", "rule_key": list(key), "model_key": list(key)}
+        self.real_load_questions = run_eval.load_questions
+        self.folders = 0
+        questions, golds = run_eval.load_questions("lookup")
+        for question in questions:
+            question["bundle"] = "C" if question["id"] in self.BUNDLE_C else "A"
+        self.loader = mock.patch.object(run_eval, "load_questions", lambda question_set: (copy.deepcopy(questions), golds))
+        self.loader.start()
+        meta = {**meta, "git": {"commit": "c0ffee", "dirty": False}, "contract": run_eval.contract_hashes("lookup"),
+                "model": {"model": "gpt-oss:20b", "digest": "abc", "options": {"temperature": 0}, "think": None}}
+        by_id = {question["id"]: question for question in questions}
+        for item in cases:  # both readers right, as a cross-check run records them
+            key = judge.expected_key(by_id[item["id"]])
+            item["readings"] = {"used": "both", "rule_key": key, "model_key": key}
         self.meta, self.cases = meta, cases
 
-    def runs(self, crosscheck=None, baseline=None, **meta_changes):
-        return {"crosscheck": ({**self.meta, **meta_changes}, crosscheck or copy.deepcopy(self.cases)),
-                "baseline": (self.meta, baseline or copy.deepcopy(self.cases))}
+    def tearDown(self):
+        self.loader.stop()
+        self.temp.cleanup()
 
-    def test_all_right_meets_the_criteria(self):
-        report = judge.judge(self.runs())
-        self.assertEqual(report["problems"], [])
-        self.assertEqual(report["verdict"], "기준 충족")
-        self.assertEqual(report["checks"]["해결률 ≥ 70%"]["value"], 1.0)
+    def saved(self, name, meta, cases):
+        """Write a run as the runner does and read it back with the judge's loader (inner tuples become lists)."""
+        self.folders += 1
+        folder = Path(self.temp.name) / f"{self.folders}_{name}"
+        folder.mkdir()
+        (folder / "run.json").write_text(json.dumps(meta, ensure_ascii=False), encoding="utf-8")
+        (folder / "cases.jsonl").write_text("".join(json.dumps(case, ensure_ascii=False) + "\n" for case in cases), encoding="utf-8")
+        return judge.load_run(folder)
+
+    def runs(self, crosscheck=None, baseline=None, model_only=None, **meta_changes):
+        return {"crosscheck": self.saved("crosscheck", {**self.meta, **meta_changes}, crosscheck or copy.deepcopy(self.cases)),
+                "baseline": self.saved("baseline", self.meta, baseline or copy.deepcopy(self.cases)),
+                "model_only": self.saved("model_only", self.meta, model_only or copy.deepcopy(self.cases))}
+
+    def runs_recording(self, contract):
+        """All three runs recorded the same, older file hashes (the files changed after the runs)."""
+        current, self.meta = self.meta, {**self.meta, "contract": contract}
+        try:
+            return self.runs()
+        finally:
+            self.meta = current
+
+    @staticmethod
+    def review(runs, confirmed=True, overrides=None):
+        overrides = overrides or {}
+        return {method: {"confirmed_by_user": confirmed,
+                         "per_case": [{"id": case["id"], "automatic_passed": case["score"]["automatic_passed"],
+                                       "reviewed_passed": overrides.get((method, case["id"]), case["score"]["automatic_passed"])}
+                                      for case in cases]}
+                for method, (_, cases) in runs.items()}
+
+    def test_keys_survive_the_file_round_trip(self):
+        runs = self.runs()
+        stored = runs["crosscheck"][1][0]["readings"]["rule_key"]
+        self.assertIsInstance(stored, list)  # what the file really holds
+        report = judge.judge(runs, self.review(runs))
         self.assertEqual(list(report["interpretation"]), ["규칙 정답 / 모델 정답"])
-        self.assertIsNone(report["checks"]["범위 밖·모호 ≥ 75%"]["met"])  # no bundle C in this set
+
+    def test_everything_in_place_meets_the_criteria(self):
+        runs = self.runs()
+        report = judge.judge(runs, self.review(runs))
+        self.assertEqual((report["problems"], report["verdict"]), ([], "기준 충족"))
+        self.assertEqual(report["checks"]["범위 밖·모호 ≥ 75%"]["value"], 1.0)
 
     def test_one_wrong_answer_fails_and_an_averted_one_is_counted(self):
-        crosscheck = copy.deepcopy(self.cases)
-        wrong = next(item for item in crosscheck if item["id"] == "L01")
-        wrong["score"]["automatic_passed"] = False
-        baseline = copy.deepcopy(self.cases)
-        baseline_wrong = next(item for item in baseline if item["id"] == "L02")
-        baseline_wrong["score"]["automatic_passed"] = False
-        report = judge.judge(self.runs(crosscheck, baseline))
+        crosscheck, baseline = copy.deepcopy(self.cases), copy.deepcopy(self.cases)
+        next(item for item in crosscheck if item["id"] == "L01")["score"]["automatic_passed"] = False
+        next(item for item in baseline if item["id"] == "L02")["score"]["automatic_passed"] = False
+        runs = self.runs(crosscheck, baseline)
+        report = judge.judge(runs, self.review(runs))
         self.assertEqual(report["verdict"], "기준 미달")
         self.assertEqual(report["outcome_table"]["crosscheck"]["잘못된 수치 답"], ["L01"])
         self.assertEqual(report["crosscheck_effect"]["막은 오답"], ["L02"])
         self.assertEqual(report["crosscheck_effect"]["일치한 오답"], ["L01"])
 
-    def test_run_problems_suspend_the_verdict(self):
+    def test_a_wrong_refusal_reason_fails_through_the_review(self):
+        # Codex 3-1 first review 4: the status is right, the stated reason is not; only the review catches it
+        runs = self.runs()
+        report = judge.judge(runs, self.review(runs, overrides={("crosscheck", "L11"): False}))
+        self.assertEqual(report["outcomes"]["crosscheck"]["L11"], "잘못된 거절")
+
+    def test_what_suspends_the_verdict(self):
+        runs = self.runs()
         duplicated = copy.deepcopy(self.cases) + [copy.deepcopy(self.cases[0])]
-        for runs, expected in ((self.runs(duplicated), "duplicates ['L01']"),
-                               (self.runs(self.cases[1:]), "missing ['L01']"),
-                               (self.runs(reference_date="2027-01-01"), "reference_date differs"),
-                               (self.runs(git={"commit": "other", "dirty": False}), "different code"),
-                               (self.runs(git={"commit": "c0ffee", "dirty": True}), "dirty tree")):
+        no_keys = copy.deepcopy(self.cases)
+        del no_keys[0]["readings"]["rule_key"]
+        cases = {
+            "duplicates ['L01']": (self.runs(duplicated), None),
+            "missing ['L01']": (self.runs(self.cases[1:]), None),
+            "reference_date differs": (self.runs(reference_date="2027-01-01"), None),
+            "different code": (self.runs(git={"commit": "other", "dirty": False}), None),
+            "dirty tree": (self.runs(git={"commit": "c0ffee", "dirty": True}), None),
+            "methods missing": ({key: value for key, value in runs.items() if key != "model_only"}, None),
+            "no human review": (runs, {}),
+            "not confirmed by the user": (runs, self.review(runs, confirmed=False)),
+            "differ from the ones the runs recorded": (self.runs_recording({**self.meta["contract"], "lookup_gold": "old"}), None),
+            "the model differs": (self.runs(model={**self.meta["model"], "digest": "other"}), None),
+            "without recorded reading keys": (self.runs(no_keys), None),
+        }
+        for expected, (these_runs, finals) in cases.items():
             with self.subTest(expected=expected):
-                report = judge.judge(runs)
+                report = judge.judge(these_runs, self.review(these_runs) if finals is None else finals)
                 self.assertEqual(report["verdict"], "판정 보류")
                 self.assertTrue(any(expected in problem for problem in report["problems"]), report["problems"])
                 self.assertNotIn("checks", report)
 
-    def test_a_human_review_result_replaces_the_automatic_pass(self):
-        final = {"confirmed_by_user": False, "per_case": [{"id": "L03", "reviewed_passed": False}]}
-        report = judge.judge(self.runs(), {"crosscheck": final})
-        self.assertEqual(report["outcomes"]["crosscheck"]["L03"], "잘못된 수치 답")
-        self.assertEqual(report["review"]["crosscheck"], {"confirmed_by_user": False})
+    def test_a_criterion_that_cannot_be_applied_is_not_a_pass(self):
+        questions, golds = self.real_load_questions("lookup")  # no bundle C: the out-of-scope criterion has nothing to count
+        with mock.patch.object(run_eval, "load_questions",
+                               lambda question_set: ([{**question, "bundle": "A"} for question in questions], golds)):
+            runs = self.runs()
+            report = judge.judge(runs, self.review(runs))
+        self.assertEqual(report["verdict"], "판정 보류")
+        self.assertTrue(any("cannot be applied" in problem for problem in report["problems"]))
+
+    def test_runs_without_reading_keys_are_not_called_unread(self):
+        no_keys = copy.deepcopy(self.cases)
+        for item in no_keys:
+            item["readings"] = {"used": "both"}
+        report = judge.judge({"crosscheck": self.runs(no_keys)["crosscheck"]}, exploratory=True)
+        self.assertEqual(list(report["interpretation"]), ["해석 키 기록 없음"])
+
+    def test_exploratory_mode_is_never_a_verdict(self):
+        runs = self.runs()
+        report = judge.judge({"crosscheck": runs["crosscheck"]}, exploratory=True)
+        self.assertEqual(report["verdict"], "탐색 (판정 아님)")
 
 
 class EvaluationRunGuardTests(unittest.TestCase):

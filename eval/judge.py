@@ -12,8 +12,14 @@ question set, company set, reference date, prompt version and code, a clean
 tree. If any check fails, the verdict is "판정 보류" with the reasons; the
 criteria are not applied.
 
-Automatic scores are used unless a human-review result (eval/finalize.py) is
-given with --final; the report then says whether the user confirmed it.
+By default the judge is strict (the 3-1 contract, Codex 3-1 first review 3):
+all three methods, a complete human review confirmed by the user for every
+method (so a refusal or clarification with the wrong reason fails through the
+review, finding 4), the fixed 36-question composition for the sealed set, the
+same model identity, the recorded file hashes equal to the files read now,
+reading keys recorded, and every criterion applicable. Otherwise the verdict
+is "판정 보류". --exploratory relaxes these for development sets and marks the
+report "탐색 (판정 아님)"; automatic scores are then used where no review is given.
 """
 
 from __future__ import annotations
@@ -39,6 +45,16 @@ SOLVED = ("정답 제공", "맞는 거절", "맞는 되묻기")
 COSTS = ("불필요한 되묻기", "보류·무응답", "잘못된 거절")
 # docs/EVAL_CONTRACT_3-1.ko.md section 10 (decided by the user before any sealed data)
 CRITERIA = {"wrong_answers": 0, "solved_rate": 0.70, "cost_rate": 0.25, "out_of_scope_rate": 0.75}
+METHODS = ("crosscheck", "baseline", "model_only")
+# section 4.1: bundle -> author -> count
+COMPOSITION_3_1 = {"A": {"claude": 16}, "B": {"user": 10}, "C": {"claude": 6, "user": 4}}
+HASHED_FILES = ("questions", "gold", "paraphrases", "lookup_questions", "lookup_gold", "set_questions", "set_gold",
+                "reading_prompt", "reading_schema", "company_set")
+
+
+def freeze(value: Any) -> Any:
+    """A key as the product builds it: JSON turns its inner tuples into lists (Codex 3-1 first review 2)."""
+    return tuple(freeze(item) for item in value) if isinstance(value, (list, tuple)) else value
 
 
 def expected_key(question: dict[str, Any]) -> tuple | None:
@@ -124,29 +140,80 @@ def check_runs(runs: dict[str, tuple[dict[str, Any], list[dict[str, Any]]]], gol
     return problems
 
 
-def _reading_state(key: tuple | None, expected: tuple | None, failed: str | None = None) -> str:
+def _reading_state(key: Any, expected: tuple | None, failed: str | None = None) -> str:
     if key is None:
         return failed or "미해석"
-    return "정답" if key == expected else "오답"
+    return "정답" if freeze(key) == freeze(expected) else "오답"
 
 
-def judge(runs: dict[str, tuple[dict[str, Any], list[dict[str, Any]]]], finals: dict[str, dict[str, Any]] | None = None
-          ) -> dict[str, Any]:
+def check_contract(runs: dict[str, tuple[dict[str, Any], list[dict[str, Any]]]], finals: dict[str, dict[str, Any]],
+                   questions: dict[str, dict[str, Any]]) -> list[str]:
+    """What the strict (3-1) judge also requires (Codex 3-1 first review 3); empty when all is there."""
+    problems = []
+    missing = [method for method in METHODS if method not in runs]
+    if missing:
+        problems.append(f"methods missing: {missing}")
+    meta = runs["crosscheck"][0]
+    current = run_eval.contract_hashes(meta.get("question_set", "dev"))
+    recorded = meta.get("contract") or {}
+    changed = [key for key in HASHED_FILES if key in current and recorded.get(key) != current[key]]
+    if changed:
+        problems.append(f"the files read now differ from the ones the runs recorded: {changed}")
+    models = {method: {key: (runs[method][0].get("model") or {}).get(key) for key in ("model", "digest", "options", "think")}
+              for method in ("crosscheck", "model_only") if method in runs}
+    if len({json.dumps(model, sort_keys=True) for model in models.values()}) > 1:
+        problems.append(f"the model differs between methods: {models}")
+    without_keys = [case["id"] for case in runs["crosscheck"][1]
+                    if "rule_key" not in (case.get("readings") or {}) or "model_key" not in (case.get("readings") or {})]
+    if without_keys:
+        problems.append(f"crosscheck cases without recorded reading keys: {without_keys}")
+    for method, (_, cases) in runs.items():
+        final = finals.get(method)
+        if not final:
+            problems.append(f"{method}: no human review result")
+            continue
+        reviewed = {item["id"]: item for item in final.get("per_case", [])}
+        if set(reviewed) != {case["id"] for case in cases}:
+            problems.append(f"{method}: the review covers {sorted(reviewed)}, not the run's questions")
+        if not final.get("confirmed_by_user"):
+            problems.append(f"{method}: the review is not confirmed by the user")
+        mismatched = [case["id"] for case in cases if case["id"] in reviewed
+                      and reviewed[case["id"]].get("automatic_passed") != case["score"]["automatic_passed"]]
+        if mismatched:
+            problems.append(f"{method}: the review belongs to another run (automatic scores differ: {mismatched})")
+        if any(not isinstance(item.get("reviewed_passed"), bool) for item in reviewed.values()):
+            problems.append(f"{method}: a reviewed result is not true or false")
+    if meta.get("company_set") == "sealed-3-1":
+        found: dict[str, Counter] = {}
+        for question in questions.values():
+            found.setdefault(question.get("bundle"), Counter())[question.get("author")] += 1
+        expected = {bundle: Counter(authors) for bundle, authors in COMPOSITION_3_1.items()}
+        if found != expected:
+            problems.append(f"the questions are not the contract's 36 (bundle -> authors): {found}")
+    return problems
+
+
+def judge(runs: dict[str, tuple[dict[str, Any], list[dict[str, Any]]]], finals: dict[str, dict[str, Any]] | None = None,
+          exploratory: bool = False) -> dict[str, Any]:
     finals = finals or {}
     meta = runs["crosscheck"][0]
-    questions, golds = run_eval.load_questions(meta.get("question_set", "dev"))
-    by_id = {question["id"]: question for question in questions}
-    problems = check_runs(runs, list(by_id))
+    with using_company_set(meta.get("company_set", "development")):
+        questions, golds = run_eval.load_questions(meta.get("question_set", "dev"))
+        by_id = {question["id"]: question for question in questions}
+        problems = check_runs(runs, list(by_id))
+        if not exploratory and not problems:
+            problems += check_contract(runs, finals, by_id)
     report: dict[str, Any] = {"question_set": meta.get("question_set"), "company_set": meta.get("company_set"),
                               "reference_date": meta.get("reference_date"), "prompt_version": meta.get("prompt_version"),
                               "commit": (meta.get("git") or {}).get("commit"), "problems": problems,
                               "review": {mode: ({"confirmed_by_user": final.get("confirmed_by_user")} if final else "사람 검토 전")
                                          for mode, final in ((mode, finals.get(mode)) for mode in runs)}}
+    report["exploratory"] = exploratory
     if problems:
         report["verdict"] = "판정 보류"
         return report
     with using_company_set(meta.get("company_set", "development")):
-        expected = {question_id: expected_key(question) for question_id, question in by_id.items()}
+        expected = {question_id: freeze(expected_key(question)) for question_id, question in by_id.items()}
     outcomes: dict[str, dict[str, str]] = {}
     for mode, (_, cases) in runs.items():
         reviewed = {item["id"]: item["reviewed_passed"] for item in (finals.get(mode) or {}).get("per_case", [])}
@@ -163,8 +230,11 @@ def judge(runs: dict[str, tuple[dict[str, Any], list[dict[str, Any]]]], finals: 
             length = any(((request or {}).get("response") or {}).get("done_reason") == "length" for request in case.get("requests") or [])
             model_failed = "미해석(출력 한도)" if length else "미해석(형식)" if readings.get("model_error") or case.get("model_error") else "미해석"
         rule_key = readings.get("rule_key")
-        cell = (f"규칙 {_reading_state(tuple(rule_key) if rule_key else None, expected[question_id])} / "
-                f"모델 {_reading_state(tuple(readings['model_key']) if readings.get('model_key') else None, expected[question_id], model_failed)}")
+        if "rule_key" not in readings or "model_key" not in readings:
+            cell = "해석 키 기록 없음"  # a run made before the keys were recorded: unknown, not "미해석"
+        else:
+            cell = (f"규칙 {_reading_state(rule_key, expected[question_id])} / "
+                    f"모델 {_reading_state(readings.get('model_key'), expected[question_id], model_failed)}")
         interpretation.setdefault(cell, []).append(question_id)
 
     # product outcome table, per method
@@ -211,8 +281,15 @@ def judge(runs: dict[str, tuple[dict[str, Any], list[dict[str, Any]]]], finals: 
         "근거 없는 숫자 0": {"value": ungrounded, "met": not any(ungrounded.values())},
     }
     report.update(outcomes=outcomes, outcome_table=table, interpretation=interpretation, crosscheck_effect=effect,
-                  cost=cost, checks=checks, shown_answers=len(shown_answers),
-                  verdict="기준 충족" if all(check["met"] is not False for check in checks.values()) else "기준 미달")
+                  cost=cost, checks=checks, shown_answers=len(shown_answers))
+    unknown = [name for name, check in checks.items() if check["met"] is None]
+    if exploratory:
+        report["verdict"] = "탐색 (판정 아님)"
+    elif unknown:  # a criterion that cannot be applied is not a pass (Codex 3-1 first review 3)
+        report["verdict"] = "판정 보류"
+        report["problems"].append(f"criteria that cannot be applied: {unknown}")
+    else:
+        report["verdict"] = "기준 충족" if all(check["met"] for check in checks.values()) else "기준 미달"
     return report
 
 
@@ -223,6 +300,8 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--model-only", type=Path)
     parser.add_argument("--final", action="append", default=[], help="MODE=FILE: a finalize.py result for that method")
     parser.add_argument("--out", type=Path, help="write the report as JSON (never over an existing file)")
+    parser.add_argument("--exploratory", action="store_true",
+                        help="development sets: relax the 3-1 requirements; the report is not a verdict")
     args = parser.parse_args(argv)
     runs = {mode: load_run(folder) for mode, folder in
             (("crosscheck", args.crosscheck), ("baseline", args.baseline), ("model_only", args.model_only)) if folder}
@@ -230,7 +309,7 @@ def main(argv: list[str] | None = None) -> int:
     for item in args.final:
         mode, _, path = item.partition("=")
         finals[mode] = json.loads(Path(path).read_text(encoding="utf-8"))
-    report = judge(runs, finals)
+    report = judge(runs, finals, exploratory=args.exploratory)
     text = json.dumps(report, ensure_ascii=False, indent=1) + "\n"
     if args.out:
         if args.out.exists():

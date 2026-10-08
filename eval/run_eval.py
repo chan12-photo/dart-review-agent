@@ -227,7 +227,7 @@ def _git_state() -> dict[str, Any]:
     return {"commit": git("rev-parse", "HEAD"), "dirty": bool(git("status", "--porcelain"))}
 
 
-def contract_hashes() -> dict[str, str]:
+def contract_hashes(question_set: str = "dev") -> dict[str, str]:
     """Fingerprints of everything that defines the evaluation, recorded with each run."""
     def text(value: Any) -> bytes:
         return json.dumps(value, ensure_ascii=False, sort_keys=True).encode("utf-8")
@@ -238,7 +238,9 @@ def contract_hashes() -> dict[str, str]:
             "decision_schema": _sha256(text(DECISION_SCHEMA)), "paraphrases": _sha256(PARAPHRASES.read_bytes()),
             "reading_prompt": _sha256(READING_SYSTEM_PROMPT.encode("utf-8")), "reading_schema": _sha256(text(READING_SCHEMA)),
             "lookup_questions": _sha256(LOOKUP_SPEC.read_bytes()), "lookup_gold": _sha256(LOOKUP_GOLD.read_bytes()),
-            "lookup_tool": _sha256(text(LOOKUP_SPEC_TOOL)), "company_set": company_set_hash()}
+            "lookup_tool": _sha256(text(LOOKUP_SPEC_TOOL)), "company_set": company_set_hash(),
+            **({"set_questions": _sha256(set_files(question_set)[0].read_bytes()),
+                "set_gold": _sha256(set_files(question_set)[1].read_bytes())} if question_set.startswith(FILE_SET) else {})}
 
 
 def company_set_hash() -> str:
@@ -251,8 +253,31 @@ def company_set_hash() -> str:
     return _sha256(definition.encode("utf-8") + vocabulary)
 
 
+FILE_SET = "file:"  # a question set given as a file: "file:<path from the repository root>"
+
+
+def set_files(question_set: str) -> tuple[Path, Path]:
+    """(question file, gold file) of a file question set. The question file names its gold file under "gold"."""
+    question_file = ROOT / question_set[len(FILE_SET):]
+    gold_file = ROOT / json.loads(question_file.read_text(encoding="utf-8"))["gold"]
+    return question_file, gold_file
+
+
 def load_questions(question_set: str = "dev") -> tuple[list[dict[str, Any]], dict[str, dict[str, Any]]]:
-    """Questions and gold answers. A paraphrase keeps its base question's reading and gold, with new wording."""
+    """Questions and gold answers. A paraphrase keeps its base question's reading and gold, with new wording.
+
+    ``file:<path>`` loads any question file in the dev_lookup.json format with a "gold" entry naming its gold
+    file; the 3-1 sealed questions use it, so adding them needs no code change after the product freeze
+    (Codex 3-1 first review 1).
+    """
+    if question_set.startswith(FILE_SET):
+        question_file, gold_file = set_files(question_set)
+        questions = json.loads(question_file.read_text(encoding="utf-8"))["questions"]
+        golds = {answer["id"]: answer for answer in json.loads(gold_file.read_text(encoding="utf-8"))["answers"]}
+        ids = [question["id"] for question in questions]
+        if len(ids) != len(set(ids)) or set(ids) != set(golds):
+            raise ValueError(f"{question_set}: question ids must be unique and match the gold ids exactly")
+        return questions, golds
     spec = {question["id"]: question for question in json.loads(SPEC.read_text(encoding="utf-8"))["questions"]}
     gold = {answer["id"]: answer for answer in json.loads(GOLD.read_text(encoding="utf-8"))["answers"]}
     if question_set == "dev":
@@ -301,6 +326,8 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--only", nargs="+", help="question ids to run")
     parser.add_argument("--out", type=Path, help="new directory for run.json, cases.jsonl, summary.json, review files")
     parser.add_argument("--allow-dirty", action="store_true", help="allow a model run with uncommitted changes")
+    parser.add_argument("--questions", type=Path, help="a question file (dev_lookup.json format, with a 'gold' entry); "
+                        "used instead of --set")
     parser.add_argument("--set", dest="question_set", choices=("dev", "paraphrase", "lookup"), default="dev",
                         help="dev: the 13 development questions; paraphrase: the same readings reworded; "
                              "lookup: the 16 value-lookup and company-name questions (EVAL_DESIGN 12.4)")
@@ -312,6 +339,12 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 def _main(parser: argparse.ArgumentParser, args: argparse.Namespace) -> int:
+    if args.questions:
+        path = args.questions.resolve()
+        if ROOT not in path.parents:
+            parser.error("--questions must be a file inside the repository (its hash is recorded)")
+        args.question_set = FILE_SET + str(path.relative_to(ROOT))
+        load_questions(args.question_set)  # fails early on a bad file
     if (args.mode in MODEL_MODES) != bool(args.model):
         parser.error("--model is required for oracle, full, and agent, and not used for rules and baseline")
     if args.model and not args.out:
@@ -334,7 +367,8 @@ def _main(parser: argparse.ArgumentParser, args: argparse.Namespace) -> int:
     if args.out:
         # written as the run goes, so an interrupted run keeps every finished question
         args.out.mkdir(parents=True)
-        meta = {"mode": args.mode, "question_set": args.question_set, "model": identity, "contract": contract_hashes(),
+        meta = {"mode": args.mode, "question_set": args.question_set, "model": identity,
+                "contract": contract_hashes(args.question_set),
                 "prompt_version": {"agent": AGENT_PROMPT_VERSION, "crosscheck": READING_PROMPT_VERSION,
                                    "model_only": READING_PROMPT_VERSION}.get(args.mode, PROMPT_VERSION),
                 "company_set": active_set().name,

@@ -35,7 +35,7 @@ def build() -> dict:
         if meta["status"] != "000":
             continue
         if meta["params"]["corp_code"] not in DEV_COMPANIES:
-            raise SystemExit(f"not a development company in the cache: {meta['params']['corp_code']}")
+            continue  # only development responses: the 3-1 sealed responses in the same cache never shape the rules
         body = json.loads(meta_path.with_name(meta_path.name.replace(".meta.json", ".body")).read_text(encoding="utf-8"))
         statements += 1
         names.update(normalize_term(row.get("account_nm", "")) for row in body.get("list", []))

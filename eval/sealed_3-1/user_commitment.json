@@ -1,0 +1,10 @@
+{
+ "about": "3-1 user questions, committed blind (docs/EVAL_CONTRACT_3-1.ko.md 4.3). Claude computed only these hashes and line counts; the contents were not read.",
+ "date": "2026-10-08",
+ "product_freeze": "c18207595e0d84a3228e7471423aa178129ca151",
+ "files": {
+  "questions": {"name": "dart_3-1_questions.txt", "sha256": "8fd42cb9e314cbc8d1f26ad6b482a9e6491dd91aa1913a93389825674c15601e", "bytes": 860, "lines": 14},
+  "expected": {"name": "dart_3-1_expected.txt", "sha256": "434dced5f6e3fec5bf4f477653f0125bc19e5f50104723379d46ccb9bf0bc58e", "bytes": 130, "lines": 14}
+ },
+ "reveal": "questions at step 5 after the product freeze; expected decisions only after Claude has committed its own gold for them"
+}

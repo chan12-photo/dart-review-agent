@@ -43,7 +43,8 @@ Claude가 만든 결과를 Claude가 검증하면 같은 착각을 반복할 수
 - **3-1a 진행 중:**
   - 계약 초안: [EVAL_CONTRACT_3-1.ko.md](EVAL_CONTRACT_3-1.ko.md). 사용자 결정 반영.
   - 7절 코드 구현 완료: 평가 모드, 모델만 방식, 판정기, 재채점 경로.
-  - 다음: **Codex 1차 검토**([요청문](reviews/3-1_contract_codex_request.ko.md)) → 반영 → ② 제품 고정 → ③ 질문. 데이터 열람과 질문 작성 전에 한다. 3-1 사전 등록 전에 **Codex 필수 검토**를 받는다.
+  - Codex 1차 검토 12건을 모두 반영했다([응답](reviews/3-1_contract_codex_response.ko.md)).
+  - 다음: 사용자 확인 → ② 제품 고정 → ③ 질문(사용자 14개는 블라인드로). 데이터 열람과 질문 작성 전에 한다. 3-1 사전 등록 전에 **Codex 필수 검토**를 받는다.
 - 데모 자료 주의: `demo/opendart/`에 OpenDART 응답 축소본(대상 계정 행만)이 있다. 재배포 조건은 첫 외부 전송 전에 확인한다(3-4, [demo/README.md](../demo/README.md)).
 - 막힌 것: 없음
 

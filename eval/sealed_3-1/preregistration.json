@@ -1,0 +1,47 @@
+{
+ "about": "3-1 pre-registration (docs/EVAL_CONTRACT_3-1.ko.md step 6). The commit that adds this file is R. Nothing listed here changes before the 3-1 report.",
+ "date": "2026-10-08",
+ "product_freeze_P": "c18207595e0d84a3228e7471423aa178129ca151",
+ "evaluator_freeze_P2": "3299d5f547b4ed8e1a296c83f62551ab217dca1e",
+ "reference_date": "2026-10-08",
+ "company_set": "sealed-3-1",
+ "questions": {
+  "total": 36,
+  "bundles": {
+   "A": "claude 16",
+   "B": "user 10",
+   "C": "claude 6 + user 4"
+  },
+  "answerable": 23,
+  "refuse": 10,
+  "clarify": 3
+ },
+ "model": {
+  "name": "gpt-oss:20b",
+  "digest_prefix": "17052f91",
+  "options": "temperature 0, num_ctx 8192, num_predict 4096, think unset",
+  "prompt": "reading-v4"
+ },
+ "runs": [
+  "python3 eval/run_eval.py --mode baseline --companies sealed-3-1 --questions eval/sealed_3-1/questions.json --reference-date 2026-10-08 --out eval/sealed_3-1/runs/baseline",
+  "python3 eval/run_eval.py --mode crosscheck --model gpt-oss:20b --companies sealed-3-1 --questions eval/sealed_3-1/questions.json --reference-date 2026-10-08 --out eval/sealed_3-1/runs/crosscheck",
+  "python3 eval/run_eval.py --mode model_only --model gpt-oss:20b --companies sealed-3-1 --questions eval/sealed_3-1/questions.json --reference-date 2026-10-08 --out eval/sealed_3-1/runs/model_only"
+ ],
+ "order": "baseline, crosscheck, model_only; once each; a commit after each (contract 9.1)",
+ "criteria": "wrong figures 0; solved >= 70% and cost <= 25% of the 23 answerable (at least 18/23); bundle C handled >= 75%; no ungrounded number (contract 9)",
+ "judge": "python3 eval/judge.py --crosscheck ... --baseline ... --model-only ... --final MODE=FILE x3 (strict)",
+ "files_sha256": {
+  "eval/sealed_3-1/questions.json": "63150cd62f212c9d0272f6ac5c860da2b09e6b384c878bb393a72a99f9ded6a9",
+  "eval/sealed_3-1/gold.json": "540e46e46084e57beeef7c57a0ea71390e592658790553e341992214497e83da",
+  "eval/sealed_3-1/gold_disagreements.json": "73123c8763b32973e6811b86802bc590301d97d7e6e710d2f439e9869b06a718",
+  "eval/sealed_3-1/expected_tag_comparison.json": "f4316307a60568903f2a8cba7f8828cb573a94019b2056b87ebcea04916c7df6",
+  "eval/sealed_3-1/user_commitment.json": "77d5df54398c5dd0d9484391516450d65cf4287eaaaaa3221d7ea77db6cab801",
+  "eval/sealed_3-1/claude_questions.json": "2deeea978163e58be8cf0e73137f4f44a05e0f0ee67abd184595bcad3c092884",
+  "eval/sealed_3-1/fetch_manifest.json": "99e5dc3fa0f7e1b9d1b04f97b94c52874002929f67e2e69afd3af870fb2f97e7",
+  "eval/freeze_3-1.json": "400222b602ed45e02ba9423c286a5604957df98704bd8fb5364afecbccadf4ac",
+  "docs/EVAL_CONTRACT_3-1.ko.md": "110a7415bb197241855833d44706e58da0856c695d2a07cac08f6780de311fc9",
+  "eval/HUMAN_REVIEW.ko.md": "47bee60023397fded75f467ddac4926e50b71921128509f84f18fa507ad26624",
+  "docs/GOLD_RULES.ko.md": "f2099867712464d5683a7f7323dca2aafa8b30de9b3270e95e3aa9b93b2580b8",
+  "eval/build_sealed_gold.py": "9a6c7eb50016d8a52b464d63dcec5d7e014d4587909b91dbafee1320adbd69e3"
+ }
+}

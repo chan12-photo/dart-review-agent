@@ -1,0 +1,72 @@
+{
+ "reviewer": "",
+ "confirmed_by_user": false,
+ "criteria": "eval/HUMAN_REVIEW.ko.md",
+ "cases": {
+  "p01": {
+   "body_ok": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "p02": {
+   "body_ok": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "p03": {
+   "body_ok": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "p04": {
+   "body_ok": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "p05": {
+   "body_ok": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "p06": {
+   "body_ok": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "p07": {
+   "body_ok": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "p08": {
+   "body_ok": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "p09": {
+   "body_ok": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "p10": {
+   "body_ok": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "p11": {
+   "body_ok": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "p12": {
+   "body_ok": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "p13": {
+   "body_ok": null,
+   "note": "",
+   "accepted_unparsed": []
+  }
+ }
+}

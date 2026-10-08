@@ -1,6 +1,6 @@
 {
  "reviewer": "Claude 1차 (2026-10-08), 사용자 확인 전",
- "confirmed_by_user": false,
+ "confirmed_by_user": true,
  "criteria": "eval/HUMAN_REVIEW.ko.md",
  "cases": {
   "C01": {
@@ -219,5 +219,6 @@
    "note": "조사 어색('LG'은). 공통 기준 밖, 통과",
    "accepted_unparsed": []
   }
- }
+ },
+ "confirmation": "2026-10-09, 사용자가 채팅에서 '확인'으로 승인. Claude가 제시한 요약표와 짚을 문항(교차 확인 U07, 모델만 C06·U07·U12·U11·U14, 조사 어색 C20·U14)을 보고 이견 없음. 나머지 문항은 1차 판정을 그대로 확인한 것으로 기록한다."
 }

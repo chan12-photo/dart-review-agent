@@ -1,0 +1,374 @@
+{
+ "mode": "crosscheck",
+ "reviewer": "Claude 1차 (2026-10-08), 사용자 확인 전",
+ "confirmed_by_user": true,
+ "automatic_passed": 35,
+ "reviewed_passed": 35,
+ "total": 36,
+ "per_case": [
+  {
+   "id": "C01",
+   "automatic_passed": true,
+   "automatic_after_accepted_notation": true,
+   "body_ok": true,
+   "reviewed_passed": true,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  {
+   "id": "C02",
+   "automatic_passed": true,
+   "automatic_after_accepted_notation": true,
+   "body_ok": true,
+   "reviewed_passed": true,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  {
+   "id": "C03",
+   "automatic_passed": true,
+   "automatic_after_accepted_notation": true,
+   "body_ok": true,
+   "reviewed_passed": true,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  {
+   "id": "C04",
+   "automatic_passed": true,
+   "automatic_after_accepted_notation": true,
+   "body_ok": true,
+   "reviewed_passed": true,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  {
+   "id": "C05",
+   "automatic_passed": true,
+   "automatic_after_accepted_notation": true,
+   "body_ok": true,
+   "reviewed_passed": true,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  {
+   "id": "C06",
+   "automatic_passed": true,
+   "automatic_after_accepted_notation": true,
+   "body_ok": true,
+   "reviewed_passed": true,
+   "failure_kind": null,
+   "note": "재작성을 관찰로 말하고 기준 변경을 단정하지 않음",
+   "accepted_unparsed": []
+  },
+  {
+   "id": "C07",
+   "automatic_passed": true,
+   "automatic_after_accepted_notation": true,
+   "body_ok": true,
+   "reviewed_passed": true,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  {
+   "id": "C08",
+   "automatic_passed": true,
+   "automatic_after_accepted_notation": true,
+   "body_ok": true,
+   "reviewed_passed": true,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  {
+   "id": "C09",
+   "automatic_passed": true,
+   "automatic_after_accepted_notation": true,
+   "body_ok": true,
+   "reviewed_passed": true,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  {
+   "id": "C10",
+   "automatic_passed": true,
+   "automatic_after_accepted_notation": true,
+   "body_ok": true,
+   "reviewed_passed": true,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  {
+   "id": "C11",
+   "automatic_passed": true,
+   "automatic_after_accepted_notation": true,
+   "body_ok": true,
+   "reviewed_passed": true,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  {
+   "id": "C12",
+   "automatic_passed": true,
+   "automatic_after_accepted_notation": true,
+   "body_ok": true,
+   "reviewed_passed": true,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  {
+   "id": "C13",
+   "automatic_passed": true,
+   "automatic_after_accepted_notation": true,
+   "body_ok": true,
+   "reviewed_passed": true,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  {
+   "id": "C14",
+   "automatic_passed": true,
+   "automatic_after_accepted_notation": true,
+   "body_ok": true,
+   "reviewed_passed": true,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  {
+   "id": "C15",
+   "automatic_passed": true,
+   "automatic_after_accepted_notation": true,
+   "body_ok": true,
+   "reviewed_passed": true,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  {
+   "id": "C16",
+   "automatic_passed": true,
+   "automatic_after_accepted_notation": true,
+   "body_ok": true,
+   "reviewed_passed": true,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  {
+   "id": "C17",
+   "automatic_passed": true,
+   "automatic_after_accepted_notation": true,
+   "body_ok": true,
+   "reviewed_passed": true,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  {
+   "id": "C18",
+   "automatic_passed": true,
+   "automatic_after_accepted_notation": true,
+   "body_ok": true,
+   "reviewed_passed": true,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  {
+   "id": "C19",
+   "automatic_passed": true,
+   "automatic_after_accepted_notation": true,
+   "body_ok": true,
+   "reviewed_passed": true,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  {
+   "id": "C20",
+   "automatic_passed": true,
+   "automatic_after_accepted_notation": true,
+   "body_ok": true,
+   "reviewed_passed": true,
+   "failure_kind": null,
+   "note": "조사 어색('CJ'은). 공통 기준 밖, 통과",
+   "accepted_unparsed": []
+  },
+  {
+   "id": "C21",
+   "automatic_passed": true,
+   "automatic_after_accepted_notation": true,
+   "body_ok": true,
+   "reviewed_passed": true,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  {
+   "id": "C22",
+   "automatic_passed": true,
+   "automatic_after_accepted_notation": true,
+   "body_ok": true,
+   "reviewed_passed": true,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  {
+   "id": "U01",
+   "automatic_passed": true,
+   "automatic_after_accepted_notation": true,
+   "body_ok": true,
+   "reviewed_passed": true,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  {
+   "id": "U02",
+   "automatic_passed": true,
+   "automatic_after_accepted_notation": true,
+   "body_ok": true,
+   "reviewed_passed": true,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  {
+   "id": "U03",
+   "automatic_passed": true,
+   "automatic_after_accepted_notation": true,
+   "body_ok": true,
+   "reviewed_passed": true,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  {
+   "id": "U04",
+   "automatic_passed": true,
+   "automatic_after_accepted_notation": true,
+   "body_ok": true,
+   "reviewed_passed": true,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  {
+   "id": "U05",
+   "automatic_passed": true,
+   "automatic_after_accepted_notation": true,
+   "body_ok": true,
+   "reviewed_passed": true,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  {
+   "id": "U06",
+   "automatic_passed": true,
+   "automatic_after_accepted_notation": true,
+   "body_ok": true,
+   "reviewed_passed": true,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  {
+   "id": "U07",
+   "automatic_passed": false,
+   "automatic_after_accepted_notation": false,
+   "body_ok": true,
+   "reviewed_passed": false,
+   "failure_kind": null,
+   "note": "답이 있는데 되물음(상태로 실패, 불필요한 되묻기). 모델이 매출을 시점 값(12월 31일)으로 읽어 선택지 ②가 의미 없는 해석으로 보임. 되묻기 본문은 숫자를 내놓지 않고 단정하지 않아 공통 4번은 지킴",
+   "accepted_unparsed": []
+  },
+  {
+   "id": "U08",
+   "automatic_passed": true,
+   "automatic_after_accepted_notation": true,
+   "body_ok": true,
+   "reviewed_passed": true,
+   "failure_kind": null,
+   "note": "2024 값 재작성을 참고로 밝힘, 같은 보고서 값 비교",
+   "accepted_unparsed": []
+  },
+  {
+   "id": "U09",
+   "automatic_passed": true,
+   "automatic_after_accepted_notation": true,
+   "body_ok": true,
+   "reviewed_passed": true,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  {
+   "id": "U10",
+   "automatic_passed": true,
+   "automatic_after_accepted_notation": true,
+   "body_ok": true,
+   "reviewed_passed": true,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  {
+   "id": "U11",
+   "automatic_passed": true,
+   "automatic_after_accepted_notation": true,
+   "body_ok": true,
+   "reviewed_passed": true,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  {
+   "id": "U12",
+   "automatic_passed": true,
+   "automatic_after_accepted_notation": true,
+   "body_ok": true,
+   "reviewed_passed": true,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  {
+   "id": "U13",
+   "automatic_passed": true,
+   "automatic_after_accepted_notation": true,
+   "body_ok": true,
+   "reviewed_passed": true,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  {
+   "id": "U14",
+   "automatic_passed": true,
+   "automatic_after_accepted_notation": true,
+   "body_ok": true,
+   "reviewed_passed": true,
+   "failure_kind": null,
+   "note": "조사 어색('LG'은). 공통 기준 밖, 통과",
+   "accepted_unparsed": []
+  }
+ ],
+ "cases_file": "cases.jsonl",
+ "cases_sha256": "334617c57e0131d10530d7aa9a03908a814bf5a68323f7a22fbba5870c61c009",
+ "run_sha256": "af309195301bc353e12d77d2536449dc7604c66ee4a1c8c1e571fffb8be397c2",
+ "review_sha256": "c591df84a03ed41fe6fca1fa0b15bdb980e7de50d9e93fb3dbbd28033b065d58"
+}

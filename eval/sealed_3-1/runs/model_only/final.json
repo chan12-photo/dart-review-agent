@@ -1,0 +1,374 @@
+{
+ "mode": "model_only",
+ "reviewer": "Claude 1차 (2026-10-08), 사용자 확인 전",
+ "confirmed_by_user": true,
+ "automatic_passed": 31,
+ "reviewed_passed": 31,
+ "total": 36,
+ "per_case": [
+  {
+   "id": "C01",
+   "automatic_passed": true,
+   "automatic_after_accepted_notation": true,
+   "body_ok": true,
+   "reviewed_passed": true,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  {
+   "id": "C02",
+   "automatic_passed": true,
+   "automatic_after_accepted_notation": true,
+   "body_ok": true,
+   "reviewed_passed": true,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  {
+   "id": "C03",
+   "automatic_passed": true,
+   "automatic_after_accepted_notation": true,
+   "body_ok": true,
+   "reviewed_passed": true,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  {
+   "id": "C04",
+   "automatic_passed": true,
+   "automatic_after_accepted_notation": true,
+   "body_ok": true,
+   "reviewed_passed": true,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  {
+   "id": "C05",
+   "automatic_passed": true,
+   "automatic_after_accepted_notation": true,
+   "body_ok": true,
+   "reviewed_passed": true,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  {
+   "id": "C06",
+   "automatic_passed": false,
+   "automatic_after_accepted_notation": false,
+   "body_ok": false,
+   "reviewed_passed": false,
+   "failure_kind": "수치",
+   "note": "모델이 3분기말(시점)을 3분기 3개월로 읽음. 본문이 말하는 기간이 정답과 다름(공통 2번). 상태로도 잘못된 거절",
+   "accepted_unparsed": []
+  },
+  {
+   "id": "C07",
+   "automatic_passed": true,
+   "automatic_after_accepted_notation": true,
+   "body_ok": true,
+   "reviewed_passed": true,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  {
+   "id": "C08",
+   "automatic_passed": true,
+   "automatic_after_accepted_notation": true,
+   "body_ok": true,
+   "reviewed_passed": true,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  {
+   "id": "C09",
+   "automatic_passed": true,
+   "automatic_after_accepted_notation": true,
+   "body_ok": true,
+   "reviewed_passed": true,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  {
+   "id": "C10",
+   "automatic_passed": true,
+   "automatic_after_accepted_notation": true,
+   "body_ok": true,
+   "reviewed_passed": true,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  {
+   "id": "C11",
+   "automatic_passed": true,
+   "automatic_after_accepted_notation": true,
+   "body_ok": true,
+   "reviewed_passed": true,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  {
+   "id": "C12",
+   "automatic_passed": true,
+   "automatic_after_accepted_notation": true,
+   "body_ok": true,
+   "reviewed_passed": true,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  {
+   "id": "C13",
+   "automatic_passed": true,
+   "automatic_after_accepted_notation": true,
+   "body_ok": true,
+   "reviewed_passed": true,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  {
+   "id": "C14",
+   "automatic_passed": true,
+   "automatic_after_accepted_notation": true,
+   "body_ok": true,
+   "reviewed_passed": true,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  {
+   "id": "C15",
+   "automatic_passed": true,
+   "automatic_after_accepted_notation": true,
+   "body_ok": true,
+   "reviewed_passed": true,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  {
+   "id": "C16",
+   "automatic_passed": true,
+   "automatic_after_accepted_notation": true,
+   "body_ok": true,
+   "reviewed_passed": true,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  {
+   "id": "C17",
+   "automatic_passed": true,
+   "automatic_after_accepted_notation": true,
+   "body_ok": true,
+   "reviewed_passed": true,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  {
+   "id": "C18",
+   "automatic_passed": true,
+   "automatic_after_accepted_notation": true,
+   "body_ok": true,
+   "reviewed_passed": true,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  {
+   "id": "C19",
+   "automatic_passed": true,
+   "automatic_after_accepted_notation": true,
+   "body_ok": true,
+   "reviewed_passed": true,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  {
+   "id": "C20",
+   "automatic_passed": true,
+   "automatic_after_accepted_notation": true,
+   "body_ok": true,
+   "reviewed_passed": true,
+   "failure_kind": null,
+   "note": "조사 어색('CJ'은). 공통 기준 밖, 통과",
+   "accepted_unparsed": []
+  },
+  {
+   "id": "C21",
+   "automatic_passed": true,
+   "automatic_after_accepted_notation": true,
+   "body_ok": true,
+   "reviewed_passed": true,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  {
+   "id": "C22",
+   "automatic_passed": true,
+   "automatic_after_accepted_notation": true,
+   "body_ok": true,
+   "reviewed_passed": true,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  {
+   "id": "U01",
+   "automatic_passed": true,
+   "automatic_after_accepted_notation": true,
+   "body_ok": true,
+   "reviewed_passed": true,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  {
+   "id": "U02",
+   "automatic_passed": true,
+   "automatic_after_accepted_notation": true,
+   "body_ok": true,
+   "reviewed_passed": true,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  {
+   "id": "U03",
+   "automatic_passed": true,
+   "automatic_after_accepted_notation": true,
+   "body_ok": true,
+   "reviewed_passed": true,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  {
+   "id": "U04",
+   "automatic_passed": true,
+   "automatic_after_accepted_notation": true,
+   "body_ok": true,
+   "reviewed_passed": true,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  {
+   "id": "U05",
+   "automatic_passed": true,
+   "automatic_after_accepted_notation": true,
+   "body_ok": true,
+   "reviewed_passed": true,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  {
+   "id": "U06",
+   "automatic_passed": true,
+   "automatic_after_accepted_notation": true,
+   "body_ok": true,
+   "reviewed_passed": true,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  {
+   "id": "U07",
+   "automatic_passed": false,
+   "automatic_after_accepted_notation": false,
+   "body_ok": false,
+   "reviewed_passed": false,
+   "failure_kind": "수치",
+   "note": "모델이 매출을 2025-12-31 시점으로 읽음. 본문이 말하는 기간이 정답과 다름(공통 2번). 상태로도 잘못된 거절",
+   "accepted_unparsed": []
+  },
+  {
+   "id": "U08",
+   "automatic_passed": true,
+   "automatic_after_accepted_notation": true,
+   "body_ok": true,
+   "reviewed_passed": true,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  {
+   "id": "U09",
+   "automatic_passed": true,
+   "automatic_after_accepted_notation": true,
+   "body_ok": true,
+   "reviewed_passed": true,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  {
+   "id": "U10",
+   "automatic_passed": true,
+   "automatic_after_accepted_notation": true,
+   "body_ok": true,
+   "reviewed_passed": true,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  {
+   "id": "U11",
+   "automatic_passed": false,
+   "automatic_after_accepted_notation": false,
+   "body_ok": true,
+   "reviewed_passed": false,
+   "failure_kind": null,
+   "note": "본문(범위 밖 거절)은 맞음. 해석 문장의 '2025년'(작년)을 채점기가 근거 없는 숫자로 셈: 제품은 해석 연도를 허용(EVAL_DESIGN 12), 채점기는 질문의 4자리 연도만 허용하는 불일치",
+   "accepted_unparsed": []
+  },
+  {
+   "id": "U12",
+   "automatic_passed": false,
+   "automatic_after_accepted_notation": false,
+   "body_ok": false,
+   "reviewed_passed": false,
+   "failure_kind": "설명",
+   "note": "회사 두 개를 물었는데 '다루지 않는 회사라' 답하지 않는다고 함. 실제 원인은 회사 여러 개(공통 4번 범위 밖 이유 틀림)",
+   "accepted_unparsed": []
+  },
+  {
+   "id": "U13",
+   "automatic_passed": true,
+   "automatic_after_accepted_notation": true,
+   "body_ok": true,
+   "reviewed_passed": true,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  {
+   "id": "U14",
+   "automatic_passed": false,
+   "automatic_after_accepted_notation": false,
+   "body_ok": true,
+   "reviewed_passed": false,
+   "failure_kind": null,
+   "note": "본문(그룹 되묻기)은 맞음. 해석 문장에 모델의 오독(당기순이익, 12월 31일 시점)이 보이지만 답은 회사 되묻기. '2025년'이 근거 없는 숫자로 잡힌 것은 U11과 같은 채점기 불일치",
+   "accepted_unparsed": []
+  }
+ ],
+ "cases_file": "cases.jsonl",
+ "cases_sha256": "d269062f42ccd423d5cd65514a4f437d5012f5d5db95df14e8ebf7282374baa5",
+ "run_sha256": "f545e5ca47b99069229483e7b58f9eccca5cc4acdb996ca3f1a1b9c3f37c52d4",
+ "review_sha256": "e61493ec5a29621e01ca3931d84c60897199d00119c99db6d7ce5cb2785c4329"
+}

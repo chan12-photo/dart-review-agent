@@ -14,7 +14,7 @@ from .accounts import ACCOUNTS, NAME_CONFLICT
 from .client import DartAPIError, DartClient, DartTransportError, NotCached
 from .client import NO_DATA as NO_DATA_STATUS
 from .company_names import resolve_company
-from .companies import DEV_COMPANIES, REPORT_CODES, SEALED_EVAL_COMPANIES
+from .companies import REPORT_CODES, supported_companies
 from .compare import NEEDS_REVIEW, NO_DATA, NOT_COMPARABLE, Comparison, compare, find_restatements
 from .facts import Fact, fact_from_response, is_ambiguous
 from .periods import Period, PeriodNotProvided, Source, column_periods, instant, own_source, quarter, year_to_date
@@ -78,8 +78,8 @@ def find_company(name: Any) -> str:
     if match.kind == "sealed":
         raise ToolArgumentError(f"{name}은 개발 중 조회하지 않는 평가용 회사다")
     if match.kind == "group":
-        raise ToolArgumentError(f"{name}은 여러 회사일 수 있다 (지원: {', '.join(DEV_COMPANIES.values())})")
-    raise ToolArgumentError(f"지원하지 않는 회사다: {name} (지원: {', '.join(DEV_COMPANIES.values())})")
+        raise ToolArgumentError(f"{name}은 여러 회사일 수 있다 (지원: {', '.join(supported_companies().values())})")
+    raise ToolArgumentError(f"지원하지 않는 회사다: {name} (지원: {', '.join(supported_companies().values())})")
 
 
 def parse_period(spec: Any, field: str) -> Period:
@@ -129,7 +129,7 @@ def compare_values(client: DartClient, company: Any, basis: Any, account: Any,
     key = _account(account)
     current, base = parse_period(current_period, "current_period"), parse_period(base_period, "base_period")
     result = review_change(client, corp_code, BASIS_CODES[basis], key, current, base)
-    return {"tool": "compare_values", "company": DEV_COMPANIES[corp_code], "basis": basis, "account": key,
+    return {"tool": "compare_values", "company": supported_companies()[corp_code], "basis": basis, "account": key,
             "account_label": ACCOUNTS[key].label,
             "requested": {"current": period_dict(current), "base": period_dict(base)},
             **_comparison_dict(result)}
@@ -139,7 +139,7 @@ def side_by_side(client: DartClient, company: Any, account: Any, period: Any) ->
     corp_code = find_company(company)
     key = _account(account)
     wanted = parse_period(period, "period")
-    output: dict[str, Any] = {"tool": "side_by_side", "company": DEV_COMPANIES[corp_code], "account": key,
+    output: dict[str, Any] = {"tool": "side_by_side", "company": supported_companies()[corp_code], "account": key,
                               "account_label": ACCOUNTS[key].label, "period": period_dict(wanted)}
     try:
         source = own_source(wanted, ACCOUNTS[key].statements[0])
@@ -181,7 +181,7 @@ def lookup_value(client: DartClient, company: Any, basis: Any, account: Any, per
     key = _account(account)
     wanted = parse_period(period, "period")
     sj_div = ACCOUNTS[key].statements[0]
-    output: dict[str, Any] = {"tool": "lookup_value", "company": DEV_COMPANIES[corp_code], "basis": basis, "account": key,
+    output: dict[str, Any] = {"tool": "lookup_value", "company": supported_companies()[corp_code], "basis": basis, "account": key,
                               "account_label": ACCOUNTS[key].label, "period": period_dict(wanted),
                               "value": None, "later": None, "reasons": [], "notes": []}
     try:

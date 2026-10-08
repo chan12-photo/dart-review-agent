@@ -40,7 +40,7 @@ from typing import Any, Callable
 from .accounts import ACCOUNTS
 from .baseline import Reading, default_year_note, latest_annual_year, read
 from .company_names import resolve_company
-from .companies import DEV_COMPANIES
+from .companies import supported_companies
 from .numbers import allowed_from, check_text, question_years, ungrounded
 from .render import (
     clarification_answer, company_clarification_answer, period_text, structured_answer, unsupported_answer,
@@ -273,15 +273,20 @@ def ungrounded_in_answer(answer: dict[str, Any], seen: list[Any], question: str,
 
 def _company_name(reading: Reading) -> str:
     corp = _corp(reading.company)
-    return DEV_COMPANIES[corp] if corp else reading.company
+    return supported_companies()[corp] if corp else reading.company
 
 
 def crosscheck_turn(question: str, client: Any, record: dict[str, Any], ask: Callable[..., Any] | None,
-                    reference_date: date | None = None) -> None:
-    """Read ``question`` twice, compare, and fill ``record``. ``ask`` None is the explicit rules-only mode."""
+                    reference_date: date | None = None, use_rules: bool = True) -> None:
+    """Read ``question`` twice, compare, and fill ``record``. ``ask`` None is the explicit rules-only mode.
+
+    ``use_rules`` False is the 3-1 "model only" method (docs/EVAL_CONTRACT_3-1.ko.md section 3): the
+    rules' reading is still recorded, for the interpretation table, but only the model's reading decides.
+    """
     reference_date = reference_date or date.today()
     rule = read(question, reference_date)
-    readings: dict[str, Any] = {"rule": {"kind": rule.kind, "arguments": rule.arguments, "reason": rule.reason},
+    readings: dict[str, Any] = {"rule": {"kind": rule.kind, "company": rule.company, "arguments": rule.arguments,
+                                         "options": list(rule.options), "reason": rule.reason},
                                 "model": None, "agree": None, "used": None, "reference_date": reference_date.isoformat()}
     record["readings"] = readings
     model: Reading | None = None
@@ -296,6 +301,9 @@ def crosscheck_turn(question: str, client: Any, record: dict[str, Any], ask: Cal
             readings["model_error"] = str(exc)
     rule_key = canonical(rule.kind, rule.arguments, rule.company, rule.options) if rule.kind != "unreadable" else None
     model_key = canonical(model.kind, model.arguments, model.company, model.options) if model else None
+    readings["rule_key"], readings["model_key"] = rule_key, model_key
+    if not use_rules:
+        rule_key = None  # recorded above, not used to decide
     header = note = None
     if ask is None:
         if not rule_key:

@@ -32,7 +32,7 @@ from dart_review.baseline import baseline_turn  # noqa: E402
 from dart_review.crosscheck import READING_PROMPT_VERSION, READING_SCHEMA, READING_SYSTEM_PROMPT, crosscheck_turn  # noqa: E402
 from dart_review.cache import ResponseCache  # noqa: E402
 from dart_review.client import DartClient  # noqa: E402
-from dart_review.companies import DEV_COMPANIES, FS_DIVS  # noqa: E402
+from dart_review.companies import COMPANY_SETS, FS_DIVS, active_set, supported_companies, using_company_set  # noqa: E402
 from dart_review.llm import ModelError, OllamaChat  # noqa: E402
 from dart_review.prompts import (  # noqa: E402
     AGENT_PROMPT_VERSION, AGENT_SYSTEM_PROMPT, DECISION_INSTRUCTION, FINAL_INSTRUCTION, PROMPT_VERSION, SYSTEM_PROMPT,
@@ -49,8 +49,8 @@ from scoring import CaseScore, score_case, summarize  # noqa: E402
 SPEC = ROOT / "eval" / "dev_questions.json"
 GOLD = ROOT / "eval" / "dev_gold.json"
 CACHE = ROOT / "cache"
-MODES = ("rules", "oracle", "full", "agent", "baseline", "crosscheck")
-MODEL_MODES = ("oracle", "full", "agent", "crosscheck")
+MODES = ("rules", "oracle", "full", "agent", "baseline", "crosscheck", "model_only")
+MODEL_MODES = ("oracle", "full", "agent", "crosscheck", "model_only")
 PARAPHRASES = ROOT / "eval" / "dev_paraphrases.json"
 LOOKUP_SPEC = ROOT / "eval" / "dev_lookup.json"  # value lookups and company names (EVAL_DESIGN 12.4)
 LOOKUP_GOLD = ROOT / "eval" / "dev_lookup_gold.json"
@@ -63,7 +63,7 @@ def interpretation_calls(question: dict[str, Any]) -> list[tuple[str, dict[str, 
     expected = question["expected"]
     if expected["action"] in ("clarify_company", "out_of_scope"):
         return []  # answered without a tool
-    company = DEV_COMPANIES[expected["corp_code"]]
+    company = supported_companies()[expected["corp_code"]]
     if expected["action"] == "lookup":
         return [("lookup_value", {"company": company, "basis": FS_DIVS[expected["fs_div"]], "account": expected["account"],
                                   "period": expected["period"]})]
@@ -79,7 +79,7 @@ def rules_answer(question: dict[str, Any], results: list[dict[str, Any]]) -> dic
     """Mode ①: the product's own renderer on the tool results of the correct reading."""
     expected = question["expected"]
     if expected["action"] == "clarify":
-        return clarification_answer(DEV_COMPANIES[expected["corp_code"]], [result["account"] for result in results])
+        return clarification_answer(supported_companies()[expected["corp_code"]], [result["account"] for result in results])
     if expected["action"] == "clarify_company":
         return company_clarification_answer(expected["company"], expected["options"])
     if expected["action"] == "out_of_scope":
@@ -150,6 +150,8 @@ def run_case(mode: str, question: dict[str, Any], gold: dict[str, Any], client: 
             agent_turn(question["question"], client, record, ask)
         elif mode == "crosscheck":  # design B: rules and model read independently, code answers if they agree
             crosscheck_turn(question["question"], client, record, ask, reference_date)
+        elif mode == "model_only":  # 3-1: the same model reading decides alone (EVAL_CONTRACT_3-1 section 3)
+            crosscheck_turn(question["question"], client, record, ask, reference_date, use_rules=False)
         else:  # baseline: keyword rules, no model (roadmap 2-2)
             baseline_turn(question["question"], client, record, reference_date)
     except ModelError as exc:
@@ -157,7 +159,7 @@ def run_case(mode: str, question: dict[str, Any], gold: dict[str, Any], client: 
     except Exception as exc:  # a bug in the evaluator, not a model mistake: recorded and reported, never hidden
         record["evaluator_error"] = f"{type(exc).__name__}: {exc}"
         record["evaluator_traceback"] = traceback.format_exc(limit=8)
-    if mode in ("full", "agent", "baseline", "crosscheck") and not record["evaluator_error"]:
+    if mode in ("full", "agent", "baseline", "crosscheck", "model_only") and not record["evaluator_error"]:
         try:  # also after a model error or an overrun: the calls made so far still count
             tool_argument_metrics(question, record)
         except Exception as exc:
@@ -228,7 +230,17 @@ def contract_hashes() -> dict[str, str]:
             "decision_schema": _sha256(text(DECISION_SCHEMA)), "paraphrases": _sha256(PARAPHRASES.read_bytes()),
             "reading_prompt": _sha256(READING_SYSTEM_PROMPT.encode("utf-8")), "reading_schema": _sha256(text(READING_SCHEMA)),
             "lookup_questions": _sha256(LOOKUP_SPEC.read_bytes()), "lookup_gold": _sha256(LOOKUP_GOLD.read_bytes()),
-            "lookup_tool": _sha256(text(LOOKUP_SPEC_TOOL))}
+            "lookup_tool": _sha256(text(LOOKUP_SPEC_TOOL)), "company_set": company_set_hash()}
+
+
+def company_set_hash() -> str:
+    """The active company set: its names, aliases, groups, refused companies, and name vocabulary."""
+    company_set = active_set()
+    vocabulary = (ROOT / "dart_review" / company_set.vocabulary).read_bytes()
+    definition = json.dumps({"name": company_set.name, "companies": company_set.companies, "aliases": company_set.aliases,
+                             "groups": company_set.groups, "refused": company_set.refused,
+                             "refused_kind": company_set.refused_kind}, ensure_ascii=False, sort_keys=True)
+    return _sha256(definition.encode("utf-8") + vocabulary)
 
 
 def load_questions(question_set: str = "dev") -> tuple[list[dict[str, Any]], dict[str, dict[str, Any]]]:
@@ -268,6 +280,13 @@ def no_key() -> str:
 
 
 def main(argv: list[str] | None = None) -> int:
+    parser = build_parser()
+    args = parser.parse_args(argv)
+    with using_company_set(args.companies):  # the 3-1 evaluation mode (EVAL_CONTRACT_3-1 section 7)
+        return _main(parser, args)
+
+
+def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--mode", choices=MODES, required=True)
     parser.add_argument("--model", help="local Ollama model name (oracle and full modes)")
@@ -279,7 +298,12 @@ def main(argv: list[str] | None = None) -> int:
                              "lookup: the 16 value-lookup and company-name questions (EVAL_DESIGN 12.4)")
     parser.add_argument("--reference-date", type=date.fromisoformat, default=date.today(),
                         help="the date the crosscheck reading prompt treats as today (YYYY-MM-DD; default: today)")
-    args = parser.parse_args(argv)
+    parser.add_argument("--companies", choices=sorted(COMPANY_SETS), default="development",
+                        help="the company set to answer about (sealed-3-1 only for the pre-registered evaluation)")
+    return parser
+
+
+def _main(parser: argparse.ArgumentParser, args: argparse.Namespace) -> int:
     if (args.mode in MODEL_MODES) != bool(args.model):
         parser.error("--model is required for oracle, full, and agent, and not used for rules and baseline")
     if args.model and not args.out:
@@ -300,7 +324,9 @@ def main(argv: list[str] | None = None) -> int:
         # written as the run goes, so an interrupted run keeps every finished question
         args.out.mkdir(parents=True)
         meta = {"mode": args.mode, "question_set": args.question_set, "model": identity, "contract": contract_hashes(),
-                "prompt_version": {"agent": AGENT_PROMPT_VERSION, "crosscheck": READING_PROMPT_VERSION}.get(args.mode, PROMPT_VERSION),
+                "prompt_version": {"agent": AGENT_PROMPT_VERSION, "crosscheck": READING_PROMPT_VERSION,
+                                   "model_only": READING_PROMPT_VERSION}.get(args.mode, PROMPT_VERSION),
+                "company_set": active_set().name,
                 "git": git, "budget": {"model_calls": MAX_MODEL_CALLS, "tool_calls": MAX_TOOL_CALLS},
                 "reference_date": args.reference_date.isoformat(),
                 "started_at": datetime.now(timezone.utc).isoformat(timespec="seconds")}

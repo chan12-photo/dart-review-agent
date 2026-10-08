@@ -188,7 +188,7 @@ class RunnerTests(unittest.TestCase):
             self.assertEqual(set(meta["contract"]), {"gold", "questions", "system_prompt", "final_instruction", "tools", "answer_schema",
                                                      "agent_prompt", "decision_instruction", "decision_schema", "paraphrases",
                                                      "reading_prompt", "reading_schema", "lookup_questions", "lookup_gold",
-                                             "lookup_tool"})
+                                             "lookup_tool", "company_set"})
 
     def test_full_flow_clarification_without_tools(self):
         ask = {"status": "되묻기", "company": "셀트리온", "account": None, "values": [], "change": None, "change_pct": None,

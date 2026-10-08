@@ -230,8 +230,8 @@ def unsupported_answer(company: str, term: str | None = None, scope: str = "acco
     accounts at once), "company" (a company it does not cover), "companies"
     (several companies at once), or "any" (only the model's reading says so).
     """
-    from .companies import DEV_COMPANIES
-    companies = ", ".join(DEV_COMPANIES.values())
+    from .companies import supported_companies
+    companies = ", ".join(supported_companies().values())
     text = {
         "account": f"{company}: 이 도구가 다루지 않는 계정이라 답하지 않습니다: {term}. 다룰 수 있는 계정은 {SUPPORTED_ACCOUNTS}입니다.",
         "accounts": f"{company}: 한 번에 계정 하나만 답합니다(질문한 계정: {term}). 계정을 하나씩 물어봐 주세요.",
@@ -246,9 +246,9 @@ def unsupported_answer(company: str, term: str | None = None, scope: str = "acco
 
 def company_clarification_answer(group: str, candidates: list[str]) -> dict[str, Any]:
     """Ask which company a group name means (EVAL_DESIGN 12.3)."""
-    from .companies import DEV_COMPANIES
+    from .companies import supported_companies
     offer = f"말씀하신 회사가 {candidates[0]}인가요?" if len(candidates) == 1 else f"{', '.join(candidates)} 중 어느 회사인가요?"
-    question = f"'{group}'은 여러 회사를 뜻할 수 있습니다. {offer} 다룰 수 있는 회사는 {', '.join(DEV_COMPANIES.values())}입니다."
+    question = f"'{group}'은 여러 회사를 뜻할 수 있습니다. {offer} 다룰 수 있는 회사는 {', '.join(supported_companies().values())}입니다."
     return {"status": "되묻기", "company": group, "account": None, "values": [], "change": None, "change_pct": None,
             "answer": "회사를 먼저 확인하겠습니다. " + question, "clarifying_question": question}
 

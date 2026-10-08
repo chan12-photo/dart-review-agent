@@ -1,5 +1,6 @@
 {
  "source": "OpenDART corpCode.xml in the cache (company names only)",
+ "company_set": "development",
  "companies_in_list": 119558,
  "contains": [
   "삼성",

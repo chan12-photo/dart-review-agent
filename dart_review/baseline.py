@@ -48,7 +48,7 @@ from typing import Any
 
 from .accounts import ACCOUNTS, normalize_term
 from .company_names import resolve_company
-from .companies import DEV_COMPANIES
+from .companies import supported_companies
 from .render import clarification_answer, company_clarification_answer, structured_answer, unsupported_answer
 from .tools import execute_tool
 
@@ -180,7 +180,7 @@ def read(question: str, reference_date: date | None = None) -> Reading:
                        reason=f"{'회사 여러 개' if match.kind == 'several' else '지원하지 않는 회사'}: {match.name}")
     if match.kind == "group":
         return Reading("clarify_company", company=match.name, options=match.candidates)
-    company = DEV_COMPANIES[match.corp_code]
+    company = supported_companies()[match.corp_code]
     account, unsupported, several = _account(compact)
     if unsupported:
         return Reading("unsupported", {"term": unsupported, "scope": "account"}, company,

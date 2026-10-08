@@ -1,0 +1,92 @@
+{
+ "cases": 16,
+ "automatic_passed": {
+  "correct": 13,
+  "total": 16
+ },
+ "status": {
+  "correct": 13,
+  "total": 16
+ },
+ "decision": {
+  "correct": 13,
+  "total": 16
+ },
+ "numbers": {
+  "correct": 7,
+  "total": 8
+ },
+ "basis": {
+  "correct": 14,
+  "total": 16
+ },
+ "refusal_or_clarify": {
+  "correct": 6,
+  "total": 8
+ },
+ "sign_wording": {
+  "correct": 0,
+  "total": 0
+ },
+ "ungrounded_numbers": 0,
+ "cases_with_ungrounded": 0,
+ "unparsed_numbers": 0,
+ "format_errors": 2,
+ "evaluator_errors": 0,
+ "warnings": 0,
+ "model_attempts": 16,
+ "model_responses": 16,
+ "tool_calls": 10,
+ "model_latency_ms": {
+  "total": 331786.6,
+  "median_per_case": 11103.0
+ },
+ "case_wall_ms_total": 331992.1,
+ "budget_exceeded": 0,
+ "failed": [
+  "L12",
+  "L13",
+  "L16"
+ ],
+ "confident_wrong": [],
+ "asked_back_instead": [
+  "L12"
+ ],
+ "length_stops": [
+  "L13",
+  "L16"
+ ],
+ "reading_paths": {
+  "both": [
+   "L01",
+   "L02",
+   "L03",
+   "L04",
+   "L05",
+   "L06",
+   "L07",
+   "L08",
+   "L09",
+   "L10",
+   "L11",
+   "L14",
+   "L15"
+  ],
+  "neither (asked back)": [
+   "L12"
+  ],
+  "rule only (withheld)": [
+   "L13",
+   "L16"
+  ]
+ },
+ "tool_args_first_ok": {
+  "correct": 10,
+  "total": 11
+ },
+ "tool_args_any_ok": {
+  "correct": 10,
+  "total": 11
+ },
+ "network_requests": 0
+}

@@ -20,5 +20,16 @@
  },
  "prompt_version": "reading-v4",
  "model_options": "temperature 0, num_ctx 8192, num_predict 4096, think unset",
- "rule": "nothing under these paths changes until the 3-1 report; evaluation-set runs and the strict judge refuse other code"
+ "rule": "nothing under these paths changes until the 3-1 report; evaluation-set runs and the strict judge refuse other code",
+ "evaluator_commit": "3299d5f547b4ed8e1a296c83f62551ab217dca1e",
+ "evaluator_amendment": {
+  "date": "2026-10-08",
+  "reason": "Codex 3-1 second review findings 1-3 and 5, fixed before any model run on the sealed questions",
+  "files": [
+   "eval/finalize.py",
+   "eval/judge.py",
+   "eval/run_eval.py"
+  ],
+  "product_unchanged": true
+ }
 }

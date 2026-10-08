@@ -244,6 +244,18 @@ class SummaryTests(unittest.TestCase):
         self.assertEqual(summary["model_latency_ms"], {"total": 400.0, "median_per_case": 200.0})
         # a format error still counts in every applicable denominator (Codex 1-5 review E7)
         self.assertEqual((summary["numbers"]["total"], summary["basis"]["total"]), (2, 2))
+        self.assertEqual(summary["length_stops"], [])
+        self.assertNotIn("reading_paths", summary)
+
+    def test_length_stops_and_reading_paths_are_counted(self):
+        cut = {"response": {"done_reason": "length"}}
+        cases = [{"score": score("dev01", DEV01_CORRECT).to_dict(), "requests": [{"response": {"done_reason": "stop"}}, cut],
+                  "readings": {"used": "both"}},
+                 {"score": score("dev01", "not json").to_dict(), "requests": [None], "readings": {"used": "rule only (withheld)"}}]
+        cases[1]["score"]["id"] = "dev99"
+        summary = summarize(cases)
+        self.assertEqual(summary["length_stops"], ["dev01"])
+        self.assertEqual(summary["reading_paths"], {"both": ["dev01"], "rule only (withheld)": ["dev99"]})
 
 
 if __name__ == "__main__":

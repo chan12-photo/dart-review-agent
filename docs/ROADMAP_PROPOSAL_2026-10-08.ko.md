@@ -1,6 +1,6 @@
 # 로드맵 수정안 (2026-10-08, 제안 단계)
 
-- 상태: **제안.** 사용자 승인과 Codex 검토 뒤에 [ROADMAP.ko.md](ROADMAP.ko.md)와 [SCOPE.ko.md](SCOPE.ko.md)에 반영한다. 반영 전까지 기존 로드맵이 유효하다.
+- 상태: **반영됨 (2026-10-08).** Codex 검토(A1~A9)와 사용자 결정에 따라 고친 내용이 [ROADMAP.ko.md](ROADMAP.ko.md)에 들어갔다. 이 문서는 기록으로 남긴다. 아래 내용 가운데 세션 추정, 4단계 순서, 두 번째 봉인 필수, 3-1 push 시점은 반영하지 않았다. 이유는 [응답 문서](reviews/roadmap_proposal_codex_response.ko.md)에 있다. 본문의 "`[경계]` 4건"은 착오다. 실제 표시는 3건이다(oracle/dev05, full/dev04, agent/dev05).
 - 작성: Claude. 근거: 1~2단계 결과([REPORT.md](../eval/feasibility_2026-10-07/REPORT.md)), 사용자 요청(기능 확장성, LLM 필요성), 2026-10-06 채용 공고·가이드 조사(다시 확인 필요).
 
 ## 1. 왜 고치는가 (현재 로드맵의 문제)

@@ -229,7 +229,16 @@ def summarize(cases: Sequence[dict[str, Any]]) -> dict[str, Any]:
                             and not case["score"]["automatic_passed"]],
         "asked_back_instead": [case["score"]["id"] for case in cases if _shown_status(case) == "되묻기"
                                and not case["score"]["automatic_passed"]],
+        # a reply cut off by the output limit (Codex 2026-10-08 review: counted, not hidden)
+        "length_stops": [case["score"]["id"] for case in cases
+                         if any(((request or {}).get("response") or {}).get("done_reason") == "length"
+                                for request in case.get("requests") or [])],
     }
+    paths = [(case.get("readings") or {}).get("used") for case in cases if case.get("readings")]
+    if paths:  # the cross-check reading path of each question (EVAL_DESIGN 11.1)
+        summary["reading_paths"] = {path: [case["score"]["id"] for case in cases
+                                           if (case.get("readings") or {}).get("used") == path]
+                                    for path in sorted({str(path) for path in paths})}
     for key in ("tool_args_first_ok", "tool_args_any_ok"):
         flags = [case[key] for case in cases if case.get(key) is not None]
         if flags:

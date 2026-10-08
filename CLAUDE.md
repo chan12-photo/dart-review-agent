@@ -5,7 +5,7 @@
 - One task per session where possible. At the end, update the task markers and the "현재 상태" section of the roadmap, then commit.
 - Ask the user before pushing, creating or renaming GitHub repositories, changing visibility, or using the stored `gh` login.
 - The OpenDART key lives only in `~/.config/opendart/api_key` (mode 600). Never print it, log it, write it into the repository, or put it in cache files or error messages. Check that no tracked file contains it before every commit.
-- Raw API responses go to `cache/` (git-ignored) until their redistribution terms are confirmed.
-- The four evaluation companies (NAVER, CJ제일제당, 이마트, LG에너지솔루션) are sealed: do not inspect their data during development.
+- Raw API responses stay in `cache/` (git-ignored). Only trimmed account rows and the figures used in the demo, gold answers, and run records are committed (`docs/PUBLICATION_CHECK.ko.md`).
+- The sealed 3-1 evaluation on four companies (NAVER, CJ제일제당, 이마트, LG에너지솔루션) is finished (`eval/sealed_3-1/`). Their data may now be read, but never re-run, tune on, or re-score the 3-1 questions to change the official result; a new evaluation needs its own pre-registration and new questions.
 - Report failures and ambiguous results as they are; do not change an evaluation's criteria after seeing its results. After any commit that adds files, verify from a fresh clone.
 - Reusable parts (policy checks, run logging, replay, pre-registered evaluation, public-safety scan) come from the sibling repository `../ai_job_agent` (GitHub: `chan12-photo/local-agent-lab`).

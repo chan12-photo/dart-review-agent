@@ -1,25 +1,32 @@
 {
- "source": "eval/feasibility_2026-10-07/crosscheck_dev/cases.jsonl",
+ "source": "eval/3-0b_2026-10-08/crosscheck_dev/cases.jsonl",
+ "prompt_version": "reading-v2",
+ "reference_date": "2026-10-08",
  "replies": {
   "삼성전자 2025년 매출액이 전년보다 얼마나 늘었어?": {
-   "messages_sha256": "7cc17541abf912fbfc7d17a9c1b01da056039831cf974dc05f5a0a7accc187a2",
-   "content": "{\n  \"action\": \"compare\",\n  \"company\": \"삼성전자\",\n  \"basis\": \"연결\",\n  \"account\": \"revenue\",\n  \"current_period\": {\"kind\": \"year_to_date\", \"year\": 2025, \"month\": 12},\n  \"base_period\": {\"kind\": \"year_to_date\", \"year\": 2024, \"month\": 12},\n  \"clarify_accounts\": []\n}"
+   "messages_sha256": "0dbcc3db80b17f6c25b2225fc027c0710c400fb9a86a1e2a80b090738bffffc3",
+   "schema_sha256": "8754d701b35a8fded25cd264268a8f7e42d927b44f77e22e9c8d3c89b19de10e",
+   "content": "{\n  \"action\": \"compare\",\n  \"company\": \"삼성전자\",\n  \"basis\": \"연결\",\n  \"account\": \"revenue\",\n  \"current_period\": {\n    \"kind\": \"year_to_date\",\n    \"year\": 2025,\n    \"month\": 12\n  },\n  \"base_period\": {\n    \"kind\": \"year_to_date\",\n    \"year\": 2024,\n    \"month\": 12\n  }, \"clarify_accounts\": []}"
   },
   "삼성전자 2025년 3분기말 자산총계를 작년 3분기말과 비교해 줘.": {
-   "messages_sha256": "26a895cd154026cd201ce838cf237d61a6a63f7521ffe8bd8f2ebff617415620",
+   "messages_sha256": "ed098360512e1c4eb3828cd17cdb47ed0ad7ecee03f0f932a2cd99ab749301c5",
+   "schema_sha256": "8754d701b35a8fded25cd264268a8f7e42d927b44f77e22e9c8d3c89b19de10e",
    "content": "{\n  \"action\": \"compare\",\n  \"company\": \"삼성전자\",\n  \"basis\": \"연결\",\n  \"account\": \"total_assets\",\n  \"current_period\": {\n    \"kind\": \"instant\",\n    \"year\": 2025,\n    \"month\": 9\n  },\n  \"base_period\": {\n    \"kind\": \"instant\",\n    \"year\": 2024,\n    \"month\": 9\n  },\n  \"clarify_accounts\": []\n}"
   },
   "삼성전자의 2025년 3분기까지 누적 영업활동현금흐름은 얼마이고, 작년 같은 기간보다 얼마나 늘었어?": {
-   "messages_sha256": "3f00ec8428f0c6454a42308114b023a19bce81882d92611ae5b0f96d24326680",
-   "content": "{\n  \"action\": \"compare\",\n  \"company\": \"삼성전자\",\n  \"basis\": \"연결\",\n  \"account\": \"operating_cash_flow\",\n  \"current_period\": {\n    \"kind\": \"year_to_date\",\n    \"year\": 2025,\n    \"month\": 9\n  },\n  \"base_period\": {\n    \"kind\": \"year_to_date\",\n    \"year\": 2024,\n    \"month\": 9\n  },\n  \"clarify_accounts\": []\n}"
+   "messages_sha256": "bc5fa3dbd7e50f5c81688b51b3e756ae0620308e1166fe3c6bb0ef91d3cef63f",
+   "schema_sha256": "8754d701b35a8fded25cd264268a8f7e42d927b44f77e22e9c8d3c89b19de10e",
+   "content": "{\"action\":\"compare\",\"company\":\"삼성전자\",\"basis\":\"연결\",\"account\":\"operating_cash_flow\",\"current_period\":{\"kind\":\"year_to_date\",\"year\":2025,\"month\":9},\"base_period\":{\"kind\":\"year_to_date\",\"year\":2024,\"month\":9},\"clarify_accounts\":[]}"
   },
   "삼성전자 2025년 연결 매출이랑 별도 매출은 각각 얼마야? 차이가 왜 이렇게 커?": {
-   "messages_sha256": "65400f3188f93b8a96bb2c565668a1b56de7beaeb678401881a256cb1b724936",
-   "content": "{\n  \"action\": \"side_by_side\",\n  \"company\": \"삼성전자\",\n  \"basis\": \"연결\",\n  \"account\": \"revenue\",\n  \"current_period\": {\n    \"kind\": \"year_to_date\",\n    \"year\": 2025,\n    \"month\": 12\n  },\n  \"base_period\": {\n    \"kind\": \"year_to_date\",\n    \"year\": 2025,\n    \"month\": 12\n  },\n  \"clarify_accounts\": []\n}"
+   "messages_sha256": "d6041c13b426caa829af14bda17c8614a7aa27e75bdf4e85067533e8f54f1dc5",
+   "schema_sha256": "8754d701b35a8fded25cd264268a8f7e42d927b44f77e22e9c8d3c89b19de10e",
+   "content": "{\n  \"action\": \"side_by_side\",\n  \"company\": \"삼성전자\",\n  \"basis\": \"연결\",\n  \"account\": \"revenue\",\n  \"current_period\": {\"kind\": \"year_to_date\", \"year\": 2025, \"month\": 12},\n  \"base_period\": {\"kind\": \"year_to_date\", \"year\": 2025, \"month\": 12},\n  \"clarify_accounts\": []\n}"
   },
   "삼성전자 2014년 매출액을 2013년과 비교해 줘.": {
-   "messages_sha256": "5b3ca84bfee3c62805184534af6504be349601c4deba233dc1331063f4978ec0",
-   "content": "{\n  \"action\": \"compare\",\n  \"company\": \"삼성전자\",\n  \"basis\": \"연결\",\n  \"account\": \"revenue\",\n  \"current_period\": {\n    \"kind\": \"year_to_date\",\n    \"year\": 2014,\n    \"month\": 12\n  },\n  \"base_period\": {\n    \"kind\": \"year_to_date\",\n    \"year\": 2013,\n    \"month\": 12\n  },\n  \"clarify_accounts\": []\n}"
+   "messages_sha256": "7a870e70673d2b49f1121a00b48f9ff1f9a26288de3a5142394fab31b171c773",
+   "schema_sha256": "8754d701b35a8fded25cd264268a8f7e42d927b44f77e22e9c8d3c89b19de10e",
+   "content": "{\"action\":\"compare\",\"company\":\"삼성전자\",\"basis\":\"연결\",\"account\":\"revenue\",\"current_period\":{\"kind\":\"year_to_date\",\"year\":2014,\"month\":12},\"base_period\":{\"kind\":\"year_to_date\",\"year\":2013,\"month\":12},\"clarify_accounts\":[]}"
   }
  }
 }

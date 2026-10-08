@@ -47,8 +47,9 @@ from .render import (
 )
 from .tools import BASIS_CODES, PERIOD_KINDS, ToolArgumentError, execute_tool, parse_period, period_dict
 
-# v2 (3-0b): unsupported action, reference date. v3 (EVAL_DESIGN 12): lookup action, company names, default year
-READING_PROMPT_VERSION = "reading-v3"
+# v2 (3-0b): unsupported action, reference date. v3 (EVAL_DESIGN 12): lookup action, company names, default year.
+# v4 (EVAL_DESIGN 12.6): month is the end month of the period, not its length. Frozen until 3-1.
+READING_PROMPT_VERSION = "reading-v4"
 ACTIONS = ("compare", "side_by_side", "lookup", "clarify", "unsupported")
 
 _PERIOD = {"type": "object", "properties": {"kind": {"type": "string", "enum": list(PERIOD_KINDS)},
@@ -76,7 +77,7 @@ READING_SYSTEM_PROMPT = """너는 한국 상장사 재무 비교 질문을 해�
 - action: compare(한 기준·한 계정의 두 기간 비교), side_by_side(같은 기간의 연결 값과 별도 값을 나란히), lookup(비교 표현 없이 한 기간의 값 하나를 묻는 질문, 예: "매출 알려줘"), clarify(질문이 두 가지 이상의 계정으로 읽혀 먼저 물어야 함, 예: "이익"은 영업이익일 수도 당기순이익일 수도 있다), unsupported(이 도구가 답하지 않는 질문).
 - unsupported: 질문의 계정이 여섯 계정과 다른 계정이면 고른다. 이름에 여섯 계정의 일부가 들어 있어도 다른 계정이면 unsupported다(예: 현금및현금성자산은 자산총계가 아니고, 이익잉여금은 당기순이익이 아니다). 비슷한 계정으로 바꿔 읽지 않는다. 계정을 둘 이상 묻거나("전부" 포함) 회사를 둘 이상 물어도 unsupported다. 이때 나머지 칸은 질문에서 읽은 대로 채운다.
 - company: 질문에 나온 회사 이름을 쓴다. 널리 쓰는 줄임말만 정식 이름으로 바꾼다(삼전 → 삼성전자). 이름이 비슷한 다른 회사로 바꾸지 않는다(예: 삼성물산은 삼성전자가 아니다). "삼성"처럼 그룹 이름만 있으면 그대로 쓴다. basis: 연결 또는 별도(언급이 없으면 연결). account: revenue=매출액, operating_income=영업이익, net_income=당기순이익, operating_cash_flow=영업활동현금흐름, total_assets=자산총계, total_liabilities=부채총계.
-- 기간: kind는 instant(재무상태표의 시점), quarter(그 분기 3개월), year_to_date(연초부터 누적, 연간은 month 12). month는 3, 6, 9, 12.
+- 기간: kind는 instant(재무상태표의 시점), quarter(그 분기 3개월), year_to_date(연초부터 누적, 연간은 month 12). month는 그 기간이 끝나는 달이다(3, 6, 9, 12 중 하나). 기간의 길이가 아니다: 1분기는 3, 2분기는 6, 3분기는 9, 4분기는 12다.
   - "N년 매출"은 N년 연간. "3분기 매출"·"7~9월"은 quarter, month 9. "3분기 누적"·"3분기까지"·"1~9월"·"9월까지 누적"은 year_to_date, month 9. "상반기"·"1~6월"은 year_to_date, month 6. "3분기말 자산"·"9월 말 자산"은 instant, month 9. 자산·부채의 연도만 있으면 그해 말(instant, month 12).
   - current_period는 비교하려는 나중 기간, base_period는 그 기준이 되는 앞 기간이다. "전년보다", "1년 전"은 같은 종류의 전년 기간, "직전 분기"는 바로 앞 분기다. 두 연도가 나오면 나중 연도가 current다.
 - 기준 날짜는 {reference_date}이다. 질문에 연도가 없으면 이 날짜로 정한다: "올해"는 기준 날짜의 연도, "작년"·"지난해"는 그 전년, "재작년"은 2년 전이다. 연도를 나타내는 말이 전혀 없으면 {default_year}년으로 본다(가장 최근 사업보고서 연도).

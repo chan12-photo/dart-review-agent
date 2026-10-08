@@ -165,29 +165,37 @@ def run_case(mode: str, question: dict[str, Any], gold: dict[str, Any], client: 
         except Exception as exc:
             record["evaluator_error"] = f"{type(exc).__name__} in tool metrics: {exc}"
             record["evaluator_traceback"] = traceback.format_exc(limit=8)
-    try:
-        score = score_case(gold, record["answer"], seen, question["question"])
-    except Exception as exc:
-        record["evaluator_error"] = record["evaluator_error"] or f"{type(exc).__name__} while scoring: {exc}"
-        record["evaluator_traceback"] = traceback.format_exc(limit=8)
-        score = CaseScore(question["id"], format_error="evaluator error")
-    if record["model_error"]:
+    record["score"] = score_record(record, gold).to_dict()
+    record["wall_ms"] = round((clock() - started) * 1000, 1)
+    return record
+
+
+def score_record(record: dict[str, Any], gold: dict[str, Any]) -> CaseScore:
+    """The automatic score of one run record. The runner and eval/rescore.py both use it (Codex 3.1)."""
+    if record.get("evaluator_error") and record.get("answer") is None:
+        score = CaseScore(record["id"], format_error="evaluator error")
+    else:
+        try:
+            score = score_case(gold, record.get("answer"), record.get("seen", []), record["question"])
+        except Exception as exc:
+            record["evaluator_error"] = record.get("evaluator_error") or f"{type(exc).__name__} while scoring: {exc}"
+            record["evaluator_traceback"] = traceback.format_exc(limit=8)
+            score = CaseScore(record["id"], format_error="evaluator error")
+    if record.get("model_error"):
         score.format_error = f"model error: {record['model_error']}"
-    elif record["evaluator_error"]:
+    elif record.get("evaluator_error"):
         score.format_error = "evaluator error"
-    elif record["budget_exceeded"]:
+    elif record.get("budget_exceeded"):
         score.format_error = "budget exceeded (no final answer)"
-    elif record["decision_error"]:
+    elif record.get("decision_error"):
         score.format_error = f"decision format error: {record['decision_error']}"
     elif record.get("output_blocked"):
         score.format_error = f"output withheld: ungrounded numbers {record['output_blocked']}"
-    elif record["no_result"]:
+    elif record.get("no_result"):
         score.format_error = "no successful tool result to answer from"
-    if record["model_error"] or record["evaluator_error"] or record["budget_exceeded"]:
+    if record.get("model_error") or record.get("evaluator_error") or record.get("budget_exceeded"):
         score.automatic_passed = False
-    record["score"] = score.to_dict()
-    record["wall_ms"] = round((clock() - started) * 1000, 1)
-    return record
+    return score
 
 
 def _run_full(question: dict[str, Any], client: DartClient, record: dict[str, Any], ask: Callable[..., Any]) -> None:
@@ -313,6 +321,9 @@ def _main(parser: argparse.ArgumentParser, args: argparse.Namespace) -> int:
     git = _git_state()
     if args.model and git["dirty"] and not args.allow_dirty:
         parser.error("commit first: a model run must name the exact code it ran (or pass --allow-dirty)")
+    if args.companies != "development" and (git["dirty"] or args.allow_dirty or not args.out):
+        # EVAL_CONTRACT_3-1 sections 1 and 7: every evaluation run, with or without a model, is recorded from committed code
+        parser.error("an evaluation-set run must be recorded (--out) from a clean, committed tree; --allow-dirty is refused")
     if not CACHE.exists():
         print("no cache: run scripts/fetch_dev_cache.py first")
         return 2

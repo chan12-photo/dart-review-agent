@@ -19,26 +19,20 @@ from typing import Any
 ROOT = Path(__file__).resolve().parents[1]
 sys.path[:0] = [str(ROOT), str(ROOT / "eval")]
 
-from scoring import CaseScore, score_case, summarize  # noqa: E402
-
-GOLD = ROOT / "eval" / "dev_gold.json"
+import run_eval  # noqa: E402
+from scoring import summarize  # noqa: E402
 
 
 def rescore_case(case: dict[str, Any], gold: dict[str, Any]) -> dict[str, Any]:
-    """The same scoring path as run_eval.run_case, applied to the saved answer and tool results."""
-    if case.get("evaluator_error") and case.get("answer") is None:
-        score = CaseScore(case["id"], format_error="evaluator error")
-    else:
-        score = score_case(gold, case.get("answer"), case.get("seen", []), case["question"])
-    if case.get("model_error"):
-        score.format_error = f"model error: {case['model_error']}"
-    elif case.get("evaluator_error"):
-        score.format_error = "evaluator error"
-    elif case.get("budget_exceeded"):
-        score.format_error = "budget exceeded (no final answer)"
-    if case.get("model_error") or case.get("evaluator_error") or case.get("budget_exceeded"):
-        score.automatic_passed = False
-    return {**case, "score": score.to_dict()}
+    """The runner's own scoring (run_eval.score_record), applied to the saved answer and tool results."""
+    return {**case, "score": run_eval.score_record(dict(case), gold).to_dict()}
+
+
+def golds_for(folder: Path) -> dict[str, dict[str, Any]]:
+    """The gold answers of the run's question set (dev, paraphrase, or lookup), as the runner loaded them."""
+    meta_path = folder / "run.json"
+    question_set = json.loads(meta_path.read_text(encoding="utf-8")).get("question_set", "dev") if meta_path.exists() else "dev"
+    return run_eval.load_questions(question_set)[1]
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -48,7 +42,7 @@ def main(argv: list[str] | None = None) -> int:
         return 2
     folder, reason = Path(args[0]), args[1]
     git = lambda *a: subprocess.run(["git", *a], cwd=ROOT, capture_output=True, text=True).stdout.strip()  # noqa: E731
-    if git("status", "--porcelain", "--", "dart_review", "eval/scoring.py", "eval/rescore.py"):
+    if git("status", "--porcelain", "--", "dart_review", "eval/scoring.py", "eval/rescore.py", "eval/run_eval.py"):
         print("commit the scorer first: a rescore must name the exact scorer it used")
         return 2
     commit = git("rev-parse", "--short", "HEAD")
@@ -56,7 +50,7 @@ def main(argv: list[str] | None = None) -> int:
     if out_cases.exists() or out_report.exists():
         print(f"{out_report.name} exists; not overwritten")
         return 2
-    gold = {answer["id"]: answer for answer in json.loads(GOLD.read_text(encoding="utf-8"))["answers"]}
+    gold = golds_for(folder)
     original = [json.loads(line) for line in (folder / "cases.jsonl").read_text(encoding="utf-8").splitlines() if line]
     rescored = [rescore_case(case, gold[case["id"]]) for case in original]
     with out_cases.open("w", encoding="utf-8") as handle:

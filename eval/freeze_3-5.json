@@ -1,0 +1,29 @@
+{
+ "about": "EVAL_CONTRACT_3-5 sections 1 and 2: the product P3 and the evaluator files fixed for the 3-5 runs",
+ "commit": "db756c240f1af955a1052e62e2c60345b4d5942b",
+ "product_version": "v0.1.1",
+ "evaluator_commit": "ebd5fa60387a74869d9eeecc3a5324a7a6bba2ca",
+ "evaluator_paths": [
+  "eval/run_eval.py",
+  "eval/scoring.py",
+  "eval/judge.py",
+  "eval/finalize.py",
+  "eval/rescore.py",
+  "eval/build_template_questions.py",
+  "eval/build_template_gold.py"
+ ],
+ "reading_prompt_version": "reading-v4",
+ "model": {
+  "name": "gpt-oss:20b",
+  "digest_prefix": "17052f91",
+  "options": {
+   "temperature": 0,
+   "num_ctx": 8192,
+   "num_predict": 4096
+  },
+  "think": null,
+  "ollama": "0.34.4"
+ },
+ "company_set": "sealed-3-1",
+ "reference_date": "2026-10-08"
+}

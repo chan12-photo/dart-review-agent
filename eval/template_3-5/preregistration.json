@@ -1,0 +1,66 @@
+{
+ "about": "EVAL_CONTRACT_3-5 step 5: what the 3-5 runs must match. Committed before any product run on these questions.",
+ "contract": "docs/EVAL_CONTRACT_3-5.ko.md",
+ "contract_sha256": "10f3b2bb8fb4a130deca3701b992cf402d27b25f0069ea5265dba15cdc5d3e2d",
+ "freeze": "eval/freeze_3-5.json",
+ "freeze_sha256": "4a3801733a4c0852186f24f0a935ebbdbc0555ee2700875250641d7329ee4b9c",
+ "product_commit": "db756c240f1af955a1052e62e2c60345b4d5942b",
+ "evaluator_commit": "ebd5fa60387a74869d9eeecc3a5324a7a6bba2ca",
+ "files": {
+  "questions.json": "39981a8b5255d144f6f7f4c399ee506d5a793243d4d0b62cf16b4a61f03e5145",
+  "gold.json": "a9695afcf1d40dccfd3ca39ea0d3947807633ee1a758157d7325d1241bdae98b",
+  "gold_disagreements.json": "82e9ffc4627d659c9344ea10de653b1ff9637c56dd5e9369b5f7a91c57a59401",
+  "excluded.json": "fa7368aeb49c86ba0386713fc5d85330a8cdd3b38bdb0d67bd3dd4effda0abee"
+ },
+ "hashes": {
+  "set_questions": "39981a8b5255d144f6f7f4c399ee506d5a793243d4d0b62cf16b4a61f03e5145",
+  "set_gold": "a9695afcf1d40dccfd3ca39ea0d3947807633ee1a758157d7325d1241bdae98b",
+  "reading_prompt": "f497fa4ed0f346a110807a8b7c8e83c6ce2e14a12619006c71884dc16ad245c7",
+  "reading_schema": "2f5fa7f56b35755896b912ca6ea07a38ed496f932a7734b28373bf05a3500c69",
+  "company_set": "1b483878f8c51bd675af48108aca73253ac9a35669c0243507647daa8b9df04e",
+  "lookup_tool": "a51902515f4b1aa483e67d695aaac6de1d36e22fa5fe16b52ec72a6f899dcfb6",
+  "tools": "58a4d07e631f34171362d24feae1abf11dc74dbc3cfad0d98e9d5fa38216f6a3"
+ },
+ "reference_date": "2026-10-08",
+ "company_set": "sealed-3-1",
+ "seed": 20261009,
+ "composition": {
+  "A1": 60,
+  "A2": 60,
+  "A3": 60,
+  "A4": 60,
+  "A5": 60,
+  "A6": 80,
+  "A7": 40,
+  "A8": 60,
+  "B1": 25,
+  "B2": 20,
+  "B3": 15,
+  "B4": 15,
+  "B5": 15,
+  "B6": 10,
+  "B7": 10,
+  "B8": 10
+ },
+ "criteria": {
+  "wrong_answers": 0,
+  "solved_rate": 0.8,
+  "trap_rate": 0.9,
+  "ungrounded_numbers": 0
+ },
+ "methods_in_order": [
+  "baseline",
+  "crosscheck"
+ ],
+ "review_policy": {
+  "seed": 3505,
+  "sample": {
+   "crosscheck": 40,
+   "baseline": 20
+  }
+ },
+ "disagreements": {
+  "count": 7,
+  "approved_by_user": "2026-10-09"
+ }
+}

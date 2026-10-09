@@ -107,7 +107,8 @@ def skew_angle(image, limit: float = 3.0, step: float = 0.1) -> float:
     steps = int(round(limit / step))
     for index in range(-steps, steps + 1):
         angle = index * step
-        rows = list(small.rotate(angle, fillcolor=255, resample=Image.BILINEAR).resize((1, small.height), Image.BOX).getdata())
+        column = small.rotate(angle, fillcolor=255, resample=Image.BILINEAR).resize((1, small.height), Image.BOX)
+        rows = list(column.convert("L").tobytes())  # one grey value per row (getdata is deprecated in Pillow 12)
         score = sum((rows[i] - rows[i + 1]) ** 2 for i in range(len(rows) - 1))
         if score > best_score:
             best, best_score = angle, score

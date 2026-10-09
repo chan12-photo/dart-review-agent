@@ -183,6 +183,35 @@ class TextLayerEvidenceTests(unittest.TestCase):
             reading = read_document(path, ScriptedModel([rows[0], rows[2]]))
         self.assertIn("'(973)'를 AI가 읽지 않았다", " ".join(reading.statements[0].problems))
 
+    def test_two_statements_on_one_page_are_read_apart(self):
+        from dart_review.documents.ai_reader import read_document
+        income = [("매출", ["7,661,584", "7,926,651"]), ("당기순손실", ["(572,713)", "(937,643)"])]
+        comprehensive = [("당기순손실", ["(572,713)", "(937,643)"]), ("기타포괄손익", ["15,606", "53,229"]),
+                         ("총포괄손실", ["(557,107)", "(884,414)"])]
+        rows = income + [("포괄손익계산서", ["", ""]), ("제 57 기 2025년 1월 1일부터 2025년 12월 31일까지", ["", ""]),
+                         ("(단위: 백만원)", ["", ""]), ("과 목", ["제 57 (당) 기", "제 56 (전) 기"])] + comprehensive
+        page = SampleStatement("손익계산서", SAMPLE.company, ["제 57 기 2025년 1월 1일부터 2025년 12월 31일까지"], "백만원",
+                               SAMPLE.headers, rows)
+
+        class InTurn:
+            name = "scripted"
+
+            def __init__(self, answers):
+                self.answers = list(answers)
+
+            def transcribe(self, png, prompt):
+                lines = self.answers.pop(0)
+                return "\n".join(f"{label} | {' | '.join(amounts)}" for label, amounts in lines)
+
+        with tempfile.TemporaryDirectory() as folder:
+            path = Path(folder) / "sample.pdf"
+            text_pdf(path, [page])
+            reading = read_document(path, InTurn([income, comprehensive]))
+        first, second = reading.statements
+        self.assertEqual((first.kind, [row.label for row in first.rows]), ("IS", ["매출", "당기순손실"]))
+        self.assertEqual((second.kind, [row.label for row in second.rows]), ("CIS", ["당기순손실", "기타포괄손익", "총포괄손실"]))
+        self.assertEqual(self.flagged(reading), {})
+
     def test_a_failed_band_is_reported_and_its_amounts_are_not_lost_silently(self):
         reading = self.read(SAMPLE.rows, fail=True)
         problems = " ".join(reading.statements[0].problems)

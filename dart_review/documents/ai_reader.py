@@ -193,7 +193,8 @@ def _is_amount_like(cell: Cell, header: Header | None) -> bool:
             and bool(re.fullmatch(r"[(（]?[-−△]?\d{1,3}[)）]?", text)))
 
 
-def _existing_row(statement: Statement, label: str, line: Line | None) -> int | None:
+def _existing_row(statement: Statement, label: str, line: Line | None, recent_from: int | None = None,
+                  amounts: Sequence[str] = ()) -> int | None:
     """The row this reading continues: the one read from the same printed line (the overlap of two bands).
     Without an evidence line, a row of the same label among the last few rows. A label may appear twice in
     a statement (관계기업 지분 under both parts of 기타포괄손익); matching on the label alone once merged
@@ -201,8 +202,19 @@ def _existing_row(statement: Statement, label: str, line: Line | None) -> int | 
     if line is not None:
         return next((index for index, row in enumerate(statement.rows)
                      if row.label_cell is not None and any(row.label_cell is cell for cell in line.cells)), None)
-    recent = range(max(0, len(statement.rows) - BAND_OVERLAP - 1), len(statement.rows))
-    return next((index for index in recent if _key(statement.rows[index].label) == _key(label)), None)
+    first = recent_from if recent_from is not None else len(statement.rows) - BAND_OVERLAP - 1
+    recent = range(max(0, first), len(statement.rows))
+    found = next((index for index in recent if _key(statement.rows[index].label) == _key(label)), None)
+    if found is None and amounts:
+        # the overlap of two photo bands, read with a different label ("3 단기당손익…" for "단기당기손익…"):
+        # the same digits in the same order as a row of the previous band
+        digits = [_digits(printed) for printed in amounts]
+        for index in recent:
+            row = statement.rows[index]
+            known = [_digits(row.amounts[column].printed) for column in sorted(row.amounts)]
+            if known and known == digits[:len(known)]:
+                return index
+    return found
 
 
 def _bands(lines: Sequence[Line]) -> list[tuple[float, float, list[Line]]]:
@@ -242,9 +254,16 @@ def read_document(path: Path, model: VisionModel, pages: Sequence[int] | None = 
     state = _State()
     for part in page_parts(path, pages):
         lines = without_page_furniture(group_lines(part.words))
-        title_line = next((line for index, line in enumerate(lines) if is_statement_start(lines, index, state.closed)), None)
-        if title_line is not None or part.source == "PDF 글자":
-            _read_with_page_structure(part, lines, title_line, model, state)
+        starts = [index for index in range(len(lines)) if is_statement_start(lines, index, state.closed)]
+        if starts or part.source == "PDF 글자":
+            # a page may hold the end of one statement and the start of others (손익계산서 and 포괄손익계산서 on
+            # one page): each title starts its own part of the page; reading only the first title once put the
+            # second statement's rows under the first
+            if not starts or starts[0] > 0:
+                _read_with_page_structure(part, lines[:starts[0]] if starts else lines, None, model, state)
+            for position, start in enumerate(starts):
+                end = starts[position + 1] if position + 1 < len(starts) else len(lines)
+                _read_with_page_structure(part, lines[start:end], lines[start], model, state)
         else:
             _read_with_model_structure(part, model, state)
     for s_index, statement in enumerate(state.statements):
@@ -394,19 +413,22 @@ def _read_with_model_structure(part: Part, model: VisionModel, state: _State) ->
     claimed: set[int] = set()
     band, step = 0.20 * height, 0.15 * height
     y = 0.0
+    previous_start = len(statement.rows)  # rows of the previous band: the overlap may read them again
     while y < height:
         box = (int(part.x_range[0]), int(y), int(part.x_range[1]), int(min(height, y + band)))
         answer = state.ask(model, part.image.crop(box), BAND_PROMPT, split=True)
         tokens = [word for word in part.tokens if box[1] <= (word.top + word.bottom) / 2 <= box[3]]
+        band_start = len(statement.rows)
         for item in parse_band(answer or ""):
-            _add_row_by_tokens(statement, state.checks, s_index, item, tokens, part, claimed)
+            _add_row_by_tokens(statement, state.checks, s_index, item, tokens, part, claimed, previous_start)
+        previous_start = band_start
         if y + band >= height:
             break
         y += step
 
 
 def _add_row_by_tokens(statement: Statement, checks: list[CellCheck], s_index: int, item: BandLine,
-                       tokens: Sequence[Word], part: Part, claimed: set[int]) -> None:
+                       tokens: Sequence[Word], part: Part, claimed: set[int], recent_from: int | None = None) -> None:
     """Without evidence lines: an amount is confirmed when OCR read the same digits in the same band; its period
     is the model's left-to-right order, which is checked against the number of period columns."""
     label, own_unit = row_unit(clean_label(item.label, ocr=True))
@@ -414,7 +436,7 @@ def _add_row_by_tokens(statement: Statement, checks: list[CellCheck], s_index: i
     amounts = [printed for printed in item.amounts if printed not in ("-", "–", "—")]
     if not label or not amounts:
         return
-    existing = _existing_row(statement, label, None)
+    existing = _existing_row(statement, label, None, recent_from, amounts)
     row = statement.rows[existing] if existing is not None else Row(label, account_of(label), None, {})
     r_index = existing if existing is not None else len(statement.rows)
     for position, printed in enumerate(amounts):

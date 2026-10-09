@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>재무제표 → 검증된 엑셀</title>
+<style>
+  :root { --bg: #fafaf8; --fg: #1d1d1b; --muted: #6b6b66; --line: #deded8; --accent: #1f5f8b;
+          --warn-bg: #fff2cc; --warn: #7a5b00; --bad: #a33; --ok: #2e6b3a; }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #161615; --fg: #ececea; --muted: #a3a39d; --line: #3a3a37; --accent: #7fb3d9;
+            --warn-bg: #4a3d12; --warn: #f0d58a; --bad: #f08a8a; --ok: #8fd19e; }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--fg);
+         font: 15px/1.55 -apple-system, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif; }
+  main { max-width: 860px; margin: 0 auto; padding: 32px 16px 64px; }
+  h1 { font-size: 22px; margin: 0 0 4px; }
+  p.lead { color: var(--muted); margin: 0 0 24px; }
+  form { border: 1px solid var(--line); border-radius: 8px; padding: 16px; display: grid; gap: 12px; }
+  label { display: grid; gap: 4px; font-size: 14px; color: var(--muted); }
+  input[type=text], select { font: inherit; padding: 6px 8px; border: 1px solid var(--line); border-radius: 6px;
+                             background: transparent; color: var(--fg); max-width: 260px; }
+  button { font: inherit; padding: 8px 16px; border: 0; border-radius: 6px; background: var(--accent); color: #fff;
+           cursor: pointer; justify-self: start; }
+  button:disabled { opacity: .5; cursor: default; }
+  #status { margin: 24px 0 8px; font-weight: 600; }
+  .muted { color: var(--muted); font-size: 14px; }
+  .bad { color: var(--bad); }
+  .ok { color: var(--ok); }
+  a { color: var(--accent); }
+  table { border-collapse: collapse; width: 100%; font-size: 14px; margin: 8px 0 20px; }
+  th, td { border-bottom: 1px solid var(--line); padding: 4px 6px; text-align: left; vertical-align: top; }
+  td.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  td.review { background: var(--warn-bg); color: var(--warn); }
+  .scroll { overflow-x: auto; }
+  ul { padding-left: 20px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>재무제표 PDF → 검증된 엑셀</h1>
+  <p class="lead">감사보고서·재무제표 PDF(글자 PDF, 스캔, 사진 PDF)를 올리면 표를 읽어 엑셀로 만듭니다.
+    모든 숫자는 원본과 대조하고, 확인하지 못한 칸은 고치지 않고 노란색 '확인 필요'로 남깁니다.
+    이 컴퓨터 안에서만 처리합니다.</p>
+  <form id="form">
+    <label>PDF 파일 <input type="file" name="file" accept="application/pdf" required></label>
+    <label>읽는 방법
+      <select name="reader">
+        <option value="ai">AI가 읽고 원본으로 대조 (로컬 비전 모델, 느림)</option>
+        <option value="rules">위치 규칙만 (빠름, 글자 PDF에 적합)</option>
+      </select>
+    </label>
+    <label>쪽 번호 (선택, 예: 10,11,12) <input type="text" name="pages" placeholder="전체" inputmode="numeric"></label>
+    <button type="submit" id="send">올리고 읽기</button>
+  </form>
+  <div id="status"></div>
+  <div id="result"></div>
+</main>
+<script>
+const form = document.getElementById("form");
+const statusBox = document.getElementById("status");
+const resultBox = document.getElementById("result");
+const send = document.getElementById("send");
+const STATES = {queued: "기다리는 중", running: "읽는 중", done: "완료", failed: "실패"};
+
+function el(tag, attrs = {}, ...children) {
+  const node = document.createElement(tag);
+  for (const [key, value] of Object.entries(attrs)) {
+    if (key === "class") node.className = value; else node.setAttribute(key, value);
+  }
+  for (const child of children) node.append(child instanceof Node ? child : document.createTextNode(String(child)));
+  return node;
+}
+
+async function errorText(response) {
+  try { const body = await response.json(); return body.detail || response.statusText; }
+  catch { return response.statusText; }
+}
+
+form.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  send.disabled = true;
+  resultBox.replaceChildren();
+  statusBox.textContent = "올리는 중…";
+  try {
+    const response = await fetch("/jobs", {method: "POST", body: new FormData(form)});
+    if (!response.ok) throw new Error(await errorText(response));
+    const job = await response.json();
+    await follow(job.id);
+  } catch (error) {
+    statusBox.replaceChildren(el("span", {class: "bad"}, "실패: " + error.message));
+  } finally {
+    send.disabled = false;
+  }
+});
+
+async function follow(id) {
+  const started = Date.now();
+  for (;;) {
+    const response = await fetch(`/jobs/${id}`);
+    if (!response.ok) throw new Error(await errorText(response));
+    const job = await response.json();
+    const seconds = Math.round((Date.now() - started) / 1000);
+    statusBox.textContent = `${STATES[job.status] || job.status} · ${job.filename} · ${seconds}초`;
+    if (job.status === "failed") throw new Error(job.error || "알 수 없는 오류");
+    if (job.status === "done") return show(job);
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+  }
+}
+
+async function show(job) {
+  const response = await fetch(job.links.report);
+  const report = await response.json();
+  const summary = el("p", {},
+    `칸 ${report.cells}개 가운데 확인 필요 `, el("strong", {class: report.needs_review ? "bad" : "ok"}, report.needs_review),
+    "개 · ", el("a", {href: job.links.workbook}, "엑셀 받기"), " · ", el("a", {href: job.links.report}, "JSON"));
+  resultBox.replaceChildren(summary);
+  if (report.problems.length) {
+    resultBox.append(el("p", {class: "muted"}, "문서 전체:"), list(report.problems));
+  }
+  for (const statement of report.statements) {
+    resultBox.append(el("h2", {}, `${statement.title} (p.${statement.page}, 단위 ${statement.unit || "알 수 없음"})`));
+    if (statement.problems.length) resultBox.append(list(statement.problems));
+    if (!statement.rows.length) continue;
+    const head = el("tr", {}, el("th", {}, "계정"), ...statement.columns.map((c) => el("th", {}, c.header || "")));
+    const rows = statement.rows.map((row) => {
+      const cells = statement.columns.map((_, index) => {
+        const value = row.values.find((item) => item.column === index);
+        if (!value) return el("td", {class: "num"}, "");
+        const review = value.status === "확인 필요";
+        const td = el("td", {class: "num" + (review ? " review" : "")}, value.printed);
+        if (review) td.title = "확인 필요: " + value.reasons.join("; ");
+        return td;
+      });
+      return el("tr", {}, el("td", {}, row.label), ...cells);
+    });
+    resultBox.append(el("div", {class: "scroll"}, el("table", {}, el("thead", {}, head), el("tbody", {}, ...rows))));
+  }
+}
+
+function list(items) {
+  return el("ul", {class: "muted"}, ...items.map((item) => el("li", {}, item)));
+}
+</script>
+</body>
+</html>

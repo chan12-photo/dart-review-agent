@@ -268,6 +268,15 @@ class TextPdfTests(unittest.TestCase):
         self.assertEqual(result.needs_review, 0)
 
 
+    def test_only_the_asked_pages_are_read(self):
+        from dart_review.documents import extract
+        with tempfile.TemporaryDirectory() as folder:
+            path = Path(folder) / "sample.pdf"
+            text_pdf(path, [BALANCE, INCOME])
+            result = extract(path, ocr="never", pages=[2])
+        self.assertEqual([statement.kind for statement in result.statements], ["IS"])
+        self.assertEqual(result.pages_by_method, {"text": [2]})
+
     def test_the_notes_end_the_statements_and_a_matrix_statement_is_not_read(self):
         from dart_review.documents import extract
         from dart_review.documents.statement import SCE_SKIPPED

@@ -4,6 +4,8 @@
     python -m dart_review ask "질문"                 # cross-checked answer (local Ollama, OpenDART cache/key)
     python -m dart_review ask "질문" --no-model      # keyword rules only, marked as a single reading
     python -m dart_review ask "질문" --cache demo/opendart --offline   # try it on the demo data, no key
+    python -m dart_review extract report.pdf        # statements in a PDF to a checked workbook ([docs])
+    python -m dart_review serve                     # local API and upload page, http://127.0.0.1:8000 ([server])
 """
 
 from __future__ import annotations
@@ -101,6 +103,21 @@ def extract_command(args: argparse.Namespace) -> int:
     return 0
 
 
+def serve_command(args: argparse.Namespace) -> int:
+    try:
+        import uvicorn
+        from .server import create_app
+        app = create_app(args.data)
+    except (ImportError, RuntimeError):
+        print("서버에 필요한 패키지가 없습니다: pip install -e '.[docs,server]'")
+        return 5
+    if args.host not in ("127.0.0.1", "localhost", "::1"):
+        print("주의: 계정 확인이 없는 서버입니다. 이 컴퓨터 밖에서 접속할 수 있게 열었습니다.")
+    print(f"http://{args.host}:{args.port} (데이터: {args.data})")
+    uvicorn.run(app, host=args.host, port=args.port, log_level="warning")
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(prog="python -m dart_review", description="공시 재무 비교 도구 (교차 확인형)")
     commands = parser.add_subparsers(dest="command", required=True)
@@ -123,9 +140,16 @@ def main(argv: list[str] | None = None) -> int:
     extracting.add_argument("--reader", choices=("ai", "rules"), default="ai",
                             help="ai: 로컬 비전 모델이 읽고 원본으로 대조 (기본, Ollama qwen3-vl 필요) / rules: 위치 규칙만")
     extracting.add_argument("--pages", help="읽을 쪽 번호 (예: 10,11). 기본은 전체")
+    serving = commands.add_parser("serve", help="PDF를 올려 엑셀을 받는 로컬 API와 업로드 화면 (선택 설치 [server] 필요)")
+    serving.add_argument("--host", default="127.0.0.1", help="기본 127.0.0.1 (이 컴퓨터에서만 접속)")
+    serving.add_argument("--port", type=int, default=8000)
+    serving.add_argument("--data", type=Path, default=Path.home() / ".dart_review" / "server",
+                         help="올린 문서와 결과, 작업 기록(SQLite)을 두는 폴더")
     args = parser.parse_args(argv)
     if args.command == "extract":
         return extract_command(args)
+    if args.command == "serve":
+        return serve_command(args)
     return demo() if args.command == "demo" else ask(args)
 
 

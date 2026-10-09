@@ -14,7 +14,7 @@ import io
 from pathlib import Path
 import shutil
 import subprocess
-from typing import Iterator
+from typing import Iterator, Sequence
 
 OCR_DPI = 300
 OCR_LANGUAGES = "kor+eng"
@@ -186,15 +186,17 @@ def vision_words(image, page: int) -> list[Word]:
     return words
 
 
-def read_words(path: Path, ocr: str = "auto") -> list[Word]:
-    """``ocr``: "never" (text layer only), "always", or "auto" (OCR the pages whose text layer is empty)."""
+def read_words(path: Path, ocr: str = "auto", pages: Sequence[int] | None = None) -> list[Word]:
+    """``ocr``: "never" (text layer only), "always", or "auto" (OCR the pages whose text layer is empty).
+    ``pages``: only these page numbers (1-based); all pages when None."""
     if ocr not in ("auto", "always", "never"):
         raise ValueError(f"ocr must be auto, always, or never, not {ocr!r}")
+    wanted = list(pages) if pages else list(range(1, page_count(path) + 1))
     if ocr == "always":
-        return ocr_words(path)
-    words = text_layer_words(path)
+        return ocr_words(path, wanted)
+    words = [word for word in text_layer_words(path) if word.page in wanted]
     if ocr == "never":
         return words
     with_text = {word.page for word in words}
-    missing = [page for page in range(1, page_count(path) + 1) if page not in with_text]
+    missing = [page for page in wanted if page not in with_text]
     return words + (ocr_words(path, missing) if missing else [])

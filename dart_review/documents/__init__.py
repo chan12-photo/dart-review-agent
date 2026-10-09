@@ -25,6 +25,8 @@ class Extraction:
     checks: list[CellCheck]
     pages_by_method: dict[str, list[int]]
     problems: list[str]  # about the whole document, e.g. amounts found but no statement title
+    model: str | None = None  # the vision model, for the AI reader
+    model_calls: int | None = None
 
     @property
     def needs_review(self) -> int:
@@ -37,7 +39,7 @@ def extract(source: Path, workbook: Path | None = None, ocr: str = "auto", reade
     ``model``: the vision model for "ai" (default: local Ollama qwen3-vl)."""
     if reader == "ai":
         return _extract_ai(source, workbook, model, pages)
-    words = read_words(source, ocr)
+    words = read_words(source, ocr, pages)
     if not words:
         raise DocumentError("no text was found (the scan may be empty or unreadable)")
     lines = group_lines(words)
@@ -55,9 +57,9 @@ def extract(source: Path, workbook: Path | None = None, ocr: str = "auto", reade
                             "읽지 못한 줄이나 칸이 많을 수 있다")
     methods: dict[str, list[int]] = {}
     for word in words:
-        pages = methods.setdefault(word.method, [])
-        if word.page not in pages:
-            pages.append(word.page)
+        seen = methods.setdefault(word.method, [])
+        if word.page not in seen:
+            seen.append(word.page)
     if workbook is not None:
         from .excel import write_workbook
         write_workbook(workbook, statements, checks, source.name, problems)
@@ -76,7 +78,8 @@ def _extract_ai(source: Path, workbook: Path | None, model, pages) -> Extraction
         from .excel import write_workbook
         write_workbook(workbook, reading.statements, reading.checks, source.name, reading.problems, reader="ai")
     return Extraction(reading.statements, reading.checks, {"ai": sorted({s.page for s in reading.statements})},
-                      reading.problems + [f"AI 호출 {reading.calls}번, 증거: {', '.join(sorted(sources)) or '없음'}"])
+                      reading.problems + [f"AI 호출 {reading.calls}번, 증거: {', '.join(sorted(sources)) or '없음'}"],
+                      getattr(model, "name", None), reading.calls)
 
 
 __all__ = ["DocumentError", "Extraction", "extract"]

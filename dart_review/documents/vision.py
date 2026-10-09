@@ -90,6 +90,18 @@ class OllamaVision:
         return content
 
 
+def ollama_ready(name: str = DEFAULT_VISION_MODEL, url: str = OLLAMA_URL) -> dict[str, Any]:
+    """Whether the local Ollama answers and has the model (a quick check for the server's /health)."""
+    try:
+        with urllib.request.urlopen(f"{url}/api/tags", timeout=2) as response:
+            models = {item.get("name") for item in json.load(response).get("models", [])}
+    except (urllib.error.URLError, TimeoutError, ValueError, OSError):
+        return {"ready": False, "model": name, "reason": "Ollama가 응답하지 않는다 (ollama serve)"}
+    if name not in models:
+        return {"ready": False, "model": name, "reason": f"모델이 없다 (ollama pull {name})"}
+    return {"ready": True, "model": name}
+
+
 def png_bytes(image) -> bytes:
     buffer = io.BytesIO()
     image.save(buffer, format="PNG")

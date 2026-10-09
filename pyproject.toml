@@ -13,8 +13,11 @@ dependencies = []
 [project.optional-dependencies]
 # documents to verified spreadsheets (dart_review.documents); OCR also needs the tesseract program with kor data
 docs = ["pdfplumber>=0.11", "pypdfium2>=4", "openpyxl>=3.1", "pillow>=10"]
-# the HTTP API and upload page (planned)
+# the local HTTP API and upload page: python -m dart_review serve
 server = ["fastapi>=0.110", "uvicorn>=0.29", "python-multipart>=0.0.9"]
 
 [tool.setuptools.packages.find]
 include = ["dart_review*"]
+
+[tool.setuptools.package-data]
+dart_review = ["*.json", "upload.html", "documents/vision_ocr.swift"]

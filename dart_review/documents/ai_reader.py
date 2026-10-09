@@ -23,7 +23,7 @@ from difflib import SequenceMatcher
 from pathlib import Path
 import re
 from statistics import median
-from typing import Sequence
+from typing import Iterator, Sequence
 
 from .statement import (
     _END, _ORDINAL, _PERIOD_LINE, _TITLE, SCE_SKIPPED, TITLES, UNITS, Amount, PeriodColumn, Row, Statement,
@@ -77,13 +77,13 @@ def _pixels(word: Word, scale: float) -> Word:
                 word.method, word.confidence, word.line_key)
 
 
-def page_parts(path: Path, pages: Sequence[int] | None = None) -> list[Part]:
+def page_parts(path: Path, pages: Sequence[int] | None = None) -> Iterator[Part]:
+    """The page parts one page at a time (a 150-page report is not held in memory as images)."""
     import pypdfium2
     from PIL import Image
     from .words import text_layer_words
     text_words = text_layer_words(path)
     document = pypdfium2.PdfDocument(str(path))
-    parts: list[Part] = []
     try:
         for index in range(len(document)):
             number = index + 1
@@ -108,10 +108,9 @@ def page_parts(path: Path, pages: Sequence[int] | None = None) -> list[Part]:
                     # on a photo of two pages it reads each half far better than the whole (69 of 92 amounts vs 54)
                     crop = image.crop((int(x_range[0]), 0, int(x_range[1]), image.height))
                     found += [_shifted(word, x_range[0]) for word in vision_words(crop, number)]
-                parts.append(Part(number, image, inside, source, x_range, found))
+                yield Part(number, image, inside, source, x_range, found)
     finally:
         document.close()
-    return parts
 
 
 def _shifted(word: Word, dx: float) -> Word:

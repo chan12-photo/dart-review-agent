@@ -14,7 +14,7 @@ import re
 from typing import Sequence
 
 from ..accounts import ACCOUNTS, normalize_name
-from .table import Cell, Column, Line, number_columns
+from .table import UNIT_SUFFIX, Cell, Column, Line, number_columns
 
 TITLES = {"재무상태표": "BS", "대차대조표": "BS", "포괄손익계산서": "CIS", "손익계산서": "IS", "현금흐름표": "CF",
           "자본변동표": "SCE", "이익잉여금처분계산서": "RE", "결손금처리계산서": "RE", "이익잉여금처분계산서(안)": "RE"}
@@ -24,6 +24,7 @@ _TITLE = re.compile(r"^(?:\d{1,2}\.|[ⅠⅡⅢⅣⅤ]+\.)?(연결|별도)?(" + "
 _UNIT = re.compile(r"단위\s*[:：]?\s*(백만원|천원|억원|원)")
 _ORDINAL = re.compile(r"제\s*(\d+)\s*(?:\(\s*(당|전|전전)\s*\))?\s*기")
 _PERIOD_LINE = re.compile(r"제\s*(\d+)\s*(?:\([^)]*\))?\s*기.*?(\d{4})\s*년\s*(\d{1,2})\s*월\s*(\d{1,2})\s*일\s*(?:현재|까지)")
+_DATED = re.compile(r"\d{4}\s*년\s*\d{1,2}\s*월\s*\d{1,2}\s*일\s*(?:부터|현재|까지)")
 _YEAR = re.compile(r"(\d{4})\s*(?:년|\.)")
 # an item index before a label; OCR reads a Roman numeral "Ⅰ." as "|." or "I." too
 _INDEX = re.compile(r"^\s*(?:[ⅠⅡⅢⅣⅤⅥⅦⅧⅨⅩ]+\s*\.?|[|IVXlivx]{1,4}\s*\.|\d{1,2}\.|\(\d{1,2}\)|[가-하]\.|[①-⑳])\s*")
@@ -78,6 +79,9 @@ def parse_amount(printed: str, unit: int | None) -> int | None:
     judged in verify.py, so a misread "300,870.903" is not silently accepted there.
     """
     text = printed.replace(" ", "").replace("（", "(").replace("）", ")").replace("−", "-")
+    own = UNIT_SUFFIX.search(text)
+    if own:  # "(2,447)원": the amount states its unit
+        text, unit = text[:own.start()], UNITS[own.group(1)]
     if text in ("-", "–", "—"):
         return None
     negative = text.startswith("(") and text.endswith(")") or text[:1] in "△▲-"
@@ -102,7 +106,9 @@ def row_unit(label: str) -> tuple[str, int | None]:
     """A row that states its own unit ("기본주당이익(단위 : 원)"): the label without it, and that unit."""
     found = _UNIT.search(label.replace(" ", ""))
     if not found:
-        return label, None
+        # per-share amounts are in 원 whatever the table's unit (K-IFRS statements print them so); a 주당이익 row
+        # under a 백만원 table without its own unit mark was once read a million times too large
+        return label, (1 if re.search(r"주당\s*(순)?\s*(이익|손실|손익)", label) else None)
     return clean_label(re.sub(r"\(?\s*단\s*위\s*[:：]?\s*[천백만억]*\s*원\s*\)?", "", label)), UNITS[found.group(1)]
 
 
@@ -123,6 +129,19 @@ def title_parts(compact: str) -> tuple[str, bool, str]:
 
 def is_title(line: Line) -> bool:
     return bool(_TITLE.match(re.sub(r"\s+", "", line.text)))
+
+
+def is_statement_start(lines: Sequence[Line], index: int, in_notes: bool = False) -> bool:
+    """A title line that starts a statement: a period line or the unit line follows within a few lines on its
+    page. Inside the notes, where tables have unit lines too, only a dated period line counts: a notes heading
+    "37. 현금흐름표" was once read as a 141-row statement."""
+    line = lines[index]
+    if not is_title(line):
+        return False
+    following = [other.text for other in lines[index + 1:index + 6] if other.page == line.page]
+    if any(_DATED.search(text) for text in following):
+        return True
+    return not in_notes and any(_UNIT.search(text.replace(" ", "")) for text in following)
 
 
 def is_notes_start(line: Line, earlier_on_page: Sequence[Line]) -> bool:
@@ -174,13 +193,16 @@ def find_statements(lines: Sequence[Line]) -> list[Statement]:
     are read in turn. A 자본변동표 is listed with a problem and no rows (its table is a matrix)."""
     lines = without_page_furniture(lines)
     boundaries = []  # (index, is a title)
+    in_notes = False
     for index, line in enumerate(lines):
-        if is_title(line):
+        if is_statement_start(lines, index, in_notes):
             boundaries.append((index, True))
+            in_notes = False
         else:
             earlier = [other for other in lines[max(0, index - 80):index] if other.page == line.page]
             if is_notes_start(line, earlier):
                 boundaries.append((index, False))
+                in_notes = True
     statements = []
     for position, (start, title) in enumerate(boundaries):
         if not title:

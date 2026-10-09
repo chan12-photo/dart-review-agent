@@ -27,7 +27,7 @@ from typing import Iterator, Sequence
 
 from .statement import (
     _END, _ORDINAL, _PERIOD_LINE, _TITLE, SCE_SKIPPED, TITLES, UNITS, Amount, PeriodColumn, Row, Statement,
-    account_of, clean_label, is_notes_start, title_parts, without_page_furniture, parse_amount, row_unit, unit_of,
+    account_of, clean_label, is_notes_start, is_statement_start, title_parts, without_page_furniture, parse_amount, row_unit, unit_of,
 )
 from .table import Cell, Line, group_lines
 from .verify import CHECKED, REVIEW, CellCheck, _balance, _subtotals, separator_problem
@@ -178,7 +178,7 @@ def _digits(text: str) -> str:
 def _is_amount_word(text: str) -> bool:
     """An amount as printed: digits grouped by three, or a small amount in parentheses or of three digits
     ("(973)", "682"). Note numbers ("4", "29", "4, 29") are not amounts."""
-    return bool(SMALL_OR_GROUPED.fullmatch(text.replace(" ", "")))
+    return bool(SMALL_OR_GROUPED.fullmatch(re.sub(r"(백만|천)?원$", "", text.replace(" ", ""))))
 
 
 def _existing_row(statement: Statement, label: str, line: Line | None) -> int | None:
@@ -230,7 +230,7 @@ def read_document(path: Path, model: VisionModel, pages: Sequence[int] | None = 
     state = _State()
     for part in page_parts(path, pages):
         lines = without_page_furniture(group_lines(part.words))
-        title_line = next((line for line in lines if _TITLE.match(re.sub(r"\s+", "", line.text))), None)
+        title_line = next((line for index, line in enumerate(lines) if is_statement_start(lines, index, state.closed)), None)
         if title_line is not None or part.source == "PDF 글자":
             _read_with_page_structure(part, lines, title_line, model, state)
         else:

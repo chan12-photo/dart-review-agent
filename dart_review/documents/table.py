@@ -16,7 +16,9 @@ from .words import Word
 
 # an amount as printed: digits with or without separators, optional parentheses / minus / triangle for a negative,
 # or a dash for none. Loose on purpose: verify.py judges whether the separators are plausible.
-AMOUNT = re.compile(r"^[(（]?[△▲\-−]?\s?[\d][\d,.\s]*[)）]?$|^[-–—]$")
+# A unit word may follow ("(2,447) 원", seen on a per-share row).
+AMOUNT = re.compile(r"^[(（]?[△▲\-−]?\s?[\d][\d,.\s]*[)）]?(?:\s*(?:백만|천)?원)?$|^[-–—]$")
+UNIT_SUFFIX = re.compile(r"\s*((?:백만|천)?원)$")
 
 
 @dataclass

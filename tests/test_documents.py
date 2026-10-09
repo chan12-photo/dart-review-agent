@@ -173,6 +173,20 @@ class RealLayoutTests(unittest.TestCase):
         self.assertEqual(statement.problems, [])
 
 
+    def test_per_share_rows_are_in_won(self):
+        rows = [(40, [(250, 300, "손익계산서")]), (80, [(470, 540, "(단위: 백만원)")]),
+                (100, [(60, 90, "과 목"), (330, 380, "제6기"), (470, 520, "제5기")]),
+                (120, [(60, 100, "매출"), (320, 380, "7,661,584"), (460, 520, "7,926,651")]),
+                (140, [(60, 100, "당기순손실"), (320, 380, "(572,713)"), (460, 520, "(937,643)")]),
+                (160, [(60, 200, "보통주 기본 및 희석주당손실"), (330, 380, "(2,447) 원"), (470, 520, "(4,007) 원")]),
+                (180, [(60, 200, "기본주당이익"), (340, 380, "(4,585)"), (480, 520, "(4,354)")])]
+        [statement] = find_statements(group_lines(words_for(rows)))
+        values = {row.label: [row.amounts[c].value for c in sorted(row.amounts)] for row in statement.rows}
+        self.assertEqual(values["보통주 기본 및 희석주당손실"], [-2_447, -4_007])
+        self.assertEqual(values["기본주당이익"], [-4_585, -4_354])
+        self.assertEqual(values["매출"], [7_661_584_000_000, 7_926_651_000_000])
+        self.assertEqual([item for item in check([statement]) if item.status == REVIEW], [])
+
     def test_a_business_report_layout(self):
         """영업보고서: numbered 별도 titles, a 결손금처리계산서 after the 포괄손익계산서, and a page-number footer."""
         page_35 = [(40, [(34, 200, "3. 별도포괄손익계산서")]), (80, [(470, 540, "(단위: 백만 원)")]),

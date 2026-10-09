@@ -38,7 +38,7 @@ class CellCheck:
 
 
 def digits_of(printed: str) -> str:
-    return _SIGNS.sub("", printed)
+    return _SIGNS.sub("", re.sub(r"\s*(백만|천)?원$", "", printed))
 
 
 def separator_problem(printed: str) -> str | None:

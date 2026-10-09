@@ -1,0 +1,72 @@
+{
+ "cases": 600,
+ "automatic_passed": {
+  "correct": 593,
+  "total": 600
+ },
+ "status": {
+  "correct": 593,
+  "total": 600
+ },
+ "decision": {
+  "correct": 593,
+  "total": 600
+ },
+ "numbers": {
+  "correct": 476,
+  "total": 480
+ },
+ "basis": {
+  "correct": 593,
+  "total": 600
+ },
+ "refusal_or_clarify": {
+  "correct": 117,
+  "total": 120
+ },
+ "sign_wording": {
+  "correct": 24,
+  "total": 24
+ },
+ "ungrounded_numbers": 0,
+ "cases_with_ungrounded": 0,
+ "unparsed_numbers": 0,
+ "format_errors": 3,
+ "evaluator_errors": 0,
+ "warnings": 0,
+ "model_attempts": 0,
+ "model_responses": 0,
+ "tool_calls": 540,
+ "model_latency_ms": {
+  "total": 0.0,
+  "median_per_case": 0.0
+ },
+ "case_wall_ms_total": 4984.4,
+ "budget_exceeded": 0,
+ "failed": [
+  "A1-038",
+  "A2-032",
+  "A5-043",
+  "A8-032",
+  "B5-007",
+  "B5-008",
+  "B5-015"
+ ],
+ "confident_wrong": [
+  "A1-038",
+  "A2-032",
+  "A5-043",
+  "A8-032"
+ ],
+ "asked_back_instead": [],
+ "length_stops": [],
+ "tool_args_first_ok": {
+  "correct": 533,
+  "total": 540
+ },
+ "tool_args_any_ok": {
+  "correct": 533,
+  "total": 540
+ },
+ "network_requests": 0
+}

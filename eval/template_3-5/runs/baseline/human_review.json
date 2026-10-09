@@ -1,0 +1,176 @@
+{
+ "reviewer": "",
+ "confirmed_by_user": false,
+ "criteria": "eval/HUMAN_REVIEW.ko.md",
+ "cases": {
+  "A1-027": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "A1-038": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "A1-045": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "A1-047": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "A2-026": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "A2-032": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "A3-040": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "A5-026": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "A5-043": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "A5-053": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "A5-054": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "A5-060": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "A6-011": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "A6-064": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "A6-065": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "A7-014": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "A7-034": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "A8-009": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "A8-032": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "A8-051": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "A8-052": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "B2-007": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "B5-007": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "B5-008": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "B5-015": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "B7-004": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "B8-002": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  }
+ },
+ "policy": {
+  "seed": 3505,
+  "sample": {
+   "crosscheck": 40,
+   "baseline": 20
+  }
+ }
+}

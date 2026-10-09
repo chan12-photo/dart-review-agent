@@ -26,8 +26,8 @@ from statistics import median
 from typing import Sequence
 
 from .statement import (
-    _ORDINAL, _PERIOD_LINE, _TITLE, _UNIT, TITLES, UNITS, Amount, PeriodColumn, Row, Statement, account_of, clean_label,
-    parse_amount,
+    _END, _ORDINAL, _PERIOD_LINE, _TITLE, SCE_SKIPPED, TITLES, UNITS, Amount, PeriodColumn, Row, Statement,
+    account_of, clean_label, is_notes_start, parse_amount, row_unit, unit_of,
 )
 from .table import Cell, Line, group_lines
 from .verify import CHECKED, REVIEW, CellCheck, _balance, _subtotals, separator_problem
@@ -227,6 +227,8 @@ def read_document(path: Path, model: VisionModel, pages: Sequence[int] | None = 
         if s_index in state.unverified_units:
             for check in own:
                 check.flag(f"단위를 원본에서 확인하지 못했다 (AI가 읽은 단위: {statement.unit_text})")
+        if statement.kind == "SCE":
+            continue
         by_cell = {(check.row, check.column): check for check in own}
         if statement.kind == "BS" and not _balance(statement, by_cell):
             statement.problems.append("합계 줄을 찾지 못해 재무상태표 검산을 하지 못했다")
@@ -244,10 +246,11 @@ class _State:
     header: Header | None = None
     ends: dict[int, tuple[int, str]] = field(default_factory=dict)
     unverified_units: set[int] = field(default_factory=set)
+    closed: bool = False  # the notes section started: pages until the next title belong to no statement
 
     @property
     def current(self) -> Statement | None:
-        return self.statements[-1] if self.statements else None
+        return self.statements[-1] if self.statements and not self.closed else None
 
     def ask(self, model: VisionModel, image, prompt: str, split: bool = False) -> str | None:
         """The model's answer, or None (reported). ``split``: a band that ran out of output budget is asked again
@@ -274,8 +277,10 @@ def _new_statement(state: _State, title: str, page: int, unit_text: str | None) 
     kind = TITLES[_TITLE.match(compact).group(2)]
     statement = Statement(kind, compact.startswith("연결"), compact, page, UNITS.get(unit_text) if unit_text else None,
                           unit_text, [], [], [] if unit_text else ["단위 줄을 찾지 못해 금액 단위를 알 수 없다"])
+    if kind == "SCE":
+        statement.problems.append(SCE_SKIPPED)
     state.statements.append(statement)
-    state.header = None
+    state.header, state.closed = None, False
     return statement
 
 
@@ -286,12 +291,18 @@ def _read_with_page_structure(part: Part, lines: Sequence[Line], title_line: Lin
     for found in _PERIOD_LINE.finditer(text):
         ordinal, year, month, day = (int(value) for value in found.groups())
         state.ends[ordinal] = (year, f"{year:04d}-{month:02d}-{day:02d}")
-    unit_match = next((found for line in lines if (found := _UNIT.search(line.text.replace(" ", "")))), None)
     if title_line is not None:
-        _new_statement(state, title_line.text, part.page, unit_match.group(1) if unit_match else None)
+        unit_text = unit_of([line for line in lines if line.top > title_line.top],
+                            before=[line for line in lines if line.top < title_line.top])
+        _new_statement(state, title_line.text, part.page, unit_text)
+    notes = next((line for index, line in enumerate(lines)
+                  if is_notes_start(line, lines[:index]) and (title_line is None or line.top > title_line.top)), None)
     statement = state.current
-    if statement is None:
-        return  # pages before the first statement (cover, auditor's report)
+    if statement is None or statement.kind == "SCE":
+        state.closed = state.closed or notes is not None
+        return  # pages before the first statement (cover, auditor's report), the notes, or a 자본변동표
+    if notes is not None:
+        lines = [line for line in lines if line.top < notes.top]
     part_header = _header(lines, state.ends)
     if part_header is not None:
         state.header = part_header
@@ -312,6 +323,8 @@ def _read_with_page_structure(part: Part, lines: Sequence[Line], title_line: Lin
         for cell in line.cells:
             if _is_amount_word(cell.text) and id(cell) not in claimed:
                 statement.problems.append(f"{part.page}쪽: 원본의 금액 '{cell.text}'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)")
+    if notes is not None:
+        state.closed = True
 
 
 def _read_with_model_structure(part: Part, model: VisionModel, state: _State) -> None:
@@ -331,8 +344,10 @@ def _read_with_model_structure(part: Part, model: VisionModel, state: _State) ->
         statement = _new_statement(state, title, part.page, unit)
         if unit and unit not in ocr_text:
             state.unverified_units.add(len(state.statements) - 1)
+    elif _END.match(title):
+        state.closed = True
     statement = state.current
-    if statement is None:
+    if statement is None or statement.kind == "SCE":
         return
     for line in meta.periods:
         found = _PERIOD_LINE.search(line.replace(":", " "))
@@ -369,7 +384,8 @@ def _add_row_by_tokens(statement: Statement, checks: list[CellCheck], s_index: i
                        tokens: Sequence[Word], part: Part, claimed: set[int]) -> None:
     """Without evidence lines: an amount is confirmed when OCR read the same digits in the same band; its period
     is the model's left-to-right order, which is checked against the number of period columns."""
-    label = clean_label(item.label, ocr=True)
+    label, own_unit = row_unit(clean_label(item.label, ocr=True))
+    unit = own_unit or statement.unit
     amounts = [printed for printed in item.amounts if printed not in ("-", "–", "—")]
     if not label or not amounts:
         return
@@ -381,7 +397,7 @@ def _add_row_by_tokens(statement: Statement, checks: list[CellCheck], s_index: i
             break
         column = position
         try:
-            value = parse_amount(printed, statement.unit)
+            value = parse_amount(printed, unit)
         except ValueError:
             continue
         if column in row.amounts:
@@ -427,6 +443,10 @@ def _add_row(statement: Statement, checks: list[CellCheck], s_index: int, item: 
         elif source_label and _different_accounts(label, source_label):
             label_problem = (f"AI가 읽은 계정명 '{label}'과 숫자를 찾은 원본 줄의 계정명 '{source_label}'이 다르다 "
                              "(숫자를 다른 줄에 붙였을 수 있다)")
+    label, own_unit = row_unit(label)
+    if own_unit is None:
+        _, own_unit = row_unit(item.label)
+    unit = own_unit or statement.unit
     existing = next((index for index, row in enumerate(statement.rows) if _key(row.label) == _key(label)), None)
     row = statement.rows[existing] if existing is not None else Row(label, account_of(label), None, {})
     for position, printed in enumerate(item.amounts):
@@ -454,7 +474,7 @@ def _add_row(statement: Statement, checks: list[CellCheck], s_index: int, item: 
         if column in row.amounts:
             continue  # the overlap line between two bands, already read
         try:
-            value = parse_amount(printed, statement.unit)
+            value = parse_amount(printed, unit)
         except ValueError:
             continue
         anchor = cell or Cell([Word(printed, part.page, part.x_range[0], part.x_range[1], 0, 0, "ai")])

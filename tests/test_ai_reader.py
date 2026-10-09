@@ -134,6 +134,20 @@ class TextLayerEvidenceTests(unittest.TestCase):
         self.assertEqual(answer, "줄 | 120\n줄 | 120")
         self.assertEqual(state.calls, 3)
 
+    def test_the_notes_are_not_read_as_more_rows(self):
+        from dart_review.documents.ai_reader import read_document
+        notes = SampleStatement("주석", SAMPLE.company, SAMPLE.period_lines, "백만원", ["당기말", "전기말"],
+                                [("보통예금", ["1,234,567", "1,111,111"])])
+        model = ScriptedModel(SAMPLE.rows)
+        with tempfile.TemporaryDirectory() as folder:
+            path = Path(folder) / "sample.pdf"
+            text_pdf(path, [SAMPLE, notes])
+            reading = read_document(path, model)
+        self.assertEqual(len(reading.statements), 1)
+        self.assertEqual(len(reading.statements[0].rows), len(SAMPLE.rows))
+        self.assertFalse(any("보통예금" in problem or "1,234,567" in problem for problem in reading.statements[0].problems))
+        self.assertEqual(len(model.prompts), 1)  # the notes page cost no model call
+
     def test_a_failed_band_is_reported_and_its_amounts_are_not_lost_silently(self):
         reading = self.read(SAMPLE.rows, fail=True)
         problems = " ".join(reading.statements[0].problems)

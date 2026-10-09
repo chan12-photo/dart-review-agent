@@ -26,7 +26,10 @@ _PERIOD_LINE = re.compile(r"제\s*(\d+)\s*(?:\([^)]*\))?\s*기.*?(\d{4})\s*년\s
 _YEAR = re.compile(r"(\d{4})\s*(?:년|\.)")
 # an item index before a label; OCR reads a Roman numeral "Ⅰ." as "|." or "I." too
 _INDEX = re.compile(r"^\s*(?:[ⅠⅡⅢⅣⅤⅥⅦⅧⅨⅩ]+\s*\.?|[|IVXlivx]{1,4}\s*\.|\d{1,2}\.|\(\d{1,2}\)|[가-하]\.|[①-⑳])\s*")
-_NOTE = re.compile(r"\s*\(?\s*주\s*[\d,\s]+\)?\s*$")  # a note reference after a label: "현금 (주4,5)"
+_NOTE = re.compile(r"\s*\(\s*주\s*석?\s*[\d,\s]+\)\s*$|\s+주\s*석?\s*[\d,\s]+$")  # "현금 (주4,5)", "(주석 38)"
+# where the statements end: the notes section starts with a line that is only its name
+_END = re.compile(r"^(?:\(?연결\)?)?(?:재무제표에대한)?주석$")
+SCE_SKIPPED = ("자본변동표는 행과 열이 모두 항목인 표라 이 도구가 아직 읽지 않는다 (v0.2 범위 밖, 원본을 직접 확인)")
 
 
 @dataclass
@@ -86,11 +89,20 @@ def parse_amount(printed: str, unit: int | None) -> int | None:
 
 def clean_label(text: str, ocr: bool = False) -> str:
     label = re.sub(r"\s+", " ", _NOTE.sub("", _INDEX.sub("", text)).strip())
+    label = re.sub(r"(?<=[가-힣)])\s+\d{1,2}(\s*,\s*\d{1,2})*$", "", label)  # a note number joined to the label
     if ocr:  # stray marks OCR puts before a label ("| 유동자산", "© 비유동자산")
         label = _INDEX.sub("", re.sub(r"^[^\w가-힣(]+", "", label)).strip()
     if ocr:  # OCR splits Hangul syllables of one word ("자 산 총계"); statement labels rarely need those spaces
         label = re.sub(r"(?<=[가-힣]) (?=[가-힣(])|(?<=[가-힣(]) (?=[가-힣)])", "", label)
     return label
+
+
+def row_unit(label: str) -> tuple[str, int | None]:
+    """A row that states its own unit ("기본주당이익(단위 : 원)"): the label without it, and that unit."""
+    found = _UNIT.search(label.replace(" ", ""))
+    if not found:
+        return label, None
+    return clean_label(re.sub(r"\(?\s*단\s*위\s*[:：]?\s*[천백만억]*\s*원\s*\)?", "", label)), UNITS[found.group(1)]
 
 
 def account_of(label: str) -> str | None:
@@ -102,13 +114,51 @@ def account_of(label: str) -> str | None:
     return None
 
 
+def is_title(line: Line) -> bool:
+    return bool(_TITLE.match(re.sub(r"\s+", "", line.text)))
+
+
+def is_notes_start(line: Line, earlier_on_page: Sequence[Line]) -> bool:
+    """The notes heading ("주석", "연결재무제표에 대한 주석"): a line that is only that, above any amount on its
+    page. A "주석" column heading shares its line with the period headings, so it does not match."""
+    return bool(_END.match(re.sub(r"\s+", "", line.text))) and not any(
+        cell.is_amount for other in earlier_on_page for cell in other.cells)
+
+
+def unit_of(body: Sequence[Line], before: Sequence[Line] = ()) -> str | None:
+    """The statement's unit line: below the title and above the first amount, else just above the title on its
+    page. A row label carrying its own unit ("기본주당이익(단위 : 원)") is never the statement's unit: on a real
+    report that row, on the page before a statement, once made every amount of the statement a million times
+    too small."""
+    def found(lines):
+        for line in lines:
+            if any(cell.is_amount for cell in line.cells):
+                return None
+            match = _UNIT.search(line.text.replace(" ", ""))
+            if match:
+                return match.group(1)
+        return None
+    return found(body) or found(list(before)[::-1])
+
+
 def find_statements(lines: Sequence[Line]) -> list[Statement]:
-    """Each statement title starts a block that ends at the next title; the block's rows are read in turn."""
-    starts = [index for index, line in enumerate(lines) if _TITLE.match(re.sub(r"\s+", "", line.text))]
+    """Each statement title starts a block that ends at the next title or at the notes heading; the block's rows
+    are read in turn. A 자본변동표 is listed with a problem and no rows (its table is a matrix)."""
+    boundaries = []  # (index, is a title)
+    for index, line in enumerate(lines):
+        if is_title(line):
+            boundaries.append((index, True))
+        else:
+            earlier = [other for other in lines[max(0, index - 80):index] if other.page == line.page]
+            if is_notes_start(line, earlier):
+                boundaries.append((index, False))
     statements = []
-    for position, start in enumerate(starts):
-        end = starts[position + 1] if position + 1 < len(starts) else len(lines)
-        statements.append(read_statement(lines[start], lines[start + 1:end], lines[max(0, start - 3):end]))
+    for position, (start, title) in enumerate(boundaries):
+        if not title:
+            continue
+        end = boundaries[position + 1][0] if position + 1 < len(boundaries) else len(lines)
+        statement = read_statement(lines[start], lines[start + 1:end], lines[max(0, start - 3):end])
+        statements.append(statement)
     return statements
 
 
@@ -116,9 +166,12 @@ def read_statement(title_line: Line, body: Sequence[Line], context: Sequence[Lin
     compact = re.sub(r"\s+", "", title_line.text)
     match = _TITLE.match(compact)
     kind = TITLES[match.group(2)]
-    unit_text = next((found.group(1) for line in context if (found := _UNIT.search(line.text.replace(" ", "")))), None)
+    unit_text = unit_of(body, before=[line for line in context if line.page == title_line.page and line.top < title_line.top])
     unit = UNITS.get(unit_text) if unit_text else None
     problems = [] if unit else ["단위 줄을 찾지 못해 금액 단위를 알 수 없다"]
+    if kind == "SCE":
+        return Statement(kind, compact.startswith("연결"), compact, title_line.page, unit, unit_text, [], [],
+                         problems + [SCE_SKIPPED])
     height = sorted(cell.bottom - cell.top for line in body for cell in line.cells)
     tolerance = 2.0 * (height[len(height) // 2] if height else 10.0)
     columns = number_columns(body, tolerance)
@@ -131,9 +184,15 @@ def read_statement(title_line: Line, body: Sequence[Line], context: Sequence[Lin
         label_cells = []
         for cell in line.cells:
             index = next((i for i, column in enumerate(columns) if column.holds(cell, tolerance)), None)
+            if index is not None and columns[index].header == NOTE_COLUMN and not re.search(r"[가-힣]", cell.text):
+                continue  # note references, neither label nor amount (a long label may reach into the column)
+            if index is not None and re.search(r"[가-힣]", cell.text) and not cell.is_amount:
+                index = None  # words are a label wherever they end
             if index is not None and columns[index].header.isdigit():  # merged under a period heading
                 index = int(columns[index].header)
             if cell.is_amount and index is not None and index < len(periods) and not _is_note_column(periods[index]):
+                if index in amounts:
+                    continue  # two amounts of one line in one period: left unplaced, the row is marked below
                 try:
                     amounts[index] = Amount(cell, parse_amount(cell.text, unit), cell.text, index)
                 except ValueError:
@@ -141,13 +200,21 @@ def read_statement(title_line: Line, body: Sequence[Line], context: Sequence[Lin
             elif index is None:
                 label_cells.append(cell)
         line_amounts = [cell for cell in line.cells if cell.is_amount and not _is_dash(cell.text)]
+        if amounts and not label_cells:
+            label_cells = _wrapped_label(body, line)
         if not amounts or not label_cells:
             orphans += len([cell for cell in line_amounts if not _is_note_like(cell, columns, periods, tolerance)])
             continue
         label_cell = label_cells[0]
-        label = clean_label(label_cell.text, ocr=label_cell.method == "ocr")
-        if not label:
-            orphans += len(amounts)
+        # a label printed with wide letter spacing ("자    본    총    계") comes as several cells
+        texts = [cell.text for cell in label_cells if not cell.is_amount] or [label_cell.text]
+        label = clean_label(" ".join(texts), ocr=label_cell.method == "ocr")
+        label, own_unit = row_unit(label)
+        if own_unit:  # "기본주당이익(단위 : 원)": this row's amounts are in its own unit
+            for index, amount in list(amounts.items()):
+                amounts[index] = Amount(amount.cell, parse_amount(amount.printed, own_unit), amount.printed, index)
+        if not re.search(r"[가-힣A-Za-z]", label):  # no label, or only a mark like "-"
+            orphans += len([cell for cell in line_amounts if not _is_note_like(cell, columns, periods, tolerance)])
             continue
         unplaced = len([cell for cell in line_amounts if all(cell is not item.cell for item in amounts.values())
                         and not _is_note_like(cell, columns, periods, tolerance)])
@@ -165,6 +232,25 @@ def read_statement(title_line: Line, body: Sequence[Line], context: Sequence[Lin
     return Statement(kind, compact.startswith("연결"), compact, title_line.page, unit, unit_text, periods, rows, problems)
 
 
+def _wrapped_label(body: Sequence[Line], line: Line) -> list[Cell]:
+    """A long label wrapped over two lines with the amounts printed between them ("…금융자산의 감" / amounts /
+    "소"): the label-only lines touching the amount line above and below."""
+    index = next(i for i, other in enumerate(body) if other is line)
+    height = median_cell_height(line)
+    cells = []
+    for neighbour, gap in ((body[index - 1] if index else None, lambda n: line.top - n.bottom),
+                           (body[index + 1] if index + 1 < len(body) else None, lambda n: n.top - line.bottom)):
+        if (neighbour is not None and neighbour.page == line.page and gap(neighbour) <= 0.5 * height
+                and not any(cell.is_amount for cell in neighbour.cells) and re.search(r"[가-힣]", neighbour.text)):
+            cells += neighbour.cells
+    return cells
+
+
+def median_cell_height(line: Line) -> float:
+    heights = sorted(cell.bottom - cell.top for cell in line.cells)
+    return heights[len(heights) // 2] if heights else 10.0
+
+
 def _is_dash(text: str) -> bool:
     return text.strip() in ("-", "–", "—")
 
@@ -174,6 +260,8 @@ def _is_note_like(cell: Cell, columns: list[Column], periods: list[PeriodColumn]
     if re.fullmatch(r"\d{1,2}(\s*,\s*\d{1,2})*", cell.text.strip()):
         return True  # note references: "8", "4, 29", "4,5,7,29" (amounts group their digits by three)
     index = next((i for i, column in enumerate(columns) if column.holds(cell, tolerance)), None)
+    if index is not None and columns[index].header == NOTE_COLUMN:
+        return True
     if index is not None and columns[index].header.isdigit():
         return False
     if index is not None and index < len(periods) and _is_note_column(periods[index]):
@@ -200,13 +288,15 @@ def _merge_nested(body: Sequence[Line], columns: list[Column], periods: list[Per
         for match in _PERIOD_LINE.finditer(line.text):
             ordinal, year, month, day = (int(value) for value in match.groups())
             ends[ordinal] = (year, f"{year:04d}-{month:02d}-{day:02d}")
-    centres = [(cell.x0 + cell.x1) / 2 for cell in headings]
-    bounds = [(a + b) / 2 for a, b in zip(centres, centres[1:])]
     merged: list[Column] = []
     for column, period in zip(columns, periods):
-        if _is_note_column(period):
+        if _is_note_column(period) or column.right < headings[0].x0:
+            # left of the first period heading: the note column, whatever its header reads like
+            merged.append(Column(column.right, header=NOTE_COLUMN))
             continue
-        index = sum(column.right > bound for bound in bounds)
+        # a column belongs to the last heading that starts left of its right edge: headings are printed centred
+        # or left-aligned over their period's positions (both seen on real reports)
+        index = sum(column.right >= cell.x0 for cell in headings) - 1
         merged.append(Column(column.right, header=str(index)))
     new_periods = []
     for cell in headings:
@@ -215,6 +305,9 @@ def _merge_nested(body: Sequence[Line], columns: list[Column], periods: list[Per
         year, end = ends.get(number, (None, None)) if number else (None, None)
         new_periods.append(PeriodColumn(cell.text, number, year, end))
     return merged, new_periods
+
+
+NOTE_COLUMN = "주석"
 
 
 def _is_note_column(column: PeriodColumn) -> bool:

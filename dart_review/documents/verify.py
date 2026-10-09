@@ -97,6 +97,8 @@ def _subtotals(statement: Statement, by_cell: dict[tuple[int, int], CellCheck]) 
     misread the same way by the model and by OCR (7,953,586 read as 7,963,586 on a photo).
     """
     checked = 0
+    if statement.kind in ("IS", "CIS"):
+        return 0  # expenses are printed without a sign, so a subtotal is not the plain sum of the rows near it
     for column in range(len(statement.columns)):
         placed = []  # (row index, amount, x centre, height, segment)
         segment, last = 0, None
@@ -140,12 +142,23 @@ def _subtotals(statement: Statement, by_cell: dict[tuple[int, int], CellCheck]) 
                 continue
             checked += 1
             total = statement.rows[r_index].amounts[column].value
-            if total != sum(statement.rows[d].amounts[column].value for d in details):
+            if total != sum(_collapsed([statement.rows[d].amounts[column].value for d in details])):
                 label = statement.rows[r_index].label
                 for target in [r_index, *details]:
                     if (target, column) in by_cell:
                         by_cell[(target, column)].flag(f"소계 '{label}'와 그 아래 항목의 합이 맞지 않는다 (어느 칸이 틀렸는지는 모른다)")
     return checked
+
+
+def _collapsed(values: list[int]) -> list[int]:
+    """A third level printed in the detail position: a detail that equals the sum of the details right after it
+    (현금흐름표: 영업에서 창출된 현금흐름 = 당기순이익 + 조정 + 자산부채의 변동) stands for them, so they are left out."""
+    result, index = [], 0
+    while index < len(values):
+        result.append(values[index])
+        end = next((j for j in range(index + 2, len(values)) if values[index] == sum(values[index + 1:j + 1])), None)
+        index = (end if end is not None else index) + 1
+    return result
 
 
 def median_height(heights: list[float]) -> float:

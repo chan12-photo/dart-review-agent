@@ -75,6 +75,10 @@ class Line:
     def top(self) -> float:
         return min(cell.top for cell in self.cells)
 
+    @property
+    def bottom(self) -> float:
+        return max(cell.bottom for cell in self.cells)
+
 
 def group_lines(words: Sequence[Word]) -> list[Line]:
     """Words on one baseline form a line; lines are ordered top to bottom, page by page."""

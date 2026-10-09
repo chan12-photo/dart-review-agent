@@ -2,11 +2,16 @@
 
 A local tool that **looks up and compares** financial figures of Korean listed companies from their filed statements (OpenDART). It compares two periods only when the comparison is sound: within the reports it reads, the same consolidated/separate basis, period length, and currency, and no visible restatement. Otherwise it refuses or asks back, and says why. It does not check amendments it has not fetched. Korean version: [README.ko.md](README.ko.md).
 
-**v0.1 (2026-10-09).** In one line: **a rule-based financial comparison tool, plus an experiment in cross-checking it with an LLM.** A sealed, pre-registered evaluation (36 questions, one run) found:
-- **the official verdict is "criteria not met"**: every criterion on the product was met, but the "model reading only" comparison method failed one criterion through a scorer mismatch (below);
-- the product gave **no wrong figure** in 22 figure answers. This is an observation on these 36 questions, most of them easy;
-- the keyword rules alone read all of these questions correctly;
-- on these 36 questions **the LLM did not improve accuracy**, and the model on its own misread questions.
+**v0.1 (2026-10-09).** In one line: **a rule-based financial comparison tool, plus an experiment in cross-checking it with an LLM.** Two pre-registered evaluations were run:
+
+| Evaluation | Questions | Official verdict | Product's wrong figures | Solved (product / rules only) | LLM: wrong answers prevented / answers lost |
+|---|---|---|---|---|---|
+| 3-1 sealed | 36 written by people | **criteria not met** (a scorer mismatch in a comparison method) | 0 of 22 figure answers | 22/23 / **23/23** | 0 / 1 |
+| 3-5 large template | 600 generated from templates | **criteria met** (with the scorer fixed after 3-1) | 0 of 419 figure answers | 419/480 / **476/480** | 0 / **62** |
+
+- In both, the product gave **no wrong figure**.
+- **The keyword rules alone solved more.** The LLM cross-check prevented no wrong answer and, through misreadings and output-limit stops, lost answerable questions.
+- Both use four companies, and the 3-5 questions are template-generated; neither is a general accuracy figure.
 
 `dart_review/` in v0.1.0 is identical to the frozen commit P (`c182075`) that was evaluated. v0.1.1 changes wording only: tool notes and reasons are shown in the polite style, and the account clarifying question no longer assumes a comparison. No status or figure changed; the replay test checks this against the saved runs.
 
@@ -48,6 +53,30 @@ $ python -m dart_review demo        # no API key, no model server, no network
   - So the rules getting everything right says more about the questions staying inside the rules' range than about the rules being strong.
 
 Full report (Korean): [eval/sealed_3-1/REPORT.md](eval/sealed_3-1/REPORT.md). Contract: [docs/EVAL_CONTRACT_3-1.ko.md](docs/EVAL_CONTRACT_3-1.ko.md).
+
+## Large template evaluation (3-5, pre-registered)
+
+- **Method:** 600 questions about the same four companies, generated from fixed templates. This evaluation was committed to before 3-1's results were known.
+  - Generation: every company x basis x account x period combination was listed, and the questions were drawn with a fixed seed.
+  - Composition: 480 answerable questions (lookups, prior-year comparisons, balance-sheet comparisons across two reports, consolidated vs separate) and 120 traps (fourth-quarter three months, quarterly cash flow, 2014, out of scope, ambiguous, compound).
+  - Pre-registration: the questions, gold answers, criteria, and product v0.1.1 were committed before the runs, after a Codex review.
+
+| Criterion | Cross-check (product) | Met |
+|---|---|---|
+| Wrong figure answers 0 | **0** (419 figure answers) | yes |
+| Solved ≥ 80% | 419/480 = 87.3% | yes |
+| Traps ≥ 90% | 112/120 = 93.3% | yes |
+| Ungrounded numbers 0 | 0 | yes |
+
+- **The verdict depends on a scorer fix.** With the 3-1 scorer, the reading years shown in 8 clarifying questions would count as ungrounded numbers, and the criteria would not be met. The fix corrects the mismatch found in 3-1; it was written into the contract, reviewed, and pre-registered before the 3-5 runs.
+- **Rules only:** 476/480 (99.2%), no wrong figure. The four failures are Emart's non-standard cash-flow rows.
+- **LLM:** 0 wrong answers prevented, 62 answers lost.
+  - 37 unnecessary clarifications: quarter ends read as three months (16), the company written in English (13), annual flows read as year-end values (5), and others.
+  - 24 withheld answers after the model hit its output limit.
+- **Reference error-rate figure:** 0 wrong among 419 figure answers (all distinct cells) gives about 0.71%. This assumes independent trials, so it is not a strict upper bound.
+- **Product defects found (not fixed during the evaluation):** company names in the model's reading are not normalized; a non-standard account name is unknown, and the answer then wrongly says there is no data; unknown companies are not refused as out of scope.
+
+Full report (Korean): [eval/template_3-5/REPORT.md](eval/template_3-5/REPORT.md). Contract: [docs/EVAL_CONTRACT_3-5.ko.md](docs/EVAL_CONTRACT_3-5.ko.md).
 
 ## What it does
 
@@ -133,7 +162,8 @@ The design was chosen on 13 development questions plus 13 paraphrases ([report](
 - Human review is a first pass by Claude confirmed by the user; there is no independent third reviewer.
 - The local model is not deterministic even at temperature 0.
 - Not covered: financial companies' statements, questions about several companies or accounts at once, explaining *why* a figure changed.
-- The next evaluation is a large template evaluation, committed to before the results were known (contract section 11). The scorer's reading-year mismatch is fixed from that evaluation on.
+- The 3-5 questions are mechanical. Its human review covered all failures and a sample of 60 passed answers.
+- Next is fixing the defects 3-5 found. A fixed version is to be measured on new questions, not on ones whose results have been seen.
 
 ## Quick start
 

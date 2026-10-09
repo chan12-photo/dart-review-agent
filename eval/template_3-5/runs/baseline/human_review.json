@@ -1,6 +1,6 @@
 {
  "reviewer": "Claude (1차, 2026-10-09)",
- "confirmed_by_user": false,
+ "confirmed_by_user": true,
  "criteria": "eval/HUMAN_REVIEW.ko.md",
  "cases": {
   "A1-027": {
@@ -172,5 +172,6 @@
    "crosscheck": 40,
    "baseline": 20
   }
- }
+ },
+ "confirmed_on": "2026-10-09"
 }

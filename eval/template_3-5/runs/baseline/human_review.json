@@ -1,168 +1,168 @@
 {
- "reviewer": "",
+ "reviewer": "Claude (1차, 2026-10-09)",
  "confirmed_by_user": false,
  "criteria": "eval/HUMAN_REVIEW.ko.md",
  "cases": {
   "A1-027": {
-   "body_ok": null,
+   "body_ok": true,
    "failure_kind": null,
-   "note": "",
+   "note": "표본 검토: 회사·기준·계정·기간 종류·금액의 기간 배치·방향이 정답과 같고 원인 단정 없음",
    "accepted_unparsed": []
   },
   "A1-038": {
-   "body_ok": null,
-   "failure_kind": null,
-   "note": "",
+   "body_ok": false,
+   "failure_kind": "설명",
+   "note": "비표준 행(이마트 영업활동현금흐름): 원본에 값이 있는데 'OpenDART가 제공하지 않아 자료가 없는 것'이라고 말함. 공통 4번(데이터 없음은 실제로 자료가 없을 때)에 어긋나는 사실과 다른 설명. 상태로도 잘못된 거절",
    "accepted_unparsed": []
   },
   "A1-045": {
-   "body_ok": null,
+   "body_ok": true,
    "failure_kind": null,
-   "note": "",
+   "note": "표본 검토: 회사·기준·계정·기간 종류·금액의 기간 배치·방향이 정답과 같고 원인 단정 없음. (문구) 재작성 이유 문장에 반말이 섞임: v0.1.x 후보",
    "accepted_unparsed": []
   },
   "A1-047": {
-   "body_ok": null,
+   "body_ok": true,
    "failure_kind": null,
-   "note": "",
+   "note": "표본 검토: 회사·기준·계정·기간 종류·금액의 기간 배치·방향이 정답과 같고 원인 단정 없음",
    "accepted_unparsed": []
   },
   "A2-026": {
-   "body_ok": null,
+   "body_ok": true,
    "failure_kind": null,
-   "note": "",
+   "note": "표본 검토: 회사·기준·계정·기간 종류·금액의 기간 배치·방향이 정답과 같고 원인 단정 없음",
    "accepted_unparsed": []
   },
   "A2-032": {
-   "body_ok": null,
-   "failure_kind": null,
-   "note": "",
+   "body_ok": false,
+   "failure_kind": "설명",
+   "note": "비표준 행(이마트 영업활동현금흐름): 원본에 값이 있는데 'OpenDART가 제공하지 않아 자료가 없는 것'이라고 말함. 공통 4번(데이터 없음은 실제로 자료가 없을 때)에 어긋나는 사실과 다른 설명. 상태로도 잘못된 거절",
    "accepted_unparsed": []
   },
   "A3-040": {
-   "body_ok": null,
+   "body_ok": true,
    "failure_kind": null,
-   "note": "",
+   "note": "표본 검토: 회사·기준·계정·기간 종류·금액의 기간 배치·방향이 정답과 같고 원인 단정 없음",
    "accepted_unparsed": []
   },
   "A5-026": {
-   "body_ok": null,
+   "body_ok": true,
    "failure_kind": null,
-   "note": "",
+   "note": "표본 검토: 회사·기준·계정·기간 종류·금액의 기간 배치·방향이 정답과 같고 원인 단정 없음",
    "accepted_unparsed": []
   },
   "A5-043": {
-   "body_ok": null,
-   "failure_kind": null,
-   "note": "",
+   "body_ok": false,
+   "failure_kind": "설명",
+   "note": "비표준 행(이마트 영업활동현금흐름): 원본에 값이 있는데 'OpenDART가 제공하지 않아 자료가 없는 것'이라고 말함. 공통 4번(데이터 없음은 실제로 자료가 없을 때)에 어긋나는 사실과 다른 설명. 상태로도 잘못된 거절",
    "accepted_unparsed": []
   },
   "A5-053": {
-   "body_ok": null,
+   "body_ok": true,
    "failure_kind": null,
-   "note": "",
+   "note": "표본 검토: 회사·기준·계정·기간 종류·금액의 기간 배치·방향이 정답과 같고 원인 단정 없음",
    "accepted_unparsed": []
   },
   "A5-054": {
-   "body_ok": null,
+   "body_ok": true,
    "failure_kind": null,
-   "note": "",
+   "note": "표본 검토: 회사·기준·계정·기간 종류·금액의 기간 배치·방향이 정답과 같고 원인 단정 없음",
    "accepted_unparsed": []
   },
   "A5-060": {
-   "body_ok": null,
+   "body_ok": true,
    "failure_kind": null,
-   "note": "",
+   "note": "표본 검토: 회사·기준·계정·기간 종류·금액의 기간 배치·방향이 정답과 같고 원인 단정 없음",
    "accepted_unparsed": []
   },
   "A6-011": {
-   "body_ok": null,
+   "body_ok": true,
    "failure_kind": null,
-   "note": "",
+   "note": "표본 검토: 회사·기준·계정·기간 종류·금액의 기간 배치·방향이 정답과 같고 원인 단정 없음",
    "accepted_unparsed": []
   },
   "A6-064": {
-   "body_ok": null,
+   "body_ok": true,
    "failure_kind": null,
-   "note": "",
+   "note": "표본 검토: 회사·기준·계정·기간 종류·금액의 기간 배치·방향이 정답과 같고 원인 단정 없음",
    "accepted_unparsed": []
   },
   "A6-065": {
-   "body_ok": null,
+   "body_ok": true,
    "failure_kind": null,
-   "note": "",
+   "note": "표본 검토: 회사·기준·계정·기간 종류·금액의 기간 배치·방향이 정답과 같고 원인 단정 없음",
    "accepted_unparsed": []
   },
   "A7-014": {
-   "body_ok": null,
+   "body_ok": true,
    "failure_kind": null,
-   "note": "",
+   "note": "표본 검토: 회사·기준·계정·기간 종류·금액의 기간 배치·방향이 정답과 같고 원인 단정 없음. (문구) 재작성 이유 문장에 반말이 섞임: v0.1.x 후보",
    "accepted_unparsed": []
   },
   "A7-034": {
-   "body_ok": null,
+   "body_ok": true,
    "failure_kind": null,
-   "note": "",
+   "note": "표본 검토: 회사·기준·계정·기간 종류·금액의 기간 배치·방향이 정답과 같고 원인 단정 없음",
    "accepted_unparsed": []
   },
   "A8-009": {
-   "body_ok": null,
+   "body_ok": true,
    "failure_kind": null,
-   "note": "",
+   "note": "표본 검토: 회사·기준·계정·기간 종류·금액의 기간 배치·방향이 정답과 같고 원인 단정 없음",
    "accepted_unparsed": []
   },
   "A8-032": {
-   "body_ok": null,
+   "body_ok": true,
    "failure_kind": null,
-   "note": "",
+   "note": "비표준 행: '계정을 찾지 못함'은 사실대로 말함. 상태(데이터 없음)로 잘못된 거절",
    "accepted_unparsed": []
   },
   "A8-051": {
-   "body_ok": null,
+   "body_ok": true,
    "failure_kind": null,
-   "note": "",
+   "note": "표본 검토: 회사·기준·계정·기간 종류·금액의 기간 배치·방향이 정답과 같고 원인 단정 없음",
    "accepted_unparsed": []
   },
   "A8-052": {
-   "body_ok": null,
+   "body_ok": true,
    "failure_kind": null,
-   "note": "",
+   "note": "표본 검토: 회사·기준·계정·기간 종류·금액의 기간 배치·방향이 정답과 같고 원인 단정 없음",
    "accepted_unparsed": []
   },
   "B2-007": {
-   "body_ok": null,
+   "body_ok": true,
    "failure_kind": null,
-   "note": "",
+   "note": "표본 검토: 회사·기준·계정·기간 종류·금액의 기간 배치·방향이 정답과 같고 원인 단정 없음",
    "accepted_unparsed": []
   },
   "B5-007": {
-   "body_ok": null,
+   "body_ok": true,
    "failure_kind": null,
-   "note": "",
+   "note": "보여 준 본문 없음: no successful tool result to answer from. 결과 칸은 보류·무응답",
    "accepted_unparsed": []
   },
   "B5-008": {
-   "body_ok": null,
+   "body_ok": true,
    "failure_kind": null,
-   "note": "",
+   "note": "보여 준 본문 없음: no successful tool result to answer from. 결과 칸은 보류·무응답",
    "accepted_unparsed": []
   },
   "B5-015": {
-   "body_ok": null,
+   "body_ok": true,
    "failure_kind": null,
-   "note": "",
+   "note": "보여 준 본문 없음: no successful tool result to answer from. 결과 칸은 보류·무응답",
    "accepted_unparsed": []
   },
   "B7-004": {
-   "body_ok": null,
+   "body_ok": true,
    "failure_kind": null,
-   "note": "",
+   "note": "표본 검토: 회사·기준·계정·기간 종류·금액의 기간 배치·방향이 정답과 같고 원인 단정 없음. (문구) 조사 'LG'은: v0.1.x 후보",
    "accepted_unparsed": []
   },
   "B8-002": {
-   "body_ok": null,
+   "body_ok": true,
    "failure_kind": null,
-   "note": "",
+   "note": "표본 검토: 회사·기준·계정·기간 종류·금액의 기간 배치·방향이 정답과 같고 원인 단정 없음",
    "accepted_unparsed": []
   }
  },

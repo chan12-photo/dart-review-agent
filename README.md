@@ -15,6 +15,15 @@ A local tool that **looks up and compares** financial figures of Korean listed c
 
 `dart_review/` in v0.1.0 is identical to the frozen commit P (`c182075`) that was evaluated. v0.1.1 changes wording only: tool notes and reasons are shown in the polite style, and the account clarifying question no longer assumes a comparison. No status or figure changed; the replay test checks this against the saved runs.
 
+**v0.1.2** fixes the product defects 3-5 found:
+- an official English company name in the model's reading is mapped to the registered Korean name (corpCode.xml);
+- an unknown company written in the question is refused as out of scope;
+- two refusals agree;
+- a row that is not found gives a figure-free "확인 필요" instead of "no data";
+- one non-standard account name is added, and two wordings are fixed.
+
+Replaying the recorded 3-5 model replies, 22 questions improve and none gets worse. Those questions have been seen, so this is not an evaluation result; v0.1.2 is to be measured on new questions.
+
 ```text
 $ python -m dart_review demo        # no API key, no model server, no network
 ## 삼성전자 매출액

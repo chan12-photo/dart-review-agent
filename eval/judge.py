@@ -127,6 +127,10 @@ def outcome(case: dict[str, Any], gold: dict[str, Any], passed: bool, failure_ki
     if status in ANSWER_STATUSES:
         if passed:
             return "정답 제공"
+        if status == "확인 필요" and not answer.get("values") and answer.get("change") is None:
+            # v0.1.2: a 확인 필요 that shows no figure (the row was not found, or several candidates) is not a figure
+            # answer; when it is wrong it holds the answer back
+            return "보류·무응답"
         if failure_kind == "설명" and case["score"].get("automatic_passed"):
             return "설명 실패"
         return "잘못된 수치 답"

@@ -39,7 +39,7 @@ from typing import Any, Callable
 
 from .accounts import ACCOUNTS
 from .baseline import Reading, default_year_note, latest_annual_year, read
-from .company_names import resolve_company
+from .company_names import korean_name, normalize_company, resolve_company
 from .companies import supported_companies
 from .numbers import allowed_from, check_text, question_years, ungrounded
 from .render import (
@@ -139,7 +139,8 @@ def _corp(name: Any) -> str | None:
     return match.corp_code if match and match.kind == "company" else None
 
 
-def canonical(kind: str, arguments: dict[str, Any] | None, company: str, options: Any = ()) -> tuple | None:
+def canonical(kind: str, arguments: dict[str, Any] | None, company: str, options: Any = (),
+              question: str | None = None) -> tuple | None:
     """A comparable form of a reading, or None when it is not usable.
 
     Two clarifying readings agree only when they offer the same candidate
@@ -147,8 +148,16 @@ def canonical(kind: str, arguments: dict[str, Any] | None, company: str, options
     not compared (review B5).
     """
     match = resolve_company(company) if isinstance(company, str) else None
-    if match is None or match.kind == "none":
+    if match is None:
         return None
+    if match.kind == "none":
+        # v0.1.2: a refusal without a company still refuses; a company the product does not know is out of scope
+        if kind == "unsupported" and not company.strip():
+            return ("unsupported", None)
+        # a company name the user wrote (it is in the question) that the product does not know is out of scope;
+        # anything else the model put there is not a usable reading
+        written = question is not None and company.strip() and normalize_company(company) in normalize_company(question)
+        return ("unsupported", "company") if written else None
     if match.kind == "group":
         return ("clarify_company", match.name)
     if match.kind != "company":
@@ -178,8 +187,14 @@ def canonical(kind: str, arguments: dict[str, Any] | None, company: str, options
     return ("compare", corp, arguments["basis"], arguments["account"], current, base)
 
 
+def same_reading(rule_key: tuple, model_key: tuple) -> bool:
+    """Two usable readings agree when equal, or when both refuse (EVAL_DESIGN 11.1: a refusal is final only
+    when both readers refuse); the refusal then states the rules' reason, which names its scope (v0.1.2)."""
+    return rule_key == model_key or (rule_key[0] == "unsupported" and model_key[0] == "unsupported")
+
+
 def model_to_reading(data: dict[str, Any]) -> Reading:
-    company = data["company"]
+    company = korean_name(data["company"])  # an official English name as the registered Korean one (v0.1.2)
     if data["action"] == "unsupported":
         return Reading("unsupported", {}, company)
     if data["action"] == "clarify":
@@ -297,10 +312,12 @@ def crosscheck_turn(question: str, client: Any, record: dict[str, Any], ask: Cal
             model = model_to_reading(data)
             readings["model"] = {"kind": model.kind, "company": model.company, "arguments": model.arguments,
                                  "options": list(model.options)}
+            if model.company != data["company"]:
+                readings["model"]["company_as_written"] = data["company"]
         except ReadingError as exc:
             readings["model_error"] = str(exc)
     rule_key = canonical(rule.kind, rule.arguments, rule.company, rule.options) if rule.kind != "unreadable" else None
-    model_key = canonical(model.kind, model.arguments, model.company, model.options) if model else None
+    model_key = canonical(model.kind, model.arguments, model.company, model.options, question) if model else None
     readings["rule_key"], readings["model_key"] = rule_key, model_key
     if not use_rules:
         rule_key = None  # recorded above, not used to decide
@@ -313,7 +330,7 @@ def crosscheck_turn(question: str, client: Any, record: dict[str, Any], ask: Cal
         chosen, readings["used"] = rule, "rules only (--no-model)"
         note = "참고: 모델 없이(--no-model) 규칙 해석 하나로만 확인한 답입니다"
     elif rule_key and model_key:
-        readings["agree"] = rule_key == model_key
+        readings["agree"] = same_reading(rule_key, model_key)
         if not readings["agree"]:
             readings["used"] = "neither (asked back)"
             # the question names the model's periods: check it too (review B6/C2), with only
@@ -336,7 +353,7 @@ def crosscheck_turn(question: str, client: Any, record: dict[str, Any], ask: Cal
         return
     elif model_key:
         chosen, readings["used"] = model, "model only"
-        header = f"이렇게 이해했습니다: {describe(model)}."
+        header = f"이렇게 이해했습니다: {describe(model, with_company=model_key == ('unsupported', 'company'))}."
         record["proposed_years"] = sorted(candidate_years(model))
     else:
         readings["used"] = "none"

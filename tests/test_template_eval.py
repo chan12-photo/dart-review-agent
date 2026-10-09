@@ -20,7 +20,7 @@ import build_template_questions as generator  # noqa: E402
 import finalize  # noqa: E402
 import judge  # noqa: E402
 import run_eval  # noqa: E402
-from build_gold import GoldError  # noqa: E402
+from build_gold import GoldError, no_key  # noqa: E402
 from dart_review.accounts import ACCOUNTS  # noqa: E402
 from dart_review.companies import SEALED_EVAL_COMPANIES  # noqa: E402
 
@@ -279,8 +279,13 @@ class GeneratedFilesTests(unittest.TestCase):
     def test_the_generator_reproduces_the_committed_files(self):
         self.assertEqual(generator.main(["--check"]), 0)
 
-    def test_the_gold_is_up_to_date_and_every_disagreement_recorded(self):
-        self.assertEqual(gold_rules.main(["--check"]), 0)
+    def test_the_gold_is_up_to_date(self):
+        # the disagreement record compares the gold with the product evaluated in 3-5 (P3, v0.1.1); it is a record
+        # of that version and is not rebuilt for later product versions. The gold itself is independent of them.
+        document, _ = gold_rules.build(gold_rules.DartClient(gold_rules.ResponseCache(gold_rules.CACHE),
+                                                             key_loader=no_key, offline=True),
+                                       json.loads(gold_rules.QUESTIONS.read_text(encoding="utf-8")))
+        self.assertEqual(json.dumps(document, ensure_ascii=False, indent=1) + "\n", gold_rules.GOLD.read_text(encoding="utf-8"))
 
 
 if __name__ == "__main__":

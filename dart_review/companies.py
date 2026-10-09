@@ -18,6 +18,17 @@ SEALED_EVAL_COMPANIES = {
     "00872984": "이마트",
     "01515323": "LG에너지솔루션",
 }
+# Official English names in OpenDART's corpCode.xml (corp_eng_name), checked against the cache by
+# tests/test_company_names.py. A model may write a company in English; this maps it back (v0.1.2).
+ENGLISH_NAMES = {
+    "00126380": "SAMSUNG ELECTRONICS CO,.LTD",
+    "00258801": "Kakao Corp.",
+    "00413046": "Celltrion, Inc.",
+    "00266961": "NAVER Corporation",
+    "00635134": "CJ CHEILJEDANG CORP.",
+    "00872984": "E-MART Inc.",
+    "01515323": "LG ENERGY SOLUTION, LTD.",
+}
 REPORT_CODES = {"11013": "1분기보고서", "11012": "반기보고서", "11014": "3분기보고서", "11011": "사업보고서"}
 FS_DIVS = {"CFS": "연결", "OFS": "별도"}
 

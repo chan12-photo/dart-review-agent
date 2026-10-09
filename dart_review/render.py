@@ -11,6 +11,8 @@ as a truncation of the exact amount.
 
 from __future__ import annotations
 
+import re
+
 from datetime import date
 from typing import Any
 
@@ -88,6 +90,8 @@ _POLITE_ENDINGS = (("않았다", "않았습니다"), ("못했다", "못했습니
 
 
 def _polite_clause(text: str) -> str:
+    if text.endswith("니다"):
+        return text  # already polite (v0.1.2: never "…습니입니다")
     for terse, polite_form in _POLITE_ENDINGS:
         if text.endswith(terse):
             return text[: -len(terse)] + polite_form
@@ -97,8 +101,13 @@ def _polite_clause(text: str) -> str:
     return text
 
 
+_TERSE_BEFORE_PAREN = re.compile(r"(\S+다)(?=\()")
+
+
 def polite(text: str) -> str:
-    """One tool note or reason in the polite style of the answer; a trailing "(…)" is converted on its own."""
+    """One tool note or reason in the polite style of the answer; a trailing "(…)" is converted on its own, and so
+    is a terse clause right before "(" inside the text ("…다르다(재작성): …", v0.1.2)."""
+    text = _TERSE_BEFORE_PAREN.sub(lambda match: _polite_clause(match.group(1)), text)
     if text.endswith(")") and " (" in text:
         head, _, inner = text[:-1].rpartition(" (")
         return f"{_polite_clause(head)} ({_polite_clause(inner)})"
@@ -270,18 +279,26 @@ def unsupported_answer(company: str, term: str | None = None, scope: str = "acco
         "accounts": f"{company}: 한 번에 계정 하나만 답합니다(질문한 계정: {term}). 계정을 하나씩 물어봐 주세요.",
         "company": f"{term}: 이 도구가 다루지 않는 회사라 답하지 않습니다. 다룰 수 있는 회사는 {companies}입니다.",
         "companies": f"한 번에 회사 하나만 답합니다(질문한 회사: {term}). 회사를 하나씩 물어봐 주세요.",
-        "any": f"{company}: 이 도구가 다루는 범위(회사 하나, 계정 하나: {SUPPORTED_ACCOUNTS}) 밖의 질문이라 답하지 않습니다.",
+        "any": (f"{company}: " if company else "") + f"이 도구가 다루는 범위(회사 하나, 계정 하나: {SUPPORTED_ACCOUNTS}) 밖의 질문이라 답하지 않습니다.",
     }[scope if term or scope == "any" else "any"]
     shown = term if scope in ("company", "companies") and term else company
     return {"status": "범위 밖", "company": shown, "account": None, "values": [], "change": None, "change_pct": None,
             "answer": text, "clarifying_question": None}
 
 
+def _topic_particle(word: str) -> str:
+    """은 or 는 after ``word`` as read aloud: a Hangul final consonant, or a Latin letter or digit read with one."""
+    last = word.strip()[-1:] or "가"
+    if "가" <= last <= "힣":
+        return "은" if (ord(last) - 0xAC00) % 28 else "는"
+    return "은" if last.upper() in "LMNR" or last in "0136780" else "는"  # 엘, 엠, 엔, 알; 영, 일, 삼, 육, 칠, 팔
+
+
 def company_clarification_answer(group: str, candidates: list[str]) -> dict[str, Any]:
     """Ask which company a group name means (EVAL_DESIGN 12.3)."""
     from .companies import supported_companies
     offer = f"말씀하신 회사가 {candidates[0]}인가요?" if len(candidates) == 1 else f"{', '.join(candidates)} 중 어느 회사인가요?"
-    question = f"'{group}'은 여러 회사를 뜻할 수 있습니다. {offer} 다룰 수 있는 회사는 {', '.join(supported_companies().values())}입니다."
+    question = f"'{group}'{_topic_particle(group)} 여러 회사를 뜻할 수 있습니다. {offer} 다룰 수 있는 회사는 {', '.join(supported_companies().values())}입니다."
     return {"status": "되묻기", "company": group, "account": None, "values": [], "change": None, "change_pct": None,
             "answer": "회사를 먼저 확인하겠습니다. " + question, "clarifying_question": question}
 

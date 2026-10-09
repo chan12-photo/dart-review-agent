@@ -15,7 +15,7 @@ from .client import DartAPIError, DartClient, DartTransportError, NotCached
 from .client import NO_DATA as NO_DATA_STATUS
 from .company_names import resolve_company
 from .companies import REPORT_CODES, supported_companies
-from .compare import NEEDS_REVIEW, NO_DATA, NOT_COMPARABLE, Comparison, compare, find_restatements
+from .compare import NEEDS_REVIEW, NO_DATA, NOT_COMPARABLE, Comparison, compare, find_restatements, missing_result
 from .facts import Fact, fact_from_response, is_ambiguous
 from .periods import Period, PeriodNotProvided, Source, column_periods, instant, own_source, quarter, year_to_date
 from .review import review_change
@@ -148,8 +148,9 @@ def side_by_side(client: DartClient, company: Any, account: Any, period: Any) ->
     facts = [fact_from_response(client.financial_statements(corp_code, source.year, source.report_code, code),
                                 key, source.column) for code in ("CFS", "OFS")]
     if not all(fact.available for fact in facts):
-        reasons = [note for fact in facts if not fact.available for note in fact.notes]
-        return {**output, "status": NO_DATA, "reasons": reasons, "values": [fact_dict(f) for f in facts], "difference": None}
+        status, reasons = missing_result(facts)
+        return {**output, "status": status, "reasons": list(reasons), "values": [fact_dict(f) for f in facts],
+                "difference": None}
     # the rules refuse a CFS/OFS change; the plain scope difference needs the
     # same company, account, period, and a confirmed common currency
     rule = compare(facts[0], facts[1])
@@ -198,7 +199,8 @@ def lookup_value(client: DartClient, company: Any, basis: Any, account: Any, per
     if is_ambiguous(fact):
         return {**output, "status": NEEDS_REVIEW, "reasons": list(fact.notes)}
     if not fact.available:
-        return {**output, "status": NO_DATA, "reasons": list(fact.notes) or [f"{wanted.label()} 값이 없다"]}
+        status, reasons = missing_result([fact])
+        return {**output, "status": status, "reasons": list(reasons)}
     reasons = [note for note in fact.notes if fact.resolved_by == NAME_CONFLICT]
     notes = [note for note in fact.notes if fact.resolved_by != NAME_CONFLICT]
     if not fact.currency:

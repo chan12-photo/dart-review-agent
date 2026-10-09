@@ -4,7 +4,9 @@ Statuses (docs/SCOPE.ko.md section 3), checked in this order:
 - 비교 불가: different company, account, consolidated/separate basis, period
   kind or length, or a known currency mismatch. Never computed.
 - 확인 필요 (no change computed): the account matched more than one row.
-- 데이터 없음: a value is missing (no report, no row, or an empty column).
+- 데이터 없음: OpenDART has no report for the period (status 013).
+- 확인 필요 (no figures): the report exists but the account's row was not found or its cell is empty; the
+  value may be filed under another name, so "no data" would be a claim the tool cannot make (v0.1.2).
 - 확인 필요 (change computed, with the reasons): something the comparison
   depends on could not be confirmed. The two values come from different
   reports and the check of a shared basis found a restatement or could not be
@@ -127,6 +129,19 @@ def basis_review(current: Fact, base: Fact, check: BasisCheck | None) -> tuple[l
     return [], notes + list(check.gaps)
 
 
+NOT_FOUND_REASON = "보고서는 있지만 이 계정의 값을 찾지 못했다 (다른 계정명으로 실려 있을 수 있다)"
+
+
+def missing_result(facts: Iterable[Fact]) -> tuple[str, tuple[str, ...]]:
+    """The status and reasons when a value is missing: 데이터 없음 only when every missing value's report is
+    absent from OpenDART (013); otherwise 확인 필요, saying the row was not found (EVAL 3-5 report, v0.1.2)."""
+    missing = [fact for fact in facts if not fact.available]
+    reasons = tuple(dict.fromkeys(note for fact in missing for note in (fact.notes or (f"{fact.period.label()} 값이 없다",))))
+    if all(fact.resolved_by == "no_data" for fact in missing):
+        return NO_DATA, reasons
+    return NEEDS_REVIEW, reasons + (NOT_FOUND_REASON,)
+
+
 def compare(current: Fact | None, base: Fact | None, check: BasisCheck | None = None) -> Comparison:
     """Compare ``current`` with the earlier ``base``.
 
@@ -142,10 +157,9 @@ def compare(current: Fact | None, base: Fact | None, check: BasisCheck | None = 
     ambiguous = [note for fact in (current, base) if is_ambiguous(fact) for note in fact.notes]
     if ambiguous:
         return Comparison(NEEDS_REVIEW, tuple(ambiguous), (), current, base)
-    missing = [note for fact in (current, base) if not fact.available
-               for note in (fact.notes or (f"{fact.period.label()} 값이 없다",))]
-    if missing:
-        return Comparison(NO_DATA, tuple(dict.fromkeys(missing)), (), current, base)
+    if not (current.available and base.available):
+        status, reasons = missing_result([current, base])
+        return Comparison(status, reasons, (), current, base)
     review = [note for fact in (current, base) if fact.resolved_by == NAME_CONFLICT for note in fact.notes]
     notes = [note for fact in (current, base) if fact.resolved_by != NAME_CONFLICT for note in fact.notes]
     if NAME in (current.resolved_by, base.resolved_by):

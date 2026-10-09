@@ -22,6 +22,9 @@ Two parts:
     python eval/build_template_gold.py          # write gold.json and gold_disagreements.json
     python eval/build_template_gold.py --check  # fail if either committed file is stale
 
+The disagreement record compares the gold with the product evaluated in 3-5 (P3, v0.1.1). It is a record of
+that version: with a later product, --check reports the disagreements as differing, by design.
+
 Shared with the product: the cache and client, company names, account labels
 and the product's account-name list (extended by the gold name table).
 """

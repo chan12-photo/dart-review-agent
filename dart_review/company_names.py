@@ -25,6 +25,30 @@ def normalize_company(text: str) -> str:
     return re.sub(r"\s+", "", text).casefold()
 
 
+_LEGAL_FORMS = re.compile(r"\b(co|corp|corporation|inc|incorporated|ltd|limited|company)\b")
+
+
+def _english_key(text: str) -> str:
+    """An English company name as compared: case-folded, legal-form words, punctuation, and spaces removed."""
+    text = re.sub(r"[^a-z0-9 ]", " ", (text or "").casefold())
+    return re.sub(r"\s+", "", _LEGAL_FORMS.sub(" ", text))
+
+
+def korean_name(text: str) -> str:
+    """The Korean registered name for an official English name written alone ("LG Energy Solution"), else ``text``.
+
+    Only a whole official name counts, not an abbreviation: a model's reading is mapped back so that the same
+    company is not taken for two (EVAL 3-5 report, v0.1.2). A question's text is not rewritten.
+    """
+    from .companies import DEV_COMPANIES, ENGLISH_NAMES, SEALED_EVAL_COMPANIES
+    key = _english_key(text)
+    names = {**DEV_COMPANIES, **SEALED_EVAL_COMPANIES}
+    for corp_code, english in ENGLISH_NAMES.items():
+        if key and key == _english_key(english):
+            return names[corp_code]
+    return text
+
+
 @dataclass(frozen=True)
 class CompanyMatch:
     kind: str  # "company", "sealed", "unsupported", "group", "several", or "none"

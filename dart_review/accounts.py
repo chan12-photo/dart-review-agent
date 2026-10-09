@@ -56,7 +56,8 @@ ACCOUNTS = {
                 ("당기순이익", "당기순이익(손실)", "연결당기순이익", "반기순이익", "분기순이익",
                  "분기순이익(손실)"), profit_like=True),
         Account("operating_cash_flow", "영업활동현금흐름", "ifrs-full_CashFlowsFromUsedInOperatingActivities", ("CF",),
-                ("영업활동현금흐름", "영업활동으로인한현금흐름")),
+                # the last name: Emart's rows without a standard id in 2022-2023 (EVAL 3-5 report, v0.1.2)
+                ("영업활동현금흐름", "영업활동으로인한현금흐름", "영업활동으로부터의순현금유입")),
         Account("total_assets", "자산총계", "ifrs-full_Assets", ("BS",), ("자산총계",)),
         Account("total_liabilities", "부채총계", "ifrs-full_Liabilities", ("BS",), ("부채총계",)),
     )

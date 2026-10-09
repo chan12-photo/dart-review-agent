@@ -4,13 +4,13 @@ A local tool that **looks up and compares** financial figures of Korean listed c
 
 **v0.1 (2026-10-09).** In one line: **a rule-based financial comparison tool, plus an experiment in cross-checking it with an LLM.** Two pre-registered evaluations were run:
 
-| Evaluation | Questions | Official verdict | Product's wrong figures | Solved (product / rules only) | LLM: wrong answers prevented / answers lost |
+| Evaluation | Questions | Official verdict | Product's wrong figures | Solved (product / rules only) | LLM: wrong figures prevented / answers lost |
 |---|---|---|---|---|---|
 | 3-1 sealed | 36 written by people | **criteria not met** (a scorer mismatch in a comparison method) | 0 of 22 figure answers | 22/23 / **23/23** | 0 / 1 |
-| 3-5 large template | 600 generated from templates | **criteria met** (with the scorer fixed after 3-1) | 0 of 419 figure answers | 419/480 / **476/480** | 0 / **62** |
+| 3-5 large template | 600 generated from templates | **criteria met** (with the scorer fixed after 3-1 and the run-commit condition relaxed after the runs, P5) | 0 of 419 figure answers | 419/480 / **476/480** | 0 / **62** (57 answerable, 5 traps) |
 
 - In both, the product gave **no wrong figure**.
-- **The keyword rules alone solved more.** The LLM cross-check prevented no wrong answer and, through misreadings and output-limit stops, lost answerable questions.
+- **The keyword rules alone solved more.** The LLM cross-check prevented no wrong figure and, through misreadings and output-limit stops, lost questions that were otherwise handled correctly.
 - Both use four companies, and the 3-5 questions are template-generated; neither is a general accuracy figure.
 
 `dart_review/` in v0.1.0 is identical to the frozen commit P (`c182075`) that was evaluated. v0.1.1 changes wording only: tool notes and reasons are shown in the polite style, and the account clarifying question no longer assumes a comparison. No status or figure changed; the replay test checks this against the saved runs.
@@ -42,7 +42,7 @@ $ python -m dart_review demo        # no API key, no model server, no network
   - All four criteria on the product were met: 0 wrong figures, 22/23 solved (criterion ≥ 70%), 4.3% unnecessary-clarification cost (criterion ≤ 25%), 10/10 on out-of-scope and ambiguous questions.
   - The miss came from the "model reading only" comparison method. It prefixes answers with "이렇게 이해했습니다: …2025년…" ("Here is how I read it"), and the frozen scorer counted that year as an ungrounded number.
   - This is a mismatch between the product design (reading years are allowed) and the scorer. Two independent reviews before the run did not catch it. The scorer was not changed after the run; the result with the year allowed is reported only as a sensitivity check.
-- **On these 36 questions the LLM added nothing.** Rules wrong and model right: 0. Wrong answers the cross-check prevented: 0. Instead, a model misreading (revenue read as a point-in-time value) turned one answerable question into a clarifying question.
+- **On these 36 questions the LLM added nothing.** Rules wrong and model right: 0. Wrong figures the cross-check prevented: 0. Instead, a model misreading (revenue read as a point-in-time value) turned one answerable question into a clarifying question.
 - **What happened when the model read alone:**
   - it refused answerable questions after misreading the period or the account;
   - it gave a wrong reason for a refusal ("unsupported company" when the question named several companies);
@@ -69,11 +69,12 @@ Full report (Korean): [eval/sealed_3-1/REPORT.md](eval/sealed_3-1/REPORT.md). Co
 | Ungrounded numbers 0 | 0 | yes |
 
 - **The verdict depends on a scorer fix.** With the 3-1 scorer, the reading years shown in 8 clarifying questions would count as ungrounded numbers, and the criteria would not be met. The fix corrects the mismatch found in 3-1; it was written into the contract, reviewed, and pre-registered before the 3-5 runs.
+- **A verdict condition was also relaxed after the runs (P5).** The contract commits each run before the next, but the judge required both runs to come from one commit. It now treats commits that differ only by run records as the same code. Without P5 the verdict would have been "suspended". Scores and thresholds are unchanged.
 - **Rules only:** 476/480 (99.2%), no wrong figure. The four failures are Emart's non-standard cash-flow rows.
-- **LLM:** 0 wrong answers prevented, 62 answers lost.
-  - 37 unnecessary clarifications: quarter ends read as three months (16), the company written in English (13), annual flows read as year-end values (5), and others.
+- **LLM:** 0 wrong figures prevented, 62 answers lost (57 answerable questions, 5 correctly handled traps).
+  - The two readings differed in 40 questions: quarter ends read as three months (16), the company written in English (14), annual flows read as year-end values (4), a different year (3), a group name taken as one company (2), the ambiguous "이익" taken as one account (1). 37 of them became unnecessary clarifications.
   - 24 withheld answers after the model hit its output limit.
-- **Reference error-rate figure:** 0 wrong among 419 figure answers (all distinct cells) gives about 0.71%. This assumes independent trials, so it is not a strict upper bound.
+- **Reference error-rate figure:** 0 wrong among 419 figure answers gives about 0.71%. This assumes independent trials, so it is not a strict upper bound. The 419 answers referenced raw evidence rows 730 times, 642 distinct rows.
 - **Product defects found (not fixed during the evaluation):** company names in the model's reading are not normalized; a non-standard account name is unknown, and the answer then wrongly says there is no data; unknown companies are not refused as out of scope.
 
 Full report (Korean): [eval/template_3-5/REPORT.md](eval/template_3-5/REPORT.md). Contract: [docs/EVAL_CONTRACT_3-5.ko.md](docs/EVAL_CONTRACT_3-5.ko.md).

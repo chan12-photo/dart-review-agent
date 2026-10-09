@@ -261,6 +261,19 @@ class FixedContractTests(unittest.TestCase):
         self.assertTrue(any("pre-registered" in problem for problem in problems), problems)
 
 
+class PerRunCommitTests(unittest.TestCase):
+    """Amendment P5: the 3-5 runs, committed one by one, differ only by run records."""
+
+    def test_only_run_records_between_the_two_run_commits(self):
+        template = {"question_set": "file:eval/template_3-5/questions.json"}
+        sealed = {"question_set": "file:eval/sealed_3-1/questions.json"}
+        runs = {"baseline": "e1024a2", "crosscheck": "6d238db"}  # R2 and the commit of the baseline run
+        self.assertTrue(judge.only_run_records_between(runs, {mode: template for mode in runs}))
+        self.assertFalse(judge.only_run_records_between({"baseline": "708759a", "crosscheck": "6d238db"},
+                                                        {"baseline": template, "crosscheck": template}))
+        self.assertFalse(judge.only_run_records_between(runs, {mode: sealed for mode in runs}))
+
+
 @unittest.skipUnless(gold_rules.CACHE.exists(), "run scripts/fetch_dev_cache.py first")
 class GeneratedFilesTests(unittest.TestCase):
     def test_the_generator_reproduces_the_committed_files(self):

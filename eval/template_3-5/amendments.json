@@ -1,0 +1,16 @@
+{
+ "about": "Evaluator changes made after the pre-registration R2 (e1024a2). None touches the questions, gold, scoring, or criteria.",
+ "items": [
+  {
+   "id": "P5",
+   "date": "2026-10-09",
+   "made_after": "both runs (baseline 6d238db's run record, cross-check ae82356), before any human review or official verdict",
+   "file": "eval/judge.py",
+   "what": "check_runs accepted only runs from one commit, but contract section 9.1 commits each run before the next, so the two 3-5 runs name e1024a2 and 6d238db. For 3-5 the judge now accepts different run commits when everything between them is under eval/template_3-5/runs/, and compares each run's own commit (not only the cross-check one) with the freeze record.",
+   "why": "a contradiction between the contract's run procedure and the judge, found by the first exploratory judge call; the Codex pre-registration review did not catch it",
+   "alternatives_considered": "re-running the cross-check from one commit (refused: the contract allows re-runs only for infrastructure failures, and the model is not deterministic); reporting the verdict as suspended",
+   "decided_by": "the user, 2026-10-09",
+   "effect_on_scores": "none: outcomes, criteria, and scores are computed exactly as before"
+  }
+ ]
+}

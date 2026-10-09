@@ -35,6 +35,7 @@ from collections import Counter
 import hashlib
 import json
 from pathlib import Path
+import subprocess
 import sys
 from typing import Any
 
@@ -139,6 +140,23 @@ def load_run(folder: Path) -> tuple[dict[str, Any], list[dict[str, Any]]]:
     return meta, [json.loads(line) for line in data.decode("utf-8").splitlines() if line]
 
 
+RUN_RECORDS_3_5 = "eval/template_3-5/runs/"
+
+
+def only_run_records_between(commits: dict[str, str | None], metas: dict[str, dict[str, Any]]) -> bool:
+    """Amendment P5 (EVAL_CONTRACT_3-5 section 9.1, after the runs): the contract commits each run before the next,
+    so the 3-5 runs name different commits. They count as the same code when everything between them is a run
+    record in eval/template_3-5/runs/; each run's commit is still compared with the freeze record."""
+    if {contract_of(meta.get("question_set")) for meta in metas.values()} != {"3-5"} or None in commits.values():
+        return False
+    first, *others = sorted(set(commits.values()))
+    for other in others:
+        result = subprocess.run(["git", "diff", "--name-only", first, other], cwd=ROOT, capture_output=True, text=True)
+        if result.returncode != 0 or any(not path.startswith(RUN_RECORDS_3_5) for path in result.stdout.split()):
+            return False
+    return True
+
+
 def check_runs(runs: dict[str, tuple[dict[str, Any], list[dict[str, Any]]]], gold_ids: list[str]) -> list[str]:
     """Reasons the runs cannot be judged (Codex B10); empty when they can."""
     problems = []
@@ -148,7 +166,7 @@ def check_runs(runs: dict[str, tuple[dict[str, Any], list[dict[str, Any]]]], gol
         if len(set(values.values())) != 1:
             problems.append(f"{key} differs between runs: {values}")
     commits = {mode: (meta.get("git") or {}).get("commit") for mode, meta in metas.items()}
-    if len(set(commits.values())) != 1:
+    if len(set(commits.values())) != 1 and not only_run_records_between(commits, metas):
         problems.append(f"the runs ran different code: {commits}")
     shared = ("questions", "gold", "lookup_questions", "lookup_gold", "set_questions", "set_gold", "reading_prompt",
               "reading_schema", "company_set")
@@ -276,10 +294,11 @@ def check_contract(runs: dict[str, tuple[dict[str, Any], list[dict[str, Any]]]],
                             f"{str(final.get('cases_sha256'))[:12]}) than this one ({run_meta.get('mode')}, "
                             f"{str(run_meta.get('_cases_sha256'))[:12]})")
     if meta.get("company_set") == "sealed-3-1":
-        changed = run_eval.frozen_differences((meta.get("git") or {}).get("commit") or "HEAD",
-                                              freeze=run_eval.freeze_file(question_set))
-        if changed:
-            problems.append(f"the runs' code differs from the freeze commit P: {changed}")
+        for method, (method_meta, _) in runs.items():  # every run's own commit (amendment P5)
+            changed = run_eval.frozen_differences((method_meta.get("git") or {}).get("commit") or "HEAD",
+                                                  freeze=run_eval.freeze_file(question_set))
+            if changed:
+                problems.append(f"{method}: the run's code differs from the freeze commit P: {changed}")
     if contract == "3-5":
         problems += check_fixed_3_5(runs, question_set)
         found35 = Counter(question.get("bundle") for question in questions.values())

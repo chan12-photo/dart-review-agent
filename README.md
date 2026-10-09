@@ -175,6 +175,20 @@ The design was chosen on 13 development questions plus 13 paraphrases ([report](
 - The 3-5 questions are mechanical. Its human review covered all failures and a sample of 60 passed answers.
 - Next is fixing the defects 3-5 found. A fixed version is to be measured on new questions, not on ones whose results have been seen.
 
+## Status and next tasks (2026-10-10)
+
+This repository is closed for now at v0.1.2. Deferred tasks, and when they would be picked up:
+
+| Task | What | Why deferred / when to resume |
+|---|---|---|
+| 3-6 re-evaluation | Measure v0.1.2 on new companies and free-form questions written by people; the 3-1 and 3-5 questions have been seen and are not reused | The two evaluations complete the current claims; to be done together with a policy change |
+| Cross-check policy | Answer with the rules when they read the question; use the LLM only for questions the rules cannot read | In both 3-1 and 3-5 the LLM prevented no wrong figure and only lost answers; decide after comparing on the same questions in 3-6 |
+| Review memo | The comparison as a Markdown memo with sources | Covered first in another project (documents to spreadsheets) |
+| MCP adapter | The same tools from external clients | When there is a client to connect |
+| Reasons for a change (RAG) | Cite sentences from the filings that explain a change | The largest task; needs its own evaluation design |
+
+Details: [docs/ROADMAP.ko.md](docs/ROADMAP.ko.md) (Korean).
+
 ## Quick start
 
 Python 3.10+, standard library only.

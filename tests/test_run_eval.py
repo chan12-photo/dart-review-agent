@@ -1,5 +1,7 @@
 """The evaluation runner with a scripted model (needs the cache; never needs the key or Ollama)."""
 
+from contextlib import redirect_stdout
+import io
 import json
 from pathlib import Path
 import re
@@ -173,7 +175,8 @@ class RunnerTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temp:
             out = Path(temp) / "run"
             with mock.patch.object(run_eval, "run_case", interrupted), self.assertRaises(KeyboardInterrupt):
-                run_eval.main(["--mode", "rules", "--out", str(out)])
+                with redirect_stdout(io.StringIO()):
+                    run_eval.main(["--mode", "rules", "--out", str(out)])
             lines = (out / "cases.jsonl").read_text(encoding="utf-8").splitlines()
             self.assertEqual([json.loads(line)["id"] for line in lines], ["dev01", "dev02"])
             self.assertTrue((out / "run.json").exists())
@@ -181,7 +184,8 @@ class RunnerTests(unittest.TestCase):
     def test_rules_run_writes_every_file(self):
         with tempfile.TemporaryDirectory() as temp:
             out = Path(temp) / "run"
-            self.assertEqual(run_eval.main(["--mode", "rules", "--out", str(out)]), 0)
+            with redirect_stdout(io.StringIO()):
+                self.assertEqual(run_eval.main(["--mode", "rules", "--out", str(out)]), 0)
             self.assertEqual({path.name for path in out.iterdir()},
                              {"run.json", "cases.jsonl", "summary.json", "review_sheet.md", "human_review.json"})
             meta = json.loads((out / "run.json").read_text(encoding="utf-8"))

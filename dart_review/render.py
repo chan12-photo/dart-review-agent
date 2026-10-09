@@ -82,6 +82,37 @@ def _direction_sentence(result: dict[str, Any], base_period: str) -> str:
             "기준 값이 0 이하이거나 부호가 바뀌어 변화율은 계산하지 않습니다.")
 
 
+# Tool notes and reasons are terse data ("…확인하지 않았다"); the visible answer is polite.
+_POLITE_ENDINGS = (("않았다", "않았습니다"), ("못했다", "못했습니다"), ("않는다", "않습니다"), ("없다", "없습니다"),
+                   ("있다", "있습니다"), ("다르다", "다릅니다"), ("쓴다", "씁니다"), ("한다", "합니다"), ("이다", "입니다"))
+
+
+def _polite_clause(text: str) -> str:
+    for terse, polite_form in _POLITE_ENDINGS:
+        if text.endswith(terse):
+            return text[: -len(terse)] + polite_form
+    # a noun ending in a vowel plus 다 ("평가용 회사다")
+    if len(text) >= 2 and text.endswith("다") and "가" <= text[-2] <= "힣" and (ord(text[-2]) - 0xAC00) % 28 == 0:
+        return text[:-1] + "입니다"
+    return text
+
+
+def polite(text: str) -> str:
+    """One tool note or reason in the polite style of the answer; a trailing "(…)" is converted on its own."""
+    if text.endswith(")") and " (" in text:
+        head, _, inner = text[:-1].rpartition(" (")
+        return f"{_polite_clause(head)} ({_polite_clause(inner)})"
+    return _polite_clause(text)
+
+
+def _reasons(reasons: list[str]) -> str:
+    return " ".join(f"{polite(reason)}." for reason in reasons)
+
+
+def _notes(notes: list[str]) -> list[str]:
+    return [f"참고: {polite(note)}" for note in notes]
+
+
 def _alternative(result: dict[str, Any]) -> str:
     """A comparable condition to offer when the requested one is not provided."""
     reasons = " ".join(result.get("reasons", []))
@@ -104,7 +135,7 @@ def render_comparison(result: dict[str, Any]) -> str:
         facts = [(period_text(fact["period"]), fact) for fact in (result["current"], result["base"])]
         lines = []
         if status == "확인 필요":
-            lines.append("확인이 필요합니다. " + " ".join(f"{reason}." for reason in result["reasons"]))
+            lines.append("확인이 필요합니다. " + _reasons(result["reasons"]))
         # a value under review may have no amount (several candidate rows): say so, never format a missing number
         known = [f"{period} {format_amount(fact['amount'], fact.get('currency'))}" for period, fact in facts
                  if fact.get("amount") is not None]
@@ -116,13 +147,13 @@ def render_comparison(result: dict[str, Any]) -> str:
         if result.get("change") is not None:
             lines.append(_direction_sentence(result, facts[1][0]))
         # the rate note repeats the direction sentence above, so it is left out
-        lines += [f"참고: {note}" for note in result.get("notes", []) if "변화율을 계산하지 않는다" not in note]
+        lines += _notes([note for note in result.get("notes", []) if "변화율을 계산하지 않는다" not in note])
         return "\n".join(lines)
     periods = " / ".join(period_text(requested[role]) for role in ("current", "base") if role in requested)
     if status == "데이터 없음":
         return (f"{_subject(result)} ({periods}): OpenDART가 이 기간의 재무제표를 제공하지 않아 조회 결과가 없습니다. "
                 "오류가 아니라 자료가 없는 것입니다.")
-    reasons = " ".join(f"{reason}." for reason in result.get("reasons", []))
+    reasons = _reasons(result.get("reasons", []))
     text = f"{_subject(result)} ({periods})는 비교하지 않습니다. 이유: {reasons}"
     alternative = _alternative(result)
     return f"{text} {alternative}".strip()
@@ -134,7 +165,7 @@ def render_side_by_side(result: dict[str, Any]) -> str:
     if result["status"] != SIDE_BY_SIDE:
         values = ", ".join(f"{value['basis']} {format_amount(value['amount'], value.get('currency'))}" for value in result.get("values", [])
                            if value and value.get("amount") is not None)
-        reasons = " ".join(f"{reason}." for reason in result.get("reasons", []))
+        reasons = _reasons(result.get("reasons", []))
         return f"{subject}: {values}. {result['status']}: {reasons}".replace(": .", ":")
     consolidated, separate = result["values"]
     difference, currency = result["difference"], _common_currency(consolidated, separate)
@@ -153,7 +184,7 @@ def render_lookup(result: dict[str, Any]) -> str:
     status, period = result["status"], period_text(result["period"])
     value, later = result.get("value") or {}, result.get("later") or {}
     if status == "조회 불가":
-        reasons = " ".join(f"{reason}." for reason in result.get("reasons", []))
+        reasons = _reasons(result.get("reasons", []))
         alternative = _alternative({"reasons": result.get("reasons", []), "requested": {"current": result["period"]}})
         return f"{_subject(result)} ({period})는 조회하지 않습니다. 이유: {reasons} {alternative}".strip()
     if status == "데이터 없음":
@@ -161,14 +192,14 @@ def render_lookup(result: dict[str, Any]) -> str:
                 "오류가 아니라 자료가 없는 것입니다.")
     lines = []
     if status == "확인 필요":
-        lines.append("확인이 필요합니다. " + " ".join(f"{reason}." for reason in result.get("reasons", [])))
+        lines.append("확인이 필요합니다. " + _reasons(result.get("reasons", [])))
     if value.get("amount") is not None:
         lines.append(f"{_subject(result)}: {period} {format_amount(value['amount'], value.get('currency'))} ({_source(value)}).")
     else:
         lines.append(f"{_subject(result)}: {period} 값은 확정하지 못했습니다.")
     if later.get("amount") is not None and later["amount"] != value.get("amount"):
         lines.append(f"같은 기간의 이후 보고서 값: {format_amount(later['amount'], later.get('currency'))} ({_source(later)}).")
-    lines += [f"참고: {note}" for note in result.get("notes", [])]
+    lines += _notes(result.get("notes", []))
     return "\n".join(lines)
 
 
@@ -181,8 +212,9 @@ def render_result(result: dict[str, Any]) -> str:
 def clarifying_question(accounts: list[str]) -> str:
     labels = [ACCOUNTS[key].label for key in accounts if key in ACCOUNTS]
     if len(labels) >= 2:
-        return f"{', '.join(labels[:-1])}과 {labels[-1]} 중 어느 것을 비교할까요?"
-    return "어떤 계정(예: 매출액, 영업이익, 당기순이익)을 비교할지 알려 주세요."
+        # neutral wording: the same question follows a lookup or a comparison
+        return f"{', '.join(labels[:-1])}과 {labels[-1]} 중 어느 것을 말씀하신 건가요?"
+    return "어떤 계정(예: 매출액, 영업이익, 당기순이익)을 말씀하신 건지 알려 주세요."
 
 
 def answer_values(result: dict[str, Any]) -> list[dict[str, Any]]:

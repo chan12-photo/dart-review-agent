@@ -311,7 +311,7 @@ def crosscheck_turn(question: str, client: Any, record: dict[str, Any], ask: Cal
             record["no_result"] = True
             return
         chosen, readings["used"] = rule, "rules only (--no-model)"
-        note = "참고: 모델 없이(--no-model) 규칙 해석 하나로만 확인한 답이다"
+        note = "참고: 모델 없이(--no-model) 규칙 해석 하나로만 확인한 답입니다"
     elif rule_key and model_key:
         readings["agree"] = rule_key == model_key
         if not readings["agree"]:

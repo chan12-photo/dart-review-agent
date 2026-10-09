@@ -8,7 +8,7 @@ A local tool that **looks up and compares** financial figures of Korean listed c
 - the keyword rules alone read all of these questions correctly;
 - on these 36 questions **the LLM did not improve accuracy**, and the model on its own misread questions.
 
-`dart_review/` in v0.1 is identical to the frozen commit P (`c182075`) that was evaluated.
+`dart_review/` in v0.1.0 is identical to the frozen commit P (`c182075`) that was evaluated. v0.1.1 changes wording only: tool notes and reasons are shown in the polite style, and the account clarifying question no longer assumes a comparison. No status or figure changed; the replay test checks this against the saved runs.
 
 ```text
 $ python -m dart_review demo        # no API key, no model server, no network

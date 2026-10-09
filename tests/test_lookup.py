@@ -118,7 +118,7 @@ class LookupAnswerTests(unittest.TestCase):
         self.assertEqual(answer["status"], "값 확인")
         self.assertTrue(answer["answer"].startswith("연도를 말하지 않아 가장 최근 사업보고서 연도(2025년)로 봤습니다."))
         self.assertIn("333조 6,059억 원 (2025년 사업보고서, 접수번호 20260310002820)", answer["answer"])
-        self.assertIn("재작성 여부는 확인하지 않았다", answer["answer"])
+        self.assertIn("재작성 여부는 확인하지 않았습니다", answer["answer"])
         self.assertEqual((answer["change"], answer["change_pct"]), (None, None))
         self.assertEqual(len(answer["values"]), 1)
 

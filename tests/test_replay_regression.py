@@ -7,8 +7,10 @@ fails here; an intended change must say so and be re-measured in a new run
 folder (the saved runs are never rewritten).
 """
 
+import difflib
 import json
 from pathlib import Path
+import re
 import sys
 import unittest
 
@@ -20,6 +22,7 @@ from dart_review.client import DartClient
 from dart_review.crosscheck import crosscheck_turn
 from dart_review.demo import answer as shown_answer
 from dart_review.llm import Reply, ScriptedChat
+from dart_review.render import polite
 
 ROOT = Path(__file__).resolve().parents[1]
 CACHE = ROOT / "cache"
@@ -31,6 +34,31 @@ RUNS = ROOT / "eval" / "feasibility_2026-10-07"
 # since the Codex 3-1 first review (finding 7), so the baseline no longer misreads it and the cross-check no
 # longer has to ask back.
 INTENDED_CHANGES = {("baseline_paraphrase", "p06"), ("crosscheck_paraphrase", "p06")}
+
+
+# v0.1.x wording (after the 3-1 evaluation): tool notes and reasons are shown in the polite style, and the
+# account clarifying question no longer assumes a comparison. Only these word-level changes are allowed;
+# statuses, values, and every other word must stay exactly as saved.
+OLD_CLARIFY = (("중 어느 것을 비교할까요?", "중 어느 것을 말씀하신 건가요?"),
+               ("을 비교할지 알려 주세요.", "을 말씀하신 건지 알려 주세요."))
+
+
+def politely_reworded(old: str, new: str) -> bool:
+    for before, after in OLD_CLARIFY:
+        old = old.replace(before, after)
+    old_words, new_words = re.split(r"(\s+)", old), re.split(r"(\s+)", new)  # spaces and line breaks kept as tokens
+    matcher = difflib.SequenceMatcher(a=old_words, b=new_words, autojunk=False)
+    for tag, i1, i2, j1, j2 in matcher.get_opcodes():
+        if tag == "equal":
+            continue
+        if tag != "replace" or i2 - i1 != j2 - j1:
+            return False
+        for before, after in zip(old_words[i1:i2], new_words[j1:j2]):
+            core = before.rstrip(".)\n")
+            tail = before[len(core):]
+            if after != polite(core) + tail or after == before:
+                return False
+    return True
 
 
 def no_key():
@@ -56,7 +84,11 @@ class ReplayRegressionTests(unittest.TestCase):
 
     def assert_same_or_intended(self, folder, case, record):
         if (folder, case["id"]) not in INTENDED_CHANGES:
-            self.assertEqual(record["answer"], case["answer"])
+            new, old = dict(record["answer"]), dict(case["answer"])
+            for field in ("answer", "clarifying_question"):
+                if new.get(field) != old.get(field) and politely_reworded(old.get(field) or "", new.get(field) or ""):
+                    new[field] = old[field]
+            self.assertEqual(new, old)
             return
         import run_eval
         from scoring import score_case

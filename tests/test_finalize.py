@@ -1,5 +1,7 @@
 """Human review and the final score (no cache needed)."""
 
+from contextlib import redirect_stdout
+import io
 import json
 from pathlib import Path
 import sys
@@ -17,6 +19,13 @@ def case(case_id, automatic, **score):
             "warnings": [], "problems": [], "automatic_passed": automatic}
     base.update(score)
     return {"id": case_id, "question": "질문", "answer": '{"status": "비교 가능", "answer": "답"}', "score": base}
+
+
+
+def quiet(function, *args):
+    """Run a command-line main without its JSON summary on the test output."""
+    with redirect_stdout(io.StringIO()):
+        return function(*args)
 
 
 class FinalScoreTests(unittest.TestCase):
@@ -95,13 +104,13 @@ class SecondReviewFinalizeTests(unittest.TestCase):
             (folder / "run.json").write_text(json.dumps({"mode": "crosscheck"}), encoding="utf-8")
             (folder / "cases.jsonl").write_text(json.dumps(case("dev01", True)) + "\n", encoding="utf-8")
             (folder / "human_review.json").write_text(json.dumps({"cases": {"dev01": {"body_ok": True}}}), encoding="utf-8")
-            self.assertEqual(main([str(folder)]), 0)
+            self.assertEqual(quiet(main, [str(folder)]), 0)
             first = json.loads((folder / "final.json").read_text(encoding="utf-8"))
             self.assertEqual(first["mode"], "crosscheck")
             self.assertEqual(len(first["cases_sha256"]), 64)
-            self.assertEqual(main([str(folder)]), 2)  # a second review needs a reason
+            self.assertEqual(quiet(main, [str(folder)]), 2)  # a second review needs a reason
             (folder / "human_review.json").write_text(json.dumps({"revision_reason": "사용자 확인", "cases": {"dev01": {"body_ok": True}}}),
                                                      encoding="utf-8")
-            self.assertEqual(main([str(folder)]), 0)
+            self.assertEqual(quiet(main, [str(folder)]), 0)
             self.assertTrue((folder / "final_v2.json").exists())
             self.assertEqual(json.loads((folder / "final.json").read_text(encoding="utf-8")), first)

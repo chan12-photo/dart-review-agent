@@ -63,6 +63,11 @@ COMPOSITION_3_5 = {"A1": 60, "A2": 60, "A3": 60, "A4": 60, "A5": 60, "A6": 80, "
 CRITERIA_3_5 = {"wrong_answers": 0, "solved_rate": 0.80, "trap_rate": 0.90}
 METHODS_3_5 = ("crosscheck", "baseline")
 INFRASTRUCTURE_LIMIT_3_5 = 0.02  # section 9: model-server failures above this suspend the verdict
+# section 2 and 7 (Codex 3-5 review 1): checked against the contract, not only between the two runs
+REFERENCE_DATE_3_5, COMPANY_SET_3_5, FREEZE_3_5 = "2026-10-08", "sealed-3-1", "eval/freeze_3-5.json"
+PRODUCT_3_5 = "db756c240f1af955a1052e62e2c60345b4d5942b"  # P3, v0.1.1
+EVALUATOR_PATHS_3_5 = ("eval/run_eval.py", "eval/scoring.py", "eval/judge.py", "eval/finalize.py", "eval/rescore.py",
+                       "eval/build_template_questions.py", "eval/build_template_gold.py")
 HASHED_FILES = ("questions", "gold", "paraphrases", "lookup_questions", "lookup_gold", "set_questions", "set_gold",
                 "reading_prompt", "reading_schema", "company_set")
 
@@ -196,6 +201,35 @@ def check_sampled_reviews(runs: dict[str, tuple[dict[str, Any], list[dict[str, A
     return problems
 
 
+def check_fixed_3_5(runs: dict[str, tuple[dict[str, Any], list[dict[str, Any]]]], question_set: str) -> list[str]:
+    """The 3-5 runs against the contract and the pre-registration record, not only against each other."""
+    problems = []
+    question_file, gold_file = run_eval.set_files(question_set)
+    spec = json.loads(question_file.read_text(encoding="utf-8"))
+    if (spec.get("reference_date"), spec.get("freeze")) != (REFERENCE_DATE_3_5, FREEZE_3_5):
+        problems.append(f"the question file names {spec.get('reference_date')} and {spec.get('freeze')}, "
+                        f"not the contract's {REFERENCE_DATE_3_5} and {FREEZE_3_5}")
+    for method, (meta, _) in runs.items():
+        if (meta.get("reference_date"), meta.get("company_set")) != (REFERENCE_DATE_3_5, COMPANY_SET_3_5):
+            problems.append(f"{method}: ran with {meta.get('reference_date')} and {meta.get('company_set')}, "
+                            f"not {REFERENCE_DATE_3_5} and {COMPANY_SET_3_5}")
+    freeze = ROOT / FREEZE_3_5
+    record = json.loads(freeze.read_text(encoding="utf-8")) if freeze.exists() else {}
+    if record.get("commit") != PRODUCT_3_5:
+        problems.append(f"the freeze record does not name the product P3 {PRODUCT_3_5[:7]}")
+    missing = [path for path in EVALUATOR_PATHS_3_5 if path not in (record.get("evaluator_paths") or ())]
+    if missing:
+        problems.append(f"the freeze record does not cover the evaluator files {missing}")
+    registered = question_file.parent / "preregistration.json"
+    hashes = json.loads(registered.read_text(encoding="utf-8")).get("hashes", {}) if registered.exists() else {}
+    for method, (meta, _) in runs.items():
+        recorded = meta.get("contract") or {}
+        for key in ("set_questions", "set_gold"):
+            if not hashes.get(key) or recorded.get(key) != hashes[key]:
+                problems.append(f"{method}: {key} is not the pre-registered one")
+    return problems
+
+
 def check_contract(runs: dict[str, tuple[dict[str, Any], list[dict[str, Any]]]], finals: dict[str, dict[str, Any]],
                    questions: dict[str, dict[str, Any]], golds: dict[str, dict[str, Any]] | None = None) -> list[str]:
     """What the strict judge also requires (Codex 3-1 first review 3; EVAL_CONTRACT_3-5 section 9); empty when all is there."""
@@ -247,6 +281,7 @@ def check_contract(runs: dict[str, tuple[dict[str, Any], list[dict[str, Any]]]],
         if changed:
             problems.append(f"the runs' code differs from the freeze commit P: {changed}")
     if contract == "3-5":
+        problems += check_fixed_3_5(runs, question_set)
         found35 = Counter(question.get("bundle") for question in questions.values())
         if found35 != Counter(COMPOSITION_3_5) or {question.get("author") for question in questions.values()} != {"template"}:
             problems.append(f"the questions are not the contract's 600 (family -> count): {dict(found35)}")
@@ -276,12 +311,14 @@ def check_contract(runs: dict[str, tuple[dict[str, Any], list[dict[str, Any]]]],
     return problems
 
 
-def wrong_direction(case: dict[str, Any], gold: dict[str, Any]) -> str:
+def wrong_direction(case: dict[str, Any], gold: dict[str, Any], failure_kind: str | None = None) -> str:
     """EVAL_CONTRACT_3-5 section 6.2: "조심한 방향" only when every value is right and the shown status is the more
-    careful 확인 필요 where the gold is 비교 가능 or 값 확인; any other wrong figure is "위험한 방향"."""
+    careful 확인 필요 where the gold is 비교 가능 or 값 확인; any other wrong figure is "위험한 방향". A text the
+    human review failed for a figure ("수치") is never the careful direction (Codex 3-5 review 3)."""
     answer = shown_answer(case) or {}
     score = case["score"]
-    careful = (answer.get("status") == "확인 필요" and gold.get("expected_status") in ("비교 가능", "값 확인")
+    careful = (failure_kind != "수치" and answer.get("status") == "확인 필요"
+               and gold.get("expected_status") in ("비교 가능", "값 확인")
                and score.get("numbers_ok") is True and score.get("basis_ok") is not False and not score.get("ungrounded"))
     return "조심한 방향" if careful else "위험한 방향"
 
@@ -294,7 +331,8 @@ def cluster_of(question: dict[str, Any]) -> str:
 
 
 def template_report(runs: dict[str, tuple[dict[str, Any], list[dict[str, Any]]]], outcomes: dict[str, dict[str, str]],
-                    questions: dict[str, dict[str, Any]], golds: dict[str, dict[str, Any]]) -> dict[str, Any]:
+                    questions: dict[str, dict[str, Any]], golds: dict[str, dict[str, Any]],
+                    finals: dict[str, dict[str, Any]] | None = None) -> dict[str, Any]:
     """The 3-5 tables (contract sections 4.2, 5.3, 6.2, 9): by family, by group, the two directions of a wrong
     figure, the clusters with a wrong figure, and the 95% upper bound when there is none."""
     def table_by(key) -> dict[str, dict[str, dict[str, int]]]:
@@ -312,15 +350,23 @@ def template_report(runs: dict[str, tuple[dict[str, Any], list[dict[str, Any]]]]
                                                   if choice.get(key)] or ["(표시 없음)"])
 
     cross = {case["id"]: case for case in runs["crosscheck"][1]}
-    wrong = {mode: {item: wrong_direction(next(case for case in runs[mode][1] if case["id"] == item), golds[item])
+    kinds = {mode: {entry["id"]: entry.get("failure_kind") for entry in ((finals or {}).get(mode) or {}).get("per_case", [])}
+             for mode in outcomes}
+    wrong = {mode: {item: wrong_direction(next(case for case in runs[mode][1] if case["id"] == item), golds[item],
+                                          kinds[mode].get(item))
                     for item, cell in result.items() if cell == "잘못된 수치 답"} for mode, result in outcomes.items()}
     answered = [item for item, case in cross.items() if (shown_answer(case) or {}).get("status") in ANSWER_STATUSES]
     clusters = sorted({cluster_of(questions[item]) for item in wrong.get("crosscheck", {})})
+    cells = {json.dumps([questions[item]["expected"].get(key) for key in ("corp_code", "fs_div", "account", "period",
+                                                                           "current", "base")], sort_keys=True)
+             for item in answered}
     bound = round(1 - 0.05 ** (1 / len(answered)), 5) if answered and not wrong.get("crosscheck") else None
     return {"by_family": table_by(lambda question: [question["bundle"]]), "by_group": table_by(groups),
             "wrong_figure_directions": wrong, "clusters_with_wrong_figures": clusters,
             "clusters_total": len({cluster_of(question) for question in questions.values()} - {"-"}),
-            "figure_answers": len(answered), "upper_bound_95": bound}
+            "figure_answers": len(answered), "distinct_cells_answered": len(cells),
+            # section 9 (Codex 3-5 review 5): a reference figure assuming independent trials, which these are not
+            "upper_bound_95": bound, "upper_bound_note": "독립 시행을 가정한 참고 계산"}
 
 
 def judge(runs: dict[str, tuple[dict[str, Any], list[dict[str, Any]]]], finals: dict[str, dict[str, Any]] | None = None,
@@ -414,7 +460,7 @@ def judge(runs: dict[str, tuple[dict[str, Any], list[dict[str, Any]]]], finals: 
             "함정 처리 ≥ 90%": {"value": trap_rate, "met": None if trap_rate is None else trap_rate >= CRITERIA_3_5["trap_rate"]},
             "근거 없는 숫자 0": {"value": ungrounded, "met": not any(ungrounded.values())},
         }
-        report.update(template_report(runs, outcomes, by_id, golds))
+        report.update(template_report(runs, outcomes, by_id, golds, finals))
     else:
         checks = {
             "잘못된 수치 답 0": {"value": len(table["crosscheck"]["잘못된 수치 답"]), "met": not table["crosscheck"]["잘못된 수치 답"]},

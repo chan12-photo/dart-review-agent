@@ -7,6 +7,7 @@ runs the product on the template questions: that happens only after pre-registra
 
 import copy
 import json
+import unittest.mock
 from pathlib import Path
 import sys
 import unittest
@@ -235,6 +236,29 @@ class WrongDirectionTests(unittest.TestCase):
         self.assertEqual(judge.wrong_direction(self.case("비교 가능"), {"expected_status": "확인 필요"}), "위험한 방향")
         self.assertEqual(judge.wrong_direction(self.case("확인 필요", numbers_ok=False), {"expected_status": "비교 가능"}),
                          "위험한 방향")
+
+    def test_a_text_failed_for_a_figure_is_dangerous_even_with_right_structured_values(self):
+        # Codex 3-5 review 3: values right in the structure, but the text swaps the two years
+        self.assertEqual(judge.wrong_direction(self.case("확인 필요"), {"expected_status": "비교 가능"}, "수치"), "위험한 방향")
+        self.assertEqual(judge.wrong_direction(self.case("확인 필요"), {"expected_status": "비교 가능"}, "설명"), "조심한 방향")
+
+
+class FixedContractTests(unittest.TestCase):
+    """Codex 3-5 review 1: the date, company set, freeze record, and pre-registration are checked against the contract."""
+
+    def test_the_runner_refuses_another_date_or_company_set(self):
+        base = ["--mode", "baseline", "--questions", str(QUESTION_FILE), "--out", "/nonexistent/run"]
+        for extra in (["--reference-date", "2026-10-09", "--companies", "sealed-3-1"], ["--companies", "development"]):
+            with self.subTest(extra=extra), self.assertRaises(SystemExit), \
+                    unittest.mock.patch("sys.stderr", new_callable=__import__("io").StringIO):
+                run_eval.main(base + extra)
+
+    def test_the_judge_compares_the_runs_with_the_contract(self):
+        meta = {"reference_date": "2026-10-09", "company_set": "sealed-3-1", "contract": {}}
+        problems = judge.check_fixed_3_5({"crosscheck": (meta, []), "baseline": (meta, [])},
+                                         "file:eval/template_3-5/questions.json")
+        self.assertTrue(any("ran with 2026-10-09" in problem for problem in problems), problems)
+        self.assertTrue(any("pre-registered" in problem for problem in problems), problems)
 
 
 @unittest.skipUnless(gold_rules.CACHE.exists(), "run scripts/fetch_dev_cache.py first")

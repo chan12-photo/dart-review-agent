@@ -34813,7 +34813,7 @@
    "id": "B5-001",
    "bundle": "B5",
    "author": "template",
-   "question": "현대자동차의 2025년 영업활동현금흐름은 얼마야?",
+   "question": "CJ대한통운의 2025년 부채총계는 얼마야?",
    "case_types": [
     "범위 밖 회사"
    ],
@@ -34824,14 +34824,14 @@
    "grid": {
     "kind": "out_of_scope",
     "action": "out_of_scope",
-    "company": "현대자동차",
+    "company": "CJ대한통운",
     "scope": "company",
-    "account": "operating_cash_flow",
+    "account": "total_liabilities",
     "year": 2025
    },
    "expected": {
     "action": "out_of_scope",
-    "company": "현대자동차",
+    "company": "CJ대한통운",
     "scope": "company"
    }
   },
@@ -34839,25 +34839,25 @@
    "id": "B5-002",
    "bundle": "B5",
    "author": "template",
-   "question": "카카오 2025년 영업이익 알려줘.",
+   "question": "CJ대한통운의 2024년 영업활동현금흐름은 얼마야?",
    "case_types": [
     "범위 밖 회사"
    ],
    "tags": [],
    "template": {
-    "template": "B5#0"
+    "template": "B5#1"
    },
    "grid": {
     "kind": "out_of_scope",
     "action": "out_of_scope",
-    "company": "카카오",
+    "company": "CJ대한통운",
     "scope": "company",
-    "account": "operating_income",
-    "year": 2025
+    "account": "operating_cash_flow",
+    "year": 2024
    },
    "expected": {
     "action": "out_of_scope",
-    "company": "카카오",
+    "company": "CJ대한통운",
     "scope": "company"
    }
   },
@@ -34865,25 +34865,25 @@
    "id": "B5-003",
    "bundle": "B5",
    "author": "template",
-   "question": "LG화학의 2024년 영업활동현금흐름은 얼마야?",
+   "question": "LG전자 2024년 매출액 알려줘.",
    "case_types": [
     "범위 밖 회사"
    ],
    "tags": [],
    "template": {
-    "template": "B5#1"
+    "template": "B5#0"
    },
    "grid": {
     "kind": "out_of_scope",
     "action": "out_of_scope",
-    "company": "LG화학",
+    "company": "LG전자",
     "scope": "company",
-    "account": "operating_cash_flow",
+    "account": "revenue",
     "year": 2024
    },
    "expected": {
     "action": "out_of_scope",
-    "company": "LG화학",
+    "company": "LG전자",
     "scope": "company"
    }
   },
@@ -34891,7 +34891,7 @@
    "id": "B5-004",
    "bundle": "B5",
    "author": "template",
-   "question": "SK하이닉스의 2024년 부채총계는 얼마야?",
+   "question": "LG전자의 2024년 부채총계는 얼마야?",
    "case_types": [
     "범위 밖 회사"
    ],
@@ -34902,14 +34902,14 @@
    "grid": {
     "kind": "out_of_scope",
     "action": "out_of_scope",
-    "company": "SK하이닉스",
+    "company": "LG전자",
     "scope": "company",
     "account": "total_liabilities",
     "year": 2024
    },
    "expected": {
     "action": "out_of_scope",
-    "company": "SK하이닉스",
+    "company": "LG전자",
     "scope": "company"
    }
   },
@@ -34917,25 +34917,25 @@
    "id": "B5-005",
    "bundle": "B5",
    "author": "template",
-   "question": "현대자동차 2024년 부채총계 알려줘.",
+   "question": "LG화학의 2025년 부채총계는 얼마야?",
    "case_types": [
     "범위 밖 회사"
    ],
    "tags": [],
    "template": {
-    "template": "B5#0"
+    "template": "B5#1"
    },
    "grid": {
     "kind": "out_of_scope",
     "action": "out_of_scope",
-    "company": "현대자동차",
+    "company": "LG화학",
     "scope": "company",
     "account": "total_liabilities",
-    "year": 2024
+    "year": 2025
    },
    "expected": {
     "action": "out_of_scope",
-    "company": "현대자동차",
+    "company": "LG화학",
     "scope": "company"
    }
   },
@@ -34943,7 +34943,7 @@
    "id": "B5-006",
    "bundle": "B5",
    "author": "template",
-   "question": "셀트리온 2025년 부채총계 알려줘.",
+   "question": "LG화학 2024년 자산총계 알려줘.",
    "case_types": [
     "범위 밖 회사"
    ],
@@ -34954,14 +34954,14 @@
    "grid": {
     "kind": "out_of_scope",
     "action": "out_of_scope",
-    "company": "셀트리온",
+    "company": "LG화학",
     "scope": "company",
-    "account": "total_liabilities",
-    "year": 2025
+    "account": "total_assets",
+    "year": 2024
    },
    "expected": {
     "action": "out_of_scope",
-    "company": "셀트리온",
+    "company": "LG화학",
     "scope": "company"
    }
   },
@@ -34969,7 +34969,7 @@
    "id": "B5-007",
    "bundle": "B5",
    "author": "template",
-   "question": "LG전자 2024년 매출 알려줘.",
+   "question": "SK하이닉스 2025년 매출 알려줘.",
    "case_types": [
     "범위 밖 회사"
    ],
@@ -34981,14 +34981,14 @@
    "grid": {
     "kind": "out_of_scope",
     "action": "out_of_scope",
-    "company": "LG전자",
+    "company": "SK하이닉스",
     "scope": "company",
     "account": "revenue",
-    "year": 2024
+    "year": 2025
    },
    "expected": {
     "action": "out_of_scope",
-    "company": "LG전자",
+    "company": "SK하이닉스",
     "scope": "company"
    }
   },
@@ -34996,7 +34996,7 @@
    "id": "B5-008",
    "bundle": "B5",
    "author": "template",
-   "question": "LG화학의 2025년 자산총계는 얼마야?",
+   "question": "SK하이닉스의 2025년 부채총계는 얼마야?",
    "case_types": [
     "범위 밖 회사"
    ],
@@ -35007,14 +35007,14 @@
    "grid": {
     "kind": "out_of_scope",
     "action": "out_of_scope",
-    "company": "LG화학",
+    "company": "SK하이닉스",
     "scope": "company",
-    "account": "total_assets",
+    "account": "total_liabilities",
     "year": 2025
    },
    "expected": {
     "action": "out_of_scope",
-    "company": "LG화학",
+    "company": "SK하이닉스",
     "scope": "company"
    }
   },
@@ -35022,59 +35022,7 @@
    "id": "B5-009",
    "bundle": "B5",
    "author": "template",
-   "question": "LG전자의 2024년 영업이익은 얼마야?",
-   "case_types": [
-    "범위 밖 회사"
-   ],
-   "tags": [],
-   "template": {
-    "template": "B5#1"
-   },
-   "grid": {
-    "kind": "out_of_scope",
-    "action": "out_of_scope",
-    "company": "LG전자",
-    "scope": "company",
-    "account": "operating_income",
-    "year": 2024
-   },
-   "expected": {
-    "action": "out_of_scope",
-    "company": "LG전자",
-    "scope": "company"
-   }
-  },
-  {
-   "id": "B5-010",
-   "bundle": "B5",
-   "author": "template",
-   "question": "LG화학의 2024년 부채총계는 얼마야?",
-   "case_types": [
-    "범위 밖 회사"
-   ],
-   "tags": [],
-   "template": {
-    "template": "B5#1"
-   },
-   "grid": {
-    "kind": "out_of_scope",
-    "action": "out_of_scope",
-    "company": "LG화학",
-    "scope": "company",
-    "account": "total_liabilities",
-    "year": 2024
-   },
-   "expected": {
-    "action": "out_of_scope",
-    "company": "LG화학",
-    "scope": "company"
-   }
-  },
-  {
-   "id": "B5-011",
-   "bundle": "B5",
-   "author": "template",
-   "question": "SK하이닉스 2024년 매출액 알려줘.",
+   "question": "삼성전자 2025년 매출액 알려줘.",
    "case_types": [
     "범위 밖 회사"
    ],
@@ -35085,14 +35033,66 @@
    "grid": {
     "kind": "out_of_scope",
     "action": "out_of_scope",
-    "company": "SK하이닉스",
+    "company": "삼성전자",
     "scope": "company",
     "account": "revenue",
-    "year": 2024
+    "year": 2025
    },
    "expected": {
     "action": "out_of_scope",
-    "company": "SK하이닉스",
+    "company": "삼성전자",
+    "scope": "company"
+   }
+  },
+  {
+   "id": "B5-010",
+   "bundle": "B5",
+   "author": "template",
+   "question": "삼성전자 2025년 부채총계 알려줘.",
+   "case_types": [
+    "범위 밖 회사"
+   ],
+   "tags": [],
+   "template": {
+    "template": "B5#0"
+   },
+   "grid": {
+    "kind": "out_of_scope",
+    "action": "out_of_scope",
+    "company": "삼성전자",
+    "scope": "company",
+    "account": "total_liabilities",
+    "year": 2025
+   },
+   "expected": {
+    "action": "out_of_scope",
+    "company": "삼성전자",
+    "scope": "company"
+   }
+  },
+  {
+   "id": "B5-011",
+   "bundle": "B5",
+   "author": "template",
+   "question": "셀트리온 2025년 매출액 알려줘.",
+   "case_types": [
+    "범위 밖 회사"
+   ],
+   "tags": [],
+   "template": {
+    "template": "B5#0"
+   },
+   "grid": {
+    "kind": "out_of_scope",
+    "action": "out_of_scope",
+    "company": "셀트리온",
+    "scope": "company",
+    "account": "revenue",
+    "year": 2025
+   },
+   "expected": {
+    "action": "out_of_scope",
+    "company": "셀트리온",
     "scope": "company"
    }
   },
@@ -35100,7 +35100,7 @@
    "id": "B5-012",
    "bundle": "B5",
    "author": "template",
-   "question": "셀트리온의 2024년 부채총계는 얼마야?",
+   "question": "셀트리온의 2025년 자산총계는 얼마야?",
    "case_types": [
     "범위 밖 회사"
    ],
@@ -35113,8 +35113,8 @@
     "action": "out_of_scope",
     "company": "셀트리온",
     "scope": "company",
-    "account": "total_liabilities",
-    "year": 2024
+    "account": "total_assets",
+    "year": 2025
    },
    "expected": {
     "action": "out_of_scope",
@@ -35126,7 +35126,7 @@
    "id": "B5-013",
    "bundle": "B5",
    "author": "template",
-   "question": "셀트리온 2024년 자산총계 알려줘.",
+   "question": "카카오 2024년 자산총계 알려줘.",
    "case_types": [
     "범위 밖 회사"
    ],
@@ -35137,14 +35137,14 @@
    "grid": {
     "kind": "out_of_scope",
     "action": "out_of_scope",
-    "company": "셀트리온",
+    "company": "카카오",
     "scope": "company",
     "account": "total_assets",
     "year": 2024
    },
    "expected": {
     "action": "out_of_scope",
-    "company": "셀트리온",
+    "company": "카카오",
     "scope": "company"
    }
   },
@@ -35152,33 +35152,7 @@
    "id": "B5-014",
    "bundle": "B5",
    "author": "template",
-   "question": "CJ대한통운 2025년 부채총계 알려줘.",
-   "case_types": [
-    "범위 밖 회사"
-   ],
-   "tags": [],
-   "template": {
-    "template": "B5#0"
-   },
-   "grid": {
-    "kind": "out_of_scope",
-    "action": "out_of_scope",
-    "company": "CJ대한통운",
-    "scope": "company",
-    "account": "total_liabilities",
-    "year": 2025
-   },
-   "expected": {
-    "action": "out_of_scope",
-    "company": "CJ대한통운",
-    "scope": "company"
-   }
-  },
-  {
-   "id": "B5-015",
-   "bundle": "B5",
-   "author": "template",
-   "question": "카카오의 2025년 영업활동현금흐름은 얼마야?",
+   "question": "카카오의 2025년 부채총계는 얼마야?",
    "case_types": [
     "범위 밖 회사"
    ],
@@ -35191,7 +35165,7 @@
     "action": "out_of_scope",
     "company": "카카오",
     "scope": "company",
-    "account": "operating_cash_flow",
+    "account": "total_liabilities",
     "year": 2025
    },
    "expected": {
@@ -35201,47 +35175,34 @@
    }
   },
   {
-   "id": "B6-001",
-   "bundle": "B6",
+   "id": "B5-015",
+   "bundle": "B5",
    "author": "template",
-   "question": "네이버의 2023년 이익은 얼마야?",
+   "question": "현대자동차의 2024년 순이익은 얼마야?",
    "case_types": [
-    "계정 모호"
+    "범위 밖 회사"
    ],
    "tags": [],
    "template": {
-    "alias": "네이버",
-    "template": "B6_lookup#1"
+    "synonym": "순이익",
+    "template": "B5#1"
    },
    "grid": {
-    "kind": "clarify_account",
-    "corp_code": "00266961",
-    "fs_div": "CFS",
-    "period": {
-     "kind": "year_to_date",
-     "year": 2023,
-     "month": 12
-    },
-    "form": "lookup"
+    "kind": "out_of_scope",
+    "action": "out_of_scope",
+    "company": "현대자동차",
+    "scope": "company",
+    "account": "net_income",
+    "year": 2024
    },
    "expected": {
-    "action": "clarify",
-    "corp_code": "00266961",
-    "ambiguity": "account",
-    "options": [
-     "operating_income",
-     "net_income"
-    ],
-    "fs_div": "CFS",
-    "period": {
-     "kind": "year_to_date",
-     "year": 2023,
-     "month": 12
-    }
+    "action": "out_of_scope",
+    "company": "현대자동차",
+    "scope": "company"
    }
   },
   {
-   "id": "B6-002",
+   "id": "B6-001",
    "bundle": "B6",
    "author": "template",
    "question": "NAVER 2024년 이익이 얼마나 늘었어?",
@@ -35290,32 +35251,28 @@
    }
   },
   {
-   "id": "B6-003",
+   "id": "B6-002",
    "bundle": "B6",
    "author": "template",
-   "question": "NAVER 2023년 이익이 얼마나 늘었어?",
+   "question": "NAVER 작년 이익 알려줘.",
    "case_types": [
     "계정 모호"
    ],
    "tags": [],
    "template": {
-    "template": "B6_compare#0"
+    "relative_year": true,
+    "template": "B6_lookup#0"
    },
    "grid": {
     "kind": "clarify_account",
     "corp_code": "00266961",
     "fs_div": "CFS",
-    "current": {
+    "period": {
      "kind": "year_to_date",
-     "year": 2023,
+     "year": 2025,
      "month": 12
     },
-    "base": {
-     "kind": "year_to_date",
-     "year": 2022,
-     "month": 12
-    },
-    "form": "compare"
+    "form": "lookup"
    },
    "expected": {
     "action": "clarify",
@@ -35326,14 +35283,48 @@
      "net_income"
     ],
     "fs_div": "CFS",
-    "current": {
+    "period": {
      "kind": "year_to_date",
-     "year": 2023,
+     "year": 2025,
+     "month": 12
+    }
+   }
+  },
+  {
+   "id": "B6-003",
+   "bundle": "B6",
+   "author": "template",
+   "question": "NAVER 2024년 이익 알려줘.",
+   "case_types": [
+    "계정 모호"
+   ],
+   "tags": [],
+   "template": {
+    "template": "B6_lookup#0"
+   },
+   "grid": {
+    "kind": "clarify_account",
+    "corp_code": "00266961",
+    "fs_div": "CFS",
+    "period": {
+     "kind": "year_to_date",
+     "year": 2024,
      "month": 12
     },
-    "base": {
+    "form": "lookup"
+   },
+   "expected": {
+    "action": "clarify",
+    "corp_code": "00266961",
+    "ambiguity": "account",
+    "options": [
+     "operating_income",
+     "net_income"
+    ],
+    "fs_div": "CFS",
+    "period": {
      "kind": "year_to_date",
-     "year": 2022,
+     "year": 2024,
      "month": 12
     }
    }
@@ -35342,64 +35333,14 @@
    "id": "B6-004",
    "bundle": "B6",
    "author": "template",
-   "question": "CJ제일의 2024년 이익을 전년과 비교해 줘.",
+   "question": "씨제이제일제당 2023년 이익 알려줘.",
    "case_types": [
     "계정 모호"
    ],
    "tags": [],
    "template": {
-    "alias": "CJ제일",
-    "template": "B6_compare#1"
-   },
-   "grid": {
-    "kind": "clarify_account",
-    "corp_code": "00635134",
-    "fs_div": "CFS",
-    "current": {
-     "kind": "year_to_date",
-     "year": 2024,
-     "month": 12
-    },
-    "base": {
-     "kind": "year_to_date",
-     "year": 2023,
-     "month": 12
-    },
-    "form": "compare"
-   },
-   "expected": {
-    "action": "clarify",
-    "corp_code": "00635134",
-    "ambiguity": "account",
-    "options": [
-     "operating_income",
-     "net_income"
-    ],
-    "fs_div": "CFS",
-    "current": {
-     "kind": "year_to_date",
-     "year": 2024,
-     "month": 12
-    },
-    "base": {
-     "kind": "year_to_date",
-     "year": 2023,
-     "month": 12
-    }
-   }
-  },
-  {
-   "id": "B6-005",
-   "bundle": "B6",
-   "author": "template",
-   "question": "CJ제일제당의 작년 이익은 얼마야?",
-   "case_types": [
-    "계정 모호"
-   ],
-   "tags": [],
-   "template": {
-    "relative_year": true,
-    "template": "B6_lookup#1"
+    "alias": "씨제이제일제당",
+    "template": "B6_lookup#0"
    },
    "grid": {
     "kind": "clarify_account",
@@ -35407,7 +35348,7 @@
     "fs_div": "CFS",
     "period": {
      "kind": "year_to_date",
-     "year": 2025,
+     "year": 2023,
      "month": 12
     },
     "form": "lookup"
@@ -35423,7 +35364,56 @@
     "fs_div": "CFS",
     "period": {
      "kind": "year_to_date",
-     "year": 2025,
+     "year": 2023,
+     "month": 12
+    }
+   }
+  },
+  {
+   "id": "B6-005",
+   "bundle": "B6",
+   "author": "template",
+   "question": "CJ제일제당 2023년 이익이 얼마나 늘었어?",
+   "case_types": [
+    "계정 모호"
+   ],
+   "tags": [],
+   "template": {
+    "template": "B6_compare#0"
+   },
+   "grid": {
+    "kind": "clarify_account",
+    "corp_code": "00635134",
+    "fs_div": "CFS",
+    "current": {
+     "kind": "year_to_date",
+     "year": 2023,
+     "month": 12
+    },
+    "base": {
+     "kind": "year_to_date",
+     "year": 2022,
+     "month": 12
+    },
+    "form": "compare"
+   },
+   "expected": {
+    "action": "clarify",
+    "corp_code": "00635134",
+    "ambiguity": "account",
+    "options": [
+     "operating_income",
+     "net_income"
+    ],
+    "fs_div": "CFS",
+    "current": {
+     "kind": "year_to_date",
+     "year": 2023,
+     "month": 12
+    },
+    "base": {
+     "kind": "year_to_date",
+     "year": 2022,
      "month": 12
     }
    }
@@ -35432,13 +35422,14 @@
    "id": "B6-006",
    "bundle": "B6",
    "author": "template",
-   "question": "CJ제일제당 2025년 이익이 얼마나 늘었어?",
+   "question": "CJ제일의 2025년 이익을 전년과 비교해 줘.",
    "case_types": [
     "계정 모호"
    ],
    "tags": [],
    "template": {
-    "template": "B6_compare#0"
+    "alias": "CJ제일",
+    "template": "B6_compare#1"
    },
    "grid": {
     "kind": "clarify_account",
@@ -35481,46 +35472,6 @@
    "id": "B6-007",
    "bundle": "B6",
    "author": "template",
-   "question": "이마트 재작년 이익 알려줘.",
-   "case_types": [
-    "계정 모호"
-   ],
-   "tags": [],
-   "template": {
-    "relative_year": true,
-    "template": "B6_lookup#0"
-   },
-   "grid": {
-    "kind": "clarify_account",
-    "corp_code": "00872984",
-    "fs_div": "CFS",
-    "period": {
-     "kind": "year_to_date",
-     "year": 2024,
-     "month": 12
-    },
-    "form": "lookup"
-   },
-   "expected": {
-    "action": "clarify",
-    "corp_code": "00872984",
-    "ambiguity": "account",
-    "options": [
-     "operating_income",
-     "net_income"
-    ],
-    "fs_div": "CFS",
-    "period": {
-     "kind": "year_to_date",
-     "year": 2024,
-     "month": 12
-    }
-   }
-  },
-  {
-   "id": "B6-008",
-   "bundle": "B6",
-   "author": "template",
    "question": "이마트의 2023년 이익은 얼마야?",
    "case_types": [
     "계정 모호"
@@ -35557,33 +35508,66 @@
    }
   },
   {
-   "id": "B6-009",
+   "id": "B6-008",
    "bundle": "B6",
    "author": "template",
-   "question": "엘지엔솔의 2023년 이익을 전년과 비교해 줘.",
+   "question": "이마트 2025년 이익 알려줘.",
    "case_types": [
     "계정 모호"
    ],
    "tags": [],
    "template": {
-    "alias": "엘지엔솔",
-    "template": "B6_compare#1"
+    "template": "B6_lookup#0"
+   },
+   "grid": {
+    "kind": "clarify_account",
+    "corp_code": "00872984",
+    "fs_div": "CFS",
+    "period": {
+     "kind": "year_to_date",
+     "year": 2025,
+     "month": 12
+    },
+    "form": "lookup"
+   },
+   "expected": {
+    "action": "clarify",
+    "corp_code": "00872984",
+    "ambiguity": "account",
+    "options": [
+     "operating_income",
+     "net_income"
+    ],
+    "fs_div": "CFS",
+    "period": {
+     "kind": "year_to_date",
+     "year": 2025,
+     "month": 12
+    }
+   }
+  },
+  {
+   "id": "B6-009",
+   "bundle": "B6",
+   "author": "template",
+   "question": "LG에너지솔루션 2024년 이익 알려줘.",
+   "case_types": [
+    "계정 모호"
+   ],
+   "tags": [],
+   "template": {
+    "template": "B6_lookup#0"
    },
    "grid": {
     "kind": "clarify_account",
     "corp_code": "01515323",
     "fs_div": "CFS",
-    "current": {
+    "period": {
      "kind": "year_to_date",
-     "year": 2023,
+     "year": 2024,
      "month": 12
     },
-    "base": {
-     "kind": "year_to_date",
-     "year": 2022,
-     "month": 12
-    },
-    "form": "compare"
+    "form": "lookup"
    },
    "expected": {
     "action": "clarify",
@@ -35594,14 +35578,9 @@
      "net_income"
     ],
     "fs_div": "CFS",
-    "current": {
+    "period": {
      "kind": "year_to_date",
-     "year": 2023,
-     "month": 12
-    },
-    "base": {
-     "kind": "year_to_date",
-     "year": 2022,
+     "year": 2024,
      "month": 12
     }
    }
@@ -35610,12 +35589,13 @@
    "id": "B6-010",
    "bundle": "B6",
    "author": "template",
-   "question": "LG에너지솔루션의 2025년 이익은 얼마야?",
+   "question": "LG에너지솔루션의 작년 이익은 얼마야?",
    "case_types": [
     "계정 모호"
    ],
    "tags": [],
    "template": {
+    "relative_year": true,
     "template": "B6_lookup#1"
    },
    "grid": {
@@ -35649,7 +35629,7 @@
    "id": "B7-001",
    "bundle": "B7",
    "author": "template",
-   "question": "엘지의 2025년 자산총계는 얼마야?",
+   "question": "CJ의 2024년 영업활동현금흐름은 얼마야?",
    "case_types": [
     "그룹명"
    ],
@@ -35660,173 +35640,23 @@
    "grid": {
     "kind": "clarify_company",
     "action": "clarify_company",
-    "company": "엘지",
+    "company": "CJ",
     "options": [
-     "LG에너지솔루션"
+     "CJ제일제당"
     ],
-    "account": "total_assets",
-    "year": 2025
+    "account": "operating_cash_flow",
+    "year": 2024
    },
    "expected": {
     "action": "clarify_company",
-    "company": "엘지",
+    "company": "CJ",
     "options": [
-     "LG에너지솔루션"
+     "CJ제일제당"
     ]
    }
   },
   {
    "id": "B7-002",
-   "bundle": "B7",
-   "author": "template",
-   "question": "씨제이의 2024년 매출액은 얼마야?",
-   "case_types": [
-    "그룹명"
-   ],
-   "tags": [],
-   "template": {
-    "template": "B7#1"
-   },
-   "grid": {
-    "kind": "clarify_company",
-    "action": "clarify_company",
-    "company": "씨제이",
-    "options": [
-     "CJ제일제당"
-    ],
-    "account": "revenue",
-    "year": 2024
-   },
-   "expected": {
-    "action": "clarify_company",
-    "company": "씨제이",
-    "options": [
-     "CJ제일제당"
-    ]
-   }
-  },
-  {
-   "id": "B7-003",
-   "bundle": "B7",
-   "author": "template",
-   "question": "LG의 2025년 영업이익은 얼마야?",
-   "case_types": [
-    "그룹명"
-   ],
-   "tags": [],
-   "template": {
-    "template": "B7#1"
-   },
-   "grid": {
-    "kind": "clarify_company",
-    "action": "clarify_company",
-    "company": "LG",
-    "options": [
-     "LG에너지솔루션"
-    ],
-    "account": "operating_income",
-    "year": 2025
-   },
-   "expected": {
-    "action": "clarify_company",
-    "company": "LG",
-    "options": [
-     "LG에너지솔루션"
-    ]
-   }
-  },
-  {
-   "id": "B7-004",
-   "bundle": "B7",
-   "author": "template",
-   "question": "CJ의 2025년 부채총계는 얼마야?",
-   "case_types": [
-    "그룹명"
-   ],
-   "tags": [],
-   "template": {
-    "template": "B7#1"
-   },
-   "grid": {
-    "kind": "clarify_company",
-    "action": "clarify_company",
-    "company": "CJ",
-    "options": [
-     "CJ제일제당"
-    ],
-    "account": "total_liabilities",
-    "year": 2025
-   },
-   "expected": {
-    "action": "clarify_company",
-    "company": "CJ",
-    "options": [
-     "CJ제일제당"
-    ]
-   }
-  },
-  {
-   "id": "B7-005",
-   "bundle": "B7",
-   "author": "template",
-   "question": "LG의 2024년 자산총계는 얼마야?",
-   "case_types": [
-    "그룹명"
-   ],
-   "tags": [],
-   "template": {
-    "template": "B7#1"
-   },
-   "grid": {
-    "kind": "clarify_company",
-    "action": "clarify_company",
-    "company": "LG",
-    "options": [
-     "LG에너지솔루션"
-    ],
-    "account": "total_assets",
-    "year": 2024
-   },
-   "expected": {
-    "action": "clarify_company",
-    "company": "LG",
-    "options": [
-     "LG에너지솔루션"
-    ]
-   }
-  },
-  {
-   "id": "B7-006",
-   "bundle": "B7",
-   "author": "template",
-   "question": "CJ 2024년 자산총계 알려줘.",
-   "case_types": [
-    "그룹명"
-   ],
-   "tags": [],
-   "template": {
-    "template": "B7#0"
-   },
-   "grid": {
-    "kind": "clarify_company",
-    "action": "clarify_company",
-    "company": "CJ",
-    "options": [
-     "CJ제일제당"
-    ],
-    "account": "total_assets",
-    "year": 2024
-   },
-   "expected": {
-    "action": "clarify_company",
-    "company": "CJ",
-    "options": [
-     "CJ제일제당"
-    ]
-   }
-  },
-  {
-   "id": "B7-007",
    "bundle": "B7",
    "author": "template",
    "question": "CJ의 2024년 순이익은 얼마야?",
@@ -35857,17 +35687,16 @@
    }
   },
   {
-   "id": "B7-008",
+   "id": "B7-003",
    "bundle": "B7",
    "author": "template",
-   "question": "CJ 2024년 매출 알려줘.",
+   "question": "CJ의 2024년 자산총계는 얼마야?",
    "case_types": [
     "그룹명"
    ],
    "tags": [],
    "template": {
-    "synonym": "매출",
-    "template": "B7#0"
+    "template": "B7#1"
    },
    "grid": {
     "kind": "clarify_company",
@@ -35876,7 +35705,7 @@
     "options": [
      "CJ제일제당"
     ],
-    "account": "revenue",
+    "account": "total_assets",
     "year": 2024
    },
    "expected": {
@@ -35888,10 +35717,191 @@
    }
   },
   {
+   "id": "B7-004",
+   "bundle": "B7",
+   "author": "template",
+   "question": "LG 2025년 순이익 알려줘.",
+   "case_types": [
+    "그룹명"
+   ],
+   "tags": [],
+   "template": {
+    "synonym": "순이익",
+    "template": "B7#0"
+   },
+   "grid": {
+    "kind": "clarify_company",
+    "action": "clarify_company",
+    "company": "LG",
+    "options": [
+     "LG에너지솔루션"
+    ],
+    "account": "net_income",
+    "year": 2025
+   },
+   "expected": {
+    "action": "clarify_company",
+    "company": "LG",
+    "options": [
+     "LG에너지솔루션"
+    ]
+   }
+  },
+  {
+   "id": "B7-005",
+   "bundle": "B7",
+   "author": "template",
+   "question": "LG 2025년 영업활동현금흐름 알려줘.",
+   "case_types": [
+    "그룹명"
+   ],
+   "tags": [],
+   "template": {
+    "template": "B7#0"
+   },
+   "grid": {
+    "kind": "clarify_company",
+    "action": "clarify_company",
+    "company": "LG",
+    "options": [
+     "LG에너지솔루션"
+    ],
+    "account": "operating_cash_flow",
+    "year": 2025
+   },
+   "expected": {
+    "action": "clarify_company",
+    "company": "LG",
+    "options": [
+     "LG에너지솔루션"
+    ]
+   }
+  },
+  {
+   "id": "B7-006",
+   "bundle": "B7",
+   "author": "template",
+   "question": "LG의 2025년 부채총계는 얼마야?",
+   "case_types": [
+    "그룹명"
+   ],
+   "tags": [],
+   "template": {
+    "template": "B7#1"
+   },
+   "grid": {
+    "kind": "clarify_company",
+    "action": "clarify_company",
+    "company": "LG",
+    "options": [
+     "LG에너지솔루션"
+    ],
+    "account": "total_liabilities",
+    "year": 2025
+   },
+   "expected": {
+    "action": "clarify_company",
+    "company": "LG",
+    "options": [
+     "LG에너지솔루션"
+    ]
+   }
+  },
+  {
+   "id": "B7-007",
+   "bundle": "B7",
+   "author": "template",
+   "question": "씨제이 2025년 당기순이익 알려줘.",
+   "case_types": [
+    "그룹명"
+   ],
+   "tags": [],
+   "template": {
+    "template": "B7#0"
+   },
+   "grid": {
+    "kind": "clarify_company",
+    "action": "clarify_company",
+    "company": "씨제이",
+    "options": [
+     "CJ제일제당"
+    ],
+    "account": "net_income",
+    "year": 2025
+   },
+   "expected": {
+    "action": "clarify_company",
+    "company": "씨제이",
+    "options": [
+     "CJ제일제당"
+    ]
+   }
+  },
+  {
+   "id": "B7-008",
+   "bundle": "B7",
+   "author": "template",
+   "question": "씨제이 2025년 자산총계 알려줘.",
+   "case_types": [
+    "그룹명"
+   ],
+   "tags": [],
+   "template": {
+    "template": "B7#0"
+   },
+   "grid": {
+    "kind": "clarify_company",
+    "action": "clarify_company",
+    "company": "씨제이",
+    "options": [
+     "CJ제일제당"
+    ],
+    "account": "total_assets",
+    "year": 2025
+   },
+   "expected": {
+    "action": "clarify_company",
+    "company": "씨제이",
+    "options": [
+     "CJ제일제당"
+    ]
+   }
+  },
+  {
    "id": "B7-009",
    "bundle": "B7",
    "author": "template",
-   "question": "엘지 2025년 영업활동현금흐름 알려줘.",
+   "question": "엘지의 2024년 자산총계는 얼마야?",
+   "case_types": [
+    "그룹명"
+   ],
+   "tags": [],
+   "template": {
+    "template": "B7#1"
+   },
+   "grid": {
+    "kind": "clarify_company",
+    "action": "clarify_company",
+    "company": "엘지",
+    "options": [
+     "LG에너지솔루션"
+    ],
+    "account": "total_assets",
+    "year": 2024
+   },
+   "expected": {
+    "action": "clarify_company",
+    "company": "엘지",
+    "options": [
+     "LG에너지솔루션"
+    ]
+   }
+  },
+  {
+   "id": "B7-010",
+   "bundle": "B7",
+   "author": "template",
+   "question": "엘지 2024년 영업활동현금흐름 알려줘.",
    "case_types": [
     "그룹명"
    ],
@@ -35907,7 +35917,7 @@
      "LG에너지솔루션"
     ],
     "account": "operating_cash_flow",
-    "year": 2025
+    "year": 2024
    },
    "expected": {
     "action": "clarify_company",
@@ -35918,37 +35928,36 @@
    }
   },
   {
-   "id": "B7-010",
-   "bundle": "B7",
+   "id": "B8-001",
+   "bundle": "B8",
    "author": "template",
-   "question": "씨제이의 2024년 자산총계는 얼마야?",
+   "question": "NAVER와 이마트의 2025년 매출 비교해 줘.",
    "case_types": [
-    "그룹명"
+    "복합 질문"
    ],
    "tags": [],
    "template": {
-    "template": "B7#1"
+    "synonym": "매출",
+    "template": "B8_companies#0"
    },
    "grid": {
-    "kind": "clarify_company",
-    "action": "clarify_company",
-    "company": "씨제이",
-    "options": [
-     "CJ제일제당"
-    ],
-    "account": "total_assets",
-    "year": 2024
+    "kind": "out_of_scope",
+    "action": "out_of_scope",
+    "corp_code": "00266961",
+    "other": "00872984",
+    "company": "NAVER, 이마트",
+    "scope": "companies",
+    "account": "revenue",
+    "year": 2025
    },
    "expected": {
-    "action": "clarify_company",
-    "company": "씨제이",
-    "options": [
-     "CJ제일제당"
-    ]
+    "action": "out_of_scope",
+    "company": "NAVER, 이마트",
+    "scope": "companies"
    }
   },
   {
-   "id": "B8-001",
+   "id": "B8-002",
    "bundle": "B8",
    "author": "template",
    "question": "NAVER와 이마트의 2025년 자산총계 비교해 줘.",
@@ -35976,66 +35985,10 @@
    }
   },
   {
-   "id": "B8-002",
-   "bundle": "B8",
-   "author": "template",
-   "question": "NAVER랑 CJ제일제당 2025년 영업활동현금흐름은 어디가 더 많아?",
-   "case_types": [
-    "복합 질문"
-   ],
-   "tags": [],
-   "template": {
-    "template": "B8_companies#1"
-   },
-   "grid": {
-    "kind": "out_of_scope",
-    "action": "out_of_scope",
-    "corp_code": "00266961",
-    "other": "00635134",
-    "company": "NAVER, CJ제일제당",
-    "scope": "companies",
-    "account": "operating_cash_flow",
-    "year": 2025
-   },
-   "expected": {
-    "action": "out_of_scope",
-    "company": "NAVER, CJ제일제당",
-    "scope": "companies"
-   }
-  },
-  {
    "id": "B8-003",
    "bundle": "B8",
    "author": "template",
-   "question": "NAVER와 CJ제일제당의 2025년 자산총계 비교해 줘.",
-   "case_types": [
-    "복합 질문"
-   ],
-   "tags": [],
-   "template": {
-    "template": "B8_companies#0"
-   },
-   "grid": {
-    "kind": "out_of_scope",
-    "action": "out_of_scope",
-    "corp_code": "00266961",
-    "other": "00635134",
-    "company": "NAVER, CJ제일제당",
-    "scope": "companies",
-    "account": "total_assets",
-    "year": 2025
-   },
-   "expected": {
-    "action": "out_of_scope",
-    "company": "NAVER, CJ제일제당",
-    "scope": "companies"
-   }
-  },
-  {
-   "id": "B8-004",
-   "bundle": "B8",
-   "author": "template",
-   "question": "CJ제일제당 2025년 자산총계랑 부채총계 둘 다 알려줘.",
+   "question": "NAVER 2025년 매출액이랑 영업이익 둘 다 알려줘.",
    "case_types": [
     "복합 질문"
    ],
@@ -36046,26 +35999,26 @@
    "grid": {
     "kind": "out_of_scope",
     "action": "out_of_scope",
-    "corp_code": "00635134",
-    "company": "CJ제일제당",
+    "corp_code": "00266961",
+    "company": "NAVER",
     "scope": "accounts",
     "accounts": [
-     "total_assets",
-     "total_liabilities"
+     "revenue",
+     "operating_income"
     ],
     "year": 2025
    },
    "expected": {
     "action": "out_of_scope",
-    "company": "CJ제일제당",
+    "company": "NAVER",
     "scope": "accounts"
    }
   },
   {
-   "id": "B8-005",
+   "id": "B8-004",
    "bundle": "B8",
    "author": "template",
-   "question": "CJ제일제당과 이마트의 2025년 자산총계 비교해 줘.",
+   "question": "CJ제일제당과 LG에너지솔루션의 2025년 자산총계 비교해 줘.",
    "case_types": [
     "복합 질문"
    ],
@@ -36077,10 +36030,38 @@
     "kind": "out_of_scope",
     "action": "out_of_scope",
     "corp_code": "00635134",
+    "other": "01515323",
+    "company": "CJ제일제당, LG에너지솔루션",
+    "scope": "companies",
+    "account": "total_assets",
+    "year": 2025
+   },
+   "expected": {
+    "action": "out_of_scope",
+    "company": "CJ제일제당, LG에너지솔루션",
+    "scope": "companies"
+   }
+  },
+  {
+   "id": "B8-005",
+   "bundle": "B8",
+   "author": "template",
+   "question": "CJ제일제당이랑 이마트 2025년 영업활동현금흐름은 어디가 더 많아?",
+   "case_types": [
+    "복합 질문"
+   ],
+   "tags": [],
+   "template": {
+    "template": "B8_companies#1"
+   },
+   "grid": {
+    "kind": "out_of_scope",
+    "action": "out_of_scope",
+    "corp_code": "00635134",
     "other": "00872984",
     "company": "CJ제일제당, 이마트",
     "scope": "companies",
-    "account": "total_assets",
+    "account": "operating_cash_flow",
     "year": 2025
    },
    "expected": {
@@ -36093,13 +36074,14 @@
    "id": "B8-006",
    "bundle": "B8",
    "author": "template",
-   "question": "CJ제일제당이랑 LG에너지솔루션 2025년 부채총계는 어디가 더 많아?",
+   "question": "CJ제일제당과 LG에너지솔루션의 2025년 순이익 비교해 줘.",
    "case_types": [
     "복합 질문"
    ],
    "tags": [],
    "template": {
-    "template": "B8_companies#1"
+    "synonym": "순이익",
+    "template": "B8_companies#0"
    },
    "grid": {
     "kind": "out_of_scope",
@@ -36108,7 +36090,7 @@
     "other": "01515323",
     "company": "CJ제일제당, LG에너지솔루션",
     "scope": "companies",
-    "account": "total_liabilities",
+    "account": "net_income",
     "year": 2025
    },
    "expected": {
@@ -36119,6 +36101,34 @@
   },
   {
    "id": "B8-007",
+   "bundle": "B8",
+   "author": "template",
+   "question": "이마트랑 LG에너지솔루션 2025년 부채총계는 어디가 더 많아?",
+   "case_types": [
+    "복합 질문"
+   ],
+   "tags": [],
+   "template": {
+    "template": "B8_companies#1"
+   },
+   "grid": {
+    "kind": "out_of_scope",
+    "action": "out_of_scope",
+    "corp_code": "00872984",
+    "other": "01515323",
+    "company": "이마트, LG에너지솔루션",
+    "scope": "companies",
+    "account": "total_liabilities",
+    "year": 2025
+   },
+   "expected": {
+    "action": "out_of_scope",
+    "company": "이마트, LG에너지솔루션",
+    "scope": "companies"
+   }
+  },
+  {
+   "id": "B8-008",
    "bundle": "B8",
    "author": "template",
    "question": "이마트와 LG에너지솔루션의 2025년 영업이익 비교해 줘.",
@@ -36146,46 +36156,16 @@
    }
   },
   {
-   "id": "B8-008",
-   "bundle": "B8",
-   "author": "template",
-   "question": "이마트 2025년 매출액이랑 영업이익 둘 다 알려줘.",
-   "case_types": [
-    "복합 질문"
-   ],
-   "tags": [],
-   "template": {
-    "template": "B8_accounts#0"
-   },
-   "grid": {
-    "kind": "out_of_scope",
-    "action": "out_of_scope",
-    "corp_code": "00872984",
-    "company": "이마트",
-    "scope": "accounts",
-    "accounts": [
-     "revenue",
-     "operating_income"
-    ],
-    "year": 2025
-   },
-   "expected": {
-    "action": "out_of_scope",
-    "company": "이마트",
-    "scope": "accounts"
-   }
-  },
-  {
    "id": "B8-009",
    "bundle": "B8",
    "author": "template",
-   "question": "LG에너지솔루션 2025년 자산총계랑 부채총계 둘 다 알려줘.",
+   "question": "LG에너지솔루션의 2025년 매출액과 영업이익을 함께 알려줘.",
    "case_types": [
     "복합 질문"
    ],
    "tags": [],
    "template": {
-    "template": "B8_accounts#0"
+    "template": "B8_accounts#1"
    },
    "grid": {
     "kind": "out_of_scope",
@@ -36194,8 +36174,8 @@
     "company": "LG에너지솔루션",
     "scope": "accounts",
     "accounts": [
-     "total_assets",
-     "total_liabilities"
+     "revenue",
+     "operating_income"
     ],
     "year": 2025
    },
@@ -36209,13 +36189,13 @@
    "id": "B8-010",
    "bundle": "B8",
    "author": "template",
-   "question": "LG에너지솔루션 2025년 영업이익이랑 당기순이익 둘 다 알려줘.",
+   "question": "LG에너지솔루션의 2025년 자산총계와 부채총계를 함께 알려줘.",
    "case_types": [
     "복합 질문"
    ],
    "tags": [],
    "template": {
-    "template": "B8_accounts#0"
+    "template": "B8_accounts#1"
    },
    "grid": {
     "kind": "out_of_scope",
@@ -36224,8 +36204,8 @@
     "company": "LG에너지솔루션",
     "scope": "accounts",
     "accounts": [
-     "operating_income",
-     "net_income"
+     "total_assets",
+     "total_liabilities"
     ],
     "year": 2025
    },

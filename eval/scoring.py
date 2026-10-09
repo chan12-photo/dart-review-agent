@@ -104,8 +104,8 @@ def score_case(gold: dict[str, Any], raw_answer: str | dict[str, Any] | None, se
     """``seen``: the tool results the model was shown in this case (successful ones ground numbers).
 
     ``proposed_years``: the years of the readings the product showed as readings (EVAL_CONTRACT_3-5 section 6.1).
-    They ground a year only in a clarification (which shows the readings) and on the "이렇게 이해했습니다" line;
-    anywhere else a year still needs the question or a tool result.
+    They ground a year only in the clarifying question (and where the text repeats it exactly) and on the
+    "이렇게 이해했습니다" line; anywhere else a year still needs the question or a tool result.
     """
     score = CaseScore(gold["id"])
     applies = applicable(gold)
@@ -179,10 +179,14 @@ def score_case(gold: dict[str, Any], raw_answer: str | dict[str, Any] | None, se
     allowed.years |= question_years(question)
     as_reading = allowed_from(*seen)
     as_reading.years |= question_years(question) | set(proposed_years)
-    checks = []
-    for line in (answer.answer + "\n" + (answer.clarifying_question or "")).split("\n"):
-        shown_as_reading = answer.status == "되묻기" or line.lstrip().startswith(READING_LINE)
-        checks += check_text(line, as_reading if shown_as_reading else allowed)
+    # the readings' years: in the clarifying question (also where the text repeats it exactly) and on the reading
+    # line only; the rest of the text, including any other sentence of a clarification, needs the question or a
+    # tool result (Codex 3-5 review 2)
+    question_text = answer.clarifying_question or ""
+    body = answer.answer.replace(question_text, "\n", 1) if question_text else answer.answer
+    checks = check_text(question_text, as_reading)
+    for line in body.split("\n"):
+        checks += check_text(line, as_reading if line.lstrip().startswith(READING_LINE) else allowed)
     score.ungrounded = [check.mention.text for check in checks if not check.grounded] + _structured_numbers(answer, allowed)
     score.unparsed = [check.mention.text for check in checks if check.mention.kind == "unparsed"]
     score.warnings = [term for term in gold.get("forbidden_terms", []) if term in answer.answer]

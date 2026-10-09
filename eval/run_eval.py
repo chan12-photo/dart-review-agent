@@ -378,8 +378,9 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--set", dest="question_set", choices=("dev", "paraphrase", "lookup"), default="dev",
                         help="dev: the 13 development questions; paraphrase: the same readings reworded; "
                              "lookup: the 16 value-lookup and company-name questions (EVAL_DESIGN 12.4)")
-    parser.add_argument("--reference-date", type=date.fromisoformat, default=date.today(),
-                        help="the date the crosscheck reading prompt treats as today (YYYY-MM-DD; default: today)")
+    parser.add_argument("--reference-date", type=date.fromisoformat, default=None,
+                        help="the date the crosscheck reading prompt treats as today (YYYY-MM-DD; default: the question "
+                             "file's reference date, else today)")
     parser.add_argument("--companies", choices=sorted(COMPANY_SETS), default="development",
                         help="the company set to answer about (sealed-3-1 only for the pre-registered evaluation)")
     return parser
@@ -392,6 +393,15 @@ def _main(parser: argparse.ArgumentParser, args: argparse.Namespace) -> int:
             parser.error("--questions must be a file inside the repository (its hash is recorded)")
         args.question_set = FILE_SET + str(path.relative_to(ROOT))
         load_questions(args.question_set)  # fails early on a bad file
+        spec = json.loads(path.read_text(encoding="utf-8"))
+        fixed = date.fromisoformat(spec["reference_date"]) if spec.get("reference_date") else None
+        if fixed and args.reference_date not in (None, fixed):
+            # a question file's gold was written for its own reference date (Codex 3-5 review 1)
+            parser.error(f"--reference-date {args.reference_date} differs from the question file's {fixed}")
+        args.reference_date = args.reference_date or fixed
+        if spec.get("contract") == "3-5" and args.companies != "sealed-3-1":
+            parser.error("the 3-5 questions are answered with --companies sealed-3-1 (EVAL_CONTRACT_3-5 section 2)")
+    args.reference_date = args.reference_date or date.today()
     if (args.mode in MODEL_MODES) != bool(args.model):
         parser.error("--model is required for oracle, full, and agent, and not used for rules and baseline")
     if args.model and not args.out:

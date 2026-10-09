@@ -350,6 +350,12 @@ def write(family: str, item: dict[str, Any], rng: random.Random) -> tuple[str, d
 
 # ---------------------------------------------------------------- draw (section 4.1)
 
+def spread_unit(family: str, item: dict[str, Any]) -> str:
+    """What a family's count is spread evenly over: the company, or for B5 the out-of-scope company name and for
+    B7 the group name, which have no company of their own (contract section 4.1; Codex 3-5 review 4)."""
+    return item["company"] if family in ("B5", "B7") else item["corp_code"]
+
+
 def quota(count: int, groups: list[str]) -> dict[str, int]:
     share, extra = divmod(count, len(groups))
     return {group: share + (1 if index < extra else 0) for index, group in enumerate(groups)}
@@ -368,12 +374,12 @@ def generate(client: DartClient) -> tuple[dict[str, Any], dict[str, Any]]:
                     excluded.append({"family": family, "grid": item, "reason": str(reason)})
             by_company: dict[str, list] = {}
             for pair in usable:
-                by_company.setdefault(pair[0].get("corp_code") or "", []).append(pair)
+                by_company.setdefault(spread_unit(family, pair[0]), []).append(pair)
             drawn = []
             for group, number in quota(count, sorted(by_company)).items():
                 pool = by_company[group]
                 if number > len(pool):
-                    raise GoldError(f"{family}: {number} wanted from {len(pool)} usable combinations for {group or 'all'}")
+                    raise GoldError(f"{family}: {number} wanted from {len(pool)} usable combinations for {group}")
                 drawn += rng.sample(pool, number)
             for index, (item, expected) in enumerate(drawn, 1):
                 text, choice = write(family, item, rng)

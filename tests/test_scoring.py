@@ -62,12 +62,22 @@ class ReadingYearTests(unittest.TestCase):
         self.assertEqual(result.ungrounded, ["2023년"])
         self.assertFalse(result.automatic_passed)
 
-    def test_a_clarification_may_show_the_readings_years(self):
-        clarification = {"status": "되묻기", "company": "삼성전자", "account": None, "values": [], "change": None,
-                         "change_pct": None, "answer": "질문을 두 가지로 읽었습니다. 2023년 영업이익인가요, 2023년 당기순이익인가요?",
-                         "clarifying_question": "영업이익과 당기순이익 중 어느 것을 말씀하신 건가요?"}
-        self.assertEqual(score_case(GOLD["dev12"], clarification, [], QUESTIONS["dev12"], [2023]).ungrounded, [])
-        self.assertEqual(score_case(GOLD["dev12"], clarification, [], QUESTIONS["dev12"]).ungrounded, ["2023년", "2023년"])
+    QUESTION = "질문을 두 가지로 읽을 수 있습니다. ① 2023년 영업이익 ② 2023년 당기순이익. 어느 쪽으로 볼까요?"
+
+    def clarification(self, prefix):
+        return {"status": "되묻기", "company": "삼성전자", "account": None, "values": [], "change": None,
+                "change_pct": None, "answer": prefix + self.QUESTION, "clarifying_question": self.QUESTION}
+
+    def test_the_clarifying_question_may_show_the_readings_years(self):
+        # the cross-check's clarification repeats its question in the text (crosscheck.disagreement_answer)
+        answer = self.clarification("답하기 전에 확인이 필요합니다. ")
+        self.assertEqual(score_case(GOLD["dev12"], answer, [], QUESTIONS["dev12"], [2023]).ungrounded, [])
+        self.assertEqual(score_case(GOLD["dev12"], answer, [], QUESTIONS["dev12"]).ungrounded, ["2023년"] * 2)  # the repeated question is checked once
+
+    def test_another_sentence_of_a_clarification_may_not(self):
+        # Codex 3-5 review 2: a year outside the question and the reading line is not a reading
+        answer = self.clarification("2039년 기준으로 비교하면 다릅니다.\n")
+        self.assertEqual(score_case(GOLD["dev12"], answer, [], QUESTIONS["dev12"], [2023, 2039]).ungrounded, ["2039년"])
 
 
 class DistinguishTests(unittest.TestCase):

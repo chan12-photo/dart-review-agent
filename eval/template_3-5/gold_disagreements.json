@@ -1,5 +1,5 @@
 {
- "about": "EVAL_CONTRACT_3-5 section 5.4: each item is decided by re-reading the raw cells and approved by the user before any run",
+ "about": "EVAL_CONTRACT_3-5 section 5.4: each item is decided by re-reading the raw cells and approved by the user before any run (rebuilt 2026-10-09 after the B5/B7 draw was spread evenly; the earlier record is in e8f8fde)",
  "items": [
   {
    "id": "A1-038",
@@ -74,8 +74,8 @@
    "resolved_by": "Claude (원본 재확인)"
   },
   {
-   "id": "B5-001",
-   "question": "현대자동차의 2025년 영업활동현금흐름은 얼마야?",
+   "id": "B5-007",
+   "question": "SK하이닉스 2025년 매출 알려줘.",
    "tags": [],
    "gold_status": null,
    "problems": [
@@ -87,8 +87,8 @@
    "resolved_by": "Claude (원본 재확인)"
   },
   {
-   "id": "B5-004",
-   "question": "SK하이닉스의 2024년 부채총계는 얼마야?",
+   "id": "B5-008",
+   "question": "SK하이닉스의 2025년 부채총계는 얼마야?",
    "tags": [],
    "gold_status": null,
    "problems": [
@@ -100,21 +100,8 @@
    "resolved_by": "Claude (원본 재확인)"
   },
   {
-   "id": "B5-005",
-   "question": "현대자동차 2024년 부채총계 알려줘.",
-   "tags": [],
-   "gold_status": null,
-   "problems": [
-    "the rules read Reading(kind='unreadable', arguments=None, company='', options=(), reason='회사 이름을 찾지 못함')"
-   ],
-   "decision": "정답 유지 (제품 실패로 잰다)",
-   "reason": "SK하이닉스와 현대자동차는 평가 회사 집합 밖의 회사이므로 정답은 '범위 밖'이다(계약 4.2절 B5). 제품의 규칙은 지원 회사 이름이 들어가지 않은 회사 이름을 찾지 못해 해석하지 못한다. 교차 확인에서 모델이 범위 밖으로 읽는지는 실행에서 잰다.",
-   "approved_by_user": false,
-   "resolved_by": "Claude (원본 재확인)"
-  },
-  {
-   "id": "B5-011",
-   "question": "SK하이닉스 2024년 매출액 알려줘.",
+   "id": "B5-015",
+   "question": "현대자동차의 2024년 순이익은 얼마야?",
    "tags": [],
    "gold_status": null,
    "problems": [

@@ -177,7 +177,7 @@ The design was chosen on 13 development questions plus 13 paraphrases ([report](
 
 ## Status and next tasks (2026-10-10)
 
-This repository is closed for now at v0.1.2. Deferred tasks, and when they would be picked up:
+The comparison feature is closed at v0.1.2. In progress: **v0.2 documents to verified spreadsheets** (statements in text or scanned PDFs to Excel, every cell checked; `python -m dart_review extract file.pdf`, needs `pip install -e '.[docs]'` and Tesseract; see the roadmap). Deferred tasks, and when they would be picked up:
 
 | Task | What | Why deferred / when to resume |
 |---|---|---|

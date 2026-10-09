@@ -10,5 +10,11 @@ requires-python = ">=3.10"
 license = {text = "MIT"}
 dependencies = []
 
+[project.optional-dependencies]
+# documents to verified spreadsheets (dart_review.documents); OCR also needs the tesseract program with kor data
+docs = ["pdfplumber>=0.11", "pypdfium2>=4", "openpyxl>=3.1", "pillow>=10"]
+# the HTTP API and upload page (planned)
+server = ["fastapi>=0.110", "uvicorn>=0.29", "python-multipart>=0.0.9"]
+
 [tool.setuptools.packages.find]
 include = ["dart_review*"]

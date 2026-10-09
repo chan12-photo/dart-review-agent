@@ -69,6 +69,37 @@ def ask(args: argparse.Namespace) -> int:
     return 0
 
 
+def extract_command(args: argparse.Namespace) -> int:
+    """Statements in a PDF (text layer or scan) to a checked workbook (pip install -e '.[docs]')."""
+    from .documents import DocumentError, extract
+    if not args.pdf.is_file():
+        print(f"파일이 없습니다: {args.pdf}")
+        return 2
+    out = args.out or args.pdf.with_suffix(".xlsx")
+    if out.exists() and not args.overwrite:
+        print(f"{out}가 이미 있습니다. 덮어쓰려면 --overwrite를 붙이세요.")
+        return 2
+    try:
+        result = extract(args.pdf, out, ocr=args.ocr)
+    except (DocumentError, RuntimeError) as exc:
+        print(f"문서를 읽지 못했습니다: {exc}")
+        return 5
+    values = sum(len(row.amounts) for statement in result.statements for row in statement.rows)
+    print(f"재무제표 {len(result.statements)}개, 금액 {values}칸을 읽었습니다 "
+          f"(텍스트 {len(result.pages_by_method.get('text', []))}쪽, OCR {len(result.pages_by_method.get('ocr', []))}쪽).")
+    for statement in result.statements:
+        print(f"- {statement.title} (p.{statement.page}): 계정 {len(statement.rows)}줄, 단위 {statement.unit_text or '알 수 없음'}")
+    for statement in result.statements:
+        for problem in statement.problems:
+            print(f"  ! {statement.title}: {problem}")
+    for problem in result.problems:
+        print(f"  ! {problem}")
+    print(f"확인 필요 {result.needs_review}칸 (엑셀에서 노란 칸). 저장: {out}")
+    if not result.statements:
+        print("재무제표 제목(재무상태표, 손익계산서 등)을 찾지 못했습니다.")
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(prog="python -m dart_review", description="공시 재무 비교 도구 (교차 확인형)")
     commands = parser.add_subparsers(dest="command", required=True)
@@ -82,7 +113,15 @@ def main(argv: list[str] | None = None) -> int:
     asking.add_argument("--json", action="store_true", help="구조화된 답을 JSON으로 출력한다")
     asking.add_argument("--reference-date", type=date.fromisoformat, default=None,
                         help="'올해'·'작년'의 기준 날짜 (YYYY-MM-DD, 기본: 오늘)")
+    extracting = commands.add_parser("extract", help="PDF(텍스트·스캔)의 재무제표를 검증된 엑셀로 옮긴다 (선택 설치 [docs] 필요)")
+    extracting.add_argument("pdf", type=Path)
+    extracting.add_argument("--out", type=Path, help="엑셀 파일 (기본: PDF와 같은 이름의 .xlsx)")
+    extracting.add_argument("--ocr", choices=("auto", "always", "never"), default="auto",
+                            help="auto: 텍스트가 없는 쪽만 OCR (기본) / always / never")
+    extracting.add_argument("--overwrite", action="store_true", help="있는 엑셀 파일을 덮어쓴다")
     args = parser.parse_args(argv)
+    if args.command == "extract":
+        return extract_command(args)
     return demo() if args.command == "demo" else ask(args)
 
 

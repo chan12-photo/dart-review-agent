@@ -106,8 +106,10 @@ def main(argv: list[str] | None = None) -> int:
         findings.extend(scan_file(args.root, rel))
         if secret and secret in (args.root / rel).read_bytes().decode("utf-8", errors="ignore"):
             findings.append({"path": rel, "line": 0, "kind": "opendart_key_value", "value": "<redacted>"})
+    # Only the kind and the place: a matched value may itself be a secret or personal data,
+    # and this output can end up in a public CI log.
     for item in findings:
-        print(f"{item['path']}:{item['line']}: {item['kind']}: {item['value']}")
+        print(f"{item['path']}:{item['line']}: {item['kind']}")
     print(f"scanned {len(files)} files, {len(findings)} finding(s)", file=sys.stderr)
     return 1 if findings else 0
 

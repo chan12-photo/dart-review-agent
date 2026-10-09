@@ -1,12 +1,12 @@
 # dart-review-agent
 
-A local tool that **looks up and compares** financial figures of Korean listed companies from their filed statements (OpenDART). It compares two periods only when the comparison is sound: same consolidated/separate basis, same period length, same currency, no unexplained restatement. Otherwise it refuses or asks back, and says why. Korean version: [README.ko.md](README.ko.md).
+A local tool that **looks up and compares** financial figures of Korean listed companies from their filed statements (OpenDART). It compares two periods only when the comparison is sound: within the reports it reads, the same consolidated/separate basis, period length, and currency, and no visible restatement. Otherwise it refuses or asks back, and says why. It does not check amendments it has not fetched. Korean version: [README.ko.md](README.ko.md).
 
-**v0.1 (2026-10-09).** In one line: **a verified rule-based financial comparison tool, plus an experiment in cross-checking it with an LLM.** A sealed, pre-registered evaluation found:
-- the product gave **no wrong figure**;
-- the keyword rules alone read every question correctly;
-- **the LLM did not improve accuracy**;
-- the model on its own misread questions.
+**v0.1 (2026-10-09).** In one line: **a rule-based financial comparison tool, plus an experiment in cross-checking it with an LLM.** A sealed, pre-registered evaluation (36 questions, one run) found:
+- **the official verdict is "criteria not met"**: every criterion on the product was met, but the "model reading only" comparison method failed one criterion through a scorer mismatch (below);
+- the product gave **no wrong figure** in 22 figure answers. This is an observation on these 36 questions, most of them easy;
+- the keyword rules alone read all of these questions correctly;
+- on these 36 questions **the LLM did not improve accuracy**, and the model on its own misread questions.
 
 `dart_review/` in v0.1 is identical to the frozen commit P (`c182075`) that was evaluated.
 
@@ -37,7 +37,7 @@ $ python -m dart_review demo        # no API key, no model server, no network
   - All four criteria on the product were met: 0 wrong figures, 22/23 solved (criterion ≥ 70%), 4.3% unnecessary-clarification cost (criterion ≤ 25%), 10/10 on out-of-scope and ambiguous questions.
   - The miss came from the "model reading only" comparison method. It prefixes answers with "이렇게 이해했습니다: …2025년…" ("Here is how I read it"), and the frozen scorer counted that year as an ungrounded number.
   - This is a mismatch between the product design (reading years are allowed) and the scorer. Two independent reviews before the run did not catch it. The scorer was not changed after the run; the result with the year allowed is reported only as a sensitivity check.
-- **The LLM added nothing.** Rules wrong and model right: 0. Wrong answers the cross-check prevented: 0. Instead, a model misreading (revenue read as a point-in-time value) turned one answerable question into a clarifying question.
+- **On these 36 questions the LLM added nothing.** Rules wrong and model right: 0. Wrong answers the cross-check prevented: 0. Instead, a model misreading (revenue read as a point-in-time value) turned one answerable question into a clarifying question.
 - **What happened when the model read alone:**
   - it refused answerable questions after misreading the period or the account;
   - it gave a wrong reason for a refusal ("unsupported company" when the question named several companies);
@@ -53,7 +53,7 @@ Full report (Korean): [eval/sealed_3-1/REPORT.md](eval/sealed_3-1/REPORT.md). Co
 
 | Feature | Example question | Answer |
 |---|---|---|
-| Value lookup | "삼성전자 매출 알려줘" (Samsung's revenue) | value, period, basis (consolidated/separate), report and receipt number; checked for restatement against the same report type a year later |
+| Value lookup | "삼성전자 매출 알려줘" (Samsung's revenue) | value, period, basis (consolidated/separate), report and receipt number; if the same report type a year later exists, it is checked for restatement, otherwise the answer says restatement was not checked |
 | Period comparison | "카카오 2024년 3분기 매출은 전년 같은 분기보다 얼마나 줄었어?" | both values, change, rate, direction (e.g. turned to profit when the sign changes) |
 | Consolidated vs separate | "삼성전자 연결 매출이랑 별도 매출 보여줘" | both values and the gap, explained only as a difference in scope, never a guessed cause |
 | Asking back | "삼성전자 이익이 얼마나 늘었어?", "삼성 매출 알려줘" | asks whether operating income or net income is meant, or which company |
@@ -124,7 +124,7 @@ The design was chosen on 13 development questions plus 13 paraphrases ([report](
   - The one disagreement (C06) was resolved by re-reading the raw data: a restatement was found, the gold answer was corrected, and the user approved.
   - Because the comparison with the product prompted that re-check, the correction is not fully independent. The report says so and gives the sensitivity.
 - **Judging:** Claude reviewed the visible text of each method first; the user confirmed. A strict judge (`eval/judge.py`) then ran once. It withholds a verdict if any hash does not match.
-- **Independent reviews:** five reviews by another agent (Codex) were reproduced and applied ([docs/reviews/](docs/reviews/)). Before the run they caught evaluator defects such as a crash in review-sheet generation and a missing cross-run check of the sealed hashes.
+- **Independent reviews:** another agent (Codex) reviewed the work five times. Each finding was reproduced and the decision on it recorded ([docs/reviews/](docs/reviews/)). Before the run they caught evaluator defects such as a crash in review-sheet generation and a missing cross-run check of the sealed hashes.
 
 ## Limitations
 
@@ -142,10 +142,12 @@ Python 3.10+, standard library only.
 ```bash
 python -m dart_review demo
 python -m unittest discover -s tests
-python -m dart_review ask "삼성전자 매출 알려줘" --no-model --cache demo/opendart --offline
+python -m dart_review ask "삼성전자 매출 알려줘" --no-model --cache demo/opendart --offline --reference-date 2026-10-08
 ```
 
-With your own OpenDART key in `~/.config/opendart/api_key` (mode 600) and a local Ollama with `gpt-oss:20b`:
+Without `--reference-date` the reference date is today. A question with no year uses the latest annual report as of that date, which may be a year the demo data does not have.
+
+With your own OpenDART key in `~/.config/opendart/api_key` (mode 600; `DART_API_KEY_FILE` changes the location) and a local Ollama with `gpt-oss:20b`:
 
 ```bash
 python scripts/fetch_dev_cache.py
@@ -168,17 +170,19 @@ python -m dart_review ask "카카오 2024년 3분기 매출은 전년 같은 분
 - Raw responses are not in the repository (`cache/` is git-ignored). The repository holds only:
   - the trimmed demo responses (target-account rows only, 73 of 1,012 rows);
   - the account rows and figures that appear in gold answers and run records.
-- The OpenDART terms of use (effective 2020-01-21) have no clause forbidding redistribution of disclosed data; copyright matters not covered there follow the Copyright Act and the Public Data Act (Article 16 ④). This is a pre-publication check, not legal advice ([pre-publication check](docs/PUBLICATION_CHECK.ko.md)).
+- No clause in the OpenDART terms of use (effective 2020-01-21) directly forbids redistributing disclosed data. That is not a confirmed permission: copyright matters not covered there follow the Copyright Act and the Public Data Act (Article 16 ④). This is a pre-publication check, not legal advice ([pre-publication check](docs/PUBLICATION_CHECK.ko.md)).
+- The filing companies and OpenDART are responsible for the original disclosures. The figures here come from responses fetched on 2026-10-07 and 2026-10-08.
 - The output of this tool is not investment advice.
 
 ## Safety and reproducibility
 
-- The OpenDART key is read only from `~/.config/opendart/api_key` and never logged, cached, or committed.
-- Two scans ran before publication, both with 0 findings:
+- The OpenDART key is read from `~/.config/opendart/api_key` by default (`DART_API_KEY_FILE` changes the location). Its value is never logged, cached, or committed.
+- Two scans ran before publication with 0 findings within their scope. That does not prove there is no secret: values that do not match a pattern (encoded values, binary files) are not caught.
   - the current files (`scripts/check_public_safety.py`);
-  - the whole git history (`scripts/check_history_safety.py`, including a match against the local key value).
+  - the whole git history (`scripts/check_history_safety.py`). The match against the local key value runs only on the author's machine, where the key file exists; CI runs the pattern checks only.
+  - Both print only the kind and place of a finding, never the matched value.
 - Every evaluation run records the exact request, the raw response, the model digest, hashes of prompts, tools, and gold, and the reference date. The `ask` command keeps no request log.
 
 ## License
 
-MIT
+The code is MIT-licensed (`LICENSE`). The figures and demo responses from OpenDART are not newly licensed by it; see "Data source and use" above.

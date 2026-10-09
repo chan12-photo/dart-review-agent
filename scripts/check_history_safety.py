@@ -10,6 +10,7 @@ reachable from any ref, to every path that ever existed, and to commit messages.
 
 from __future__ import annotations
 
+import argparse
 import fnmatch
 from pathlib import Path
 import subprocess
@@ -21,11 +22,14 @@ sys.path.insert(0, str(ROOT / "scripts"))
 from check_public_safety import FORBIDDEN_FILE_PATTERNS, local_key_value, scan_text  # noqa: E402
 
 
-def git(*args: str, data: bytes | None = None) -> bytes:
-    return subprocess.run(["git", *args], cwd=ROOT, input=data, capture_output=True, check=True).stdout
+def main(argv: list[str] | None = None) -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--root", type=Path, default=ROOT)
+    root = parser.parse_args(argv).root
 
+    def git(*args: str) -> bytes:
+        return subprocess.run(["git", *args], cwd=root, capture_output=True, check=True).stdout
 
-def main() -> int:
     key = local_key_value()
     objects = git("rev-list", "--objects", "--all").decode("utf-8").splitlines()
     paths: dict[str, set[str]] = {}
@@ -46,7 +50,7 @@ def main() -> int:
         where = sorted(paths[sha])[0]
         if key and key in text:
             findings.append(("blob", where, "opendart_key_value"))
-        findings += [("blob", where, f"{item['kind']}: {item['value']}") for item in scan_text(where, text)]
+        findings += [("blob", f"{where}:{item['line']}", item["kind"]) for item in scan_text(where, text)]
     messages = git("log", "--all", "--format=%H%x00%B%x01").decode("utf-8").split("\x01")
     for entry in messages:
         commit, _, body = entry.strip().partition("\x00")
@@ -54,9 +58,10 @@ def main() -> int:
             continue
         if key and key in body:
             findings.append(("message", commit[:7], "opendart_key_value"))
-        findings += [("message", commit[:7], f"{item['kind']}: {item['value']}") for item in scan_text(commit[:7], body)]
+        findings += [("message", f"{commit[:7]}:{item['line']}", item["kind"]) for item in scan_text(commit[:7], body)]
     print(f"scanned {len(blobs)} file versions, {len(paths)} objects, {len([m for m in messages if m.strip()])} commit messages; "
           f"key value check {'on' if key else 'OFF (no local key file)'}; {len(findings)} finding(s)")
+    # Only the kind and the place, never the matched value (see check_public_safety.py).
     for where, name, kind in findings:
         print(f"  {where} {name}: {kind}")
     return 1 if findings else 0

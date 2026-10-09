@@ -229,8 +229,29 @@ class PublicSafetyTests(unittest.TestCase):
                                     capture_output=True, text=True, env=env)
             self.assertEqual(result.returncode, 1)
             self.assertIn("opendart_key_param", result.stdout)
-            self.assertIn("plain.txt:0: opendart_key_value: <redacted>", result.stdout)
+            self.assertIn("plain.txt:0: opendart_key_value", result.stdout)
             self.assertNotIn(FAKE_KEY, result.stdout + result.stderr)
+            self.assertNotIn("ab" * 10, result.stdout + result.stderr)  # a matched value is never printed
+
+    def test_history_scan_finds_removed_secrets_without_printing_them(self):
+        with tempfile.TemporaryDirectory() as temp:
+            repo = Path(temp)
+            git = lambda *args: subprocess.run(["git", *args], cwd=repo, check=True, capture_output=True)
+            git("init", "-q")
+            git("config", "user.email", "test@example.com")
+            git("config", "user.name", "test")
+            leaked = "url?crtfc_key=" + "cd" * 10
+            (repo / "notes.txt").write_text(leaked + "\n", encoding="utf-8")
+            git("add", "notes.txt")
+            git("commit", "-q", "-m", "add notes")
+            (repo / "notes.txt").write_text("clean\n", encoding="utf-8")
+            git("commit", "-q", "-am", "remove the leak")
+            env = dict(os.environ, DART_API_KEY_FILE=str(repo / "missing_key"))
+            result = subprocess.run([sys.executable, str(ROOT / "scripts" / "check_history_safety.py"), "--root", str(repo)],
+                                    capture_output=True, text=True, env=env)
+            self.assertEqual(result.returncode, 1)
+            self.assertIn("notes.txt:1: opendart_key_param", result.stdout)
+            self.assertNotIn("cd" * 10, result.stdout + result.stderr)
 
 
 if __name__ == "__main__":

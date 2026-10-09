@@ -53,15 +53,17 @@ class Part:
 
 @dataclass
 class Header:
-    centers: list[float]  # x centre of each period header, left to right
+    starts: list[float]  # x where each period heading starts, left to right
     columns: list[PeriodColumn]
     bottom: float
 
-    def period_of(self, x: float) -> int | None:
-        if not self.centers:
-            return None
-        bounds = [(a + b) / 2 for a, b in zip(self.centers, self.centers[1:])]
-        return sum(x > bound for bound in bounds)
+    def period_of(self, right: float) -> int | None:
+        """The period of an amount whose right edge is ``right``: the last heading that starts left of it.
+        Headings are printed centred or left-aligned over their period's detail and subtotal positions; the
+        midpoint between heading centres once put a current-year subtotal under the prior year. An amount left
+        of the first heading (the note column) has no period."""
+        index = sum(right >= start for start in self.starts) - 1
+        return index if index >= 0 else None
 
 
 @dataclass
@@ -152,7 +154,7 @@ def _header(lines: Sequence[Line], ends: dict[int, tuple[int, str]]) -> Header |
                 number = int(ordinal.group(1)) if ordinal else None
                 year, end = ends.get(number, (None, None)) if number else (None, None)
                 columns.append(PeriodColumn(cell.text, number, year, end))
-            return Header([(cell.x0 + cell.x1) / 2 for cell, _ in found], columns, max(cell.bottom for cell, _ in found))
+            return Header([cell.x0 for cell, _ in found], columns, max(cell.bottom for cell, _ in found))
     return None
 
 
@@ -179,6 +181,16 @@ def _is_amount_word(text: str) -> bool:
     """An amount as printed: digits grouped by three, or a small amount in parentheses or of three digits
     ("(973)", "682"). Note numbers ("4", "29", "4, 29") are not amounts."""
     return bool(SMALL_OR_GROUPED.fullmatch(re.sub(r"(백만|천)?원$", "", text.replace(" ", ""))))
+
+
+def _is_amount_like(cell: Cell, header: Header | None) -> bool:
+    """An amount, or a small number printed under a period heading (a per-share amount "47"): note numbers
+    are printed left of the period headings."""
+    if _is_amount_word(cell.text):
+        return True
+    text = re.sub(r"(백만|천)?원$", "", cell.text.replace(" ", ""))
+    return (header is not None and header.period_of(cell.x1) is not None
+            and bool(re.fullmatch(r"[(（]?[-−△]?\d{1,3}[)）]?", text)))
 
 
 def _existing_row(statement: Statement, label: str, line: Line | None) -> int | None:
@@ -324,7 +336,7 @@ def _read_with_page_structure(part: Part, lines: Sequence[Line], title_line: Lin
     if state.header is None:
         statement.problems.append(f"{part.page}쪽: 열 머리글(당기·전기)을 찾지 못해 이 쪽의 금액은 기간을 정하지 못했다")
     top = part_header.bottom if part_header else (title_line.cells[0].bottom if title_line else 0.0)
-    body = [line for line in lines if line.top > top and any(_is_amount_word(cell.text) for cell in line.cells)]
+    body = [line for line in lines if line.top > top and any(_is_amount_like(cell, state.header) for cell in line.cells)]
     claimed: set[int] = set()
     s_index = len(state.statements) - 1
     for band_top, band_bottom, band_lines in _bands(body):
@@ -334,7 +346,7 @@ def _read_with_page_structure(part: Part, lines: Sequence[Line], title_line: Lin
             _add_row(statement, state.checks, s_index, item, band_lines, state.header, part, claimed)
     for line in body:
         for cell in line.cells:
-            if _is_amount_word(cell.text) and id(cell) not in claimed:
+            if _is_amount_like(cell, state.header) and id(cell) not in claimed:
                 statement.problems.append(f"{part.page}쪽: 원본의 금액 '{cell.text}'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)")
     if notes is not None:
         state.closed = True
@@ -474,7 +486,7 @@ def _add_row(statement: Statement, checks: list[CellCheck], s_index: int, item: 
         reasons = [label_problem] if label_problem else []
         if cell is not None:
             claimed.add(id(cell))
-            column = header.period_of((cell.x0 + cell.x1) / 2) if header else None
+            column = header.period_of(cell.x1) if header else None
             if column is None:
                 column = position
                 reasons.append("열 머리글이 없어 기간을 AI가 읽은 순서로 정했다")
@@ -486,7 +498,15 @@ def _add_row(statement: Statement, checks: list[CellCheck], s_index: int, item: 
             if column is None:
                 continue
         if column in row.amounts:
-            continue  # the overlap line between two bands, already read
+            if cell is None or row.amounts[column].cell is cell:
+                continue  # the overlap line between two bands, already read
+            # two amounts of one printed line in one period: neither is trusted, the second is reported
+            r_index = existing if existing is not None else len(statement.rows)
+            for check in checks:
+                if (check.statement, check.row, check.column) == (s_index, r_index, column):
+                    check.flag(f"같은 줄의 다른 금액 '{printed}'도 이 기간으로 읽혀 기간 배정이 불확실하다")
+            statement.problems.append(f"{part.page}쪽: '{label}' 줄의 금액 '{printed}'를 기간 열에 넣지 못했다 (원본 확인 필요)")
+            continue
         try:
             value = parse_amount(printed, unit)
         except ValueError:

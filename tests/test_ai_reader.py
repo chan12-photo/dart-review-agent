@@ -96,6 +96,11 @@ class TextLayerEvidenceTests(unittest.TestCase):
         self.assertIn("1쪽: AI가 '유동자산' 줄을 '비유동자산'(으)로 읽어 원본 계정명을 썼다", statement.problems)
         self.assertEqual(self.flagged(reading), {})  # the output is the page's own label, digits, and column
 
+    def test_left_aligned_headings_over_detail_and_subtotal_positions(self):
+        from dart_review.documents.ai_reader import Header
+        header = Header([238, 392], [], 0)  # 한화시스템: "제26(당) 기말" at 238, "제25(전) 기말" at 392
+        self.assertEqual([header.period_of(right) for right in (217, 311, 388, 466, 543)], [None, 0, 0, 1, 1])
+
     def test_labels_inside_one_another_are_different_accounts(self):
         from dart_review.documents.ai_reader import _different_accounts
         self.assertTrue(_different_accounts("유동자산", "비유동자산"))

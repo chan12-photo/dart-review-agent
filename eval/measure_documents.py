@@ -11,11 +11,12 @@ Each extracted cell is put in one class:
 - dart_exact: OpenDART has the same account name and value in that period
 - dart_value: OpenDART has the value under another name (or the same row is named differently)
 - dart_sign: OpenDART has the value with the opposite sign (cash outflows are stored either way)
+- wrong_period: OpenDART has the value (either sign) only in the other period: put under the wrong period
 - unit_mismatch: OpenDART has the value only after a factor of 10^3, 10^6 or 10^8: read in the wrong unit
 - pdf_only: OpenDART has no such value, but the PDF's text layer prints this value on the row's line
   (OpenDART presents some details differently from the printed statement); text PDFs only
 - unconfirmed: none of these.
-A unit_mismatch or unconfirmed cell that is not marked "확인 필요" is a candidate silent error and is listed
+A wrong_period, unit_mismatch or unconfirmed cell that is not marked "확인 필요" is a candidate silent error and is listed
 for a person to look at.
 Values OpenDART has for a statement that are in no extracted cell (either sign) are listed as not extracted.
 The workbook's own checks are reported next to this: how many cells it marked "확인 필요".
@@ -50,7 +51,7 @@ DOCUMENTS = [
      "file": "%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90_%EC%97%B0%EA%B2%B0%EC%9E%AC%EB%AC%B4%EC%A0%9C%ED%91%9C_%ED%86%B5%ED%95%A9.pdf"},
 ]
 YEAR, REPORT = 2025, "11011"  # consolidated statements are compared with CFS, separate (별도) ones with OFS
-CLASSES = ("dart_exact", "dart_value", "dart_sign", "unit_mismatch", "pdf_only", "unconfirmed")
+CLASSES = ("dart_exact", "dart_value", "dart_sign", "wrong_period", "unit_mismatch", "pdf_only", "unconfirmed")
 SCALES = (10 ** 3, 10 ** 6, 10 ** 8)
 
 
@@ -127,6 +128,8 @@ def classify(extraction, items_by_division: dict[str, list[dict]], text_lines: d
                     kind = "dart_value"
                 elif -amount.value in values[column]:
                     kind = "dart_sign"
+                elif column in (0, 1) and abs(amount.value) in {abs(v) for v in values[1 - column]} and abs(amount.value) > 999:
+                    kind = "wrong_period"
                 elif any(abs(amount.value) * scale in {abs(v) for v in values[column]}
                          or (abs(amount.value) % scale == 0 and abs(amount.value) // scale in {abs(v) for v in values[column]})
                          for scale in SCALES):
@@ -139,7 +142,7 @@ def classify(extraction, items_by_division: dict[str, list[dict]], text_lines: d
                 counts[kind] += 1
                 is_flagged = (s_index, r_index, column) in flagged
                 flagged_counts[kind] += is_flagged
-                if kind in ("unit_mismatch", "pdf_only", "unconfirmed"):
+                if kind in ("wrong_period", "unit_mismatch", "pdf_only", "unconfirmed"):
                     attention.append({"label": row.label, "period": column, "printed": amount.printed,
                                       "value": amount.value, "class": kind, "flagged": is_flagged,
                                       "dart_same_name": sorted(v for v, names in values[column].items() if key in names)})
@@ -193,7 +196,7 @@ def main() -> int:
                   **classify(extraction, items, printed_on_page(path))}
         results.append(result)
         silent = sum(1 for s in result["statements"] for item in s.get("attention", [])
-                     if item["class"] in ("unit_mismatch", "unconfirmed") and not item["flagged"])
+                     if item["class"] in ("wrong_period", "unit_mismatch", "unconfirmed") and not item["flagged"])
         print(f"{document['company']}: {seconds}s, cells {result['cells']}, review {result['needs_review']}, "
               f"unconfirmed and unmarked {silent}", flush=True)
     args.out.mkdir(parents=True, exist_ok=True)

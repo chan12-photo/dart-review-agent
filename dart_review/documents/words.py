@@ -114,15 +114,17 @@ def skew_angle(image, limit: float = 3.0, step: float = 0.1) -> float:
     return best
 
 
-def image_words(image, page: int, scale: float = 1.0) -> list[Word]:
-    """Tesseract's words for one page image, after levelling it; ``scale`` turns pixels into PDF points."""
+def image_words(image, page: int, scale: float = 1.0, level: bool = True, psm: int = 6) -> list[Word]:
+    """Tesseract's words for one page image, after levelling it; ``scale`` turns pixels into PDF points.
+
+    ``level`` False: the caller has levelled the image already and needs positions in that same image."""
     from PIL import Image
-    angle = skew_angle(image)
+    angle = skew_angle(image) if level else 0.0
     if angle:
         image = image.convert("L").rotate(angle, fillcolor=255, resample=Image.BICUBIC)
     buffer = io.BytesIO()
     image.save(buffer, format="PNG")
-    result = subprocess.run(["tesseract", "stdin", "stdout", "-l", OCR_LANGUAGES, "--psm", "6", "tsv"],
+    result = subprocess.run(["tesseract", "stdin", "stdout", "-l", OCR_LANGUAGES, "--psm", str(psm), "tsv"],
                             input=buffer.getvalue(), capture_output=True, check=False)
     if result.returncode != 0:
         raise DocumentError(f"tesseract failed with exit code {result.returncode}")

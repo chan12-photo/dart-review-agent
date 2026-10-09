@@ -31,7 +31,12 @@ class Extraction:
         return sum(item.status == REVIEW for item in self.checks)
 
 
-def extract(source: Path, workbook: Path | None = None, ocr: str = "auto") -> Extraction:
+def extract(source: Path, workbook: Path | None = None, ocr: str = "auto", reader: str = "rules",
+            model=None, pages=None) -> Extraction:
+    """``reader``: "rules" (positions and rules only) or "ai" (a vision model reads, the evidence confirms).
+    ``model``: the vision model for "ai" (default: local Ollama qwen3-vl)."""
+    if reader == "ai":
+        return _extract_ai(source, workbook, model, pages)
     words = read_words(source, ocr)
     if not words:
         raise DocumentError("no text was found (the scan may be empty or unreadable)")
@@ -57,6 +62,21 @@ def extract(source: Path, workbook: Path | None = None, ocr: str = "auto") -> Ex
         from .excel import write_workbook
         write_workbook(workbook, statements, checks, source.name, problems)
     return Extraction(statements, checks, methods, problems)
+
+
+def _extract_ai(source: Path, workbook: Path | None, model, pages) -> Extraction:
+    from .ai_reader import read_document
+    from .vision import OllamaVision
+    model = model or OllamaVision()
+    reading = read_document(source, model, pages)
+    if not reading.statements:
+        reading.problems.append("재무제표 제목을 찾지 못했다 (AI 읽기를 하지 않았다)")
+    sources = {check.evidence for check in reading.checks if check.evidence}
+    if workbook is not None:
+        from .excel import write_workbook
+        write_workbook(workbook, reading.statements, reading.checks, source.name, reading.problems, reader="ai")
+    return Extraction(reading.statements, reading.checks, {"ai": sorted({s.page for s in reading.statements})},
+                      reading.problems + [f"AI 호출 {reading.calls}번, 증거: {', '.join(sorted(sources)) or '없음'}"])
 
 
 __all__ = ["DocumentError", "Extraction", "extract"]

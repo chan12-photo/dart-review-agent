@@ -29,6 +29,7 @@ class CellCheck:
     column: int
     status: str = CHECKED
     reasons: list[str] = field(default_factory=list)
+    evidence: str = ""  # AI reading: what confirmed the value ("PDF 글자", "OCR"), empty when nothing did
 
     def flag(self, reason: str) -> None:
         self.status = REVIEW
@@ -84,20 +85,32 @@ def check(statements: list[Statement]) -> list[CellCheck]:
     return checks
 
 
-def _balance(statement: Statement, by_cell: dict[tuple[int, int], CellCheck]) -> None:
+# balance-sheet identities: total = the sum of parts (labels compared without spaces)
+IDENTITIES = (("자산총계", ("부채총계", "자본총계")), ("자산총계", ("유동자산", "비유동자산")),
+              ("부채총계", ("유동부채", "비유동부채")), ("자산총계", ("부채와자본총계",)))
+
+
+def _balance(statement: Statement, by_cell: dict[tuple[int, int], CellCheck]) -> list[str]:
+    """Check every identity whose rows are all present; return the names of the identities checked."""
     if statement.kind != "BS":
-        return
-    index = {}
+        return []
+    index: dict[str, int] = {}
     for r_index, row in enumerate(statement.rows):
         key = re.sub(r"\s+", "", row.label)
-        if key in ("자산총계", "부채총계", "자본총계") and key not in index:
-            index[key] = r_index
-    if len(index) < 3:
-        return
-    for column in range(len(statement.columns)):
-        cells = {key: statement.rows[r].amounts.get(column) for key, r in index.items()}
-        if any(cell is None or cell.value is None for cell in cells.values()):
+        index.setdefault(key, r_index)
+    checked = []
+    for total, parts in IDENTITIES:
+        names = (total, *parts)
+        if not all(name in index for name in names):
             continue
-        if cells["자산총계"].value != cells["부채총계"].value + cells["자본총계"].value:
-            for key, r in index.items():
-                by_cell[(r, column)].flag("자산총계 = 부채총계 + 자본총계가 맞지 않는다 (세 칸 중 어느 것이 틀렸는지 모른다)")
+        rule = f"{total} = {' + '.join(parts)}"
+        checked.append(rule)
+        for column in range(len(statement.columns)):
+            cells = {name: statement.rows[index[name]].amounts.get(column) for name in names}
+            if any(cell is None or cell.value is None for cell in cells.values()):
+                continue
+            if cells[total].value != sum(cells[part].value for part in parts):
+                for name in names:
+                    if (index[name], column) in by_cell:
+                        by_cell[(index[name], column)].flag(f"{rule}가 맞지 않는다 (어느 칸이 틀렸는지는 모른다)")
+    return checked

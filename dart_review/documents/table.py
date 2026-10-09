@@ -54,7 +54,8 @@ class Cell:
 
     @property
     def method(self) -> str:
-        return "ocr" if any(word.method == "ocr" for word in self.words) else "text"
+        methods = {word.method for word in self.words}
+        return "ocr" if "ocr" in methods else "ai" if "ai" in methods else "text"
 
     @property
     def is_amount(self) -> bool:

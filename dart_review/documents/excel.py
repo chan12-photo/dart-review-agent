@@ -17,8 +17,11 @@ from .verify import REVIEW, CellCheck
 KINDS = {"BS": "재무상태표", "IS": "손익계산서", "CIS": "포괄손익계산서", "CF": "현금흐름표", "SCE": "자본변동표"}
 
 
+METHODS = {"text": "PDF 글자", "ocr": "OCR", "ai": "AI"}
+
+
 def write_workbook(path: Path, statements: list[Statement], checks: list[CellCheck], source_name: str,
-                   problems: list[str] | None = None) -> None:
+                   problems: list[str] | None = None, reader: str = "rules") -> None:
     try:
         from openpyxl import Workbook
         from openpyxl.comments import Comment
@@ -35,7 +38,9 @@ def write_workbook(path: Path, statements: list[Statement], checks: list[CellChe
     review = sum(c.status == REVIEW for c in checks)
     for line in (f"원본: {source_name}", "모든 금액은 원 단위로 바꿔 적었다 (원본 단위는 '셀 출처' 시트).",
                  f"검사한 칸 {len(checks)}개 가운데 '확인 필요' {review}개: 노란 칸은 원본과 대조해 확인한다.",
-                 "숫자는 원본에서만 가져왔고, 의심되는 칸도 고치지 않았다."):
+                 "숫자는 원본에서만 가져왔고, 의심되는 칸도 고치지 않았다." if reader != "ai" else
+                 "AI(로컬 비전 모델)가 표를 읽었고, 각 숫자를 원본(PDF 글자 또는 OCR)의 같은 줄과 대조했다. "
+                 "원본에서 같은 숫자를 찾지 못한 칸은 '확인 필요'다. AI가 읽은 숫자를 원본으로 고치지는 않았다."):
         guide.append([line])
 
     sheet = book.create_sheet("재무제표")
@@ -59,7 +64,7 @@ def write_workbook(path: Path, statements: list[Statement], checks: list[CellChe
 
     sources = book.create_sheet("셀 출처")
     sources.append(["재무제표", "계정", "기간 열", "금액(원)", "원문 표기", "원본 단위", "페이지", "x0", "top", "x1", "bottom",
-                    "방법", "OCR 확신도", "상태", "이유"])
+                    "읽은 방법", "증거", "OCR 확신도", "상태", "이유"])
     for s_index, statement in enumerate(statements):
         for r_index, row in enumerate(statement.rows):
             for c_index, amount in row.amounts.items():
@@ -67,7 +72,7 @@ def write_workbook(path: Path, statements: list[Statement], checks: list[CellChe
                 cell = amount.cell
                 sources.append([statement.title, row.label, _header(statement.columns[c_index]), amount.value, amount.printed,
                                 statement.unit_text, cell.page, round(cell.x0, 1), round(cell.top, 1), round(cell.x1, 1),
-                                round(cell.bottom, 1), "OCR" if cell.method == "ocr" else "텍스트",
+                                round(cell.bottom, 1), _method(cell, check, reader), _evidence(check, reader),
                                 cell.confidence, check.status if check else "", "; ".join(check.reasons) if check else ""])
                 sources.cell(sources.max_row, 4).number_format = "#,##0"
 
@@ -86,6 +91,17 @@ def write_workbook(path: Path, statements: list[Statement], checks: list[CellChe
     for problem in problems or []:
         sheet_problems.append(["(문서 전체)", "", "", "", problem])
     book.save(path)
+
+
+def _method(cell, check, reader: str) -> str:
+    """How the value was read: by the AI (its evidence is in the next column) or straight from the page."""
+    return "AI" if reader == "ai" else METHODS.get(cell.method, cell.method)
+
+
+def _evidence(check, reader: str) -> str:
+    if reader != "ai":
+        return ""
+    return check.evidence if check and check.evidence else "없음"
 
 
 def _header(column) -> str:

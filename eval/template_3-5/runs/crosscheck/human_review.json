@@ -1,0 +1,668 @@
+{
+ "reviewer": "",
+ "confirmed_by_user": false,
+ "criteria": "eval/HUMAN_REVIEW.ko.md",
+ "cases": {
+  "A1-011": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "A1-020": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "A1-023": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "A1-030": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "A1-031": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "A1-034": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "A1-038": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "A1-043": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "A1-047": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "A1-050": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "A1-052": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "A1-053": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "A1-059": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "A2-002": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "A2-027": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "A2-032": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "A2-034": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "A2-046": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "A2-047": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "A2-058": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "A3-005": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "A3-010": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "A3-013": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "A3-021": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "A3-022": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "A3-031": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "A3-033": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "A3-035": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "A3-036": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "A3-044": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "A3-046": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "A3-047": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "A3-048": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "A3-056": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "A3-058": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "A3-059": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "A4-003": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "A4-018": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "A4-037": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "A4-042": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "A4-043": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "A4-051": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "A4-055": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "A5-013": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "A5-040": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "A5-043": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "A5-046": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "A5-047": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "A5-048": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "A5-053": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "A6-002": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "A6-013": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "A6-016": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "A6-017": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "A6-021": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "A6-022": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "A6-026": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "A6-029": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "A6-031": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "A6-032": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "A6-036": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "A6-037": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "A6-041": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "A6-044": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "A6-047": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "A6-056": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "A6-060": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "A6-073": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "A6-075": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "A6-079": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "A6-080": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "A7-024": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "A7-025": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "A7-037": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "A7-040": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "A8-001": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "A8-004": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "A8-008": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "A8-014": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "A8-019": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "A8-031": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "A8-032": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "A8-035": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "A8-038": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "A8-040": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "A8-044": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "A8-045": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "A8-046": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "A8-050": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "A8-051": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "A8-054": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "A8-055": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "A8-057": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "A8-060": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "B1-007": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "B3-003": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "B3-004": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "B4-008": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "B5-007": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "B5-008": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "B5-015": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "B6-002": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "B6-003": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "B7-007": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "B7-008": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "B7-010": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "B8-001": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "B8-002": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  },
+  "B8-003": {
+   "body_ok": null,
+   "failure_kind": null,
+   "note": "",
+   "accepted_unparsed": []
+  }
+ },
+ "policy": {
+  "seed": 3505,
+  "sample": {
+   "crosscheck": 40,
+   "baseline": 20
+  }
+ }
+}

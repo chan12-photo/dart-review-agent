@@ -96,9 +96,17 @@ def says(text: str, phrase: str) -> bool:
     return False
 
 
+READING_LINE = "이렇게 이해했습니다"
+
+
 def score_case(gold: dict[str, Any], raw_answer: str | dict[str, Any] | None, seen: Sequence[Any],
-               question: str) -> CaseScore:
-    """``seen``: the tool results the model was shown in this case (successful ones ground numbers)."""
+               question: str, proposed_years: Sequence[int] = ()) -> CaseScore:
+    """``seen``: the tool results the model was shown in this case (successful ones ground numbers).
+
+    ``proposed_years``: the years of the readings the product showed as readings (EVAL_CONTRACT_3-5 section 6.1).
+    They ground a year only in a clarification (which shows the readings) and on the "이렇게 이해했습니다" line;
+    anywhere else a year still needs the question or a tool result.
+    """
     score = CaseScore(gold["id"])
     applies = applicable(gold)
     answer = None
@@ -169,7 +177,12 @@ def score_case(gold: dict[str, Any], raw_answer: str | dict[str, Any] | None, se
 
     allowed = allowed_from(*seen)
     allowed.years |= question_years(question)
-    checks = check_text(answer.answer + "\n" + (answer.clarifying_question or ""), allowed)
+    as_reading = allowed_from(*seen)
+    as_reading.years |= question_years(question) | set(proposed_years)
+    checks = []
+    for line in (answer.answer + "\n" + (answer.clarifying_question or "")).split("\n"):
+        shown_as_reading = answer.status == "되묻기" or line.lstrip().startswith(READING_LINE)
+        checks += check_text(line, as_reading if shown_as_reading else allowed)
     score.ungrounded = [check.mention.text for check in checks if not check.grounded] + _structured_numbers(answer, allowed)
     score.unparsed = [check.mention.text for check in checks if check.mention.kind == "unparsed"]
     score.warnings = [term for term in gold.get("forbidden_terms", []) if term in answer.answer]

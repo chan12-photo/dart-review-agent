@@ -14,6 +14,7 @@ from __future__ import annotations
 import hashlib
 import json
 from pathlib import Path
+import random
 import sys
 from typing import Any, Sequence
 
@@ -28,6 +29,37 @@ class ReviewError(ValueError):
 
 
 FAILURE_KINDS = ("수치", "설명")
+
+
+# ---------------------------------------------------------------- sampled review (EVAL_CONTRACT_3-5 section 8)
+
+def review_sample(cases: Sequence[dict[str, Any]], policy: dict[str, Any], mode: str) -> list[str]:
+    """The automatically passed answers drawn for review: the passed ids sorted, then the policy's seed."""
+    passed = sorted(case["id"] for case in cases if case["score"]["automatic_passed"])
+    size = min(policy["sample"].get(mode, 0), len(passed))
+    return sorted(random.Random(policy["seed"]).sample(passed, size))
+
+
+def required_reviews(cases: Sequence[dict[str, Any]], policy: dict[str, Any] | None, mode: str,
+                     golds: dict[str, dict[str, Any]] | None = None,
+                     review: dict[str, Any] | None = None) -> tuple[list[str], list[str]]:
+    """(ids that must be reviewed, the families widened to every passed answer).
+
+    Without a policy every answer is reviewed (3-1). With one: every automatic failure, the drawn sample, and
+    - when a sampled answer failed review for a figure ("수치") - every passed answer of that family.
+    """
+    ids = [case["id"] for case in cases]
+    if not policy:
+        return ids, []
+    failed = [case["id"] for case in cases if not case["score"]["automatic_passed"]]
+    sample = review_sample(cases, policy, mode)
+    entries = (review or {}).get("cases", {})
+    widened = sorted({(golds or {}).get(item, {}).get("bundle", "?") for item in sample
+                      if (entries.get(item) or {}).get("body_ok") is False and (entries.get(item) or {}).get("failure_kind") == "수치"})
+    extra = [case["id"] for case in cases if case["score"]["automatic_passed"]
+             and (golds or {}).get(case["id"], {}).get("bundle") in widened]
+    required = set(failed) | set(sample) | set(extra)
+    return [item for item in ids if item in required], widened
 
 
 def _gold() -> dict[str, dict[str, Any]]:
@@ -56,7 +88,8 @@ def _expected_summary(gold: dict[str, Any]) -> str:
     return " / ".join(part for part in parts if part)
 
 
-def review_sheet(cases: Sequence[dict[str, Any]], golds: dict[str, dict[str, Any]] | None = None) -> str:
+def review_sheet(cases: Sequence[dict[str, Any]], golds: dict[str, dict[str, Any]] | None = None,
+                 only: Sequence[str] | None = None) -> str:
     """The sheet a reviewer reads. ``golds``: the run's own gold answers (a question file's gold, e.g. the 3-1
     sealed set); without it the development and lookup gold files are used (Codex 3-1 second review 1)."""
     gold = dict(golds) if golds is not None else _gold()
@@ -64,7 +97,11 @@ def review_sheet(cases: Sequence[dict[str, Any]], golds: dict[str, dict[str, Any
         if case["id"] not in gold and case.get("base") in gold:
             gold[case["id"]] = gold[case["base"]]
     lines = ["# 본문 검토지", "", "기준: eval/HUMAN_REVIEW.ko.md (공통 1~5번과 문항별 확인 사항). 판정은 human_review.json에 적는다.", ""]
+    if only is not None:
+        lines += [f"표본 검토(EVAL_CONTRACT_3-5 8절): 자동 채점 실패 전부와 통과 표본, {len(only)}개.", ""]
     for case in cases:
+        if only is not None and case["id"] not in only:
+            continue
         score, answer = case["score"], case.get("answer")
         try:
             parsed = json.loads(answer) if isinstance(answer, str) else answer
@@ -87,17 +124,24 @@ def review_sheet(cases: Sequence[dict[str, Any]], golds: dict[str, dict[str, Any
     return "\n".join(lines)
 
 
-def review_template(cases: Sequence[dict[str, Any]]) -> dict[str, Any]:
-    return {"reviewer": "", "confirmed_by_user": False, "criteria": "eval/HUMAN_REVIEW.ko.md",
-            "cases": {case["id"]: {"body_ok": None, "failure_kind": None, "note": "", "accepted_unparsed": []}
-                      for case in cases}}
+def review_template(cases: Sequence[dict[str, Any]], only: Sequence[str] | None = None,
+                    policy: dict[str, Any] | None = None) -> dict[str, Any]:
+    template = {"reviewer": "", "confirmed_by_user": False, "criteria": "eval/HUMAN_REVIEW.ko.md",
+                "cases": {case["id"]: {"body_ok": None, "failure_kind": None, "note": "", "accepted_unparsed": []}
+                          for case in cases if only is None or case["id"] in only}}
+    if policy:
+        template["policy"] = policy
+    return template
 
 
-def write_review_files(folder: Path, cases: Sequence[dict[str, Any]], golds: dict[str, dict[str, Any]] | None = None) -> None:
-    (folder / "review_sheet.md").write_text(review_sheet(cases, golds), encoding="utf-8")
+def write_review_files(folder: Path, cases: Sequence[dict[str, Any]], golds: dict[str, dict[str, Any]] | None = None,
+                       policy: dict[str, Any] | None = None, mode: str | None = None) -> None:
+    only = required_reviews(cases, policy, mode or "", golds)[0] if policy else None
+    (folder / "review_sheet.md").write_text(review_sheet(cases, golds, only), encoding="utf-8")
     template = folder / "human_review.json"
     if not template.exists():
-        template.write_text(json.dumps(review_template(cases), ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+        template.write_text(json.dumps(review_template(cases, only, policy), ensure_ascii=False, indent=1) + "\n",
+                            encoding="utf-8")
 
 
 def _passes_after_accepting(score: dict[str, Any], accepted: list[str]) -> bool:
@@ -109,12 +153,22 @@ def _passes_after_accepting(score: dict[str, Any], accepted: list[str]) -> bool:
             and not remaining)
 
 
-def final_scores(cases: Sequence[dict[str, Any]], review: dict[str, Any], mode: str) -> dict[str, Any]:
+def final_scores(cases: Sequence[dict[str, Any]], review: dict[str, Any], mode: str,
+                 policy: dict[str, Any] | None = None, golds: dict[str, dict[str, Any]] | None = None) -> dict[str, Any]:
+    """Without a policy every answer needs a review (3-1). With one (3-5), the required ones do; an answer left
+    unreviewed keeps its automatic result and is marked ``reviewed: false``."""
+    required, widened = required_reviews(cases, policy, mode, golds, review)
     per_case, missing = [], []
     for case in cases:
         entry = review["cases"].get(case["id"])
         if entry is None or not isinstance(entry.get("body_ok"), bool):
-            missing.append(case["id"])
+            if case["id"] in required:
+                missing.append(case["id"])
+            else:
+                automatic = case["score"]["automatic_passed"]
+                per_case.append({"id": case["id"], "automatic_passed": automatic, "automatic_after_accepted_notation": automatic,
+                                 "body_ok": None, "reviewed": False, "reviewed_passed": automatic, "failure_kind": None,
+                                 "note": "", "accepted_unparsed": []})
             continue
         accepted = entry.get("accepted_unparsed", [])
         automatic = case["score"]["automatic_passed"]
@@ -125,14 +179,16 @@ def final_scores(cases: Sequence[dict[str, Any]], review: dict[str, Any], mode: 
         if entry["body_ok"] is False and kind not in FAILURE_KINDS:
             raise ReviewError(f"{case['id']}: a failed text needs failure_kind {FAILURE_KINDS}")
         per_case.append({"id": case["id"], "automatic_passed": automatic, "automatic_after_accepted_notation": corrected,
-                         "body_ok": entry["body_ok"], "reviewed_passed": corrected and entry["body_ok"],
+                         "body_ok": entry["body_ok"], "reviewed": True, "reviewed_passed": corrected and entry["body_ok"],
                          "failure_kind": kind if entry["body_ok"] is False else None,
                          "note": entry.get("note", ""), "accepted_unparsed": accepted})
     if missing:
-        raise ReviewError(f"body_ok must be true or false for every question; missing: {missing}")
+        widening = f" (every passed answer of {widened}: a sampled one failed for a figure)" if widened else ""
+        raise ReviewError(f"body_ok must be true or false for every required question{widening}; missing: {missing}")
     total = len(per_case)
     reviewed = sum(item["reviewed_passed"] for item in per_case)
     result = {"mode": mode, "reviewer": review.get("reviewer"), "confirmed_by_user": review.get("confirmed_by_user"),
+              **({"policy": policy, "sample": review_sample(cases, policy, mode), "widened": widened} if policy else {}),
               "automatic_passed": sum(item["automatic_passed"] for item in per_case),
               "reviewed_passed": reviewed, "total": total, "per_case": per_case}
     if mode in PASS_THRESHOLD:
@@ -151,7 +207,11 @@ def main(argv: list[str] | None = None) -> int:
     cases = [json.loads(line) for line in (folder / cases_name).read_text(encoding="utf-8").splitlines() if line]
     meta = json.loads((folder / "run.json").read_text(encoding="utf-8"))
     review = json.loads((folder / "human_review.json").read_text(encoding="utf-8"))
-    result = final_scores(cases, review, meta["mode"])
+    sys.path[:0] = [str(ROOT), str(ROOT / "eval")]
+    import run_eval  # the run's own question file names its review policy and gold
+    policy = run_eval.review_policy(meta.get("question_set"))
+    golds = run_eval.load_questions(meta["question_set"])[1] if policy else None
+    result = final_scores(cases, review, meta["mode"], policy, golds)
     # tie the review to the exact run it judged (Codex 3-1 second review 3)
     result.update(cases_file=cases_name, cases_sha256=hashlib.sha256((folder / cases_name).read_bytes()).hexdigest(),
                   run_sha256=hashlib.sha256((folder / "run.json").read_bytes()).hexdigest(),

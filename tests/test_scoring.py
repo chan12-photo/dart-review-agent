@@ -45,6 +45,31 @@ def edited(**changes):
     return answer
 
 
+class ReadingYearTests(unittest.TestCase):
+    """EVAL_CONTRACT_3-5 section 6.1: a year the readings proposed grounds only where it is shown as a reading."""
+
+    HEADER = "이렇게 이해했습니다: 삼성전자 연결 매출액, 2023년 연간과 그 전년 비교."
+
+    def test_a_proposed_year_is_grounded_on_the_reading_line(self):
+        answer = edited(answer=self.HEADER + "\n" + DEV01_CORRECT["answer"])
+        self.assertEqual(score_case(GOLD["dev01"], answer, DEV01_SEEN, QUESTIONS["dev01"], [2023]).ungrounded, [])
+        # without the recorded reading years, the same line is ungrounded (the 3-1 scorer)
+        self.assertEqual(score_case(GOLD["dev01"], answer, DEV01_SEEN, QUESTIONS["dev01"]).ungrounded, ["2023년"])
+
+    def test_a_proposed_year_elsewhere_still_needs_the_question_or_a_tool_result(self):
+        answer = edited(answer=DEV01_CORRECT["answer"] + "\n참고: 2023년 값과도 비슷합니다.")
+        result = score_case(GOLD["dev01"], answer, DEV01_SEEN, QUESTIONS["dev01"], [2023])
+        self.assertEqual(result.ungrounded, ["2023년"])
+        self.assertFalse(result.automatic_passed)
+
+    def test_a_clarification_may_show_the_readings_years(self):
+        clarification = {"status": "되묻기", "company": "삼성전자", "account": None, "values": [], "change": None,
+                         "change_pct": None, "answer": "질문을 두 가지로 읽었습니다. 2023년 영업이익인가요, 2023년 당기순이익인가요?",
+                         "clarifying_question": "영업이익과 당기순이익 중 어느 것을 말씀하신 건가요?"}
+        self.assertEqual(score_case(GOLD["dev12"], clarification, [], QUESTIONS["dev12"], [2023]).ungrounded, [])
+        self.assertEqual(score_case(GOLD["dev12"], clarification, [], QUESTIONS["dev12"]).ungrounded, ["2023년", "2023년"])
+
+
 class DistinguishTests(unittest.TestCase):
     """Completion criterion of roadmap 1-4."""
 

@@ -176,7 +176,8 @@ def score_record(record: dict[str, Any], gold: dict[str, Any]) -> CaseScore:
         score = CaseScore(record["id"], format_error="evaluator error")
     else:
         try:
-            score = score_case(gold, record.get("answer"), record.get("seen", []), record["question"])
+            score = score_case(gold, record.get("answer"), record.get("seen", []), record["question"],
+                               record.get("proposed_years", ()))
         except Exception as exc:
             record["evaluator_error"] = record.get("evaluator_error") or f"{type(exc).__name__} while scoring: {exc}"
             record["evaluator_traceback"] = traceback.format_exc(limit=8)
@@ -247,18 +248,31 @@ FREEZE_FILE = ROOT / "eval" / "freeze_3-1.json"  # written right after the freez
 FROZEN_PATHS = ("dart_review", "eval/run_eval.py", "eval/scoring.py", "eval/judge.py", "eval/finalize.py", "eval/rescore.py")
 
 
-def frozen_differences(commit: str = "HEAD", working_tree: bool = False) -> list[str]:
+def freeze_file(question_set: str | None) -> Path:
+    """The freeze record of an evaluation: named by its question file ("freeze"), else the 3-1 record."""
+    if question_set and question_set.startswith(FILE_SET):
+        named = json.loads(set_files(question_set)[0].read_text(encoding="utf-8")).get("freeze")
+        if named:
+            return ROOT / named
+    return FREEZE_FILE
+
+
+def frozen_differences(commit: str = "HEAD", working_tree: bool = False, freeze: Path | None = None) -> list[str]:
     """Frozen files that differ from their freeze commit (empty when they all match).
 
     The product (dart_review/) is compared with P. The evaluator files are compared with the evaluator
     amendment commit P2 when the freeze record names one (Codex 3-1 second review: fixes to the evaluator
-    made before any model run), otherwise with P.
+    made before any model run), otherwise with P. ``freeze``: the record to use (default: the 3-1 one).
     """
-    if not FREEZE_FILE.exists():
-        return ["no freeze record (eval/freeze_3-1.json)"]
-    record = json.loads(FREEZE_FILE.read_text(encoding="utf-8"))
-    groups = ((record["commit"], ("dart_review",)),
-              (record.get("evaluator_commit", record["commit"]), tuple(path for path in FROZEN_PATHS if path != "dart_review")))
+    if freeze is None or freeze == ROOT / "eval" / "freeze_3-1.json":
+        freeze, named = FREEZE_FILE, "eval/freeze_3-1.json"
+    else:
+        named = str(freeze.relative_to(ROOT)) if ROOT in freeze.parents else str(freeze)
+    if not freeze.exists():
+        return [f"no freeze record ({named})"]
+    record = json.loads(freeze.read_text(encoding="utf-8"))
+    evaluator_paths = tuple(record.get("evaluator_paths") or (path for path in FROZEN_PATHS if path != "dart_review"))
+    groups = ((record["commit"], ("dart_review",)), (record.get("evaluator_commit", record["commit"]), evaluator_paths))
     changed = []
     for frozen, paths in groups:
         command = ["git", "diff", "--name-only", frozen] + ([] if working_tree else [commit]) + ["--", *paths]
@@ -287,6 +301,13 @@ def set_files(question_set: str) -> tuple[Path, Path]:
     question_file = ROOT / question_set[len(FILE_SET):]
     gold_file = ROOT / json.loads(question_file.read_text(encoding="utf-8"))["gold"]
     return question_file, gold_file
+
+
+def review_policy(question_set: str | None) -> dict[str, Any] | None:
+    """How a question file's runs are reviewed by people ("review"; None: every answer, as in 3-1)."""
+    if question_set and question_set.startswith(FILE_SET):
+        return json.loads(set_files(question_set)[0].read_text(encoding="utf-8")).get("review")
+    return None
 
 
 def load_questions(question_set: str = "dev") -> tuple[list[dict[str, Any]], dict[str, dict[str, Any]]]:
@@ -384,7 +405,7 @@ def _main(parser: argparse.ArgumentParser, args: argparse.Namespace) -> int:
         # EVAL_CONTRACT_3-1 sections 1 and 7: every evaluation run, with or without a model, is recorded from committed code
         parser.error("an evaluation-set run must be recorded (--out) from a clean, committed tree; --allow-dirty is refused")
     if args.companies != "development":
-        changed = frozen_differences(working_tree=True)
+        changed = frozen_differences(working_tree=True, freeze=freeze_file(args.question_set))
         if changed:
             parser.error(f"the product differs from the freeze commit P: {changed}")
     if not CACHE.exists():
@@ -423,7 +444,7 @@ def _main(parser: argparse.ArgumentParser, args: argparse.Namespace) -> int:
     print(json.dumps(summary, ensure_ascii=False, indent=1))
     if args.out:
         (args.out / "summary.json").write_text(json.dumps(summary, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
-        write_review_files(args.out, cases, load_questions(args.question_set)[1])
+        write_review_files(args.out, cases, load_questions(args.question_set)[1], review_policy(args.question_set), args.mode)
     return 1 if summary["evaluator_errors"] else 0
 
 

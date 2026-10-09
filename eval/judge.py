@@ -1,4 +1,4 @@
-"""Classify results and judge a 3-1 style evaluation (docs/EVAL_CONTRACT_3-1.ko.md sections 8 and 9).
+"""Classify results and judge a 3-1 or 3-5 evaluation (docs/EVAL_CONTRACT_3-1.ko.md sections 8-9, 3-5 sections 6-9).
 
     python eval/judge.py --crosscheck DIR [--baseline DIR] [--model-only DIR] [--final MODE=FILE ...] [--out FILE]
 
@@ -20,6 +20,12 @@ same model identity, the recorded file hashes equal to the files read now,
 reading keys recorded, and every criterion applicable. Otherwise the verdict
 is "판정 보류". --exploratory relaxes these for development sets and marks the
 report "탐색 (판정 아님)"; automatic scores are then used where no review is given.
+
+A question file may name its contract ("contract": "3-5"). The 3-5 template evaluation is judged with its own
+methods (cross-check and rules only), composition (600 questions by family), freeze record, sampled human
+review, criteria, and suspension conditions (decided gold disagreements, model-server failures at most 2%);
+its report adds tables by family and by group, the two directions of a wrong figure, the company x basis x
+account clusters with a wrong figure, and the 95% upper bound of the wrong-figure rate.
 """
 
 from __future__ import annotations
@@ -35,6 +41,7 @@ from typing import Any
 ROOT = Path(__file__).resolve().parents[1]
 sys.path[:0] = [str(ROOT), str(ROOT / "eval")]
 
+import finalize  # noqa: E402
 import run_eval  # noqa: E402
 from dart_review.companies import FS_DIVS, supported_companies, using_company_set  # noqa: E402
 from dart_review.crosscheck import canonical  # noqa: E402
@@ -50,6 +57,12 @@ CRITERIA = {"wrong_answers": 0, "solved_rate": 0.70, "cost_rate": 0.25, "out_of_
 METHODS = ("crosscheck", "baseline", "model_only")
 # section 4.1: bundle -> author -> count
 COMPOSITION_3_1 = {"A": {"claude": 16}, "B": {"user": 10}, "C": {"claude": 6, "user": 4}}
+# EVAL_CONTRACT_3-5 sections 4.2, 9, 10 (decided by the user 2026-10-09, before any question existed)
+COMPOSITION_3_5 = {"A1": 60, "A2": 60, "A3": 60, "A4": 60, "A5": 60, "A6": 80, "A7": 40, "A8": 60,
+                   "B1": 25, "B2": 20, "B3": 15, "B4": 15, "B5": 15, "B6": 10, "B7": 10, "B8": 10}
+CRITERIA_3_5 = {"wrong_answers": 0, "solved_rate": 0.80, "trap_rate": 0.90}
+METHODS_3_5 = ("crosscheck", "baseline")
+INFRASTRUCTURE_LIMIT_3_5 = 0.02  # section 9: model-server failures above this suspend the verdict
 HASHED_FILES = ("questions", "gold", "paraphrases", "lookup_questions", "lookup_gold", "set_questions", "set_gold",
                 "reading_prompt", "reading_schema", "company_set")
 
@@ -158,11 +171,38 @@ def _reading_state(key: Any, expected: tuple | None, failed: str | None = None) 
     return "정답" if freeze(key) == freeze(expected) else "오답"
 
 
-def check_contract(runs: dict[str, tuple[dict[str, Any], list[dict[str, Any]]]], finals: dict[str, dict[str, Any]],
-                   questions: dict[str, dict[str, Any]]) -> list[str]:
-    """What the strict (3-1) judge also requires (Codex 3-1 first review 3); empty when all is there."""
+def contract_of(question_set: str | None) -> str:
+    """The contract a question file names ("3-5"); every other set is judged as in 3-1."""
+    if question_set and question_set.startswith(run_eval.FILE_SET):
+        return json.loads(run_eval.set_files(question_set)[0].read_text(encoding="utf-8")).get("contract", "3-1")
+    return "3-1"
+
+
+def check_sampled_reviews(runs: dict[str, tuple[dict[str, Any], list[dict[str, Any]]]], finals: dict[str, dict[str, Any]],
+                          golds: dict[str, dict[str, Any]], policy: dict[str, Any]) -> list[str]:
+    """EVAL_CONTRACT_3-5 section 8: every failure, the drawn sample, and any widened family were reviewed."""
     problems = []
-    missing = [method for method in METHODS if method not in runs]
+    for method, (_, cases) in runs.items():
+        final = finals.get(method) or {}
+        per_case = {item["id"]: item for item in final.get("per_case", [])}
+        if final.get("sample") != finalize.review_sample(cases, policy, method):
+            problems.append(f"{method}: the reviewed sample is not the one the policy draws")
+        entries = {item: {"body_ok": entry.get("body_ok"), "failure_kind": entry.get("failure_kind")}
+                   for item, entry in per_case.items() if entry.get("reviewed")}
+        required, _ = finalize.required_reviews(cases, policy, method, golds, {"cases": entries})
+        unreviewed = [item for item in required if not (per_case.get(item) or {}).get("reviewed")]
+        if unreviewed:
+            problems.append(f"{method}: required reviews missing: {unreviewed}")
+    return problems
+
+
+def check_contract(runs: dict[str, tuple[dict[str, Any], list[dict[str, Any]]]], finals: dict[str, dict[str, Any]],
+                   questions: dict[str, dict[str, Any]], golds: dict[str, dict[str, Any]] | None = None) -> list[str]:
+    """What the strict judge also requires (Codex 3-1 first review 3; EVAL_CONTRACT_3-5 section 9); empty when all is there."""
+    problems = []
+    question_set = runs["crosscheck"][0].get("question_set")
+    contract = contract_of(question_set)
+    missing = [method for method in (METHODS_3_5 if contract == "3-5" else METHODS) if method not in runs]
     if missing:
         problems.append(f"methods missing: {missing}")
     meta = runs["crosscheck"][0]
@@ -202,9 +242,31 @@ def check_contract(runs: dict[str, tuple[dict[str, Any], list[dict[str, Any]]]],
                             f"{str(final.get('cases_sha256'))[:12]}) than this one ({run_meta.get('mode')}, "
                             f"{str(run_meta.get('_cases_sha256'))[:12]})")
     if meta.get("company_set") == "sealed-3-1":
-        changed = run_eval.frozen_differences((meta.get("git") or {}).get("commit") or "HEAD")
+        changed = run_eval.frozen_differences((meta.get("git") or {}).get("commit") or "HEAD",
+                                              freeze=run_eval.freeze_file(question_set))
         if changed:
             problems.append(f"the runs' code differs from the freeze commit P: {changed}")
+    if contract == "3-5":
+        found35 = Counter(question.get("bundle") for question in questions.values())
+        if found35 != Counter(COMPOSITION_3_5) or {question.get("author") for question in questions.values()} != {"template"}:
+            problems.append(f"the questions are not the contract's 600 (family -> count): {dict(found35)}")
+        policy = run_eval.review_policy(question_set)
+        if not policy:
+            problems.append("the question file names no review policy")
+        else:
+            problems += check_sampled_reviews(runs, finals, golds or {}, policy)
+        record = run_eval.set_files(question_set)[1].parent / "gold_disagreements.json"
+        items = json.loads(record.read_text(encoding="utf-8"))["items"] if record.exists() else None
+        if items is None:
+            problems.append("no gold disagreement record")
+        else:
+            open_items = [item["id"] for item in items if not item.get("decision") or not item.get("approved_by_user")]
+            if open_items:
+                problems.append(f"gold disagreements not decided and approved by the user: {open_items}")
+        failures = [case["id"] for case in runs["crosscheck"][1] if case.get("model_error")]
+        if len(failures) > INFRASTRUCTURE_LIMIT_3_5 * len(runs["crosscheck"][1]):
+            problems.append(f"model-server failures above 2% of the cross-check run ({len(failures)}): {failures}")
+    elif meta.get("company_set") == "sealed-3-1":
         found: dict[str, Counter] = {}
         for question in questions.values():
             found.setdefault(question.get("bundle"), Counter())[question.get("author")] += 1
@@ -212,6 +274,53 @@ def check_contract(runs: dict[str, tuple[dict[str, Any], list[dict[str, Any]]]],
         if found != expected:
             problems.append(f"the questions are not the contract's 36 (bundle -> authors): {found}")
     return problems
+
+
+def wrong_direction(case: dict[str, Any], gold: dict[str, Any]) -> str:
+    """EVAL_CONTRACT_3-5 section 6.2: "조심한 방향" only when every value is right and the shown status is the more
+    careful 확인 필요 where the gold is 비교 가능 or 값 확인; any other wrong figure is "위험한 방향"."""
+    answer = shown_answer(case) or {}
+    score = case["score"]
+    careful = (answer.get("status") == "확인 필요" and gold.get("expected_status") in ("비교 가능", "값 확인")
+               and score.get("numbers_ok") is True and score.get("basis_ok") is not False and not score.get("ungrounded"))
+    return "조심한 방향" if careful else "위험한 방향"
+
+
+def cluster_of(question: dict[str, Any]) -> str:
+    expected = question["expected"]
+    if "corp_code" not in expected or "account" not in expected:
+        return "-"
+    return f"{expected['corp_code']}/{expected.get('fs_div', 'CFS+OFS')}/{expected['account']}"
+
+
+def template_report(runs: dict[str, tuple[dict[str, Any], list[dict[str, Any]]]], outcomes: dict[str, dict[str, str]],
+                    questions: dict[str, dict[str, Any]], golds: dict[str, dict[str, Any]]) -> dict[str, Any]:
+    """The 3-5 tables (contract sections 4.2, 5.3, 6.2, 9): by family, by group, the two directions of a wrong
+    figure, the clusters with a wrong figure, and the 95% upper bound when there is none."""
+    def table_by(key) -> dict[str, dict[str, dict[str, int]]]:
+        found: dict[str, dict[str, dict[str, int]]] = {}
+        for mode, result in outcomes.items():
+            for item, cell in result.items():
+                for group in key(questions[item]):
+                    found.setdefault(mode, {}).setdefault(group, Counter())[cell] += 1
+        return {mode: {group: dict(counter) for group, counter in sorted(groups.items())} for mode, groups in found.items()}
+
+    def groups(question: dict[str, Any]) -> list[str]:
+        choice = question.get("template") or {}
+        return (list(question.get("tags", [])) + [name for name, key in (("별칭", "alias"), ("상대 연도", "relative_year"),
+                                                                       ("계정 동의어", "synonym"), ("연결 명시", "explicit_basis"))
+                                                  if choice.get(key)] or ["(표시 없음)"])
+
+    cross = {case["id"]: case for case in runs["crosscheck"][1]}
+    wrong = {mode: {item: wrong_direction(next(case for case in runs[mode][1] if case["id"] == item), golds[item])
+                    for item, cell in result.items() if cell == "잘못된 수치 답"} for mode, result in outcomes.items()}
+    answered = [item for item, case in cross.items() if (shown_answer(case) or {}).get("status") in ANSWER_STATUSES]
+    clusters = sorted({cluster_of(questions[item]) for item in wrong.get("crosscheck", {})})
+    bound = round(1 - 0.05 ** (1 / len(answered)), 5) if answered and not wrong.get("crosscheck") else None
+    return {"by_family": table_by(lambda question: [question["bundle"]]), "by_group": table_by(groups),
+            "wrong_figure_directions": wrong, "clusters_with_wrong_figures": clusters,
+            "clusters_total": len({cluster_of(question) for question in questions.values()} - {"-"}),
+            "figure_answers": len(answered), "upper_bound_95": bound}
 
 
 def judge(runs: dict[str, tuple[dict[str, Any], list[dict[str, Any]]]], finals: dict[str, dict[str, Any]] | None = None,
@@ -223,7 +332,7 @@ def judge(runs: dict[str, tuple[dict[str, Any], list[dict[str, Any]]]], finals: 
         by_id = {question["id"]: question for question in questions}
         problems = check_runs(runs, list(by_id))
         if not exploratory and not problems:
-            problems += check_contract(runs, finals, by_id)
+            problems += check_contract(runs, finals, by_id, golds)
     report: dict[str, Any] = {"question_set": meta.get("question_set"), "company_set": meta.get("company_set"),
                               "reference_date": meta.get("reference_date"), "prompt_version": meta.get("prompt_version"),
                               "commit": (meta.get("git") or {}).get("commit"), "problems": problems,
@@ -296,13 +405,25 @@ def judge(runs: dict[str, tuple[dict[str, Any], list[dict[str, Any]]]], finals: 
     cost_rate = (sum(product[item] in COSTS for item in answerable) / len(answerable)) if answerable else None
     scope_rate = (sum(product[item] in ("맞는 거절", "맞는 되묻기") for item in out_of_scope) / len(out_of_scope)
                   if out_of_scope else None)
-    checks = {
-        "잘못된 수치 답 0": {"value": len(table["crosscheck"]["잘못된 수치 답"]), "met": not table["crosscheck"]["잘못된 수치 답"]},
-        "해결률 ≥ 70%": {"value": solved_rate, "met": solved_rate is not None and solved_rate >= CRITERIA["solved_rate"]},
-        "비용 ≤ 25%": {"value": cost_rate, "met": cost_rate is not None and cost_rate <= CRITERIA["cost_rate"]},
-        "범위 밖·모호 ≥ 75%": {"value": scope_rate, "met": None if scope_rate is None else scope_rate >= CRITERIA["out_of_scope_rate"]},
-        "근거 없는 숫자 0": {"value": ungrounded, "met": not any(ungrounded.values())},
-    }
+    if contract_of(meta.get("question_set")) == "3-5":
+        traps = [item for item, question in by_id.items() if str(question.get("bundle", "")).startswith("B")]
+        trap_rate = sum(product[item] in ("맞는 거절", "맞는 되묻기") for item in traps) / len(traps) if traps else None
+        checks = {
+            "잘못된 수치 답 0": {"value": len(table["crosscheck"]["잘못된 수치 답"]), "met": not table["crosscheck"]["잘못된 수치 답"]},
+            "해결률 ≥ 80%": {"value": solved_rate, "met": None if solved_rate is None else solved_rate >= CRITERIA_3_5["solved_rate"]},
+            "함정 처리 ≥ 90%": {"value": trap_rate, "met": None if trap_rate is None else trap_rate >= CRITERIA_3_5["trap_rate"]},
+            "근거 없는 숫자 0": {"value": ungrounded, "met": not any(ungrounded.values())},
+        }
+        report.update(template_report(runs, outcomes, by_id, golds))
+    else:
+        checks = {
+            "잘못된 수치 답 0": {"value": len(table["crosscheck"]["잘못된 수치 답"]), "met": not table["crosscheck"]["잘못된 수치 답"]},
+            "해결률 ≥ 70%": {"value": solved_rate, "met": solved_rate is not None and solved_rate >= CRITERIA["solved_rate"]},
+            "비용 ≤ 25%": {"value": cost_rate, "met": cost_rate is not None and cost_rate <= CRITERIA["cost_rate"]},
+            "범위 밖·모호 ≥ 75%": {"value": scope_rate,
+                               "met": None if scope_rate is None else scope_rate >= CRITERIA["out_of_scope_rate"]},
+            "근거 없는 숫자 0": {"value": ungrounded, "met": not any(ungrounded.values())},
+        }
     report.update(outcomes=outcomes, outcome_table=table, interpretation=interpretation, crosscheck_effect=effect,
                   cost=cost, checks=checks, shown_answers=len(shown_answers))
     unknown = [name for name, check in checks.items() if check["met"] is None]

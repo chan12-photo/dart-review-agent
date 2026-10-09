@@ -1,0 +1,129 @@
+{
+ "about": "EVAL_CONTRACT_3-5 section 5.4: each item is decided by re-reading the raw cells and approved by the user before any run",
+ "items": [
+  {
+   "id": "A1-038",
+   "question": "이마트 연결 기준 2022년 영업활동현금흐름 조회해 줘.",
+   "tags": [
+    "비표준 행"
+   ],
+   "gold_status": "값 확인",
+   "problems": [
+    "status: product 데이터 없음, gold 값 확인",
+    "value: product {'basis': '연결', 'period': {'start': '2022-01-01', 'end': '2022-12-31', 'label': '2022-01-01~2022-12-31 (누적 12개월)'}, 'amount': None, 'currency': None, 'report': '2022년 사업보고서', 'rcept_no': None, 'account_nm': None}, gold 745721481875 20230321000409",
+    "later: product {}, gold 745721481875 20240320001504",
+    "the product does not say the later report agrees"
+   ],
+   "decision": "정답 유지 (제품 실패로 잰다)",
+   "reason": "원본 재확인: 이마트 2022년 보고서 4종과 2023년 1분기·반기·3분기 보고서(연결·별도)의 현금흐름표에 표준ID 없이 '영업활동으로부터의 순현금유입' 행이 있다. 같은 계정이라는 근거: 2022년 연결 값 745,721,481,875원(2022 사업보고서 20230321000409, 비표준 행)이 2023 사업보고서(20240320001504)의 표준ID 행 '영업활동현금흐름' 전기 값과 같다. 2022년 1분기 별도 211,403,509,295원도 다음 해 1분기보고서의 전년 동기 값과 같다. 계약 5.3절(사용자 결정)대로 정답은 '값 있음'이다. 제품은 이 이름을 몰라 '데이터 없음'으로 답한다. 실제로는 자료가 있으므로 미해결(잘못된 거절)로 잰다. 제품은 고치지 않는다.",
+   "approved_by_user": false,
+   "resolved_by": "Claude (원본 재확인)"
+  },
+  {
+   "id": "A2-032",
+   "question": "이마트 별도 기준 2022년 1분기 영업활동현금흐름 알려줘.",
+   "tags": [
+    "비표준 행"
+   ],
+   "gold_status": "값 확인",
+   "problems": [
+    "status: product 데이터 없음, gold 값 확인",
+    "value: product {'basis': '별도', 'period': {'start': '2022-01-01', 'end': '2022-03-31', 'label': '2022-01-01~2022-03-31 (3개월)'}, 'amount': None, 'currency': None, 'report': '2022년 1분기보고서', 'rcept_no': None, 'account_nm': None}, gold 211403509295 20220516001114",
+    "later: product {}, gold 211403509295 20230515001577",
+    "the product does not say the later report agrees"
+   ],
+   "decision": "정답 유지 (제품 실패로 잰다)",
+   "reason": "원본 재확인: 이마트 2022년 보고서 4종과 2023년 1분기·반기·3분기 보고서(연결·별도)의 현금흐름표에 표준ID 없이 '영업활동으로부터의 순현금유입' 행이 있다. 같은 계정이라는 근거: 2022년 연결 값 745,721,481,875원(2022 사업보고서 20230321000409, 비표준 행)이 2023 사업보고서(20240320001504)의 표준ID 행 '영업활동현금흐름' 전기 값과 같다. 2022년 1분기 별도 211,403,509,295원도 다음 해 1분기보고서의 전년 동기 값과 같다. 계약 5.3절(사용자 결정)대로 정답은 '값 있음'이다. 제품은 이 이름을 몰라 '데이터 없음'으로 답한다. 실제로는 자료가 있으므로 미해결(잘못된 거절)로 잰다. 제품은 고치지 않는다.",
+   "approved_by_user": false,
+   "resolved_by": "Claude (원본 재확인)"
+  },
+  {
+   "id": "A5-043",
+   "question": "2023년 상반기 이마트 별도 기준 영업활동현금흐름, 전년 대비 어떻게 됐어?",
+   "tags": [
+    "비표준 행"
+   ],
+   "gold_status": "비교 가능",
+   "problems": [
+    "current value, source, or period differs: rules gave Fact(corp_code='00872984', fs_div='OFS', account_key='operating_cash_flow', source=Source(year=2023, report_code='11012', column='thstrm'), period=Period(end=datetime.date(2023, 6, 30), months=6), amount=None, currency=None, rcept_no=None, sj_div=None, account_id=None, account_nm=None, resolved_by='not_found', notes=('영업활동현금흐름 계정을 찾지 못함',))",
+    "base value, source, or period differs: rules gave Fact(corp_code='00872984', fs_div='OFS', account_key='operating_cash_flow', source=Source(year=2023, report_code='11012', column='frmtrm_q'), period=Period(end=datetime.date(2022, 6, 30), months=6), amount=None, currency=None, rcept_no=None, sj_div=None, account_id=None, account_nm=None, resolved_by='not_found', notes=('영업활동현금흐름 계정을 찾지 못함',))",
+    "change: rules None, gold -64165229995",
+    "change_pct: rules None, gold '-45.35'",
+    "direction: rules None, gold '감소'",
+    "status: rules 데이터 없음, gold 비교 가능"
+   ],
+   "decision": "정답 유지 (제품 실패로 잰다)",
+   "reason": "원본 재확인: 이마트 2022년 보고서 4종과 2023년 1분기·반기·3분기 보고서(연결·별도)의 현금흐름표에 표준ID 없이 '영업활동으로부터의 순현금유입' 행이 있다. 같은 계정이라는 근거: 2022년 연결 값 745,721,481,875원(2022 사업보고서 20230321000409, 비표준 행)이 2023 사업보고서(20240320001504)의 표준ID 행 '영업활동현금흐름' 전기 값과 같다. 2022년 1분기 별도 211,403,509,295원도 다음 해 1분기보고서의 전년 동기 값과 같다. 계약 5.3절(사용자 결정)대로 정답은 '값 있음'이다. 제품은 이 이름을 몰라 '데이터 없음'으로 답한다. 실제로는 자료가 있으므로 미해결(잘못된 거절)로 잰다. 제품은 고치지 않는다.",
+   "approved_by_user": false,
+   "resolved_by": "Claude (원본 재확인)"
+  },
+  {
+   "id": "A8-032",
+   "question": "이마트의 2022년 상반기 영업활동현금흐름을 연결과 별도로 나란히 보여줘.",
+   "tags": [
+    "비표준 행"
+   ],
+   "gold_status": "비교 불가",
+   "problems": [
+    "CFS value differs",
+    "OFS value differs"
+   ],
+   "decision": "정답 유지 (제품 실패로 잰다)",
+   "reason": "원본 재확인: 이마트 2022년 보고서 4종과 2023년 1분기·반기·3분기 보고서(연결·별도)의 현금흐름표에 표준ID 없이 '영업활동으로부터의 순현금유입' 행이 있다. 같은 계정이라는 근거: 2022년 연결 값 745,721,481,875원(2022 사업보고서 20230321000409, 비표준 행)이 2023 사업보고서(20240320001504)의 표준ID 행 '영업활동현금흐름' 전기 값과 같다. 2022년 1분기 별도 211,403,509,295원도 다음 해 1분기보고서의 전년 동기 값과 같다. 계약 5.3절(사용자 결정)대로 정답은 '값 있음'이다. 제품은 이 이름을 몰라 '데이터 없음'으로 답한다. 실제로는 자료가 있으므로 미해결(잘못된 거절)로 잰다. 제품은 고치지 않는다.",
+   "approved_by_user": false,
+   "resolved_by": "Claude (원본 재확인)"
+  },
+  {
+   "id": "B5-001",
+   "question": "현대자동차의 2025년 영업활동현금흐름은 얼마야?",
+   "tags": [],
+   "gold_status": null,
+   "problems": [
+    "the rules read Reading(kind='unreadable', arguments=None, company='', options=(), reason='회사 이름을 찾지 못함')"
+   ],
+   "decision": "정답 유지 (제품 실패로 잰다)",
+   "reason": "SK하이닉스와 현대자동차는 평가 회사 집합 밖의 회사이므로 정답은 '범위 밖'이다(계약 4.2절 B5). 제품의 규칙은 지원 회사 이름이 들어가지 않은 회사 이름을 찾지 못해 해석하지 못한다. 교차 확인에서 모델이 범위 밖으로 읽는지는 실행에서 잰다.",
+   "approved_by_user": false,
+   "resolved_by": "Claude (원본 재확인)"
+  },
+  {
+   "id": "B5-004",
+   "question": "SK하이닉스의 2024년 부채총계는 얼마야?",
+   "tags": [],
+   "gold_status": null,
+   "problems": [
+    "the rules read Reading(kind='unreadable', arguments=None, company='', options=(), reason='회사 이름을 찾지 못함')"
+   ],
+   "decision": "정답 유지 (제품 실패로 잰다)",
+   "reason": "SK하이닉스와 현대자동차는 평가 회사 집합 밖의 회사이므로 정답은 '범위 밖'이다(계약 4.2절 B5). 제품의 규칙은 지원 회사 이름이 들어가지 않은 회사 이름을 찾지 못해 해석하지 못한다. 교차 확인에서 모델이 범위 밖으로 읽는지는 실행에서 잰다.",
+   "approved_by_user": false,
+   "resolved_by": "Claude (원본 재확인)"
+  },
+  {
+   "id": "B5-005",
+   "question": "현대자동차 2024년 부채총계 알려줘.",
+   "tags": [],
+   "gold_status": null,
+   "problems": [
+    "the rules read Reading(kind='unreadable', arguments=None, company='', options=(), reason='회사 이름을 찾지 못함')"
+   ],
+   "decision": "정답 유지 (제품 실패로 잰다)",
+   "reason": "SK하이닉스와 현대자동차는 평가 회사 집합 밖의 회사이므로 정답은 '범위 밖'이다(계약 4.2절 B5). 제품의 규칙은 지원 회사 이름이 들어가지 않은 회사 이름을 찾지 못해 해석하지 못한다. 교차 확인에서 모델이 범위 밖으로 읽는지는 실행에서 잰다.",
+   "approved_by_user": false,
+   "resolved_by": "Claude (원본 재확인)"
+  },
+  {
+   "id": "B5-011",
+   "question": "SK하이닉스 2024년 매출액 알려줘.",
+   "tags": [],
+   "gold_status": null,
+   "problems": [
+    "the rules read Reading(kind='unreadable', arguments=None, company='', options=(), reason='회사 이름을 찾지 못함')"
+   ],
+   "decision": "정답 유지 (제품 실패로 잰다)",
+   "reason": "SK하이닉스와 현대자동차는 평가 회사 집합 밖의 회사이므로 정답은 '범위 밖'이다(계약 4.2절 B5). 제품의 규칙은 지원 회사 이름이 들어가지 않은 회사 이름을 찾지 못해 해석하지 못한다. 교차 확인에서 모델이 범위 밖으로 읽는지는 실행에서 잰다.",
+   "approved_by_user": false,
+   "resolved_by": "Claude (원본 재확인)"
+  }
+ ]
+}

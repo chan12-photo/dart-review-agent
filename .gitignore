@@ -6,7 +6,7 @@ __pycache__/
 # Raw API responses and run logs stay local; only trimmed rows are published
 # (docs/PUBLICATION_CHECK.ko.md). Committed run records are force-added.
 cache/
-runs/
+/runs/
 local_only/
 # Never commit credentials.
 .env

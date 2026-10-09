@@ -17,9 +17,10 @@ from ..accounts import ACCOUNTS, normalize_name
 from .table import Cell, Column, Line, number_columns
 
 TITLES = {"재무상태표": "BS", "대차대조표": "BS", "포괄손익계산서": "CIS", "손익계산서": "IS", "현금흐름표": "CF",
-          "자본변동표": "SCE"}
+          "자본변동표": "SCE", "이익잉여금처분계산서": "RE", "결손금처리계산서": "RE", "이익잉여금처분계산서(안)": "RE"}
 UNITS = {"원": 1, "천원": 1_000, "백만원": 1_000_000, "억원": 100_000_000}
-_TITLE = re.compile(r"^(연결\s*)?(" + "|".join(sorted(TITLES, key=len, reverse=True)) + r")$")
+# a title line, spaces removed: "연결재무상태표", "1.별도재무상태표" (영업보고서 number their statements)
+_TITLE = re.compile(r"^(?:\d{1,2}\.|[ⅠⅡⅢⅣⅤ]+\.)?(연결|별도)?(" + "|".join(sorted(TITLES, key=len, reverse=True)) + r")$")
 _UNIT = re.compile(r"단위\s*[:：]?\s*(백만원|천원|억원|원)")
 _ORDINAL = re.compile(r"제\s*(\d+)\s*(?:\(\s*(당|전|전전)\s*\))?\s*기")
 _PERIOD_LINE = re.compile(r"제\s*(\d+)\s*(?:\([^)]*\))?\s*기.*?(\d{4})\s*년\s*(\d{1,2})\s*월\s*(\d{1,2})\s*일\s*(?:현재|까지)")
@@ -114,6 +115,12 @@ def account_of(label: str) -> str | None:
     return None
 
 
+def title_parts(compact: str) -> tuple[str, bool, str]:
+    """(kind, consolidated, title without its item number) of a title line with spaces removed."""
+    match = _TITLE.match(compact)
+    return TITLES[match.group(2)], match.group(1) == "연결", (match.group(1) or "") + match.group(2)
+
+
 def is_title(line: Line) -> bool:
     return bool(_TITLE.match(re.sub(r"\s+", "", line.text)))
 
@@ -141,9 +148,31 @@ def unit_of(body: Sequence[Line], before: Sequence[Line] = ()) -> str | None:
     return found(body) or found(list(before)[::-1])
 
 
+_PAGE_NUMBER = re.compile(r"[-–]?\s*\d{1,3}\s*[-–]?|\d{1,3}\s*/\s*\d{1,3}")
+
+
+def without_page_furniture(lines: Sequence[Line]) -> list[Line]:
+    """Lines without each page's running header or footer when it carries a page number ("Part 3. 재무제표  35"):
+    the number read as an amount once made a row of its own."""
+    furniture = set()
+    for page in {line.page for line in lines}:
+        on_page = [line for line in lines if line.page == page]
+        if len(on_page) < 3:
+            continue
+        height = median_cell_height(on_page[len(on_page) // 2])
+        for line, gap in ((on_page[0], on_page[1].top - on_page[0].bottom),
+                          (on_page[-1], on_page[-1].top - on_page[-2].bottom)):
+            numbers = [cell for cell in line.cells if re.search(r"\d", cell.text) and not re.search(r"[가-힣A-Za-z]", cell.text)]
+            if (len(numbers) == 1 and len(line.cells) <= 3 and gap > 2 * height
+                    and _PAGE_NUMBER.fullmatch(numbers[0].text.strip())):
+                furniture.add(id(line))
+    return [line for line in lines if id(line) not in furniture]
+
+
 def find_statements(lines: Sequence[Line]) -> list[Statement]:
     """Each statement title starts a block that ends at the next title or at the notes heading; the block's rows
     are read in turn. A 자본변동표 is listed with a problem and no rows (its table is a matrix)."""
+    lines = without_page_furniture(lines)
     boundaries = []  # (index, is a title)
     for index, line in enumerate(lines):
         if is_title(line):
@@ -164,13 +193,12 @@ def find_statements(lines: Sequence[Line]) -> list[Statement]:
 
 def read_statement(title_line: Line, body: Sequence[Line], context: Sequence[Line]) -> Statement:
     compact = re.sub(r"\s+", "", title_line.text)
-    match = _TITLE.match(compact)
-    kind = TITLES[match.group(2)]
+    kind, consolidated, title = title_parts(compact)
     unit_text = unit_of(body, before=[line for line in context if line.page == title_line.page and line.top < title_line.top])
     unit = UNITS.get(unit_text) if unit_text else None
     problems = [] if unit else ["단위 줄을 찾지 못해 금액 단위를 알 수 없다"]
     if kind == "SCE":
-        return Statement(kind, compact.startswith("연결"), compact, title_line.page, unit, unit_text, [], [],
+        return Statement(kind, consolidated, title, title_line.page, unit, unit_text, [], [],
                          problems + [SCE_SKIPPED])
     height = sorted(cell.bottom - cell.top for line in body for cell in line.cells)
     tolerance = 2.0 * (height[len(height) // 2] if height else 10.0)
@@ -229,7 +257,7 @@ def read_statement(title_line: Line, body: Sequence[Line], context: Sequence[Lin
                         "읽지 못한 숫자인지 확인 필요")
     if orphans:
         problems.append(f"표에 넣지 못한 금액 {orphans}개: 줄이나 열을 복원하지 못한 행이 있을 수 있다 (원본과 대조 필요)")
-    return Statement(kind, compact.startswith("연결"), compact, title_line.page, unit, unit_text, periods, rows, problems)
+    return Statement(kind, consolidated, title, title_line.page, unit, unit_text, periods, rows, problems)
 
 
 def _wrapped_label(body: Sequence[Line], line: Line) -> list[Cell]:

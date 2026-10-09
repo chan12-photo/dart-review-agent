@@ -27,7 +27,7 @@ from typing import Iterator, Sequence
 
 from .statement import (
     _END, _ORDINAL, _PERIOD_LINE, _TITLE, SCE_SKIPPED, TITLES, UNITS, Amount, PeriodColumn, Row, Statement,
-    account_of, clean_label, is_notes_start, parse_amount, row_unit, unit_of,
+    account_of, clean_label, is_notes_start, title_parts, without_page_furniture, parse_amount, row_unit, unit_of,
 )
 from .table import Cell, Line, group_lines
 from .verify import CHECKED, REVIEW, CellCheck, _balance, _subtotals, separator_problem
@@ -229,7 +229,7 @@ def read_document(path: Path, model: VisionModel, pages: Sequence[int] | None = 
     """Statements read by ``model`` and checked against the page's evidence (see the module docstring)."""
     state = _State()
     for part in page_parts(path, pages):
-        lines = group_lines(part.words)
+        lines = without_page_furniture(group_lines(part.words))
         title_line = next((line for line in lines if _TITLE.match(re.sub(r"\s+", "", line.text))), None)
         if title_line is not None or part.source == "PDF 글자":
             _read_with_page_structure(part, lines, title_line, model, state)
@@ -287,8 +287,8 @@ class _State:
 
 def _new_statement(state: _State, title: str, page: int, unit_text: str | None) -> Statement:
     compact = re.sub(r"\s+", "", title)
-    kind = TITLES[_TITLE.match(compact).group(2)]
-    statement = Statement(kind, compact.startswith("연결"), compact, page, UNITS.get(unit_text) if unit_text else None,
+    kind, consolidated, title = title_parts(compact)
+    statement = Statement(kind, consolidated, title, page, UNITS.get(unit_text) if unit_text else None,
                           unit_text, [], [], [] if unit_text else ["단위 줄을 찾지 못해 금액 단위를 알 수 없다"])
     if kind == "SCE":
         statement.problems.append(SCE_SKIPPED)

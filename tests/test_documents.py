@@ -173,6 +173,31 @@ class RealLayoutTests(unittest.TestCase):
         self.assertEqual(statement.problems, [])
 
 
+    def test_a_business_report_layout(self):
+        """영업보고서: numbered 별도 titles, a 결손금처리계산서 after the 포괄손익계산서, and a page-number footer."""
+        page_35 = [(40, [(34, 200, "3. 별도포괄손익계산서")]), (80, [(470, 540, "(단위: 백만 원)")]),
+                   (100, [(174, 187, "과목"), (343, 361, "제6기"), (501, 519, "제5기")]),
+                   (120, [(89, 136, "Ⅰ. 당기순손실"), (388, 425, "(572,713)"), (550, 587, "(937,643)")]),
+                   (140, [(89, 144, "Ⅱ. 기타포괄손익"), (399, 425, "15,606"), (560, 587, "53,229")]),
+                   (160, [(89, 151, "Ⅲ. 당기총포괄손실"), (388, 425, "(557,107)"), (550, 587, "(884,414)")]),
+                   (750, [(85, 134, "Part 3. 재무제표"), (581, 590, "35")])]
+        page_36 = [(77, [(34, 209, "4. 별도결손금처리계산서")]), (130, [(497, 538, "(단위: 백만 원)")]),
+                   (146, [(289, 307, "제6기"), (450, 468, "제5기")]),
+                   (172, [(38, 88, "I. 미처리결손금"), (334, 375, "(2,492,044)"), (495, 536, "(1,938,044)")]),
+                   (188, [(48, 120, "전기이월미처리결손금"), (253, 294, "(1,938,044)"), (415, 455, "(1,051,712)")]),
+                   (216, [(48, 84, "당기순손실"), (259, 294, "(572,713)"), (421, 455, "(937,643)")]),
+                   (244, [(38, 119, "II. 차기이월미처리결손금"), (334, 375, "(2,492,044)"), (495, 536, "(1,938,044)")])]
+        lines = group_lines(words_for(page_35, page=35) + words_for(page_36, page=36))
+        comprehensive, deficit = find_statements(lines)
+        self.assertEqual((comprehensive.kind, comprehensive.title, comprehensive.consolidated),
+                         ("CIS", "별도포괄손익계산서", False))
+        self.assertEqual([row.label for row in comprehensive.rows], ["당기순손실", "기타포괄손익", "당기총포괄손실"])
+        self.assertEqual(comprehensive.problems, [])
+        self.assertEqual((deficit.kind, deficit.title), ("RE", "별도결손금처리계산서"))
+        values = {row.label: [row.amounts[c].printed for c in sorted(row.amounts)] for row in deficit.rows}
+        self.assertEqual(values["전기이월미처리결손금"], ["(1,938,044)", "(1,051,712)"])
+
+
 class OcrDamageTests(unittest.TestCase):
     """What a degraded scan did in the stress test, on synthetic OCR words."""
 

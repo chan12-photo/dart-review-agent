@@ -14,7 +14,8 @@ from pathlib import Path
 from .statement import Statement
 from .verify import REVIEW, CellCheck
 
-KINDS = {"BS": "재무상태표", "IS": "손익계산서", "CIS": "포괄손익계산서", "CF": "현금흐름표", "SCE": "자본변동표"}
+KINDS = {"BS": "재무상태표", "IS": "손익계산서", "CIS": "포괄손익계산서", "CF": "현금흐름표", "SCE": "자본변동표",
+         "RE": "이익잉여금처분계산서"}
 
 
 METHODS = {"text": "PDF 글자", "ocr": "OCR", "ai": "AI"}

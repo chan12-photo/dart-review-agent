@@ -31,7 +31,7 @@ from .statement import (
 )
 from .table import Cell, Line, group_lines
 from .verify import CHECKED, REVIEW, CellCheck, _balance, _subtotals, separator_problem
-from .vision import BAND_PROMPT, META_PROMPT, BandLine, VisionError, VisionModel, parse_band, parse_meta, png_bytes
+from .vision import SMALL_OR_GROUPED, BAND_PROMPT, META_PROMPT, BandLine, VisionError, VisionModel, parse_band, parse_meta, png_bytes
 from .words import Word, image_words, skew_angle, vision_words
 
 RENDER_SCALE = 2.0  # pixels per PDF point for the model and for OCR (144 dpi)
@@ -176,7 +176,21 @@ def _digits(text: str) -> str:
 
 
 def _is_amount_word(text: str) -> bool:
-    return bool(re.fullmatch(r"[(（]?[-−△]?\d{1,3}([,.]\d{3})+[)）]?", text.replace(" ", "")))
+    """An amount as printed: digits grouped by three, or a small amount in parentheses or of three digits
+    ("(973)", "682"). Note numbers ("4", "29", "4, 29") are not amounts."""
+    return bool(SMALL_OR_GROUPED.fullmatch(text.replace(" ", "")))
+
+
+def _existing_row(statement: Statement, label: str, line: Line | None) -> int | None:
+    """The row this reading continues: the one read from the same printed line (the overlap of two bands).
+    Without an evidence line, a row of the same label among the last few rows. A label may appear twice in
+    a statement (관계기업 지분 under both parts of 기타포괄손익); matching on the label alone once merged
+    the second row into the first and dropped its amounts."""
+    if line is not None:
+        return next((index for index, row in enumerate(statement.rows)
+                     if row.label_cell is not None and any(row.label_cell is cell for cell in line.cells)), None)
+    recent = range(max(0, len(statement.rows) - BAND_OVERLAP - 1), len(statement.rows))
+    return next((index for index in recent if _key(statement.rows[index].label) == _key(label)), None)
 
 
 def _bands(lines: Sequence[Line]) -> list[tuple[float, float, list[Line]]]:
@@ -388,7 +402,7 @@ def _add_row_by_tokens(statement: Statement, checks: list[CellCheck], s_index: i
     amounts = [printed for printed in item.amounts if printed not in ("-", "–", "—")]
     if not label or not amounts:
         return
-    existing = next((index for index, row in enumerate(statement.rows) if _key(row.label) == _key(label)), None)
+    existing = _existing_row(statement, label, None)
     row = statement.rows[existing] if existing is not None else Row(label, account_of(label), None, {})
     r_index = existing if existing is not None else len(statement.rows)
     for position, printed in enumerate(amounts):
@@ -446,8 +460,9 @@ def _add_row(statement: Statement, checks: list[CellCheck], s_index: int, item: 
     if own_unit is None:
         _, own_unit = row_unit(item.label)
     unit = own_unit or statement.unit
-    existing = next((index for index, row in enumerate(statement.rows) if _key(row.label) == _key(label)), None)
-    row = statement.rows[existing] if existing is not None else Row(label, account_of(label), None, {})
+    existing = _existing_row(statement, label, evidence_line)
+    row = statement.rows[existing] if existing is not None else Row(
+        label, account_of(label), evidence_line.cells[0] if evidence_line is not None else None, {})
     for position, printed in enumerate(item.amounts):
         if printed in ("-", "–", "—"):
             continue

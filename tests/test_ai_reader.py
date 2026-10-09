@@ -148,6 +148,36 @@ class TextLayerEvidenceTests(unittest.TestCase):
         self.assertFalse(any("보통예금" in problem or "1,234,567" in problem for problem in reading.statements[0].problems))
         self.assertEqual(len(model.prompts), 1)  # the notes page cost no model call
 
+    def test_a_label_printed_twice_keeps_both_rows_and_small_amounts_count(self):
+        from dart_review.documents.ai_reader import read_document
+        comprehensive = SampleStatement(
+            "포괄손익계산서", SAMPLE.company, ["제 57 기 2025년 1월 1일부터 2025년 12월 31일까지"], "백만원",
+            ["제 57 (당) 기", "제 56 (전) 기"],
+            [("당기순이익", ["45,206,805", "34,451,351"]), ("관계기업 지분", ["92,804", "(71,581)"]),
+             ("재측정요소", ["106,691", "(766,078)"]), ("관계기업 지분", ["244,161", "305,327"]),
+             ("비지배지분의 증감", ["(973)", "(2,134)"]), ("총포괄손익", ["51,290,524", "51,296,338"])])
+        with tempfile.TemporaryDirectory() as folder:
+            path = Path(folder) / "sample.pdf"
+            text_pdf(path, [comprehensive])
+            reading = read_document(path, ScriptedModel(comprehensive.rows))
+        statement = reading.statements[0]
+        self.assertEqual([(row.label.replace(" ", ""), [row.amounts[c].printed for c in sorted(row.amounts)])
+                          for row in statement.rows],
+                         [(label.replace(" ", ""), amounts) for label, amounts in comprehensive.rows])
+        self.assertEqual(self.flagged(reading), {})
+        self.assertFalse([problem for problem in statement.problems if "읽지 않았다" in problem])
+
+    def test_a_skipped_small_amount_is_reported(self):
+        from dart_review.documents.ai_reader import read_document
+        rows = [("자산총계", ["566,942,110", "514,531,948"]), ("비지배지분의 증감", ["(973)", "(2,134)"]),
+                ("부채총계", ["130,621,773", "112,339,878"])]
+        statement = SampleStatement("현금흐름표", SAMPLE.company, SAMPLE.period_lines, "백만원", SAMPLE.headers, rows)
+        with tempfile.TemporaryDirectory() as folder:
+            path = Path(folder) / "sample.pdf"
+            text_pdf(path, [statement])
+            reading = read_document(path, ScriptedModel([rows[0], rows[2]]))
+        self.assertIn("'(973)'를 AI가 읽지 않았다", " ".join(reading.statements[0].problems))
+
     def test_a_failed_band_is_reported_and_its_amounts_are_not_lost_silently(self):
         reading = self.read(SAMPLE.rows, fail=True)
         problems = " ".join(reading.statements[0].problems)

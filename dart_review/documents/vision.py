@@ -38,7 +38,10 @@ META_PROMPT = (
     "없으면 빈칸으로 둬라. 추측하지 마라.\n제목: \n기간: (한 줄에 하나씩)\n단위: \n열: 머리글 | 머리글 | ..."
 )
 _EMPTY_THINK = "<think>\n\n</think>\n\n"
-AMOUNT = re.compile(r"^[(（]?[-−△]?\d{1,3}(,\d{3})+[)）]?$|^[-–—]$")
+# an amount: digits grouped by three, or a small one in parentheses or of three digits ("(973)", "682");
+# never a note number ("4", "29", "4, 29")
+SMALL_OR_GROUPED = re.compile(r"[(（]?[-−△]?\d{1,3}([,.]\d{3})+[)）]?|[(（][-−△]?\d{1,3}[)）]|[-−△]?\d{3}")
+AMOUNT = re.compile(r"^(?:[(（]?[-−△]?\d{1,3}(,\d{3})+[)）]?|[(（][-−△]?\d{1,3}[)）]|[-−△]?\d{3})$|^[-–—]$")
 
 
 class VisionError(Exception):

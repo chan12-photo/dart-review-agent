@@ -110,6 +110,30 @@ class TextLayerEvidenceTests(unittest.TestCase):
         self.assertIn("'24,210,425'를 AI가 읽지 않았다", problems)
         self.assertIn("'19,013,579'를 AI가 읽지 않았다", problems)
 
+    def test_a_band_out_of_budget_is_asked_again_in_halves(self):
+        from dart_review.documents.ai_reader import _State
+        from PIL import Image
+
+        class OnceTooLong:
+            name = "scripted"
+
+            def __init__(self):
+                self.heights = []
+
+            def transcribe(self, png, prompt):
+                import io
+                height = Image.open(io.BytesIO(png)).height
+                self.heights.append(height)
+                if len(self.heights) == 1:
+                    raise VisionError("the model ran out of its output budget on one band")
+                return f"줄 | {height:,}"
+
+        model, state = OnceTooLong(), _State()
+        answer = state.ask(model, Image.new("L", (300, 200), 255), "prompt", split=True)
+        self.assertEqual(model.heights, [200, 120, 120])  # halves of 100 with 20 rows of overlap each
+        self.assertEqual(answer, "줄 | 120\n줄 | 120")
+        self.assertEqual(state.calls, 3)
+
     def test_a_failed_band_is_reported_and_its_amounts_are_not_lost_silently(self):
         reading = self.read(SAMPLE.rows, fail=True)
         problems = " ".join(reading.statements[0].problems)

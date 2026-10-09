@@ -161,6 +161,36 @@ class OcrDamageTests(unittest.TestCase):
         self.assertTrue(any(problem.startswith("빈 칸 1개 (영업이익)") for problem in statement.problems), statement.problems)
 
 
+class SubtotalTests(unittest.TestCase):
+    """Detail amounts printed left of their subtotal in each period (nested columns), as in audit reports."""
+
+    def rows(self, other_payables="7,953,586"):
+        # 당기: details end at x 380, subtotals at x 440; 전기: details at 520, subtotals at 580
+        return [(40, [(250, 300, "재무상태표")]), (80, [(470, 540, "(단위: 백만원)")]),
+                (100, [(60, 90, "과 목"), (360, 420, "제 57 (당) 기"), (500, 560, "제 56 (전) 기")]),
+                (120, [(60, 100, "비유동부채"), (390, 440, "24,210,425"), (530, 580, "19,013,579")]),
+                (140, [(60, 100, "사채"), (340, 380, "7,134"), (480, 520, "14,530")]),
+                (160, [(60, 100, "장기차입금"), (330, 380, "6,479,517"), (470, 520, "3,935,860")]),
+                (180, [(60, 100, "장기미지급금"), (330, 380, "5,602,031"), (470, 520, "5,510,455")]),
+                (200, [(60, 100, "순확정급여부채"), (330, 380, "558,520"), (470, 520, "521,410")]),
+                (220, [(60, 100, "이연법인세부채"), (330, 380, "709,226"), (470, 520, "528,231")]),
+                (240, [(60, 100, "장기충당부채"), (330, 380, "2,900,411"), (470, 520, "3,120,044")]),
+                (260, [(60, 100, "기타비유동부채"), (330, 380, other_payables), (470, 520, "5,383,049")]),
+                (280, [(60, 100, "부채총계"), (390, 440, "130,621,773"), (530, 580, "112,339,878")])]
+
+    def test_subtotals_that_add_up_are_not_marked(self):
+        [statement] = find_statements(group_lines(words_for(self.rows())))
+        self.assertEqual([item for item in check([statement]) if item.status == REVIEW], [])
+
+    def test_a_misread_detail_marks_its_subtotal_and_details(self):
+        # the digit misread the same way by the model and by OCR on a real photo
+        [statement] = find_statements(group_lines(words_for(self.rows("7,963,586"))))
+        flagged = {(statement.rows[item.row].label, item.column) for item in check([statement]) if item.status == REVIEW}
+        self.assertIn(("기타비유동부채", 0), flagged)
+        self.assertIn(("비유동부채", 0), flagged)
+        self.assertNotIn(("기타비유동부채", 1), flagged)  # the prior period adds up
+
+
 @unittest.skipUnless(HAS_PDF, "pip install -e '.[docs]'")
 class TextPdfTests(unittest.TestCase):
     def test_every_value_of_a_text_pdf(self):

@@ -80,7 +80,8 @@ def extract_command(args: argparse.Namespace) -> int:
         print(f"{out}가 이미 있습니다. 덮어쓰려면 --overwrite를 붙이세요.")
         return 2
     try:
-        result = extract(args.pdf, out, ocr=args.ocr)
+        result = extract(args.pdf, out, ocr=args.ocr, reader=args.reader,
+                         pages=args.pages and [int(page) for page in args.pages.split(",")])
     except (DocumentError, RuntimeError) as exc:
         print(f"문서를 읽지 못했습니다: {exc}")
         return 5
@@ -119,6 +120,9 @@ def main(argv: list[str] | None = None) -> int:
     extracting.add_argument("--ocr", choices=("auto", "always", "never"), default="auto",
                             help="auto: 텍스트가 없는 쪽만 OCR (기본) / always / never")
     extracting.add_argument("--overwrite", action="store_true", help="있는 엑셀 파일을 덮어쓴다")
+    extracting.add_argument("--reader", choices=("ai", "rules"), default="ai",
+                            help="ai: 로컬 비전 모델이 읽고 원본으로 대조 (기본, Ollama qwen3-vl 필요) / rules: 위치 규칙만")
+    extracting.add_argument("--pages", help="읽을 쪽 번호 (예: 10,11). 기본은 전체")
     args = parser.parse_args(argv)
     if args.command == "extract":
         return extract_command(args)

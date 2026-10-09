@@ -142,6 +142,50 @@ def _tsv_words(tsv: str, page: int, scale: float) -> Iterator[Word]:
                    line_key=(int(row["block_num"]), int(row["par_num"]), int(row["line_num"])))
 
 
+VISION_SCRIPT = Path(__file__).with_name("vision_ocr.swift")
+
+
+def vision_available() -> bool:
+    import sys
+    return sys.platform == "darwin" and shutil.which("swift") is not None and VISION_SCRIPT.exists()
+
+
+def vision_words(image, page: int) -> list[Word]:
+    """macOS Vision's text for one image, as words in image pixels (a second OCR, used only as evidence).
+
+    Vision returns phrases; each is split at spaces and the pieces get x positions in proportion to their
+    characters. Confidence is Vision's 0-1 score times 100, comparable in direction (not in scale) to Tesseract's.
+    """
+    import tempfile
+    if not vision_available():
+        return []
+    with tempfile.TemporaryDirectory() as folder:
+        target = Path(folder) / "page.png"
+        image.save(target)
+        result = subprocess.run(["swift", str(VISION_SCRIPT), str(target)], capture_output=True, timeout=300, check=False)
+    if result.returncode != 0:
+        return []
+    words = []
+    width, height = image.size
+    for number, row in enumerate(result.stdout.decode("utf-8", errors="replace").splitlines()):
+        fields = row.split("\t", 5)
+        if len(fields) != 6:
+            continue
+        min_x, min_y, max_x, max_y, confidence = (float(value) for value in fields[:5])
+        text = fields[5].strip()
+        left, right = min_x * width, max_x * width
+        top, bottom = (1 - max_y) * height, (1 - min_y) * height
+        pieces = text.split()
+        total = max(1, sum(len(piece) for piece in pieces) + len(pieces) - 1)
+        cursor = 0
+        for piece in pieces:
+            x0 = left + (right - left) * cursor / total
+            x1 = left + (right - left) * (cursor + len(piece)) / total
+            words.append(Word(piece, page, x0, x1, top, bottom, "ocr", confidence * 100, (900, number, 0)))
+            cursor += len(piece) + 1
+    return words
+
+
 def read_words(path: Path, ocr: str = "auto") -> list[Word]:
     """``ocr``: "never" (text layer only), "always", or "auto" (OCR the pages whose text layer is empty)."""
     if ocr not in ("auto", "always", "never"):

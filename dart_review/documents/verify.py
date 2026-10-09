@@ -81,8 +81,76 @@ def check(statements: list[Statement]) -> list[CellCheck]:
                     result.flag("같은 줄에 열을 정하지 못한 숫자가 있다 (줄 구조가 깨졌을 수 있다)")
                 by_cell[(r_index, c_index)] = result
         _balance(statement, by_cell)
+        _subtotals(statement, by_cell)
         checks += by_cell.values()
     return checks
+
+
+def _subtotals(statement: Statement, by_cell: dict[tuple[int, int], CellCheck]) -> int:
+    """Check every subtotal against the detail rows under it; return how many subtotals were checked.
+
+    Statements print detail items and subtotals in two positions within one period ("겹친 금액 열"): the details
+    left, the subtotals right. Within a run of rows on one page part, the amounts' x centres of a period split
+    into those two groups at the widest gap (when it is wider than three character heights). A subtotal row is
+    then followed by its detail rows until the next subtotal; their sum must equal it. A failure marks the
+    subtotal and every detail cell, because which one is wrong cannot be known. This is what catches a digit
+    misread the same way by the model and by OCR (7,953,586 read as 7,963,586 on a photo).
+    """
+    checked = 0
+    for column in range(len(statement.columns)):
+        placed = []  # (row index, amount, x centre, height, segment)
+        segment, last = 0, None
+        for r_index, row in enumerate(statement.rows):
+            amount = row.amounts.get(column)
+            if amount is None or amount.value is None or amount.cell.method == "ai":
+                continue
+            cell = amount.cell
+            centre = (cell.x0 + cell.x1) / 2
+            if last is not None and (cell.page != last[0] or abs(centre - last[1]) > 8 * max(cell.bottom - cell.top, 1)):
+                segment += 1  # another page, or the other half of a photographed spread
+            last = (cell.page, centre)
+            placed.append((r_index, amount, centre, cell.bottom - cell.top, segment))
+        levels: dict[int, int] = {}
+        for seg in {item[4] for item in placed}:
+            items = [item for item in placed if item[4] == seg]
+            xs = sorted(item[2] for item in items)
+            gaps = [(b - a, (a + b) / 2) for a, b in zip(xs, xs[1:])]
+            if not gaps:
+                continue
+            widest, cut = max(gaps)
+            if widest < 3 * median_height([item[3] for item in items]):
+                continue
+            for item in items:
+                levels[item[0]] = 1 if item[2] > cut else 2  # 1 = subtotal position, 2 = detail position
+        for r_index in range(len(statement.rows)):
+            if levels.get(r_index) != 1:
+                continue
+            details, known = [], True
+            for following in range(r_index + 1, len(statement.rows)):
+                if levels.get(following) == 1:
+                    break
+                if following not in levels:
+                    # a row under this subtotal whose amount has no position (read by the AI only, or missing):
+                    # the sum cannot be checked, and an unknown is not called a mismatch
+                    if column in statement.rows[following].amounts or not statement.rows[following].amounts:
+                        known = False
+                    continue
+                details.append(following)
+            if not known or len(details) < 2:
+                continue
+            checked += 1
+            total = statement.rows[r_index].amounts[column].value
+            if total != sum(statement.rows[d].amounts[column].value for d in details):
+                label = statement.rows[r_index].label
+                for target in [r_index, *details]:
+                    if (target, column) in by_cell:
+                        by_cell[(target, column)].flag(f"소계 '{label}'와 그 아래 항목의 합이 맞지 않는다 (어느 칸이 틀렸는지는 모른다)")
+    return checked
+
+
+def median_height(heights: list[float]) -> float:
+    ordered = sorted(heights)
+    return ordered[len(ordered) // 2] if ordered else 1.0
 
 
 # balance-sheet identities: total = the sum of parts (labels compared without spaces)

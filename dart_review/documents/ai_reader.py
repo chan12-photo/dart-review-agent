@@ -30,9 +30,9 @@ from .statement import (
     parse_amount,
 )
 from .table import Cell, Line, group_lines
-from .verify import CHECKED, REVIEW, CellCheck, _balance, separator_problem
+from .verify import CHECKED, REVIEW, CellCheck, _balance, _subtotals, separator_problem
 from .vision import BAND_PROMPT, META_PROMPT, BandLine, VisionError, VisionModel, parse_band, parse_meta, png_bytes
-from .words import Word, image_words, skew_angle
+from .words import Word, image_words, skew_angle, vision_words
 
 RENDER_SCALE = 2.0  # pixels per PDF point for the model and for OCR (144 dpi)
 BAND_LINES, BAND_OVERLAP = 8, 1
@@ -103,10 +103,20 @@ def page_parts(path: Path, pages: Sequence[int] | None = None) -> list[Part]:
             for x_range in _split(tokens, image.width, image.height):
                 inside = [word for word in words if x_range[0] <= (word.x0 + word.x1) / 2 < x_range[1]]
                 found = [word for word in tokens if x_range[0] <= (word.x0 + word.x1) / 2 < x_range[1]]
+                if not layer:
+                    # a second OCR engine (macOS Vision, when available) as more evidence; read per part, because
+                    # on a photo of two pages it reads each half far better than the whole (69 of 92 amounts vs 54)
+                    crop = image.crop((int(x_range[0]), 0, int(x_range[1]), image.height))
+                    found += [_shifted(word, x_range[0]) for word in vision_words(crop, number)]
                 parts.append(Part(number, image, inside, source, x_range, found))
     finally:
         document.close()
     return parts
+
+
+def _shifted(word: Word, dx: float) -> Word:
+    return Word(word.text, word.page, word.x0 + dx, word.x1 + dx, word.top, word.bottom, word.method, word.confidence,
+                word.line_key)
 
 
 def _split(words: Sequence[Word], width: float, height: float) -> list[tuple[float, float]]:
@@ -220,6 +230,8 @@ def read_document(path: Path, model: VisionModel, pages: Sequence[int] | None = 
         by_cell = {(check.row, check.column): check for check in own}
         if statement.kind == "BS" and not _balance(statement, by_cell):
             statement.problems.append("합계 줄을 찾지 못해 재무상태표 검산을 하지 못했다")
+        if not _subtotals(statement, by_cell):
+            statement.problems.append("소계와 항목의 위치를 구분하지 못해 소계 검산을 하지 못했다")
     return Reading(state.statements, state.checks, state.problems, state.calls)
 
 
@@ -237,11 +249,21 @@ class _State:
     def current(self) -> Statement | None:
         return self.statements[-1] if self.statements else None
 
-    def ask(self, model: VisionModel, image, prompt: str) -> str | None:
+    def ask(self, model: VisionModel, image, prompt: str, split: bool = False) -> str | None:
+        """The model's answer, or None (reported). ``split``: a band that ran out of output budget is asked again
+        as its upper and lower halves (with a little overlap), once; seen on one band of a real photo."""
         self.calls += 1
         try:
             return model.transcribe(png_bytes(image), prompt)
         except VisionError as exc:
+            if split and "budget" in str(exc) and image.height >= 80:
+                middle, overlap = image.height // 2, image.height // 10
+                halves = [image.crop((0, 0, image.width, middle + overlap)),
+                          image.crop((0, middle - overlap, image.width, image.height))]
+                answers = [self.ask(model, half, prompt) for half in halves]
+                if all(answer is not None for answer in answers):
+                    return "\n".join(answers)
+                return "\n".join(answer for answer in answers if answer) or None
             target = self.current.problems if self.current else self.problems
             target.append(f"AI가 한 부분을 읽지 못했다: {exc}")
             return None
@@ -283,7 +305,7 @@ def _read_with_page_structure(part: Part, lines: Sequence[Line], title_line: Lin
     s_index = len(state.statements) - 1
     for band_top, band_bottom, band_lines in _bands(body):
         crop = part.image.crop((int(part.x_range[0]), int(band_top), int(part.x_range[1]), int(band_bottom)))
-        answer = state.ask(model, crop, BAND_PROMPT)
+        answer = state.ask(model, crop, BAND_PROMPT, split=True)
         for item in parse_band(answer or ""):
             _add_row(statement, state.checks, s_index, item, band_lines, state.header, part, claimed)
     for line in body:
@@ -334,7 +356,7 @@ def _read_with_model_structure(part: Part, model: VisionModel, state: _State) ->
     y = 0.0
     while y < height:
         box = (int(part.x_range[0]), int(y), int(part.x_range[1]), int(min(height, y + band)))
-        answer = state.ask(model, part.image.crop(box), BAND_PROMPT)
+        answer = state.ask(model, part.image.crop(box), BAND_PROMPT, split=True)
         tokens = [word for word in part.tokens if box[1] <= (word.top + word.bottom) / 2 <= box[3]]
         for item in parse_band(answer or ""):
             _add_row_by_tokens(statement, state.checks, s_index, item, tokens, part, claimed)

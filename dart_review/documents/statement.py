@@ -123,6 +123,7 @@ def read_statement(title_line: Line, body: Sequence[Line], context: Sequence[Lin
     tolerance = 2.0 * (height[len(height) // 2] if height else 10.0)
     columns = number_columns(body, tolerance)
     periods = _period_columns(body, columns, tolerance, context)
+    columns, periods = _merge_nested(body, columns, periods, context)
     rows = []
     orphans = 0  # amounts on the page that end up in no row: a broken table, never silently dropped
     for line in body:
@@ -130,7 +131,9 @@ def read_statement(title_line: Line, body: Sequence[Line], context: Sequence[Lin
         label_cells = []
         for cell in line.cells:
             index = next((i for i, column in enumerate(columns) if column.holds(cell, tolerance)), None)
-            if cell.is_amount and index is not None and not _is_note_column(periods[index]):
+            if index is not None and columns[index].header.isdigit():  # merged under a period heading
+                index = int(columns[index].header)
+            if cell.is_amount and index is not None and index < len(periods) and not _is_note_column(periods[index]):
                 try:
                     amounts[index] = Amount(cell, parse_amount(cell.text, unit), cell.text, index)
                 except ValueError:
@@ -168,10 +171,50 @@ def _is_dash(text: str) -> bool:
 
 def _is_note_like(cell: Cell, columns: list[Column], periods: list[PeriodColumn], tolerance: float) -> bool:
     """A number in the note column (주석) or a short number in a header line is not a missing amount."""
+    if re.fullmatch(r"\d{1,2}(\s*,\s*\d{1,2})*", cell.text.strip()):
+        return True  # note references: "8", "4, 29", "4,5,7,29" (amounts group their digits by three)
     index = next((i for i, column in enumerate(columns) if column.holds(cell, tolerance)), None)
-    if index is not None and _is_note_column(periods[index]):
+    if index is not None and columns[index].header.isdigit():
+        return False
+    if index is not None and index < len(periods) and _is_note_column(periods[index]):
         return True
     return len(re.sub(r"\D", "", cell.text)) <= 2
+
+
+def _merge_nested(body: Sequence[Line], columns: list[Column], periods: list[PeriodColumn],
+                  context: Sequence[Line]) -> tuple[list[Column], list[PeriodColumn]]:
+    """Audit reports print a period's details and subtotals in two positions under one heading ("제 57 (당) 기").
+    When a header line has two or more period headings, each number column joins the heading nearest to it
+    (the note column stays out), so a period is one column of values whatever its print position."""
+    headings = []
+    for line in body:
+        if any(cell.is_amount and len(re.sub(r"\D", "", cell.text)) >= 4 for cell in line.cells):
+            break
+        found = [cell for cell in line.cells if _ORDINAL.search(cell.text) or re.search(r"(당|전)\s*기", cell.text)]
+        if len(found) >= 2:
+            headings = found
+    if len(headings) < 2:
+        return columns, periods
+    ends = {}
+    for line in context:
+        for match in _PERIOD_LINE.finditer(line.text):
+            ordinal, year, month, day = (int(value) for value in match.groups())
+            ends[ordinal] = (year, f"{year:04d}-{month:02d}-{day:02d}")
+    centres = [(cell.x0 + cell.x1) / 2 for cell in headings]
+    bounds = [(a + b) / 2 for a, b in zip(centres, centres[1:])]
+    merged: list[Column] = []
+    for column, period in zip(columns, periods):
+        if _is_note_column(period):
+            continue
+        index = sum(column.right > bound for bound in bounds)
+        merged.append(Column(column.right, header=str(index)))
+    new_periods = []
+    for cell in headings:
+        found = _ORDINAL.search(cell.text)
+        number = int(found.group(1)) if found else None
+        year, end = ends.get(number, (None, None)) if number else (None, None)
+        new_periods.append(PeriodColumn(cell.text, number, year, end))
+    return merged, new_periods
 
 
 def _is_note_column(column: PeriodColumn) -> bool:

@@ -201,7 +201,11 @@ def main() -> int:
               f"unconfirmed and unmarked {silent}", flush=True)
     args.out.mkdir(parents=True, exist_ok=True)
     target = args.out / f"{args.reader}.json"
-    target.write_text(json.dumps({"opendart": {"year": YEAR, "report": REPORT, "fs_div": "CFS or OFS"},
+    import subprocess
+    commit = subprocess.run(["git", "rev-parse", "HEAD"], cwd=ROOT, capture_output=True, text=True).stdout.strip()
+    dirty = bool(subprocess.run(["git", "status", "--porcelain", "dart_review"], cwd=ROOT, capture_output=True,
+                                text=True).stdout.strip())
+    target.write_text(json.dumps({"code_commit": commit, "code_changed_since_commit": dirty, "opendart": {"year": YEAR, "report": REPORT, "fs_div": "CFS or OFS"},
                                   "documents": results}, ensure_ascii=False, indent=1), encoding="utf-8")
     print(f"wrote {target}")
     return 0

@@ -1,0 +1,101 @@
+{
+ "totals": {
+  "gold_cells": 270,
+  "product_cells": 270,
+  "correct": 270,
+  "value_wrong": 0,
+  "label_wrong": 0,
+  "missing": 0,
+  "S1": 0,
+  "L1": 0,
+  "S2": 0,
+  "G1": 0,
+  "flagged": 0,
+  "unjudged_extras": 0,
+  "not_in_gold": 0,
+  "statements_not_found": 0,
+  "product_statements_not_in_gold": [],
+  "complete": true
+ },
+ "statements": [
+  {
+   "statement_id": "연결재무상태표@7",
+   "statement": "연결재무상태표",
+   "page": 7,
+   "found": true,
+   "gold_cells": 88,
+   "product_cells": 88,
+   "correct": 88,
+   "value_wrong": 0,
+   "label_wrong": 0,
+   "missing": 0,
+   "S1": 0,
+   "L1": 0,
+   "S2": 0,
+   "G1": 0,
+   "flagged": 0,
+   "not_in_gold": [],
+   "unjudged_extras": 0,
+   "sums_checked": 18,
+   "problems": [
+    "7쪽: AI가 '충당부채' 줄을 '총당부채'(으)로 읽어 원본 계정명을 썼다",
+    "AI 호출 22번, 증거: PDF 글자"
+   ],
+   "cells": []
+  },
+  {
+   "statement_id": "연결포괄손익계산서@9",
+   "statement": "연결포괄손익계산서",
+   "page": 9,
+   "found": true,
+   "gold_cells": 64,
+   "product_cells": 64,
+   "correct": 64,
+   "value_wrong": 0,
+   "label_wrong": 0,
+   "missing": 0,
+   "S1": 0,
+   "L1": 0,
+   "S2": 0,
+   "G1": 0,
+   "flagged": 0,
+   "not_in_gold": [],
+   "unjudged_extras": 0,
+   "sums_checked": null,
+   "problems": [
+    "9쪽: AI가 '법인세비용차감전순이익' 줄을 '범인세비용차감전순이익'(으)로 읽어 원본 계정명을 썼다",
+    "9쪽: AI가 '당기순이익의귀속' 줄을 '당기순이익의케속'(으)로 읽어 원본 계정명을 썼다",
+    "9쪽: AI가 '총포괄이익의귀속' 줄을 '총포괄이익의케속'(으)로 읽어 원본 계정명을 썼다",
+    "9쪽: AI가 '기본주당순이익' 줄을 '주당이익'(으)로 읽어 원본 계정명을 썼다",
+    "AI 호출 22번, 증거: PDF 글자"
+   ],
+   "cells": []
+  },
+  {
+   "statement_id": "연결현금흐름표@11",
+   "statement": "연결현금흐름표",
+   "page": 11,
+   "found": true,
+   "gold_cells": 118,
+   "product_cells": 118,
+   "correct": 118,
+   "value_wrong": 0,
+   "label_wrong": 0,
+   "missing": 0,
+   "S1": 0,
+   "L1": 0,
+   "S2": 0,
+   "G1": 0,
+   "flagged": 0,
+   "not_in_gold": [],
+   "unjudged_extras": 0,
+   "sums_checked": 10,
+   "problems": [
+    "12쪽: AI가 '현금의증가(Ⅰ+Ⅱ+Ⅲ+Ⅳ)' 줄을 '현금의증가( I + II + III + IV)'(으)로 읽어 원본 계정명을 썼다",
+    "12쪽: AI가 '현금의증가(Ⅰ+Ⅱ+Ⅲ+Ⅳ)' 줄을 '현금의증가( I + II + III + IV)'(으)로 읽어 원본 계정명을 썼다",
+    "AI 호출 22번, 증거: PDF 글자"
+   ],
+   "cells": []
+  }
+ ]
+}

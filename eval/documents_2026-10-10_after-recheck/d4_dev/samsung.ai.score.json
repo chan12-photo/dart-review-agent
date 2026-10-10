@@ -1,0 +1,140 @@
+{
+ "totals": {
+  "gold_cells": 237,
+  "product_cells": 237,
+  "correct": 236,
+  "value_wrong": 1,
+  "label_wrong": 0,
+  "missing": 0,
+  "S1": 0,
+  "L1": 0,
+  "S2": 0,
+  "G1": 0,
+  "flagged": 1,
+  "unjudged_extras": 0,
+  "not_in_gold": 0,
+  "statements_not_found": 0,
+  "product_statements_not_in_gold": [],
+  "complete": true
+ },
+ "statements": [
+  {
+   "statement_id": "연결재무상태표@10",
+   "statement": "연결재무상태표",
+   "page": 10,
+   "found": true,
+   "gold_cells": 98,
+   "product_cells": 98,
+   "correct": 98,
+   "value_wrong": 0,
+   "label_wrong": 0,
+   "missing": 0,
+   "S1": 0,
+   "L1": 0,
+   "S2": 0,
+   "G1": 0,
+   "flagged": 0,
+   "not_in_gold": [],
+   "unjudged_extras": 0,
+   "sums_checked": 18,
+   "problems": [
+    "10쪽: AI가 '순확정급여자산' 줄을 '순환정금여자산'(으)로 읽어 원본 계정명을 썼다",
+    "10쪽: AI가 '유동부채' 줄을 '부채'(으)로 읽어 원본 계정명을 썼다",
+    "10쪽: AI가 '매입채무' 줄을 '유동부채'(으)로 읽어 원본 계정명을 썼다",
+    "10쪽: AI가 '충당부채' 줄을 '총당부채'(으)로 읽어 원본 계정명을 썼다",
+    "AI 호출 20번, 증거: PDF 글자"
+   ],
+   "cells": []
+  },
+  {
+   "statement_id": "연결손익계산서@12",
+   "statement": "연결손익계산서",
+   "page": 12,
+   "found": true,
+   "gold_cells": 34,
+   "product_cells": 34,
+   "correct": 34,
+   "value_wrong": 0,
+   "label_wrong": 0,
+   "missing": 0,
+   "S1": 0,
+   "L1": 0,
+   "S2": 0,
+   "G1": 0,
+   "flagged": 0,
+   "not_in_gold": [],
+   "unjudged_extras": 0,
+   "sums_checked": null,
+   "problems": [
+    "12쪽: AI가 '기본주당이익(단위 : 원)' 줄을 '주당이익'(으)로 읽어 원본 계정명을 썼다",
+    "12쪽: AI가 '희석주당이익(단위 : 원)' 줄을 '회석주당이익(단위：원)'(으)로 읽어 원본 계정명을 썼다",
+    "AI 호출 20번, 증거: PDF 글자"
+   ],
+   "cells": []
+  },
+  {
+   "statement_id": "연결포괄손익계산서@13",
+   "statement": "연결포괄손익계산서",
+   "page": 13,
+   "found": true,
+   "gold_cells": 26,
+   "product_cells": 26,
+   "correct": 26,
+   "value_wrong": 0,
+   "label_wrong": 0,
+   "missing": 0,
+   "S1": 0,
+   "L1": 0,
+   "S2": 0,
+   "G1": 0,
+   "flagged": 0,
+   "not_in_gold": [],
+   "unjudged_extras": 0,
+   "sums_checked": null,
+   "problems": [
+    "13쪽: AI가 '후속적으로당기손익으로재분류되지않는포괄손익' 줄을 '후속적으로당기순익으로재분류되지않는포괄손익'(으)로 읽어 원본 계정명을 썼다",
+    "13쪽: AI가 '후속적으로당기손익으로재분류되는포괄손익' 줄을 '후속적으로당기순익으로재분류되는포괄손익'(으)로 읽어 원본 계정명을 썼다",
+    "AI 호출 20번, 증거: PDF 글자"
+   ],
+   "cells": []
+  },
+  {
+   "statement_id": "연결현금흐름표@15",
+   "statement": "연결현금흐름표",
+   "page": 15,
+   "found": true,
+   "gold_cells": 79,
+   "product_cells": 79,
+   "correct": 78,
+   "value_wrong": 1,
+   "label_wrong": 0,
+   "missing": 0,
+   "S1": 0,
+   "L1": 0,
+   "S2": 0,
+   "G1": 0,
+   "flagged": 1,
+   "not_in_gold": [],
+   "unjudged_extras": 0,
+   "sums_checked": 5,
+   "problems": [
+    "15쪽: AI가 '매각예정분류자산처분으로인한현금유입액' 줄을 '매각예정분유자산처분으로인한현금유입액'(으)로 읽어 원본 계정명을 썼다",
+    "16쪽: AI가 '현금및현금성자산의증가(감소)(Ⅰ+Ⅱ+Ⅲ+Ⅳ)' 줄을 '현금및현금성자산의증가(감소)( I +II +III +IV)'(으)로 읽어 원본 계정명을 썼다",
+    "AI 호출 20번, 증거: PDF 글자"
+   ],
+   "cells": [
+    {
+     "label": "매각예정분류자산 처분으로 인한 현금유입액",
+     "period": 0,
+     "printed": "-",
+     "gold_value": null,
+     "page": 15,
+     "result": "value_wrong",
+     "product_label": "매각예정분류자산처분으로인한현금유입액",
+     "product_value": 101563000000,
+     "flagged": true
+    }
+   ]
+  }
+ ]
+}

@@ -64,6 +64,19 @@ class MeasurementTests(unittest.TestCase):
         s = classify(N(statements=[statement], checks=[], problems=[]), {"CFS": items}, {1: [line]})["statements"][0]
         self.assertEqual((s["classes"]["dart_exact"], s["classes"]["pdf_confirmed"]), (1, 1))
 
+    def test_one_number_does_not_report_two_missing_values(self):
+        # Codex recheck 8: a problem quoting '1,000' made both missing 1,000s "reported"
+        s = one("BS", "자본총계", 3000, "3,000", [("자본총계", 3000), ("유동자산", 1000), ("비유동자산", 1000)])
+        statement_problems = ["유동자산 금액 '1,000'을 읽지 않았다"]
+        amount = N(value=3000, printed="3,000", cell=cell("3,000", 300, 350))
+        statement = N(kind="BS", title="연결재무상태표", page=1, unit=1, unit_text="원", columns=[N(), N()],
+                      rows=[N(label="자본총계", amounts={0: amount})], problems=statement_problems, sums_checked=None)
+        items = [{"sj_div": "BS", "account_nm": n, "thstrm_amount": v}
+                 for n, v in (("자본총계", "3000"), ("유동자산", "1000"), ("비유동자산", "1000"))]
+        result = classify(N(statements=[statement], checks=[], problems=[]), {"CFS": items}, {})
+        self.assertEqual([m["status"] for m in result["statements"][0]["missing"]], ["silent", "silent"])
+        del s
+
     def test_a_per_share_amount_quoted_in_won_under_a_million_won_table_is_reported(self):
         amount = N(value=1_000_000, printed="1", cell=cell("1", 300, 350))
         statement = N(kind="IS", title="별도손익계산서", page=1, unit=1_000_000, unit_text="백만원", columns=[N(), N()],

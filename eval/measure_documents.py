@@ -16,17 +16,17 @@ Value, matched one to one with OpenDART's items of the statement and period:
   sign_as_printed (opposite sign elsewhere, but the text layer prints it so on this row in this period's slot:
   an expense in parentheses that OpenDART stores positive),
   pdf_confirmed (not in OpenDART, but the PDF's text layer prints this value on this row's line in this
-  period's slot under its label, and the unit is confirmed by a cell matching OpenDART exactly in a statement
-  of the same unit in this document)
+  period's slot under its label, and the unit is confirmed by a cell of the same table matching OpenDART exactly)
 - wrong: wrong_period (OpenDART has it only in the other period), unit_mismatch (only after a factor of
   10^3, 10^6 or 10^8)
 - review: sign_review (opposite sign outside a 현금흐름표), unconfirmed (none of the above)
 Label: label_ok (equals the label printed on the cell's line in the text layer, or OpenDART's name of the
 matched item), label_differs (differs from the printed label: a wrong label), label_review (no printed line to
 compare and OpenDART's name differs: a person compares), label_unknown.
-Missing: OpenDART items of the statement left unmatched; each is "reported" when a statement or document
-problem names its printed number, "generic" when only a message without numbers covers it (a band the model
-could not read), else "silent". A person then separates values OpenDART presents differently from values the
+Missing: OpenDART items of the statement left unmatched; each is "reported" when a problem names its printed
+number and either its row or a number printed once in the statement (eval/d4_score.pointers), "generic" when
+only a message without numbers covers it (a band the model could not read), else "silent". This is the
+development classifier; the D4 scores come from eval/d4_score.py against a confirmed gold. A person then separates values OpenDART presents differently from values the
 workbook really lacks.
 A wrong or review cell, or a label_differs cell, without a "확인 필요" mark is a candidate silent error.
 """
@@ -132,17 +132,6 @@ def printed_slot(cell, lines_by_page: dict[int, list], scale: float):
 
 def classify(extraction, items_by_division, lines_by_page: dict[int, list], scale: float = 1.0) -> dict:
     flagged = {(c.statement, c.row, c.column) for c in extraction.checks if c.status == "확인 필요"}
-    # units confirmed in this document: a statement with a cell matching OpenDART exactly (name, value, period)
-    units_confirmed = set()
-    for statement in extraction.statements:
-        if statement.kind == "SCE":
-            continue
-        items = dart_items_for(items_by_division["OFS" if statement.title.startswith("별도") else "CFS"], statement.kind)
-        exact = {(name_key(item["account_nm"]), integer(item.get(field)), period) for item in items
-                 for period, field in ((0, "thstrm_amount"), (1, "frmtrm_amount"))}
-        if any((name_key(row.label), amount.value, column) in exact for row in statement.rows
-               for column, amount in row.amounts.items() if amount.value):
-            units_confirmed.add(statement.unit_text)
     problems_all = " ".join(extraction.problems)
     statements = []
     for s_index, statement in enumerate(extraction.statements):
@@ -191,7 +180,9 @@ def classify(extraction, items_by_division, lines_by_page: dict[int, list], scal
                 # expense that OpenDART stores positive): the text layer must show it on this row in this period
                 cell["class"] = ("dart_sign_cf" if is_cf else "sign_as_printed" if in_slot(cell) else "sign_review")
                 cell["dart_name"] = entry["name"]
-        unit_known = any(cell.get("class") == "dart_exact" for cell in cells) or statement.unit_text in units_confirmed
+        # the unit is confirmed only by a cell of this table matching OpenDART exactly (Codex recheck 8: another
+        # table of the same unit once confirmed it)
+        unit_known = any(cell.get("class") == "dart_exact" for cell in cells)
         for cell in cells:
             if "class" in cell:
                 continue
@@ -217,17 +208,26 @@ def classify(extraction, items_by_division, lines_by_page: dict[int, list], scal
             else:
                 cell["label_class"] = "label_unknown"
         text = " ".join(statement.problems) + " " + problems_all
-        # numbers a problem names, as quoted there ('47', '(2,447) 원'); a page number ("10쪽") is not one
-        digits_reported = {re.sub(r"[^\d,]", "", quoted) for quoted in re.findall(r"'([^']*\d[^']*)'", text)}
+        # what the problems point at ('47' in "10쪽 '…' 줄: 원본의 금액 '47'…"): a number names a missing value only
+        # when it names its row too, or the number is that of one OpenDART value of the statement (Codex recheck 8)
+        from eval.d4_score import digits, label_key, pointers
+        marks = pointers(statement.problems + extraction.problems)
         generic = "한 부분을 읽지 못했다" in text
         missing = []
+        unit = statement.unit or 1
+
+        def printed_forms(value: int) -> set[str]:
+            # as printed in the statement's unit, or in 원 (per-share amounts are printed in 원 under a 백만원 table)
+            return {f"{abs(value):,}"} | ({f"{abs(value) // unit:,}"} if value % unit == 0 else set())
+
         for entry in pool:
             if entry["used"]:
                 continue
-            unit = statement.unit or 1
-            # as printed in the statement's unit, or in 원 (per-share amounts are printed in 원 under a 백만원 table)
-            printed = {f"{abs(entry['value']):,}"} | ({f"{abs(entry['value']) // unit:,}"} if entry["value"] % unit == 0 else set())
-            status = ("reported" if printed & digits_reported else "generic" if generic else "silent")
+            forms = printed_forms(entry["value"])
+            unique = sum(1 for e in pool if printed_forms(e["value"]) & forms) == 1
+            reported = any(digits(m["number"]) in forms and (unique or (m["label"] and label_key(m["label"]) == entry["name"]))
+                           for m in marks)
+            status = ("reported" if reported else "generic" if generic else "silent")
             missing.append({"period": entry["period"], "value": entry["value"], "dart_name": entry["name"],
                             "status": status})
         count = lambda key, values: {v: sum(1 for c in cells if c[key] == v) for v in values}

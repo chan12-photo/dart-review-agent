@@ -113,7 +113,7 @@ class TextLayerEvidenceTests(unittest.TestCase):
         rows = [row for row in SAMPLE.rows if row[0] != "비유동부채"]
         reading = self.read(rows)
         problems = " ".join(reading.statements[0].problems)
-        self.assertIn("'24,210,425'를 AI가 읽지 않았다", problems)
+        self.assertIn("1쪽 '비유동부채' 줄: 원본의 금액 '24,210,425'를 AI가 읽지 않았다", problems)
         self.assertIn("'19,013,579'를 AI가 읽지 않았다", problems)
 
     def test_a_band_out_of_budget_is_asked_again_in_halves(self):
@@ -345,7 +345,8 @@ class PhotoEvidenceTests(unittest.TestCase):
                   self.word("재고자산", 50, 140), self.word("7,953,586", 400, 140), self.word("7,953,586", 401, 141)]
         part = self.read("매출액", ["1,000"], tokens)
         _report_unread_tokens(self.statement, part, self.claimed)
-        self.assertEqual(self.statement.problems, ["1쪽: OCR이 읽은 금액 '7,953,586'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)"])
+        self.assertEqual(self.statement.problems,
+                         ["1쪽 '재고자산' 줄: OCR이 읽은 금액 '7,953,586'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)"])
 
 
 if __name__ == "__main__":

@@ -184,6 +184,17 @@ def _is_amount_word(text: str) -> bool:
     return bool(SMALL_OR_GROUPED.fullmatch(re.sub(r"(백만|천)?원$", "", text.replace(" ", ""))))
 
 
+def _where(page: int, label: str) -> str:
+    """Where a reported amount is: its page, and its row's printed label when there is one ("10쪽 '매출액' 줄"), so a
+    report points at one cell even when the same number is printed on another row."""
+    return f"{page}쪽 '{label}' 줄" if re.search(r"[가-힣A-Za-z]", label or "") else f"{page}쪽"
+
+
+def _line_label(line: Line) -> str:
+    words = without_section_column([c for c in line.cells if re.search(r"[가-힣]", c.text) and not c.is_amount])
+    return clean_label(" ".join(c.text for c in words), ocr=True)
+
+
 def _label_cell(line: Line | None) -> Cell | None:
     """The cell where a printed row's label starts (its item marker and indentation give the row's depth)."""
     if line is None:
@@ -381,7 +392,8 @@ def _read_with_page_structure(part: Part, lines: Sequence[Line], title_line: Lin
     for line in body:
         for cell in line.cells:
             if _is_amount_like(cell, state.header, line) and id(cell) not in claimed:
-                statement.problems.append(f"{part.page}쪽: 원본의 금액 '{cell.text}'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)")
+                statement.problems.append(f"{_where(part.page, _line_label(line))}: 원본의 금액 '{cell.text}'를 AI가 읽지 않았다 "
+                                          "(행이 빠졌을 수 있다)")
     if notes is not None:
         state.closed = True
 
@@ -650,7 +662,10 @@ def _report_unread_tokens(statement: Statement, part: Part, claimed: dict[int, i
         if any(_overlaps(word, other) for other in reported):
             continue
         reported.append(word)
-        statement.problems.append(f"{part.page}쪽: OCR이 읽은 금액 '{word.text}'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)")
+        words = _line_words([word], part.tokens) or []
+        label = clean_label(" ".join(w.text for w in words), ocr=True)
+        statement.problems.append(f"{_where(part.page, label)}: OCR이 읽은 금액 '{word.text}'를 AI가 읽지 않았다 "
+                                  "(행이 빠졌을 수 있다)")
 
 
 def _add_row(statement: Statement, checks: list[CellCheck], s_index: int, item: BandLine, band_lines: Sequence[Line],

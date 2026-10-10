@@ -260,8 +260,9 @@ def read_statement(title_line: Line, body: Sequence[Line], context: Sequence[Lin
             elif index is None:
                 label_cells.append(cell)
         line_amounts = [cell for cell in line.cells if cell.is_amount and not _is_dash(cell.text)]
+        wrapped = False
         if amounts and not label_cells:
-            label_cells = _wrapped_label(body, line)
+            label_cells, wrapped = _wrapped_label(body, line), True
         if not amounts or not label_cells:
             words = [cell.text for cell in line.cells if not cell.is_amount and re.search(r"[가-힣A-Za-z]", cell.text)]
             orphans += unplaced_of(line_amounts, clean_label(" ".join(words)) if words else "")
@@ -270,7 +271,8 @@ def read_statement(title_line: Line, body: Sequence[Line], context: Sequence[Lin
         label_cell = label_cells[0]
         # a label printed with wide letter spacing ("자    본    총    계") comes as several cells
         texts = [cell.text for cell in label_cells if not cell.is_amount] or [label_cell.text]
-        label = clean_label(" ".join(texts), ocr=label_cell.method == "ocr")
+        # a label wrapped around its amounts breaks inside a word ("…금융자산의 감" / "소"): joined as written
+        label = clean_label(("" if wrapped else " ").join(texts), ocr=label_cell.method == "ocr")
         label, own_unit = row_unit(label)
         if own_unit:  # "기본주당이익(단위 : 원)": this row's amounts are in its own unit
             for index, amount in list(amounts.items()):

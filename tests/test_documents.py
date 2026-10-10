@@ -169,7 +169,7 @@ class RealLayoutTests(unittest.TestCase):
                 (180, [(52, 196, "배당금의 지급"), (320, 380, "(9,897)"), (460, 520, "(9,809)")])]
         [statement] = find_statements(group_lines(words_for(rows)))
         self.assertEqual([row.label for row in statement.rows],
-                         ["당기손익금융자산의 증가", "기타포괄손익금융자산의 감 소", "배당금의 지급"])
+                         ["당기손익금융자산의 증가", "기타포괄손익금융자산의 감소", "배당금의 지급"])
         self.assertEqual(statement.problems, [])
 
 

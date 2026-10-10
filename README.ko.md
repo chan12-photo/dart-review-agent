@@ -181,7 +181,7 @@ OpenDART의 같은 칸이 보고서와 재무제표에 따라 뜻이 다르다. 
 
 - 텍스트 PDF, 스캔, 휴대폰 사진의 재무제표를 엑셀로 옮긴다. 기본은 로컬 비전 모델(Ollama `qwen3-vl:8b`)이 표를 읽고, 읽은 숫자마다 원본(PDF의 글자, 또는 Tesseract와 macOS Vision OCR)에서 같은 숫자를 찾아 확인한다. 원본에서 찾지 못한 숫자는 "확인 필요"로 표시하고, 원본에 있는데 모델이 읽지 않은 숫자는 보고한다. 숫자를 고치지 않는다.
 - `python -m dart_review extract 파일.pdf`(`--reader rules`는 위치와 규칙만), 또는 `python -m dart_review serve`로 로컬 API와 업로드 화면(127.0.0.1, 계정 없음). 선택 설치 `pip install -e '.[docs,server]'`, Tesseract, Ollama가 필요하다.
-- 실제 문서 6개를 OpenDART와 대조한 개발 측정은 [eval/documents_2026-10-10](eval/documents_2026-10-10/REPORT.ko.md)에 있다. 그 문서들로 결함을 찾아 고쳤으므로 평가가 아니다. 평가 계약([D4](docs/EVAL_CONTRACT_D4.ko.md))은 검토 대기 중이다. [로드맵](docs/ROADMAP.ko.md)
+- 실제 문서 6개를 OpenDART와 대조한 개발 측정은 [eval/documents_2026-10-10_after-codex](eval/documents_2026-10-10_after-codex/REPORT.ko.md)에 있다(Codex 독립 검토를 반영한 뒤. 첫 기록은 [eval/documents_2026-10-10](eval/documents_2026-10-10/REPORT.ko.md)). 그 문서들로 결함을 찾아 고쳤으므로 평가가 아니다. 사진 PDF에서는 같은 계정의 계정명 오타 3칸이 표시되지 않았다. 평가 계약([D4](docs/EVAL_CONTRACT_D4.ko.md) 2판)은 재검토 대기 중이다. [로드맵](docs/ROADMAP.ko.md)
 
 아래는 보류한 과제와 다시 꺼낼 조건이다.
 

@@ -9,7 +9,7 @@
 
 `AGENTS.md`를 따른다. 인증키, OpenDART API, Ollama는 쓰지 않는다. 추적 파일은 수정하지 말고, 결과는 `docs/reviews/D4_recheck_codex_result.ko.md`에 저장해 줘. 결과에 로컬 홈 디렉터리의 절대 경로는 쓰지 말고 `~/`로 적어 줘. 칭찬은 필요 없다. 틀렸거나, 근거가 약하거나, 결과를 실제보다 좋게 보이게 하는 것만 적어 줘. 발견마다 심각도(치명/중요/사소), 위치(파일:줄), 근거(명령과 결과), 제안을 적고, "평가 전에 고칠 것"과 "기록만 할 것"을 나눠 줘.
 
-대상은 `78f7b76..HEAD`이다. 1차 결과는 `docs/reviews/D4_contract_codex_result.ko.md`, Claude의 응답은 `docs/reviews/D4_contract_codex_response.ko.md`에 있다.
+대상은 `78f7b76..HEAD`이다(제품 최종 `0d8f8ee`, 측정 기록 `1cc67d8`, 측정 도구 고침 `8efccc6`). 1차 결과는 `docs/reviews/D4_contract_codex_result.ko.md`, Claude의 응답은 `docs/reviews/D4_contract_codex_response.ko.md`에 있다.
 
 ### Part A. 1차 지적이 실제로 막혔는가
 

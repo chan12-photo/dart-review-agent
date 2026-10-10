@@ -463,6 +463,10 @@ def _add_row_by_tokens(statement: Statement, checks: list[CellCheck], s_index: i
         if len(re.findall(r"[가-힣]", ocr_label)) >= 2:
             if _different_accounts(label, ocr_label):  # one inside the other ("부채" in "유동부채") counts as different
                 label_reason = f"AI가 읽은 계정명 '{label}'과 같은 줄에서 OCR이 읽은 계정명 '{ocr_label}'이 다르다"
+            elif _key(label) != _key(ocr_label):
+                # close but not the same ("총당부채" for "충당부채"): a typo of one of the two readers; which one cannot
+                # be told, and the label is not corrected. Taking it as the same account once let three typos through
+                label_reason = f"계정명 표기가 OCR과 조금 다르다 (AI '{label}', OCR '{ocr_label}', 오타일 수 있다)"
             else:
                 label_known = True
     for position, printed in enumerate(amounts):

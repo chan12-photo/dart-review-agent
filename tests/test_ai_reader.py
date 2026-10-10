@@ -304,6 +304,12 @@ class PhotoEvidenceTests(unittest.TestCase):
         self.read("부채", ["106,411,348"], tokens)
         self.assertTrue(any("OCR이 읽은 계정명 '유동부채'" in reason for reason in self.flags("부채")), self.flags("부채"))
 
+    def test_a_label_close_to_the_ocr_but_not_the_same_is_marked(self):
+        # the photo: the model wrote "총당부채" for the printed "충당부채"; close enough to look like the same account
+        tokens = [self.word("충당부채", 50, 100), self.word("7,690,559", 400, 100), self.word("8,216,469", 600, 100)]
+        self.read("총당부채", ["7,690,559", "8,216,469"], tokens)
+        self.assertTrue(all(any("조금 다르다" in reason for reason in c.reasons) for c in self.checks))
+
     def test_a_noisy_tesseract_label_is_not_compared(self):
         # Tesseract's Hangul on a photo ("재고자산워드") would mark a right label wrong; only Vision's is compared
         tokens = [self.word("재고자산워드", 50, 100, vision=False), self.word("52,636,828", 400, 100),

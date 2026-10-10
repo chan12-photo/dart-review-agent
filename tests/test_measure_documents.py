@@ -64,6 +64,16 @@ class MeasurementTests(unittest.TestCase):
         s = classify(N(statements=[statement], checks=[], problems=[]), {"CFS": items}, {1: [line]})["statements"][0]
         self.assertEqual((s["classes"]["dart_exact"], s["classes"]["pdf_confirmed"]), (1, 1))
 
+    def test_a_per_share_amount_quoted_in_won_under_a_million_won_table_is_reported(self):
+        amount = N(value=1_000_000, printed="1", cell=cell("1", 300, 350))
+        statement = N(kind="IS", title="별도손익계산서", page=1, unit=1_000_000, unit_text="백만원", columns=[N(), N()],
+                      rows=[N(label="매출", amounts={0: amount})], problems=["35쪽: 원본의 금액 '(2,447) 원'를 AI가 읽지 않았다"],
+                      sums_checked=None)
+        items = [{"sj_div": "IS", "account_nm": "매출", "thstrm_amount": "1000000"},
+                 {"sj_div": "IS", "account_nm": "기본주당손실", "thstrm_amount": "-2447"}]
+        result = classify(N(statements=[statement], checks=[], problems=[]), {"OFS": items, "CFS": []}, {})
+        self.assertEqual(result["statements"][0]["missing"][0]["status"], "reported")
+
     def test_a_missing_value_named_in_a_problem_is_reported_and_a_band_failure_is_generic(self):
         s = one("IS", "매출액", 1000, "1,000", [("매출액", 1000), ("영업이익", 47)])
         self.assertEqual(s["missing"][0]["status"], "silent")

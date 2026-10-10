@@ -225,8 +225,9 @@ def classify(extraction, items_by_division, lines_by_page: dict[int, list], scal
             if entry["used"]:
                 continue
             unit = statement.unit or 1
-            printed = f"{abs(entry['value']) // unit:,}" if entry["value"] % unit == 0 else None
-            status = ("reported" if printed and printed in digits_reported else "generic" if generic else "silent")
+            # as printed in the statement's unit, or in 원 (per-share amounts are printed in 원 under a 백만원 table)
+            printed = {f"{abs(entry['value']):,}"} | ({f"{abs(entry['value']) // unit:,}"} if entry["value"] % unit == 0 else set())
+            status = ("reported" if printed & digits_reported else "generic" if generic else "silent")
             missing.append({"period": entry["period"], "value": entry["value"], "dart_name": entry["name"],
                             "status": status})
         count = lambda key, values: {v: sum(1 for c in cells if c[key] == v) for v in values}

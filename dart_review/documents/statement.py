@@ -27,7 +27,7 @@ _PERIOD_LINE = re.compile(r"제\s*(\d+)\s*(?:\([^)]*\))?\s*기.*?(\d{4})\s*년\s
 _DATED = re.compile(r"\d{4}\s*년\s*\d{1,2}\s*월\s*\d{1,2}\s*일\s*(?:부터|현재|까지)")
 _YEAR = re.compile(r"(\d{4})\s*(?:년|\.)")
 # an item index before a label; OCR reads a Roman numeral "Ⅰ." as "|." or "I." too
-_INDEX = re.compile(r"^\s*(?:[ⅠⅡⅢⅣⅤⅥⅦⅧⅨⅩ]+\s*\.?|[|IVXlivx]{1,4}\s*\.|\d{1,2}\.|\(\d{1,2}\)|[가-하]\.|[①-⑳])\s*")
+_INDEX = re.compile(r"^\s*(?:[ⅠⅡⅢⅣⅤⅥⅦⅧⅨⅩ]+\s*\.?|[|IVXlivx]{1,4}\s*\.|\d{1,2}[.)]|\(\d{1,2}\)|[가-하]\.|[①-⑳])\s*")
 _NOTE = re.compile(r"\s*\(\s*주\s*석?\s*[\d,\s]+\)\s*$|\s+주\s*석?\s*[\d,\s]+$")  # "현금 (주4,5)", "(주석 38)"
 # where the statements end: the notes section starts with a line that is only its name
 _END = re.compile(r"^(?:\(?연결\)?)?(?:재무제표에대한)?주석$")

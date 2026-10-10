@@ -41,7 +41,8 @@ _EMPTY_THINK = "<think>\n\n</think>\n\n"
 # an amount: digits grouped by three, or a small one in parentheses or of three digits ("(973)", "682");
 # never a note number ("4", "29", "4, 29")
 SMALL_OR_GROUPED = re.compile(r"[(（]?[-−△]?\d{1,3}([,.]\d{3})+[)）]?|[(（][-−△]?\d{1,3}[)）]|[-−△]?\d{3}")
-AMOUNT = re.compile(r"^(?:[(（]?[-−△]?\d{1,3}(,\d{3})+[)）]?|[(（][-−△]?\d{1,3}[)）]|[-−△]?\d{3})$|^[-–—]$")
+# a bare one- or two-digit number is kept too; the reader takes it only where the page shows it in a period slot
+AMOUNT = re.compile(r"^(?:[(（]?[-−△]?\d{1,3}(,\d{3})+[)）]?|[(（][-−△]?\d{1,3}[)）]|[-−△]?\d{1,3})$|^[-–—]$")
 
 
 class VisionError(Exception):

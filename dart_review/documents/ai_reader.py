@@ -189,7 +189,14 @@ def _label_cell(line: Line | None) -> Cell | None:
     if line is None:
         return None
     words = without_section_column([c for c in line.cells if re.search(r"[가-힣]", c.text) and not c.is_amount])
-    return words[0] if words else line.cells[0]
+    # a line with no label of its own (a label wrapped onto the lines around it): its depth is not known; an amount
+    # cell's position taken for the label's once made a row the child of the one above, and its sum failed
+    return words[0] if words else None
+
+
+def _is_bare_small(text: str) -> bool:
+    """A one- or two-digit number without parentheses: an amount ("42") or a note number ("8")."""
+    return bool(re.fullmatch(r"[-−△]?\d{1,2}", text.replace(" ", "")))
 
 
 def _is_amount_like(cell: Cell, header: Header | None) -> bool:
@@ -438,7 +445,8 @@ def _add_row_by_tokens(statement: Statement, checks: list[CellCheck], s_index: i
     """
     label, own_unit = row_unit(clean_label(item.label, ocr=True))
     unit = own_unit or statement.unit
-    amounts = [printed for printed in item.amounts if printed not in ("-", "–", "—")]
+    # a one- or two-digit number cannot be told from a note number without a text layer: not taken
+    amounts = [printed for printed in item.amounts if printed not in ("-", "–", "—") and not _is_bare_small(printed)]
     if not label or not amounts:
         return
     first = recent_from if recent_from is not None else len(statement.rows)
@@ -654,14 +662,25 @@ def _add_row(statement: Statement, checks: list[CellCheck], s_index: int, item: 
     existing = _existing_row(statement, evidence_line) if evidence_line is not None else None
     row = statement.rows[existing] if existing is not None else Row(
         label, account_of(label), _label_cell(evidence_line), {})
-    for position, printed in enumerate(item.amounts):
+    regular = [printed for printed in item.amounts if not _is_bare_small(printed)]
+    small = [printed for printed in item.amounts if _is_bare_small(printed)]
+    for printed in small:
+        # "42", "2": an amount only when the page prints it in a period slot of this line; otherwise a note number
+        # the model copied, ignored (no flag, no row)
+        cell = next((c for c in (evidence_line.cells if evidence_line is not None else ())
+                     if _digits(c.text) == _digits(printed) and id(c) not in claimed and header is not None
+                     and header.period_of(c.x1) is not None and re.fullmatch(r"[-−△]?\d{1,2}", c.text.strip())), None)
+        if cell is not None:
+            regular.append(printed)
+    for position, printed in enumerate(regular):
         if printed in ("-", "–", "—"):
             continue
         digits = _digits(printed)
         cell = None
         if evidence_line is not None:
-            cell = next((c for c in evidence_line.cells if _is_amount_word(c.text) and _digits(c.text) == digits
-                         and id(c) not in claimed), None)
+            cell = next((c for c in evidence_line.cells if _digits(c.text) == digits and id(c) not in claimed
+                         and (_is_amount_word(c.text) or (_is_bare_small(c.text) and header is not None
+                                                          and header.period_of(c.x1) is not None))), None)
         reasons = [label_problem] if label_problem else []
         if cell is not None:
             claimed.add(id(cell))

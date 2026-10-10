@@ -213,6 +213,30 @@ class TextLayerEvidenceTests(unittest.TestCase):
         self.assertEqual((second.kind, [row.label for row in second.rows]), ("CIS", ["당기순손실", "기타포괄손익", "총포괄손실"]))
         self.assertEqual(self.flagged(reading), {})
 
+    def test_a_two_digit_amount_in_a_period_slot_is_taken_and_a_copied_note_number_is_not(self):
+        from dart_review.documents.ai_reader import read_document
+        rows = [("유동자산", ["247,684,612", "227,062,266"]), ("기타유동금융자산", ["45,743", "42"]),
+                ("재고자산", ["1,059,448", "1,228,678"])]
+        page = SampleStatement("재무상태표", SAMPLE.company, SAMPLE.period_lines, "백만원", SAMPLE.headers, rows)
+        answer = rows[:2] + [("재고자산", ["8", "1,059,448", "1,228,678"])]  # the model copied a note number "8"
+        with tempfile.TemporaryDirectory() as folder:
+            path = Path(folder) / "sample.pdf"
+            text_pdf(path, [page])
+            reading = read_document(path, ScriptedModel(answer))
+        statement = reading.statements[0]
+        values = {row.label: [row.amounts[c].printed for c in sorted(row.amounts)] for row in statement.rows}
+        self.assertEqual(values["기타유동금융자산"], ["45,743", "42"])  # LG에너지솔루션's "42" (백만원)
+        self.assertEqual(values["재고자산"], ["1,059,448", "1,228,678"])
+        self.assertEqual(self.flagged(reading), {})
+        self.assertFalse([p for p in statement.problems if "읽지 않았다" in p])
+
+    def test_a_line_without_its_own_label_has_no_known_depth(self):
+        from dart_review.documents.ai_reader import _label_cell
+        from dart_review.documents.table import Cell, Line
+        from dart_review.documents.words import Word
+        amounts_only = Line(1, [Cell([Word("122,448", 1, 460, 520, 100, 110)]), Cell([Word("126", 1, 600, 620, 100, 110)])])
+        self.assertIsNone(_label_cell(amounts_only))
+
     def test_a_failed_band_is_reported_and_its_amounts_are_not_lost_silently(self):
         reading = self.read(SAMPLE.rows, fail=True)
         problems = " ".join(reading.statements[0].problems)

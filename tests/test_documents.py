@@ -77,6 +77,7 @@ class AmountTests(unittest.TestCase):
         self.assertEqual(clean_label("© 비 유 동 자산", ocr=True), "비유동자산")
         self.assertEqual(clean_label("i. 비 유 동 자산", ocr=True), "비유동자산")  # OCR read "Ⅱ." as "i."
         self.assertEqual(clean_label("5 미수금", ocr=True), "미수금")  # an item number whose dot was dropped
+        self.assertEqual(clean_label("1) 확정급여제도의 재측정요소"), "확정급여제도의 재측정요소")  # 포스코
         self.assertEqual(account_of("당기순이익(손실)"), "net_income")
         self.assertEqual(account_of("자 산 총 계"), "total_assets")
         self.assertIsNone(account_of("자본총계"))

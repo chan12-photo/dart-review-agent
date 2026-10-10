@@ -13,7 +13,7 @@ from dataclasses import dataclass, field
 import re
 from typing import Iterable
 
-from .statement import Amount, Statement
+from .statement import PERIOD_MARK, Amount, Statement
 
 OCR_CONFIDENCE = 85.0  # Tesseract's 0-100 score; below this a cell is checked by a person
 _GROUPED = re.compile(r"^\d{1,3}(,\d{3})+$")
@@ -77,6 +77,8 @@ def check(statements: list[Statement]) -> list[CellCheck]:
                     result.flag(f"OCR 확신도가 낮다 ({confidence:.0f})")
                 if statement.unit is None:
                     result.flag("금액 단위를 알 수 없다")
+                if c_index < len(statement.columns) and not PERIOD_MARK.search(statement.columns[c_index].header or ""):
+                    result.flag("이 열의 기간 머리글(제 N 기, 당기·전기, 연도)을 확인하지 못했다")
                 if row.unplaced:
                     result.flag("같은 줄에 열을 정하지 못한 숫자가 있다 (줄 구조가 깨졌을 수 있다)")
                 by_cell[(r_index, c_index)] = result
@@ -95,7 +97,7 @@ def check_sums(statement: Statement, by_cell: dict[tuple[int, int], CellCheck]) 
         return
     identities = _balance(statement, by_cell)
     subtotals = _subtotals(statement, by_cell)
-    statement.sums_checked = len(identities) * len(statement.columns) + subtotals
+    statement.sums_checked = len(identities) + subtotals  # each computed in one period
     if statement.kind == "BS" and not identities and not any("합계 검산" in problem for problem in statement.problems):
         statement.problems.append("합계 줄을 찾지 못해 재무상태표 항등식(자산총계 = 부채총계 + 자본총계 등)을 검산하지 못했다")
     if not subtotals:
@@ -182,39 +184,58 @@ def _is_closing_total(label: str) -> bool:
 
 def _check_sum(statement: Statement, by_cell: dict[tuple[int, int], CellCheck], column: int, parent: int,
                details: list[int]) -> int:
-    """``parent`` = the sum of its top-level ``details``; each detail with children (deeper in the label
-    structure) is checked against them in turn. Returns the number of sums checked."""
-    ranks = [_rank(statement.rows[index]) for index in details]
-    if any(rank is None for rank in ranks):
-        ranks = [0.0] * len(details)  # no structure known: every detail is a direct part of the parent
-    top: list[tuple[int, list[int]]] = []  # (detail, its children)
-    position = 0
-    while position < len(details):
-        end = position + 1
-        while end < len(details) and ranks[end] > ranks[position] + 1.0:
-            end += 1
-        top.append((details[position], details[position + 1:end]))
-        position = end
+    """``parent`` against ``details``; returns the number of sums checked.
+
+    - Item markers that differ among the details ("1." over "가.") give the structure: the parent equals the sum
+      of its top-level details, and each detail with children (deeper markers) is checked against them.
+    - Otherwise every detail is a direct part: the plain sum must hold. If it fails but would hold were some
+      detail the sum of the ones after it (shown only by indentation, or only by the numbers), a third level
+      cannot be told from a wrong cell: the sum is not counted as checked, and its cells are marked.
+    """
     def value(index: int) -> int:
         return statement.rows[index].amounts[column].value or 0  # a dash is zero
 
+    markers = [_marker(statement.rows[index]) for index in details]
+    if None not in markers and len(set(markers)) > 1:
+        top = _levels(details, markers)
+    else:
+        top = [(index, []) for index in details]
+        if value(parent) != sum(value(index) for index in details):
+            indents = [_indent(statement.rows[index]) for index in details]
+            nested = _levels(details, indents) if None not in indents and max(indents) - min(indents) > 1.0 else None
+            explained = (nested is not None and value(parent) == sum(value(index) for index, _ in nested)) or \
+                _sums_by_coincidence(value(parent), [value(index) for index in details])
+            if explained:
+                label = statement.rows[parent].label
+                note = (f"소계 '{label}'는 세부 항목의 층(어느 항목이 다른 항목의 합인지)을 표에서 확인하지 못해 검산하지 못했다 "
+                        "(들여쓰기나 숫자로는 맞지만 항목 기호가 없다)")
+                if note not in statement.problems:
+                    statement.problems.append(note)
+                for target in [parent, *details]:
+                    if (target, column) in by_cell:
+                        by_cell[(target, column)].flag(
+                            f"소계 '{label}'와 세부 항목의 합이 그대로는 맞지 않는다. 일부 항목이 다른 항목의 합일 수 있지만 "
+                            "표에서 확인하지 못했다")
+                return 0
     if value(parent) != sum(value(index) for index, _ in top):
-        flat = len(set(ranks)) == 1
-        if flat and _sums_by_coincidence(value(parent), [value(index) for index, _ in top]):
-            # the sum holds if some detail stands for the ones after it, but no label structure says so: a
-            # third level printed in the detail position, or a wrong cell that happens to fit. Not called
-            # checked, and not called wrong
-            note = (f"소계 '{statement.rows[parent].label}'는 세부 항목의 층(어느 항목이 다른 항목의 합인지)을 표에서 알 수 없어 "
-                    "검산하지 못했다")
-            if note not in statement.problems:
-                statement.problems.append(note)
-            return 0
         _flag_sum(statement, by_cell, column, parent, [index for index, _ in top])
     checked = 1
     for index, children in top:
         if children:
             checked += _check_sum(statement, by_cell, column, index, children)
     return checked
+
+
+def _levels(details: list[int], depths: list[float]) -> list[tuple[int, list[int]]]:
+    """(detail, its children): a detail's children are the details after it that sit deeper."""
+    top, position = [], 0
+    while position < len(details):
+        end = position + 1
+        while end < len(details) and depths[end] > depths[position] + 1e-6:
+            end += 1
+        top.append((details[position], details[position + 1:end]))
+        position = end
+    return top
 
 
 def _sums_by_coincidence(total: int, values: list[int]) -> bool:
@@ -241,14 +262,17 @@ _MARKERS = ((re.compile(r"^\s*(?:[ⅠⅡⅢⅣⅤⅥⅦⅧⅨⅩ]+|[IVX]{1,4})\s
             (re.compile(r"^\s*[①-⑳]"), 5))
 
 
-def _rank(row) -> float | None:
-    """How deep a row's label sits: its item marker (Ⅰ. > 1. > 가. > (1) > ① > none), then its indentation.
-    None when the row has no printed label to look at (a value read by the AI only)."""
+def _marker(row) -> int | None:
+    """The depth its item marker gives a row's label (Ⅰ. > 1. > 가. > (1) > ① > none); None without a label."""
     cell = row.label_cell
     if cell is None:
         return None
-    marker = next((rank for pattern, rank in _MARKERS if pattern.match(cell.text)), 6)
-    return marker * 1000 + cell.x0
+    return next((rank for pattern, rank in _MARKERS if pattern.match(cell.text)), 6)
+
+
+def _indent(row) -> float | None:
+    cell = row.label_cell
+    return None if cell is None else round(cell.x0, 1)
 
 
 def median_height(heights: list[float]) -> float:
@@ -262,7 +286,8 @@ IDENTITIES = (("자산총계", ("부채총계", "자본총계")), ("자산총계
 
 
 def _balance(statement: Statement, by_cell: dict[tuple[int, int], CellCheck]) -> list[str]:
-    """Check every identity whose rows are all present; return the names of the identities checked."""
+    """Check every identity whose rows and values are present; return one entry per identity and period
+    actually computed."""
     if statement.kind != "BS":
         return []
     index: dict[str, int] = {}
@@ -275,11 +300,11 @@ def _balance(statement: Statement, by_cell: dict[tuple[int, int], CellCheck]) ->
         if not all(name in index for name in names):
             continue
         rule = f"{total} = {' + '.join(parts)}"
-        checked.append(rule)
         for column in range(len(statement.columns)):
             cells = {name: statement.rows[index[name]].amounts.get(column) for name in names}
             if any(cell is None or cell.value is None for cell in cells.values()):
-                continue
+                continue  # not computed in this period: not counted
+            checked.append(f"{rule} ({column})")
             if cells[total].value != sum(cells[part].value for part in parts):
                 for name in names:
                     if (index[name], column) in by_cell:

@@ -229,6 +229,7 @@ def read_statement(title_line: Line, body: Sequence[Line], context: Sequence[Lin
     columns = number_columns(body, tolerance)
     periods = _period_columns(body, columns, tolerance, context)
     columns, periods = _merge_nested(body, columns, periods, context)
+    columns, periods = _set_note_columns(body, columns, periods, tolerance)
     # where the amounts start: the left edge of the leftmost amount in a period column (notes are left of it)
     placed_left = [cell.x0 for line in body for cell in line.cells if cell.is_amount and not _is_dash(cell.text)
                    and _period_index(cell, columns, periods, tolerance) is not None]
@@ -297,6 +298,32 @@ def read_statement(title_line: Line, body: Sequence[Line], context: Sequence[Lin
         problems.append(f"표에 넣지 못한 금액 {len(orphans)}개 ({shown}): 줄이나 열을 복원하지 못한 행이 있을 수 있다 "
                         "(원본과 대조 필요)")
     return Statement(kind, consolidated, title, title_line.page, unit, unit_text, periods, rows, problems)
+
+
+_NOTE_REFERENCE = re.compile(r"\d{1,2}(\s*,\s*\d{1,2})*")
+PERIOD_MARK = re.compile(r"제\s*\d+|당\s*기|전\s*기|전\s*전\s*기|\d{4}\s*[년.]")
+
+
+def _set_note_columns(body: Sequence[Line], columns: list[Column], periods: list[PeriodColumn],
+                      tolerance: float) -> tuple[list[Column], list[PeriodColumn]]:
+    """A number column holding only note references ("1", "4, 29") is the note column, wherever it is printed. A
+    note column right of the amounts once became a second period whose values were the note numbers, every cell
+    passing its checks. Columns are returned in the merged form (header = period index, or the note mark)."""
+    def only_notes(column: Column) -> bool:
+        cells = [cell for line in body for cell in line.cells
+                 if cell.is_amount and not _is_dash(cell.text) and column.holds(cell, tolerance)]
+        return bool(cells) and all(_NOTE_REFERENCE.fullmatch(cell.text.strip()) for cell in cells)
+
+    if columns and all(column.header.isdigit() or column.header == NOTE_COLUMN for column in columns):
+        return [Column(c.right, NOTE_COLUMN) if c.header != NOTE_COLUMN and only_notes(c) else c for c in columns], periods
+    merged, kept = [], []
+    for column, period in zip(columns, periods):
+        if _is_note_column(period) or only_notes(column):
+            merged.append(Column(column.right, NOTE_COLUMN))
+        else:
+            merged.append(Column(column.right, str(len(kept))))
+            kept.append(period)
+    return merged, kept
 
 
 def without_section_column(cells: Sequence[Cell]) -> list[Cell]:

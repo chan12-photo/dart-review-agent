@@ -199,14 +199,28 @@ def _is_bare_small(text: str) -> bool:
     return bool(re.fullmatch(r"[-−△]?\d{1,2}", text.replace(" ", "")))
 
 
-def _is_amount_like(cell: Cell, header: Header | None) -> bool:
-    """An amount, or a small number printed under a period heading (a per-share amount "47"): note numbers
-    are printed left of the period headings."""
+def _is_amount_like(cell: Cell, header: Header | None, line: Line | None = None) -> bool:
+    """An amount, or a small number printed under a period heading (a per-share amount "47"). A bare one- or
+    two-digit number counts only in a free period slot of its line (see ``_in_free_slot``)."""
     if _is_amount_word(cell.text):
         return True
     text = re.sub(r"(백만|천)?원$", "", cell.text.replace(" ", ""))
-    return (header is not None and header.period_of(cell.x1) is not None
-            and bool(re.fullmatch(r"[(（]?[-−△]?\d{1,3}[)）]?", text)))
+    if header is None or header.period_of(cell.x1) is None:
+        return False
+    if _is_bare_small(text):
+        return line is None or _in_free_slot(cell, line, header)
+    return bool(re.fullmatch(r"[(（]?[-−△]?\d{1,3}[)）]?", text))
+
+
+def _in_free_slot(cell: Cell, line: Line, header: Header) -> bool:
+    """A bare one- or two-digit number is an amount only where its period has no other amount on the line. A note
+    number printed right of an amount falls under the same period as that amount ("매출액 1,000 | 1"); a per-share
+    amount "42" fills a period of its own."""
+    period = header.period_of(cell.x1)
+    if period is None:
+        return False
+    return not any(other is not cell and _is_amount_word(other.text) and header.period_of(other.x1) == period
+                   for other in line.cells)
 
 
 def _existing_row(statement: Statement, line: Line) -> int | None:
@@ -366,7 +380,7 @@ def _read_with_page_structure(part: Part, lines: Sequence[Line], title_line: Lin
             _add_row(statement, state.checks, s_index, item, band_lines, state.header, part, claimed)
     for line in body:
         for cell in line.cells:
-            if _is_amount_like(cell, state.header) and id(cell) not in claimed:
+            if _is_amount_like(cell, state.header, line) and id(cell) not in claimed:
                 statement.problems.append(f"{part.page}쪽: 원본의 금액 '{cell.text}'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)")
     if notes is not None:
         state.closed = True
@@ -673,7 +687,7 @@ def _add_row(statement: Statement, checks: list[CellCheck], s_index: int, item: 
         # the model copied, ignored (no flag, no row)
         cell = next((c for c in (evidence_line.cells if evidence_line is not None else ())
                      if _digits(c.text) == _digits(printed) and id(c) not in claimed and header is not None
-                     and header.period_of(c.x1) is not None and re.fullmatch(r"[-−△]?\d{1,2}", c.text.strip())), None)
+                     and _is_bare_small(c.text) and _in_free_slot(c, evidence_line, header)), None)
         if cell is not None:
             regular.append(printed)
     for position, printed in enumerate(regular):
@@ -684,7 +698,7 @@ def _add_row(statement: Statement, checks: list[CellCheck], s_index: int, item: 
         if evidence_line is not None:
             cell = next((c for c in evidence_line.cells if _digits(c.text) == digits and id(c) not in claimed
                          and (_is_amount_word(c.text) or (_is_bare_small(c.text) and header is not None
-                                                          and header.period_of(c.x1) is not None))), None)
+                                                          and _in_free_slot(c, evidence_line, header)))), None)
         reasons = [label_problem] if label_problem else []
         if cell is not None:
             claimed.add(id(cell))

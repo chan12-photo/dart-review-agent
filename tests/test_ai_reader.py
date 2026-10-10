@@ -230,6 +230,17 @@ class TextLayerEvidenceTests(unittest.TestCase):
         self.assertEqual(self.flagged(reading), {})
         self.assertFalse([p for p in statement.problems if "읽지 않았다" in p])
 
+    def test_a_note_number_right_of_an_amount_is_not_an_amount(self):
+        from dart_review.documents.ai_reader import Header, _in_free_slot
+        from dart_review.documents.table import Cell, Line
+        from dart_review.documents.words import Word
+        header = Header([300, 450], [], 0)
+        cells = [Cell([Word("매출액", 1, 20, 80, 100, 110)]), Cell([Word("1,000", 1, 310, 350, 100, 110)]),
+                 Cell([Word("1", 1, 415, 420, 100, 110)]), Cell([Word("42", 1, 500, 520, 100, 110)])]
+        line = Line(1, cells)
+        self.assertFalse(_in_free_slot(cells[2], line, header))  # the note "1" shares 당기 with 1,000
+        self.assertTrue(_in_free_slot(cells[3], line, header))  # "42" is the only amount of 전기
+
     def test_a_line_without_its_own_label_has_no_known_depth(self):
         from dart_review.documents.ai_reader import _label_cell
         from dart_review.documents.table import Cell, Line

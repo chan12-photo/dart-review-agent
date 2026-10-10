@@ -199,6 +199,29 @@ class RealLayoutTests(unittest.TestCase):
         [statement] = find_statements(group_lines(words_for(rows)))
         self.assertTrue(any("'47' (기본주당이익)" in problem for problem in statement.problems), statement.problems)
 
+    def test_a_note_column_right_of_the_amounts_is_not_a_period(self):
+        # Codex (D4 recheck): "매출액 1,000 | 1" made the note numbers a second period, every cell passing
+        for prior in (False, True):
+            head = [(300, 350, "당기"), (400, 420, "주석")] + ([(470, 520, "전기")] if prior else [])
+            rows = [(0, [(20, 100, "손익계산서")]), (15, [(20, 90, "(단위: 원)")]), (30, head)]
+            for n, (label, amount, note, previous) in enumerate((("매출액", "1,000", "1", "2,000"),
+                                                                  ("영업이익", "3,000", "2", "4,000"),
+                                                                  ("당기순이익", "5,000", "3", "6,000"))):
+                cells = [(20, 100, label), (310, 350, amount), (415, 420, note)] + ([(480, 520, previous)] if prior else [])
+                rows.append((50 + 20 * n, cells))
+            [statement] = find_statements(group_lines(words_for(rows)))
+            self.assertEqual([c.header for c in statement.columns], ["당기", "전기"] if prior else ["당기"])
+            self.assertEqual([sorted(r.amounts) for r in statement.rows], [[0, 1] if prior else [0]] * 3)
+            self.assertEqual(statement.rows[0].amounts[0].printed, "1,000")
+
+    def test_a_column_without_a_period_heading_is_marked(self):
+        rows = [(0, [(20, 100, "재무상태표")]), (15, [(20, 90, "(단위: 원)")]),
+                (30, [(300, 350, "금액")]),
+                (50, [(20, 80, "현금"), (310, 350, "1,000")]), (70, [(20, 100, "재고자산"), (310, 350, "3,000")])]
+        [statement] = find_statements(group_lines(words_for(rows)))
+        reasons = {reason for item in check([statement]) for reason in item.reasons}
+        self.assertIn("이 열의 기간 머리글(제 N 기, 당기·전기, 연도)을 확인하지 못했다", reasons)
+
     def test_a_note_number_left_of_the_amounts_stays_a_note(self):
         rows = [(0, [(20, 100, "재무상태표")]), (15, [(20, 90, "(단위: 원)")]),
                 (30, [(150, 170, "주석"), (300, 350, "당기"), (500, 550, "전기")]),
@@ -361,11 +384,33 @@ class SubtotalTests(unittest.TestCase):
                 (70, "장기금융상품", "d", "5,000"), (70, "유형자산", "d", "5,000")]
         closing = ("Ⅱ. 기말 현금", "57,856,378")
         statement = self.statement("현금흐름표", rows, closing)
-        self.assertEqual((self.flagged(statement), statement.sums_checked), (set(), 0))
+        flagged = self.flagged(statement)
+        self.assertEqual(statement.sums_checked, 0)  # never counted as checked
+        # and the cells are marked (Codex recheck 6): the plain sum fails, and that it is a third level is not shown
+        self.assertEqual({label for label, _ in flagged}, {"투자활동 현금흐름", "단기금융상품", "장기금융상품", "유형자산"})
         self.assertTrue(any("검산하지 못했다" in problem and "투자활동" in problem for problem in statement.problems),
                         statement.problems)
         rows[3] = (70, "유형자산", "d", "6,000")  # no coincidence: the plain sum is wrong and is marked
         self.assertIn(("유형자산", 0), self.flagged(self.statement("현금흐름표", rows, closing)))
+
+    def test_indentation_alone_does_not_make_a_third_level(self):
+        # Codex recheck 6: details 10, 5, 5 with the 5s indented; three equal rows or a parent and its children
+        rows = [(60, "Ⅰ. 투자활동 현금흐름", "s", "10,000"), (70, "단기금융상품", "d", "10,000"),
+                (80, "장기금융상품", "d", "5,000"), (80, "유형자산", "d", "5,000")]
+        statement = self.statement("현금흐름표", rows, ("Ⅱ. 기말 현금", "57,856,378"))
+        flagged = self.flagged(statement)
+        self.assertEqual(statement.sums_checked, 0)
+        self.assertIn(("단기금융상품", 0), flagged)
+
+    def test_an_identity_is_counted_only_where_it_was_computed(self):
+        rows = [(40, [(250, 300, "재무상태표")]), (80, [(470, 540, "(단위: 원)")]),
+                (100, [(60, 90, "과 목"), (330, 380, "제 56 기"), (470, 520, "제 55 기")]),
+                (120, [(60, 100, "자산총계"), (330, 380, "1,000"), (480, 520, "900")]),
+                (140, [(60, 100, "부채총계"), (330, 380, "400"), (500, 520, "-")]),
+                (160, [(60, 100, "자본총계"), (330, 380, "600"), (480, 520, "650")])]
+        [statement] = find_statements(group_lines(words_for(rows)))
+        check([statement])
+        self.assertEqual(statement.sums_checked, 1)  # 자산총계 = 부채총계 + 자본총계 in 제 56 기 only
 
     def test_a_dash_is_zero_and_wide_amounts_stay_in_one_part(self):
         # the detail and subtotal positions 80 apart (NAVER) once split every row into its own part: no sum ran

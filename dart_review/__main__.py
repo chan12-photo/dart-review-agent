@@ -107,9 +107,13 @@ def serve_command(args: argparse.Namespace) -> int:
     try:
         import uvicorn
         from .server import create_app
-        app = create_app(args.data)
-    except (ImportError, RuntimeError):
+    except ImportError:
         print("서버에 필요한 패키지가 없습니다: pip install -e '.[docs,server]'")
+        return 5
+    try:
+        app = create_app(args.data)
+    except RuntimeError as exc:
+        print(f"서버를 시작하지 못했습니다: {exc}")
         return 5
     if args.host not in ("127.0.0.1", "localhost", "::1"):
         print("주의: 계정 확인이 없는 서버입니다. 이 컴퓨터 밖에서 접속할 수 있게 열었습니다.")

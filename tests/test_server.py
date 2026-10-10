@@ -130,6 +130,18 @@ class DeletionAndRestartTests(unittest.TestCase):
         self.assertEqual(JobStore(Path(self.folder.name)).abandon_unfinished(), 2)
         self.assertEqual({self.store.get(job["id"])["status"] for job in (queued, running)}, {"failed"})
 
+    @unittest.skipUnless(HAS_SERVER, "pip install -e '.[docs,server]'")
+    def test_a_second_server_on_the_same_folder_refuses_to_start(self):
+        # Codex recheck 10: a second server took the first one's running job for abandoned and failed it
+        from dart_review.server import create_app
+        job = self.store.create("a.pdf", b"%PDF-1.4 test", "rules", None)
+        self.store.update(job["id"], status="running")
+        first = create_app(Path(self.folder.name), executor=Inline())
+        with self.assertRaisesRegex(RuntimeError, "다른 서버"):
+            create_app(Path(self.folder.name), executor=Inline())
+        self.assertEqual(self.store.get(job["id"])["status"], "failed")  # abandoned once, by the first server
+        first.state.lock.close()
+
     def test_only_this_packages_own_messages_are_shown(self):
         from dart_review.documents.words import DocumentError
         from dart_review.server import _error_message

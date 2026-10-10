@@ -534,5 +534,22 @@ class WorkbookTests(unittest.TestCase):
         self.assertEqual(problems[3], "소계와 그 아래 항목을 구분하지 못해 소계 검산을 하지 못했다")
 
 
+    def test_a_photo_cell_whose_label_was_not_read_says_so(self):
+        from openpyxl import load_workbook
+        from dart_review.documents.excel import write_workbook
+        from dart_review.documents.statement import Amount, PeriodColumn, Row, Statement
+        from dart_review.documents.table import Cell
+        from dart_review.documents.verify import CellCheck
+        cell = Cell([Word("1,000", 1, 400, 450, 100, 120, "ocr", 95.0)])
+        statement = Statement("BS", True, "연결재무상태표", 1, 1, "원", [PeriodColumn("제 57 기")],
+                              [Row("매출채권", None, None, {0: Amount(cell, 1000, "1,000", 0)})], [])
+        checks = [CellCheck(0, 0, 0, evidence="OCR (숫자만, 계정명 미확인)")]
+        with tempfile.TemporaryDirectory() as folder:
+            out = Path(folder) / "photo.xlsx"
+            write_workbook(out, [statement], checks, "photo.pdf", reader="ai")
+            target = load_workbook(out)["재무제표"].cell(3, 3)
+        self.assertIn("계정명은 확인하지 못했다", target.comment.text)
+        self.assertNotEqual(target.fill.fgColor.rgb, "00FFF2CC")  # not marked for review
+
 if __name__ == "__main__":
     unittest.main()

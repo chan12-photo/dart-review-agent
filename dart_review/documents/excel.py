@@ -63,6 +63,9 @@ def write_workbook(path: Path, statements: list[Statement], checks: list[CellChe
                 if check and check.status == REVIEW:
                     target.fill = yellow
                     target.comment = Comment("확인 필요: " + "; ".join(check.reasons), "dart_review")
+                elif check and "계정명 미확인" in check.evidence:
+                    # a photo: the number is on the page (OCR), the row's label could not be read there
+                    target.comment = Comment("숫자는 원본(OCR)에서 확인했고, 계정명은 확인하지 못했다", "dart_review")
         sheet.append([])
 
     sources = book.create_sheet("셀 출처")

@@ -257,6 +257,22 @@ def _error_message(exc: Exception) -> str:
     return f"읽는 중 오류가 났습니다 ({type(exc).__name__})"
 
 
+def _lock_data_dir(root: Path):
+    """An exclusive lock on the data folder for the life of the server. A second server on the same folder would
+    take the first one's running jobs for abandoned ones and mark them failed; it refuses to start instead."""
+    handle = open(root / "server.lock", "a+")
+    try:
+        import fcntl
+    except ImportError:  # pragma: no cover - Windows: no lock, one server per folder is the user's rule
+        return handle
+    try:
+        fcntl.flock(handle, fcntl.LOCK_EX | fcntl.LOCK_NB)
+    except OSError:
+        handle.close()
+        raise RuntimeError("다른 서버가 이 데이터 폴더를 쓰고 있습니다 (--data로 다른 폴더를 주세요)") from None
+    return handle
+
+
 def _public(job: dict[str, Any]) -> dict[str, Any]:
     links = {}
     if job["status"] == "done":
@@ -269,11 +285,12 @@ def create_app(data_dir: Path = DEFAULT_DATA_DIR, runner: Runner = run_extractio
         raise RuntimeError("fastapi is not installed: pip install -e '.[docs,server]'")
 
     store = JobStore(Path(data_dir))
-    store.abandon_unfinished()
+    lock = _lock_data_dir(store.root)
+    store.abandon_unfinished()  # safe: no other server uses this folder while the lock is held
     worker = Worker(store, runner, executor)
     app = FastAPI(title="dart-review documents", version="0.2.0-dev",
                   description="PDF 재무제표 → 검증된 엑셀 (로컬 전용)")
-    app.state.store, app.state.worker = store, worker
+    app.state.store, app.state.worker, app.state.lock = store, worker, lock
 
     def job_or_404(job_id: str) -> dict[str, Any]:
         try:

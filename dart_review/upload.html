@@ -33,6 +33,7 @@
   th, td { border-bottom: 1px solid var(--line); padding: 4px 6px; text-align: left; vertical-align: top; }
   td.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
   td.review { background: var(--warn-bg); color: var(--warn); }
+  td.name-unchecked { text-decoration: underline dotted; }
   .scroll { overflow-x: auto; }
   ul { padding-left: 20px; }
 </style>
@@ -131,8 +132,10 @@ async function show(job) {
         const value = row.values.find((item) => item.column === index);
         if (!value) return el("td", {class: "num"}, "");
         const review = value.status === "확인 필요";
-        const td = el("td", {class: "num" + (review ? " review" : "")}, value.printed);
+        const nameUnchecked = !review && (value.evidence || "").includes("계정명 미확인");
+        const td = el("td", {class: "num" + (review ? " review" : nameUnchecked ? " name-unchecked" : "")}, value.printed);
         if (review) td.title = "확인 필요: " + value.reasons.join("; ");
+        if (nameUnchecked) td.title = "숫자는 원본(OCR)에서 확인했고, 계정명은 확인하지 못했다";
         return td;
       });
       return el("tr", {}, el("td", {}, row.label), ...cells);

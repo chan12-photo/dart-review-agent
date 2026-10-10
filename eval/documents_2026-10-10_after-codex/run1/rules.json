@@ -1,0 +1,988 @@
+{
+ "classification": "v2",
+ "code_commit": "16843468cf3202d6402f87342fd23259bff7e380",
+ "code_changed_since_commit": false,
+ "opendart": {
+  "year": 2025,
+  "report": "11011",
+  "fs_div": "CFS or OFS"
+ },
+ "documents": [
+  {
+   "company": "삼성전자",
+   "corp_code": "00126380",
+   "file": "2025_con_quarter04_all.pdf",
+   "sha256": "5abc1d73bfcde7abce83ca0540e16c9acf3639d77ccf59b207d56660eced6ae3",
+   "bytes": 1055381,
+   "reader": "rules",
+   "seconds": 4,
+   "model": null,
+   "prompt_version": null,
+   "model_calls": null,
+   "cells": 240,
+   "needs_review": 0,
+   "document_problems": [],
+   "statements": [
+    {
+     "title": "연결재무상태표",
+     "page": 10,
+     "opendart": "CFS",
+     "rows": 49,
+     "cells": 98,
+     "flagged": 0,
+     "classes": {
+      "dart_exact": 98,
+      "dart_value": 0,
+      "dart_sign_cf": 0,
+      "sign_as_printed": 0,
+      "pdf_confirmed": 0,
+      "wrong_period": 0,
+      "unit_mismatch": 0,
+      "sign_review": 0,
+      "unconfirmed": 0
+     },
+     "labels": {
+      "label_ok": 98,
+      "label_differs": 0,
+      "label_review": 0,
+      "label_unknown": 0
+     },
+     "sums_checked": 18,
+     "silent_candidates": [],
+     "review": [],
+     "missing": [],
+     "problems": []
+    },
+    {
+     "title": "연결손익계산서",
+     "page": 12,
+     "opendart": "CFS",
+     "rows": 17,
+     "cells": 34,
+     "flagged": 0,
+     "classes": {
+      "dart_exact": 34,
+      "dart_value": 0,
+      "dart_sign_cf": 0,
+      "sign_as_printed": 0,
+      "pdf_confirmed": 0,
+      "wrong_period": 0,
+      "unit_mismatch": 0,
+      "sign_review": 0,
+      "unconfirmed": 0
+     },
+     "labels": {
+      "label_ok": 34,
+      "label_differs": 0,
+      "label_review": 0,
+      "label_unknown": 0
+     },
+     "sums_checked": null,
+     "silent_candidates": [],
+     "review": [],
+     "missing": [],
+     "problems": []
+    },
+    {
+     "title": "연결포괄손익계산서",
+     "page": 13,
+     "opendart": "CFS",
+     "rows": 13,
+     "cells": 26,
+     "flagged": 0,
+     "classes": {
+      "dart_exact": 24,
+      "dart_value": 2,
+      "dart_sign_cf": 0,
+      "sign_as_printed": 0,
+      "pdf_confirmed": 0,
+      "wrong_period": 0,
+      "unit_mismatch": 0,
+      "sign_review": 0,
+      "unconfirmed": 0
+     },
+     "labels": {
+      "label_ok": 26,
+      "label_differs": 0,
+      "label_review": 0,
+      "label_unknown": 0
+     },
+     "sums_checked": null,
+     "silent_candidates": [],
+     "review": [],
+     "missing": [],
+     "problems": []
+    },
+    {
+     "title": "연결자본변동표",
+     "page": 14,
+     "skipped": true,
+     "problems": [
+      "자본변동표는 행과 열이 모두 항목인 표라 이 도구가 아직 읽지 않는다 (v0.2 범위 밖, 원본을 직접 확인)"
+     ]
+    },
+    {
+     "title": "연결현금흐름표",
+     "page": 15,
+     "opendart": "CFS",
+     "rows": 41,
+     "cells": 78,
+     "flagged": 0,
+     "classes": {
+      "dart_exact": 50,
+      "dart_value": 2,
+      "dart_sign_cf": 26,
+      "sign_as_printed": 0,
+      "pdf_confirmed": 0,
+      "wrong_period": 0,
+      "unit_mismatch": 0,
+      "sign_review": 0,
+      "unconfirmed": 0
+     },
+     "labels": {
+      "label_ok": 78,
+      "label_differs": 0,
+      "label_review": 0,
+      "label_unknown": 0
+     },
+     "sums_checked": 6,
+     "silent_candidates": [],
+     "review": [],
+     "missing": [],
+     "problems": []
+    }
+   ]
+  },
+  {
+   "company": "NAVER",
+   "corp_code": "00266961",
+   "file": "연결감사보고서_FY2025.pdf",
+   "sha256": "1cd29568d9c14c17c60c1fdd51ee716382151e97aa6a9c757e5dc93b7c364951",
+   "bytes": 1327044,
+   "reader": "rules",
+   "seconds": 6,
+   "model": null,
+   "prompt_version": null,
+   "model_calls": null,
+   "cells": 266,
+   "needs_review": 0,
+   "document_problems": [],
+   "statements": [
+    {
+     "title": "연결재무상태표",
+     "page": 11,
+     "opendart": "CFS",
+     "rows": 50,
+     "cells": 97,
+     "flagged": 0,
+     "classes": {
+      "dart_exact": 95,
+      "dart_value": 2,
+      "dart_sign_cf": 0,
+      "sign_as_printed": 0,
+      "pdf_confirmed": 0,
+      "wrong_period": 0,
+      "unit_mismatch": 0,
+      "sign_review": 0,
+      "unconfirmed": 0
+     },
+     "labels": {
+      "label_ok": 97,
+      "label_differs": 0,
+      "label_review": 0,
+      "label_unknown": 0
+     },
+     "sums_checked": 14,
+     "silent_candidates": [],
+     "review": [],
+     "missing": [],
+     "problems": []
+    },
+    {
+     "title": "연결포괄손익계산서",
+     "page": 13,
+     "opendart": "CFS",
+     "rows": 30,
+     "cells": 59,
+     "flagged": 0,
+     "classes": {
+      "dart_exact": 45,
+      "dart_value": 4,
+      "dart_sign_cf": 0,
+      "sign_as_printed": 10,
+      "pdf_confirmed": 0,
+      "wrong_period": 0,
+      "unit_mismatch": 0,
+      "sign_review": 0,
+      "unconfirmed": 0
+     },
+     "labels": {
+      "label_ok": 59,
+      "label_differs": 0,
+      "label_review": 0,
+      "label_unknown": 0
+     },
+     "sums_checked": null,
+     "silent_candidates": [],
+     "review": [],
+     "missing": [],
+     "problems": []
+    },
+    {
+     "title": "연결자본변동표",
+     "page": 14,
+     "skipped": true,
+     "problems": [
+      "자본변동표는 행과 열이 모두 항목인 표라 이 도구가 아직 읽지 않는다 (v0.2 범위 밖, 원본을 직접 확인)"
+     ]
+    },
+    {
+     "title": "연결현금흐름표",
+     "page": 15,
+     "opendart": "CFS",
+     "rows": 53,
+     "cells": 98,
+     "flagged": 0,
+     "classes": {
+      "dart_exact": 53,
+      "dart_value": 2,
+      "dart_sign_cf": 43,
+      "sign_as_printed": 0,
+      "pdf_confirmed": 0,
+      "wrong_period": 0,
+      "unit_mismatch": 0,
+      "sign_review": 0,
+      "unconfirmed": 0
+     },
+     "labels": {
+      "label_ok": 98,
+      "label_differs": 0,
+      "label_review": 0,
+      "label_unknown": 0
+     },
+     "sums_checked": 6,
+     "silent_candidates": [],
+     "review": [],
+     "missing": [],
+     "problems": []
+    }
+   ]
+  },
+  {
+   "company": "한화시스템",
+   "corp_code": "00339391",
+   "file": "한화시스템_연결감사보고서(2026.03.13).pdf",
+   "sha256": "311bb0e6a74fc28400a06eedb10b1f169464d57d494cb56c5444fe7f74b20410",
+   "bytes": 1202374,
+   "reader": "rules",
+   "seconds": 2,
+   "model": null,
+   "prompt_version": null,
+   "model_calls": null,
+   "cells": 240,
+   "needs_review": 0,
+   "document_problems": [],
+   "statements": [
+    {
+     "title": "연결재무상태표",
+     "page": 9,
+     "opendart": "CFS",
+     "rows": 42,
+     "cells": 82,
+     "flagged": 0,
+     "classes": {
+      "dart_exact": 45,
+      "dart_value": 37,
+      "dart_sign_cf": 0,
+      "sign_as_printed": 0,
+      "pdf_confirmed": 0,
+      "wrong_period": 0,
+      "unit_mismatch": 0,
+      "sign_review": 0,
+      "unconfirmed": 0
+     },
+     "labels": {
+      "label_ok": 82,
+      "label_differs": 0,
+      "label_review": 0,
+      "label_unknown": 0
+     },
+     "sums_checked": 18,
+     "silent_candidates": [],
+     "review": [],
+     "missing": [],
+     "problems": []
+    },
+    {
+     "title": "연결포괄손익계산서",
+     "page": 10,
+     "opendart": "CFS",
+     "rows": 31,
+     "cells": 61,
+     "flagged": 0,
+     "classes": {
+      "dart_exact": 18,
+      "dart_value": 43,
+      "dart_sign_cf": 0,
+      "sign_as_printed": 0,
+      "pdf_confirmed": 0,
+      "wrong_period": 0,
+      "unit_mismatch": 0,
+      "sign_review": 0,
+      "unconfirmed": 0
+     },
+     "labels": {
+      "label_ok": 60,
+      "label_differs": 0,
+      "label_review": 1,
+      "label_unknown": 0
+     },
+     "sums_checked": null,
+     "silent_candidates": [],
+     "review": [
+      {
+       "label": "기본 및 희석주당순손익",
+       "period": 0,
+       "printed": "47",
+       "class": "dart_value",
+       "label_class": "label_review",
+       "dart_name": "중단영업기본주당이익",
+       "printed_label": null,
+       "flagged": false
+      }
+     ],
+     "missing": [
+      {
+       "period": 0,
+       "value": 47,
+       "dart_name": "중단영업희석주당이익",
+       "status": "silent"
+      },
+      {
+       "period": 1,
+       "value": -122,
+       "dart_name": "중단영업희석주당이익",
+       "status": "silent"
+      }
+     ],
+     "problems": []
+    },
+    {
+     "title": "연결자본변동표",
+     "page": 11,
+     "skipped": true,
+     "problems": [
+      "자본변동표는 행과 열이 모두 항목인 표라 이 도구가 아직 읽지 않는다 (v0.2 범위 밖, 원본을 직접 확인)"
+     ]
+    },
+    {
+     "title": "연결현금흐름표",
+     "page": 12,
+     "opendart": "CFS",
+     "rows": 47,
+     "cells": 87,
+     "flagged": 0,
+     "classes": {
+      "dart_exact": 28,
+      "dart_value": 27,
+      "dart_sign_cf": 32,
+      "sign_as_printed": 0,
+      "pdf_confirmed": 0,
+      "wrong_period": 0,
+      "unit_mismatch": 0,
+      "sign_review": 0,
+      "unconfirmed": 0
+     },
+     "labels": {
+      "label_ok": 83,
+      "label_differs": 0,
+      "label_review": 4,
+      "label_unknown": 0
+     },
+     "sums_checked": 4,
+     "silent_candidates": [],
+     "review": [
+      {
+       "label": "기타포괄손익-공정가치측정금융자산의 감소",
+       "period": 0,
+       "printed": "122,448,720,753",
+       "class": "dart_value",
+       "label_class": "label_review",
+       "dart_name": "기타포괄손익-공정가치측정금융자산의처분",
+       "printed_label": null,
+       "flagged": false
+      },
+      {
+       "label": "기타포괄손익-공정가치측정금융자산의 감소",
+       "period": 1,
+       "printed": "126,768",
+       "class": "dart_value",
+       "label_class": "label_review",
+       "dart_name": "기타포괄손익-공정가치측정금융자산의처분",
+       "printed_label": null,
+       "flagged": false
+      },
+      {
+       "label": "기타포괄손익-공정가치측정금융자산의 증가",
+       "period": 0,
+       "printed": "(244,103,739,664)",
+       "class": "dart_sign_cf",
+       "label_class": "label_review",
+       "dart_name": "기타포괄손익-공정가치측정금융자산의취득",
+       "printed_label": null,
+       "flagged": false
+      },
+      {
+       "label": "기타포괄손익-공정가치측정금융자산의 증가",
+       "period": 1,
+       "printed": "(500,000,000)",
+       "class": "dart_sign_cf",
+       "label_class": "label_review",
+       "dart_name": "기타포괄손익-공정가치측정금융자산의취득",
+       "printed_label": null,
+       "flagged": false
+      }
+     ],
+     "missing": [],
+     "problems": [
+      "소계 '영업활동현금흐름'는 세부 항목의 층(어느 항목이 다른 항목의 합인지)을 표에서 알 수 없어 검산하지 못했다"
+     ]
+    }
+   ]
+  },
+  {
+   "company": "포스코",
+   "corp_code": "01620971",
+   "file": "POSCO_consolidated_FY25.pdf",
+   "sha256": "d40aed2056f35b039d4577bdec0dd33f58310c783cf4d294d0db5798f2d43a91",
+   "bytes": 571879,
+   "reader": "rules",
+   "seconds": 2,
+   "model": null,
+   "prompt_version": null,
+   "model_calls": null,
+   "cells": 276,
+   "needs_review": 0,
+   "document_problems": [],
+   "statements": [
+    {
+     "title": "연결재무상태표",
+     "page": 7,
+     "opendart": "CFS",
+     "rows": 45,
+     "cells": 88,
+     "flagged": 0,
+     "classes": {
+      "dart_exact": 70,
+      "dart_value": 18,
+      "dart_sign_cf": 0,
+      "sign_as_printed": 0,
+      "pdf_confirmed": 0,
+      "wrong_period": 0,
+      "unit_mismatch": 0,
+      "sign_review": 0,
+      "unconfirmed": 0
+     },
+     "labels": {
+      "label_ok": 88,
+      "label_differs": 0,
+      "label_review": 0,
+      "label_unknown": 0
+     },
+     "sums_checked": 18,
+     "silent_candidates": [],
+     "review": [],
+     "missing": [],
+     "problems": []
+    },
+    {
+     "title": "연결포괄손익계산서",
+     "page": 9,
+     "opendart": "CFS",
+     "rows": 32,
+     "cells": 64,
+     "flagged": 0,
+     "classes": {
+      "dart_exact": 36,
+      "dart_value": 10,
+      "dart_sign_cf": 0,
+      "sign_as_printed": 10,
+      "pdf_confirmed": 8,
+      "wrong_period": 0,
+      "unit_mismatch": 0,
+      "sign_review": 0,
+      "unconfirmed": 0
+     },
+     "labels": {
+      "label_ok": 64,
+      "label_differs": 0,
+      "label_review": 0,
+      "label_unknown": 0
+     },
+     "sums_checked": null,
+     "silent_candidates": [],
+     "review": [],
+     "missing": [
+      {
+       "period": 0,
+       "value": 320048685,
+       "dart_name": "대손상각비",
+       "status": "silent"
+      },
+      {
+       "period": 1,
+       "value": 3900925604,
+       "dart_name": "대손상각비",
+       "status": "silent"
+      },
+      {
+       "period": 0,
+       "value": 1210818182949,
+       "dart_name": "기타일반관리비",
+       "status": "silent"
+      },
+      {
+       "period": 1,
+       "value": 1171616168608,
+       "dart_name": "기타일반관리비",
+       "status": "silent"
+      },
+      {
+       "period": 0,
+       "value": 338655658738,
+       "dart_name": "기타영업외비용",
+       "status": "silent"
+      },
+      {
+       "period": 1,
+       "value": 428110787012,
+       "dart_name": "기타영업외비용",
+       "status": "silent"
+      },
+      {
+       "period": 0,
+       "value": 4416665459,
+       "dart_name": "기타의대손상각비",
+       "status": "silent"
+      },
+      {
+       "period": 1,
+       "value": -2301914334,
+       "dart_name": "기타의대손상각비",
+       "status": "silent"
+      }
+     ],
+     "problems": []
+    },
+    {
+     "title": "연결자본변동표",
+     "page": 10,
+     "skipped": true,
+     "problems": [
+      "자본변동표는 행과 열이 모두 항목인 표라 이 도구가 아직 읽지 않는다 (v0.2 범위 밖, 원본을 직접 확인)"
+     ]
+    },
+    {
+     "title": "연결현금흐름표",
+     "page": 11,
+     "opendart": "CFS",
+     "rows": 61,
+     "cells": 118,
+     "flagged": 0,
+     "classes": {
+      "dart_exact": 87,
+      "dart_value": 2,
+      "dart_sign_cf": 18,
+      "sign_as_printed": 0,
+      "pdf_confirmed": 11,
+      "wrong_period": 0,
+      "unit_mismatch": 0,
+      "sign_review": 0,
+      "unconfirmed": 0
+     },
+     "labels": {
+      "label_ok": 118,
+      "label_differs": 0,
+      "label_review": 0,
+      "label_unknown": 0
+     },
+     "sums_checked": 10,
+     "silent_candidates": [],
+     "review": [],
+     "missing": [
+      {
+       "period": 0,
+       "value": -18593553233,
+       "dart_name": "기타재무활동으로인한현금유출입액",
+       "status": "silent"
+      },
+      {
+       "period": 0,
+       "value": 79682508119,
+       "dart_name": "관계기업투자주식의취득",
+       "status": "silent"
+      },
+      {
+       "period": 0,
+       "value": -230812809,
+       "dart_name": "기타수익",
+       "status": "silent"
+      },
+      {
+       "period": 1,
+       "value": 13202368884,
+       "dart_name": "기타수익",
+       "status": "silent"
+      }
+     ],
+     "problems": []
+    }
+   ]
+  },
+  {
+   "company": "LG에너지솔루션",
+   "corp_code": "01515323",
+   "file": "2025_LGES_Business_Report.pdf",
+   "sha256": "c0ba2ad0e1e61aad5ddfeb52d2cadfd14af60d4fa42f15697d30674384c0f3f1",
+   "bytes": 2725695,
+   "reader": "rules",
+   "seconds": 2,
+   "model": null,
+   "prompt_version": null,
+   "model_calls": null,
+   "cells": 428,
+   "needs_review": 0,
+   "document_problems": [
+    "11쪽 스캔 품질이 낮다 (OCR 평균 확신도 40): 읽지 못한 줄이나 칸이 많을 수 있다"
+   ],
+   "statements": [
+    {
+     "title": "별도재무상태표",
+     "page": 34,
+     "opendart": "OFS",
+     "rows": 40,
+     "cells": 78,
+     "flagged": 0,
+     "classes": {
+      "dart_exact": 68,
+      "dart_value": 6,
+      "dart_sign_cf": 0,
+      "sign_as_printed": 0,
+      "pdf_confirmed": 4,
+      "wrong_period": 0,
+      "unit_mismatch": 0,
+      "sign_review": 0,
+      "unconfirmed": 0
+     },
+     "labels": {
+      "label_ok": 78,
+      "label_differs": 0,
+      "label_review": 0,
+      "label_unknown": 0
+     },
+     "sums_checked": 18,
+     "silent_candidates": [],
+     "review": [],
+     "missing": [
+      {
+       "period": 0,
+       "value": 16193800000000,
+       "dart_name": "종속기업관계기업및공동기업투자",
+       "status": "silent"
+      },
+      {
+       "period": 1,
+       "value": 13449510000000,
+       "dart_name": "종속기업관계기업및공동기업투자",
+       "status": "silent"
+      }
+     ],
+     "problems": []
+    },
+    {
+     "title": "별도손익계산서",
+     "page": 35,
+     "opendart": "OFS",
+     "rows": 13,
+     "cells": 26,
+     "flagged": 0,
+     "classes": {
+      "dart_exact": 16,
+      "dart_value": 10,
+      "dart_sign_cf": 0,
+      "sign_as_printed": 0,
+      "pdf_confirmed": 0,
+      "wrong_period": 0,
+      "unit_mismatch": 0,
+      "sign_review": 0,
+      "unconfirmed": 0
+     },
+     "labels": {
+      "label_ok": 26,
+      "label_differs": 0,
+      "label_review": 0,
+      "label_unknown": 0
+     },
+     "sums_checked": null,
+     "silent_candidates": [],
+     "review": [],
+     "missing": [],
+     "problems": []
+    },
+    {
+     "title": "별도포괄손익계산서",
+     "page": 35,
+     "opendart": "OFS",
+     "rows": 10,
+     "cells": 20,
+     "flagged": 0,
+     "classes": {
+      "dart_exact": 10,
+      "dart_value": 6,
+      "dart_sign_cf": 0,
+      "sign_as_printed": 4,
+      "pdf_confirmed": 0,
+      "wrong_period": 0,
+      "unit_mismatch": 0,
+      "sign_review": 0,
+      "unconfirmed": 0
+     },
+     "labels": {
+      "label_ok": 20,
+      "label_differs": 0,
+      "label_review": 0,
+      "label_unknown": 0
+     },
+     "sums_checked": null,
+     "silent_candidates": [],
+     "review": [],
+     "missing": [],
+     "problems": []
+    },
+    {
+     "title": "별도결손금처리계산서",
+     "page": 36,
+     "opendart": "OFS",
+     "rows": 6,
+     "cells": 11,
+     "flagged": 0,
+     "classes": {
+      "dart_exact": 0,
+      "dart_value": 0,
+      "dart_sign_cf": 0,
+      "sign_as_printed": 0,
+      "pdf_confirmed": 11,
+      "wrong_period": 0,
+      "unit_mismatch": 0,
+      "sign_review": 0,
+      "unconfirmed": 0
+     },
+     "labels": {
+      "label_ok": 11,
+      "label_differs": 0,
+      "label_review": 0,
+      "label_unknown": 0
+     },
+     "sums_checked": 2,
+     "silent_candidates": [],
+     "review": [],
+     "missing": [],
+     "problems": []
+    },
+    {
+     "title": "별도자본변동표",
+     "page": 36,
+     "skipped": true,
+     "problems": [
+      "자본변동표는 행과 열이 모두 항목인 표라 이 도구가 아직 읽지 않는다 (v0.2 범위 밖, 원본을 직접 확인)"
+     ]
+    },
+    {
+     "title": "별도현금흐름표",
+     "page": 37,
+     "opendart": "OFS",
+     "rows": 33,
+     "cells": 63,
+     "flagged": 0,
+     "classes": {
+      "dart_exact": 29,
+      "dart_value": 10,
+      "dart_sign_cf": 24,
+      "sign_as_printed": 0,
+      "pdf_confirmed": 0,
+      "wrong_period": 0,
+      "unit_mismatch": 0,
+      "sign_review": 0,
+      "unconfirmed": 0
+     },
+     "labels": {
+      "label_ok": 63,
+      "label_differs": 0,
+      "label_review": 0,
+      "label_unknown": 0
+     },
+     "sums_checked": 14,
+     "silent_candidates": [],
+     "review": [],
+     "missing": [],
+     "problems": []
+    },
+    {
+     "title": "연결재무상태표",
+     "page": 38,
+     "opendart": "CFS",
+     "rows": 44,
+     "cells": 87,
+     "flagged": 0,
+     "classes": {
+      "dart_exact": 81,
+      "dart_value": 6,
+      "dart_sign_cf": 0,
+      "sign_as_printed": 0,
+      "pdf_confirmed": 0,
+      "wrong_period": 0,
+      "unit_mismatch": 0,
+      "sign_review": 0,
+      "unconfirmed": 0
+     },
+     "labels": {
+      "label_ok": 87,
+      "label_differs": 0,
+      "label_review": 0,
+      "label_unknown": 0
+     },
+     "sums_checked": 18,
+     "silent_candidates": [],
+     "review": [],
+     "missing": [],
+     "problems": []
+    },
+    {
+     "title": "연결손익계산서",
+     "page": 39,
+     "opendart": "CFS",
+     "rows": 17,
+     "cells": 34,
+     "flagged": 0,
+     "classes": {
+      "dart_exact": 32,
+      "dart_value": 2,
+      "dart_sign_cf": 0,
+      "sign_as_printed": 0,
+      "pdf_confirmed": 0,
+      "wrong_period": 0,
+      "unit_mismatch": 0,
+      "sign_review": 0,
+      "unconfirmed": 0
+     },
+     "labels": {
+      "label_ok": 34,
+      "label_differs": 0,
+      "label_review": 0,
+      "label_unknown": 0
+     },
+     "sums_checked": null,
+     "silent_candidates": [],
+     "review": [],
+     "missing": [],
+     "problems": []
+    },
+    {
+     "title": "연결포괄손익계산서",
+     "page": 39,
+     "opendart": "CFS",
+     "rows": 14,
+     "cells": 28,
+     "flagged": 0,
+     "classes": {
+      "dart_exact": 24,
+      "dart_value": 0,
+      "dart_sign_cf": 0,
+      "sign_as_printed": 4,
+      "pdf_confirmed": 0,
+      "wrong_period": 0,
+      "unit_mismatch": 0,
+      "sign_review": 0,
+      "unconfirmed": 0
+     },
+     "labels": {
+      "label_ok": 28,
+      "label_differs": 0,
+      "label_review": 0,
+      "label_unknown": 0
+     },
+     "sums_checked": null,
+     "silent_candidates": [],
+     "review": [],
+     "missing": [],
+     "problems": []
+    },
+    {
+     "title": "연결자본변동표",
+     "page": 40,
+     "skipped": true,
+     "problems": [
+      "자본변동표는 행과 열이 모두 항목인 표라 이 도구가 아직 읽지 않는다 (v0.2 범위 밖, 원본을 직접 확인)"
+     ]
+    },
+    {
+     "title": "연결현금흐름표",
+     "page": 41,
+     "opendart": "CFS",
+     "rows": 37,
+     "cells": 70,
+     "flagged": 0,
+     "classes": {
+      "dart_exact": 30,
+      "dart_value": 13,
+      "dart_sign_cf": 27,
+      "sign_as_printed": 0,
+      "pdf_confirmed": 0,
+      "wrong_period": 0,
+      "unit_mismatch": 0,
+      "sign_review": 0,
+      "unconfirmed": 0
+     },
+     "labels": {
+      "label_ok": 70,
+      "label_differs": 0,
+      "label_review": 0,
+      "label_unknown": 0
+     },
+     "sums_checked": 14,
+     "silent_candidates": [],
+     "review": [],
+     "missing": [],
+     "problems": []
+    }
+   ]
+  },
+  {
+   "company": "삼성전자 (사진 PDF)",
+   "corp_code": "00126380",
+   "file": "%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90_%EC%97%B0%EA%B2%B0%EC%9E%AC%EB%AC%B4%EC%A0%9C%ED%91%9C_%ED%86%B5%ED%95%A9.pdf",
+   "sha256": "5e25dc9d1211db0354871f2d4e3dd480adf09cc74eb680a45265d6c96505054e",
+   "bytes": 7609709,
+   "reader": "rules",
+   "seconds": 54,
+   "model": null,
+   "prompt_version": null,
+   "model_calls": null,
+   "cells": 0,
+   "needs_review": 0,
+   "document_problems": [
+    "재무제표 제목을 찾지 못했다: 금액처럼 보이는 글자 295개를 표로 옮기지 않았다 (원본 확인 필요)",
+    "1쪽 스캔 품질이 낮다 (OCR 평균 확신도 28): 읽지 못한 줄이나 칸이 많을 수 있다",
+    "2쪽 스캔 품질이 낮다 (OCR 평균 확신도 36): 읽지 못한 줄이나 칸이 많을 수 있다",
+    "3쪽 스캔 품질이 낮다 (OCR 평균 확신도 46): 읽지 못한 줄이나 칸이 많을 수 있다",
+    "5쪽 스캔 품질이 낮다 (OCR 평균 확신도 42): 읽지 못한 줄이나 칸이 많을 수 있다",
+    "6쪽 스캔 품질이 낮다 (OCR 평균 확신도 47): 읽지 못한 줄이나 칸이 많을 수 있다",
+    "7쪽 스캔 품질이 낮다 (OCR 평균 확신도 45): 읽지 못한 줄이나 칸이 많을 수 있다",
+    "8쪽 스캔 품질이 낮다 (OCR 평균 확신도 64): 읽지 못한 줄이나 칸이 많을 수 있다",
+    "9쪽 스캔 품질이 낮다 (OCR 평균 확신도 52): 읽지 못한 줄이나 칸이 많을 수 있다",
+    "10쪽 스캔 품질이 낮다 (OCR 평균 확신도 49): 읽지 못한 줄이나 칸이 많을 수 있다"
+   ],
+   "statements": []
+  }
+ ]
+}

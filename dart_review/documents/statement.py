@@ -96,8 +96,9 @@ def parse_amount(printed: str, unit: int | None) -> int | None:
 def clean_label(text: str, ocr: bool = False) -> str:
     label = re.sub(r"\s+", " ", _NOTE.sub("", _INDEX.sub("", text)).strip())
     label = re.sub(r"(?<=[가-힣)])\s+\d{1,2}(\s*,\s*\d{1,2})*$", "", label)  # a note number joined to the label
-    if ocr:  # stray marks OCR puts before a label ("| 유동자산", "© 비유동자산")
+    if ocr:  # stray marks OCR puts before a label ("| 유동자산", "© 비유동자산"), an item number without its dot
         label = _INDEX.sub("", re.sub(r"^[^\w가-힣(]+", "", label)).strip()
+        label = re.sub(r"^\d{1,2}\s+(?=[가-힣])", "", label)  # "5 미수금" (the model dropped "5."'s dot)
     if ocr:  # OCR splits Hangul syllables of one word ("자 산 총계"); statement labels rarely need those spaces
         label = re.sub(r"(?<=[가-힣]) (?=[가-힣(])|(?<=[가-힣(]) (?=[가-힣)])", "", label)
     return label

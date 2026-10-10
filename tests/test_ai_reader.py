@@ -7,6 +7,7 @@ and an unverified unit. Every wrong value must end up marked, never silently in 
 
 from importlib.util import find_spec
 from pathlib import Path
+import re
 import sys
 import tempfile
 import unittest
@@ -228,9 +229,11 @@ class PhotoEvidenceTests(unittest.TestCase):
         self.statement = Statement("BS", True, "재무상태표", 1, 1, "원", [PeriodColumn("당기"), PeriodColumn("전기")], [], [])
         self.checks, self.claimed = [], {}
 
-    def word(self, text, x0, top, method="ocr"):
+    def word(self, text, x0, top, method="ocr", vision=True):
+        """An OCR word; Hangul words come from macOS Vision unless ``vision`` is False (Tesseract)."""
         from dart_review.documents.words import Word
-        return Word(text, 1, x0, x0 + 12 * len(text), top, top + 20, method, 95.0)
+        key = (900, top, 0) if vision and re.search(r"[가-힣]", text) else None
+        return Word(text, 1, x0, x0 + 12 * len(text), top, top + 20, method, 95.0, key)
 
     def read(self, label, amounts, tokens, recent_from=0, reread=None):
         from dart_review.documents.ai_reader import Part, _add_row_by_tokens
@@ -276,6 +279,19 @@ class PhotoEvidenceTests(unittest.TestCase):
         tokens = [self.word("1.", 30, 100), self.word("유동부채", 50, 100), self.word("106,411,348", 400, 100)]
         self.read("부채", ["106,411,348"], tokens)
         self.assertTrue(any("OCR이 읽은 계정명 '유동부채'" in reason for reason in self.flags("부채")), self.flags("부채"))
+
+    def test_a_noisy_tesseract_label_is_not_compared(self):
+        # Tesseract's Hangul on a photo ("재고자산워드") would mark a right label wrong; only Vision's is compared
+        tokens = [self.word("재고자산워드", 50, 100, vision=False), self.word("52,636,828", 400, 100),
+                  self.word("51,754,865", 600, 100)]
+        self.read("재고자산", ["52,636,828", "51,754,865"], tokens)
+        self.assertEqual({(c.status, c.evidence) for c in self.checks}, {("검사 통과", "OCR (숫자만, 계정명 미확인)")})
+
+    def test_three_readings_of_one_printed_number_are_one_place(self):
+        tokens = [self.word("선급비용", 50, 100), self.word("3,627,172", 400, 100), self.word("3,627,172", 402, 101),
+                  self.word("3,362,824", 600, 100), self.word("3,362,824", 601, 99)]
+        self.read("선급비용", ["3,627,172", "3,362,824"], tokens)
+        self.assertEqual([c.status for c in self.checks], ["검사 통과", "검사 통과"])
 
     def test_a_label_the_ocr_could_not_read_is_unverified_not_confirmed(self):
         tokens = [self.word("1,000", 400, 100)]

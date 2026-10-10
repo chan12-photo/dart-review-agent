@@ -36,6 +36,7 @@ from .words import Word, image_words, skew_angle, vision_words
 
 RENDER_SCALE = 2.0  # pixels per PDF point for the model and for OCR (144 dpi)
 BAND_LINES, BAND_OVERLAP = 8, 1
+VISION_LINE = 900  # words.vision_words marks its words with line_key (900, n, 0)
 LABEL_AGREEMENT = 0.75  # below this, the model's label and the evidence line's label are taken as different rows
 
 
@@ -452,11 +453,10 @@ def _add_row_by_tokens(statement: Statement, checks: list[CellCheck], s_index: i
     if line_words is not None:
         ocr_label = clean_label(" ".join(word.text for word in line_words), ocr=True)
         if len(re.findall(r"[가-힣]", ocr_label)) >= 2:
-            a, b = _key(label), _key(ocr_label)
-            if a == b or (SequenceMatcher(None, a, b).ratio() >= LABEL_AGREEMENT and not (a in b or b in a)):
-                label_known = True
-            elif a in b or b in a or SequenceMatcher(None, a, b).ratio() < 0.5:
+            if _different_accounts(label, ocr_label):  # one inside the other ("부채" in "유동부채") counts as different
                 label_reason = f"AI가 읽은 계정명 '{label}'과 같은 줄에서 OCR이 읽은 계정명 '{ocr_label}'이 다르다"
+            else:
+                label_known = True
     for position, printed in enumerate(amounts):
         if position >= len(statement.columns):
             break
@@ -551,17 +551,23 @@ def _row_tokens(amounts: Sequence[str], tokens: Sequence[Word], claimed: dict[in
         if good:
             for index, word in zip(found, good[0]):
                 best[index] = word
-            if len({tuple(id(word) for word in combo) for combo in good}) > 1:
+            # the OCR passes read one printed number several times at one place: count places, not readings
+            if len({tuple(_place(word, candidates[index]) for index, word in zip(found, combo)) for combo in good}) > 1:
                 for index in found:
                     reasons[index].append("같은 숫자들이 띠 안 여러 줄에 있어 어느 줄인지 확정하지 못했다")
         else:
             for index in found:
                 reasons[index].append("이 줄의 숫자들을 원본(OCR)의 한 줄에서 찾지 못했다 (다른 줄의 숫자일 수 있다)")
     elif len(found) == 1 and len(candidates[found[0]]) > 1:
-        lines = {round((word.top + word.bottom) / 2 / max(word.bottom - word.top, 1)) for word in candidates[found[0]]}
-        if len(lines) > 1:
+        options = candidates[found[0]]
+        if any(not _same_line([a, b]) for a in options for b in options):
             reasons[found[0]].append("같은 숫자가 띠 안 여러 줄에 있어 어느 줄인지 확정하지 못했다")
     return best, reasons
+
+
+def _place(word: Word, readings: Sequence[Word]) -> int:
+    """The printed place of a reading: the first of ``readings`` it overlaps (the OCR passes overlap there)."""
+    return next(index for index, other in enumerate(readings) if other is word or _overlaps(word, other))
 
 
 def _same_line(words: Sequence[Word]) -> bool:
@@ -571,13 +577,16 @@ def _same_line(words: Sequence[Word]) -> bool:
 
 
 def _line_words(chosen: Sequence[Word | None], tokens: Sequence[Word]) -> list[Word] | None:
-    """The OCR words with Hangul on the line of the row's first confirmed amount, left of it (its label)."""
+    """The macOS Vision words with Hangul on the line of the row's first confirmed amount, left of it (its label).
+    Tesseract's Hangul on a photo is too noisy to compare ("재고자산워드", two passes read as "이이연법인세부채");
+    Vision read the photo's labels cleanly. None when there is no confirmed amount to anchor the line."""
     anchor = next((word for word in chosen if word is not None), None)
     if anchor is None:
         return None
     centre, height = (anchor.top + anchor.bottom) / 2, max(1.0, anchor.bottom - anchor.top)
     words = [word for word in tokens if abs((word.top + word.bottom) / 2 - centre) <= 0.6 * height
-             and word.x1 <= anchor.x0 and re.search(r"[가-힣]", word.text)]
+             and word.x1 <= anchor.x0 and re.search(r"[가-힣]", word.text)
+             and word.line_key is not None and word.line_key[0] == VISION_LINE]
     # the three OCR passes read the same words: keep one reading per position, left to right
     kept: list[Word] = []
     for word in sorted(words, key=lambda w: (w.x0, -(w.confidence or 0))):

@@ -70,6 +70,7 @@ class Statement:
     columns: list[PeriodColumn]
     rows: list[Row]
     problems: list[str] = field(default_factory=list)
+    sums_checked: int | None = None  # balance identities and subtotals checked (per period column), when run
 
 
 def parse_amount(printed: str, unit: int | None) -> int | None:
@@ -227,8 +228,17 @@ def read_statement(title_line: Line, body: Sequence[Line], context: Sequence[Lin
     columns = number_columns(body, tolerance)
     periods = _period_columns(body, columns, tolerance, context)
     columns, periods = _merge_nested(body, columns, periods, context)
+    # where the amounts start: the left edge of the leftmost amount in a period column (notes are left of it)
+    placed_left = [cell.x0 for line in body for cell in line.cells if cell.is_amount and not _is_dash(cell.text)
+                   and _period_index(cell, columns, periods, tolerance) is not None]
+    amounts_left = min(placed_left) if placed_left else float("inf")
     rows = []
-    orphans = 0  # amounts on the page that end up in no row: a broken table, never silently dropped
+    orphans: list[str] = []  # amounts that end up in no row: a broken table, never silently dropped
+
+    def unplaced_of(cells, label=""):
+        return [f"{cell.page}쪽 '{cell.text}'" + (f" ({label})" if label else "") for cell in cells
+                if not _is_note_like(cell, columns, periods, tolerance, amounts_left)]
+
     for line in body:
         amounts = {}
         label_cells = []
@@ -253,8 +263,10 @@ def read_statement(title_line: Line, body: Sequence[Line], context: Sequence[Lin
         if amounts and not label_cells:
             label_cells = _wrapped_label(body, line)
         if not amounts or not label_cells:
-            orphans += len([cell for cell in line_amounts if not _is_note_like(cell, columns, periods, tolerance)])
+            words = [cell.text for cell in line.cells if not cell.is_amount and re.search(r"[가-힣A-Za-z]", cell.text)]
+            orphans += unplaced_of(line_amounts, clean_label(" ".join(words)) if words else "")
             continue
+        label_cells = without_section_column(label_cells)
         label_cell = label_cells[0]
         # a label printed with wide letter spacing ("자    본    총    계") comes as several cells
         texts = [cell.text for cell in label_cells if not cell.is_amount] or [label_cell.text]
@@ -264,12 +276,12 @@ def read_statement(title_line: Line, body: Sequence[Line], context: Sequence[Lin
             for index, amount in list(amounts.items()):
                 amounts[index] = Amount(amount.cell, parse_amount(amount.printed, own_unit), amount.printed, index)
         if not re.search(r"[가-힣A-Za-z]", label):  # no label, or only a mark like "-"
-            orphans += len([cell for cell in line_amounts if not _is_note_like(cell, columns, periods, tolerance)])
+            orphans += unplaced_of(line_amounts)
             continue
-        unplaced = len([cell for cell in line_amounts if all(cell is not item.cell for item in amounts.values())
-                        and not _is_note_like(cell, columns, periods, tolerance)])
+        unplaced = unplaced_of([cell for cell in line_amounts if all(cell is not item.cell for item in amounts.values())],
+                               label)
         orphans += unplaced
-        rows.append(Row(label, account_of(label), label_cell, amounts, unplaced))
+        rows.append(Row(label, account_of(label), label_cell, amounts, len(unplaced)))
     if kind == "BS" and not {"자산총계", "부채총계", "자본총계"} <= {re.sub(r"\s+", "", row.label) for row in rows}:
         problems.append("자산총계·부채총계·자본총계 줄을 모두 찾지 못해 합계 검산을 하지 못했다")
     empty = [row.label for row in rows for index, period in enumerate(periods)
@@ -278,8 +290,31 @@ def read_statement(title_line: Line, body: Sequence[Line], context: Sequence[Lin
         problems.append(f"빈 칸 {len(empty)}개 ({', '.join(dict.fromkeys(empty))}): 원본이 '-'(해당 없음)인지, "
                         "읽지 못한 숫자인지 확인 필요")
     if orphans:
-        problems.append(f"표에 넣지 못한 금액 {orphans}개: 줄이나 열을 복원하지 못한 행이 있을 수 있다 (원본과 대조 필요)")
+        shown = ", ".join(orphans[:12]) + (f" 외 {len(orphans) - 12}개" if len(orphans) > 12 else "")
+        problems.append(f"표에 넣지 못한 금액 {len(orphans)}개 ({shown}): 줄이나 열을 복원하지 못한 행이 있을 수 있다 "
+                        "(원본과 대조 필요)")
     return Statement(kind, consolidated, title, title_line.page, unit, unit_text, periods, rows, problems)
+
+
+def without_section_column(cells: Sequence[Cell]) -> list[Cell]:
+    """A row's label cells without a section word printed in its own column at the far left ("자산", "부채",
+    "자본" beside the first row of each part, in a 영업보고서): the next cell starts with an item marker. Taking
+    that word as the label once named the rows "자산" and "부채"."""
+    cells = list(cells)
+    if (len(cells) >= 2 and re.fullmatch(r"[가-힣]{1,4}", cells[0].text.replace(" ", ""))
+            and _INDEX.match(cells[1].text)):
+        return cells[1:]
+    return cells
+
+
+def _period_index(cell: Cell, columns: list[Column], periods: list[PeriodColumn], tolerance: float) -> int | None:
+    """The period of an amount cell by its column, or None (no column, or the note column)."""
+    index = next((i for i, column in enumerate(columns) if column.holds(cell, tolerance)), None)
+    if index is None or columns[index].header == NOTE_COLUMN:
+        return None
+    if columns[index].header.isdigit():
+        return int(columns[index].header)
+    return index if index < len(periods) and not _is_note_column(periods[index]) else None
 
 
 def _wrapped_label(body: Sequence[Line], line: Line) -> list[Cell]:
@@ -305,10 +340,12 @@ def _is_dash(text: str) -> bool:
     return text.strip() in ("-", "–", "—")
 
 
-def _is_note_like(cell: Cell, columns: list[Column], periods: list[PeriodColumn], tolerance: float) -> bool:
-    """A number in the note column (주석) or a short number in a header line is not a missing amount."""
-    if re.fullmatch(r"\d{1,2}(\s*,\s*\d{1,2})*", cell.text.strip()):
-        return True  # note references: "8", "4, 29", "4,5,7,29" (amounts group their digits by three)
+def _is_note_like(cell: Cell, columns: list[Column], periods: list[PeriodColumn], tolerance: float,
+                  amounts_left: float = float("inf")) -> bool:
+    """A note reference ("8", "4, 29") rather than an amount that fits no column. It is one when it is in the note
+    column, or when it is short and printed left of every amount (between the label and the amounts, where
+    notes are). A short number right of that ("47", a per-share amount a little off its column) is an amount:
+    treating every one- or two-digit number as a note once dropped such a row without a word."""
     index = next((i for i, column in enumerate(columns) if column.holds(cell, tolerance)), None)
     if index is not None and columns[index].header == NOTE_COLUMN:
         return True
@@ -316,7 +353,8 @@ def _is_note_like(cell: Cell, columns: list[Column], periods: list[PeriodColumn]
         return False
     if index is not None and index < len(periods) and _is_note_column(periods[index]):
         return True
-    return len(re.sub(r"\D", "", cell.text)) <= 2
+    short = re.fullmatch(r"\d{1,2}(\s*,\s*\d{1,2})*", cell.text.strip()) or len(re.sub(r"\D", "", cell.text)) <= 2
+    return bool(short) and cell.x1 <= amounts_left
 
 
 def _merge_nested(body: Sequence[Line], columns: list[Column], periods: list[PeriodColumn],

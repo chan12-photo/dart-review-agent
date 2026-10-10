@@ -80,38 +80,63 @@ def check(statements: list[Statement]) -> list[CellCheck]:
                 if row.unplaced:
                     result.flag("같은 줄에 열을 정하지 못한 숫자가 있다 (줄 구조가 깨졌을 수 있다)")
                 by_cell[(r_index, c_index)] = result
-        _balance(statement, by_cell)
-        _subtotals(statement, by_cell)
+        check_sums(statement, by_cell)
         checks += by_cell.values()
     return checks
 
 
+SUMS_KINDS = ("BS", "CF", "RE")  # statements whose subtotals are plain sums (income statements are not)
+
+
+def check_sums(statement: Statement, by_cell: dict[tuple[int, int], CellCheck]) -> None:
+    """The balance identities and the subtotals; how many were checked is kept on the statement, and a
+    statement where none could be is reported (a sum that was not checked is not a sum that held)."""
+    if statement.kind not in SUMS_KINDS:
+        return
+    identities = _balance(statement, by_cell)
+    subtotals = _subtotals(statement, by_cell)
+    statement.sums_checked = len(identities) * len(statement.columns) + subtotals
+    if statement.kind == "BS" and not identities and not any("합계 검산" in problem for problem in statement.problems):
+        statement.problems.append("합계 줄을 찾지 못해 재무상태표 항등식(자산총계 = 부채총계 + 자본총계 등)을 검산하지 못했다")
+    if not subtotals:
+        statement.problems.append("소계와 그 아래 항목을 구분하지 못해 소계 검산을 하지 못했다")
+
+
 def _subtotals(statement: Statement, by_cell: dict[tuple[int, int], CellCheck]) -> int:
-    """Check every subtotal against the detail rows under it; return how many subtotals were checked.
+    """Check every subtotal against the detail rows under it; return how many sums were checked.
 
     Statements print detail items and subtotals in two positions within one period ("겹친 금액 열"): the details
     left, the subtotals right. Within a run of rows on one page part, the amounts' x centres of a period split
     into those two groups at the widest gap (when it is wider than three character heights). A subtotal row is
-    then followed by its detail rows until the next subtotal; their sum must equal it. A failure marks the
-    subtotal and every detail cell, because which one is wrong cannot be known. This is what catches a digit
-    misread the same way by the model and by OCR (7,953,586 read as 7,963,586 on a photo).
+    then followed by its detail rows until the next subtotal.
+
+    A detail may itself be the sum of the details after it, printed in the same position (현금흐름표: 영업에서
+    창출된 현금흐름 = 당기순이익 + 조정 + 자산부채의 변동). That is recognised only from the labels' structure,
+    their item marker ("1." over "가.") and indentation, never because the numbers happen to add up: an
+    earlier rule that folded any detail equal to the sum of the next ones could hide a wrong cell. The subtotal
+    must equal the sum of its top-level details, and each inner parent the sum of its own children.
+
+    A failure marks the sum and every cell in it, because which one is wrong cannot be known. This is what
+    catches a digit misread the same way by the model and by OCR (7,953,586 read as 7,963,586 on a photo).
     """
     checked = 0
     if statement.kind in ("IS", "CIS"):
         return 0  # expenses are printed without a sign, so a subtotal is not the plain sum of the rows near it
     for column in range(len(statement.columns)):
-        placed = []  # (row index, amount, x centre, height, segment)
+        placed = []  # (row index, amount, right edge, height, segment)
         segment, last = 0, None
         for r_index, row in enumerate(statement.rows):
             amount = row.amounts.get(column)
-            if amount is None or amount.value is None or amount.cell.method == "ai":
-                continue
+            if amount is None or amount.cell.method == "ai":
+                continue  # a dash ("-", nothing) is kept: it is a printed zero with a position
             cell = amount.cell
-            centre = (cell.x0 + cell.x1) / 2
-            if last is not None and (cell.page != last[0] or abs(centre - last[1]) > 8 * max(cell.bottom - cell.top, 1)):
-                segment += 1  # another page, or the other half of a photographed spread
-            last = (cell.page, centre)
-            placed.append((r_index, amount, centre, cell.bottom - cell.top, segment))
+            right = cell.x1  # amounts are right-aligned: one print position shares its right edge
+            # another page, or the other half of a photographed spread (about 55 character heights away; the
+            # detail and subtotal positions of one period are about 10 apart, so they stay in one segment)
+            if last is not None and (cell.page != last[0] or abs(right - last[1]) > 20 * max(cell.bottom - cell.top, 1)):
+                segment += 1
+            last = (cell.page, right)
+            placed.append((r_index, amount, right, cell.bottom - cell.top, segment))
         levels: dict[int, int] = {}
         for seg in {item[4] for item in placed}:
             items = [item for item in placed if item[4] == seg]
@@ -124,13 +149,20 @@ def _subtotals(statement: Statement, by_cell: dict[tuple[int, int], CellCheck]) 
                 continue
             for item in items:
                 levels[item[0]] = 1 if item[2] > cut else 2  # 1 = subtotal position, 2 = detail position
-        for r_index in range(len(statement.rows)):
-            if levels.get(r_index) != 1:
-                continue
+        subtotals = [index for index in range(len(statement.rows)) if levels.get(index) == 1]
+        for position, r_index in enumerate(subtotals):
+            if _is_closing_total(statement.rows[r_index].label):
+                # a closing total (자본총계) comes after its details; it takes the rows since the previous
+                # subtotal only when that one is a closing total too (otherwise they are that subtotal's details)
+                previous = subtotals[position - 1] if position else -1
+                if previous >= 0 and not _is_closing_total(statement.rows[previous].label):
+                    continue
+                span = range(previous + 1, r_index)
+            else:
+                # a section heading (Ⅰ. 유동자산) comes before its details, up to the next subtotal
+                span = range(r_index + 1, subtotals[position + 1] if position + 1 < len(subtotals) else len(statement.rows))
             details, known = [], True
-            for following in range(r_index + 1, len(statement.rows)):
-                if levels.get(following) == 1:
-                    break
+            for following in span:
                 if following not in levels:
                     # a row under this subtotal whose amount has no position (read by the AI only, or missing):
                     # the sum cannot be checked, and an unknown is not called a mismatch
@@ -140,25 +172,83 @@ def _subtotals(statement: Statement, by_cell: dict[tuple[int, int], CellCheck]) 
                 details.append(following)
             if not known or len(details) < 2:
                 continue
-            checked += 1
-            total = statement.rows[r_index].amounts[column].value
-            if total != sum(_collapsed([statement.rows[d].amounts[column].value for d in details])):
-                label = statement.rows[r_index].label
-                for target in [r_index, *details]:
-                    if (target, column) in by_cell:
-                        by_cell[(target, column)].flag(f"소계 '{label}'와 그 아래 항목의 합이 맞지 않는다 (어느 칸이 틀렸는지는 모른다)")
+            checked += _check_sum(statement, by_cell, column, r_index, details)
     return checked
 
 
-def _collapsed(values: list[int]) -> list[int]:
-    """A third level printed in the detail position: a detail that equals the sum of the details right after it
-    (현금흐름표: 영업에서 창출된 현금흐름 = 당기순이익 + 조정 + 자산부채의 변동) stands for them, so they are left out."""
-    result, index = [], 0
+def _is_closing_total(label: str) -> bool:
+    return bool(re.search(r"(총계|합계)$|^부채와자본", re.sub(r"\s+", "", label)))
+
+
+def _check_sum(statement: Statement, by_cell: dict[tuple[int, int], CellCheck], column: int, parent: int,
+               details: list[int]) -> int:
+    """``parent`` = the sum of its top-level ``details``; each detail with children (deeper in the label
+    structure) is checked against them in turn. Returns the number of sums checked."""
+    ranks = [_rank(statement.rows[index]) for index in details]
+    if any(rank is None for rank in ranks):
+        ranks = [0.0] * len(details)  # no structure known: every detail is a direct part of the parent
+    top: list[tuple[int, list[int]]] = []  # (detail, its children)
+    position = 0
+    while position < len(details):
+        end = position + 1
+        while end < len(details) and ranks[end] > ranks[position] + 1.0:
+            end += 1
+        top.append((details[position], details[position + 1:end]))
+        position = end
+    def value(index: int) -> int:
+        return statement.rows[index].amounts[column].value or 0  # a dash is zero
+
+    if value(parent) != sum(value(index) for index, _ in top):
+        flat = len(set(ranks)) == 1
+        if flat and _sums_by_coincidence(value(parent), [value(index) for index, _ in top]):
+            # the sum holds if some detail stands for the ones after it, but no label structure says so: a
+            # third level printed in the detail position, or a wrong cell that happens to fit. Not called
+            # checked, and not called wrong
+            note = (f"소계 '{statement.rows[parent].label}'는 세부 항목의 층(어느 항목이 다른 항목의 합인지)을 표에서 알 수 없어 "
+                    "검산하지 못했다")
+            if note not in statement.problems:
+                statement.problems.append(note)
+            return 0
+        _flag_sum(statement, by_cell, column, parent, [index for index, _ in top])
+    checked = 1
+    for index, children in top:
+        if children:
+            checked += _check_sum(statement, by_cell, column, index, children)
+    return checked
+
+
+def _sums_by_coincidence(total: int, values: list[int]) -> bool:
+    """Whether ``total`` is the sum of ``values`` once some value is taken to stand for the values right after
+    it (that value equals their sum)."""
+    folded, index = [], 0
     while index < len(values):
-        result.append(values[index])
+        folded.append(values[index])
         end = next((j for j in range(index + 2, len(values)) if values[index] == sum(values[index + 1:j + 1])), None)
         index = (end if end is not None else index) + 1
-    return result
+    return len(folded) < len(values) and total == sum(folded)
+
+
+def _flag_sum(statement: Statement, by_cell: dict[tuple[int, int], CellCheck], column: int, parent: int,
+              parts: list[int]) -> None:
+    label = statement.rows[parent].label
+    for target in [parent, *parts]:
+        if (target, column) in by_cell:
+            by_cell[(target, column)].flag(f"소계 '{label}'와 그 아래 항목의 합이 맞지 않는다 (어느 칸이 틀렸는지는 모른다)")
+
+
+_MARKERS = ((re.compile(r"^\s*(?:[ⅠⅡⅢⅣⅤⅥⅦⅧⅨⅩ]+|[IVX]{1,4})\s*\."), 1), (re.compile(r"^\s*\d{1,2}\s*\."), 2),
+            (re.compile(r"^\s*[가-하]\s*\."), 3), (re.compile(r"^\s*\(\s*\d{1,2}\s*\)"), 4),
+            (re.compile(r"^\s*[①-⑳]"), 5))
+
+
+def _rank(row) -> float | None:
+    """How deep a row's label sits: its item marker (Ⅰ. > 1. > 가. > (1) > ① > none), then its indentation.
+    None when the row has no printed label to look at (a value read by the AI only)."""
+    cell = row.label_cell
+    if cell is None:
+        return None
+    marker = next((rank for pattern, rank in _MARKERS if pattern.match(cell.text)), 6)
+    return marker * 1000 + cell.x0
 
 
 def median_height(heights: list[float]) -> float:

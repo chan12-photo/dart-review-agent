@@ -27,10 +27,10 @@ from typing import Iterator, Sequence
 
 from .statement import (
     _END, _ORDINAL, _PERIOD_LINE, _TITLE, SCE_SKIPPED, TITLES, UNITS, Amount, PeriodColumn, Row, Statement,
-    account_of, clean_label, is_notes_start, is_statement_start, title_parts, without_page_furniture, parse_amount, row_unit, unit_of,
+    account_of, clean_label, is_notes_start, is_statement_start, title_parts, without_section_column, without_page_furniture, parse_amount, row_unit, unit_of,
 )
 from .table import Cell, Line, group_lines
-from .verify import CHECKED, REVIEW, CellCheck, _balance, _subtotals, separator_problem
+from .verify import CHECKED, REVIEW, CellCheck, check_sums, separator_problem
 from .vision import SMALL_OR_GROUPED, BAND_PROMPT, META_PROMPT, BandLine, VisionError, VisionModel, parse_band, parse_meta, png_bytes
 from .words import Word, image_words, skew_angle, vision_words
 
@@ -183,6 +183,14 @@ def _is_amount_word(text: str) -> bool:
     return bool(SMALL_OR_GROUPED.fullmatch(re.sub(r"(백만|천)?원$", "", text.replace(" ", ""))))
 
 
+def _label_cell(line: Line | None) -> Cell | None:
+    """The cell where a printed row's label starts (its item marker and indentation give the row's depth)."""
+    if line is None:
+        return None
+    words = without_section_column([c for c in line.cells if re.search(r"[가-힣]", c.text) and not c.is_amount])
+    return words[0] if words else line.cells[0]
+
+
 def _is_amount_like(cell: Cell, header: Header | None) -> bool:
     """An amount, or a small number printed under a period heading (a per-share amount "47"): note numbers
     are printed left of the period headings."""
@@ -274,10 +282,7 @@ def read_document(path: Path, model: VisionModel, pages: Sequence[int] | None = 
         if statement.kind == "SCE":
             continue
         by_cell = {(check.row, check.column): check for check in own}
-        if statement.kind == "BS" and not _balance(statement, by_cell):
-            statement.problems.append("합계 줄을 찾지 못해 재무상태표 검산을 하지 못했다")
-        if not _subtotals(statement, by_cell):
-            statement.problems.append("소계와 항목의 위치를 구분하지 못해 소계 검산을 하지 못했다")
+        check_sums(statement, by_cell)
     return Reading(state.statements, state.checks, state.problems, state.calls)
 
 
@@ -479,7 +484,8 @@ def _add_row(statement: Statement, checks: list[CellCheck], s_index: int, item: 
     evidence_line = _match_line(item, band_lines)
     label_problem = None
     if evidence_line is not None:
-        source_label = clean_label(next((c.text for c in evidence_line.cells if re.search(r"[가-힣]", c.text)), ""), ocr=True)
+        words = without_section_column([c for c in evidence_line.cells if re.search(r"[가-힣]", c.text) and not c.is_amount])
+        source_label = clean_label(" ".join(c.text for c in words), ocr=True)
         if part.source == "PDF 글자" and source_label:
             # the text layer is exact: the row takes the page's own label, as its amounts take the page's digits
             # and their period the page's column position, so the output is right even when the model's label
@@ -496,7 +502,7 @@ def _add_row(statement: Statement, checks: list[CellCheck], s_index: int, item: 
     unit = own_unit or statement.unit
     existing = _existing_row(statement, label, evidence_line)
     row = statement.rows[existing] if existing is not None else Row(
-        label, account_of(label), evidence_line.cells[0] if evidence_line is not None else None, {})
+        label, account_of(label), _label_cell(evidence_line), {})
     for position, printed in enumerate(item.amounts):
         if printed in ("-", "–", "—"):
             continue

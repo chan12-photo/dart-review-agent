@@ -187,6 +187,36 @@ class RealLayoutTests(unittest.TestCase):
         self.assertEqual(values["매출"], [7_661_584_000_000, 7_926_651_000_000])
         self.assertEqual([item for item in check([statement]) if item.status == REVIEW], [])
 
+    def test_a_short_amount_off_its_column_is_reported_not_taken_for_a_note(self):
+        # Codex's case: "47" printed a little right of the amounts' column once vanished with its row
+        rows = [(0, [(20, 100, "손익계산서")]), (15, [(20, 90, "(단위: 원)")]),
+                (30, [(300, 350, "당기"), (500, 550, "전기")]),
+                (50, [(20, 80, "매출액"), (310, 350, "1,000"), (510, 550, "2,000")]),
+                (70, [(20, 100, "영업이익"), (310, 350, "3,000"), (510, 550, "4,000")]),
+                (90, [(20, 100, "기본주당이익"), (365, 390, "47")])]
+        [statement] = find_statements(group_lines(words_for(rows)))
+        self.assertTrue(any("'47' (기본주당이익)" in problem for problem in statement.problems), statement.problems)
+
+    def test_a_note_number_left_of_the_amounts_stays_a_note(self):
+        rows = [(0, [(20, 100, "재무상태표")]), (15, [(20, 90, "(단위: 원)")]),
+                (30, [(150, 170, "주석"), (300, 350, "당기"), (500, 550, "전기")]),
+                (50, [(20, 80, "현금"), (150, 170, "4, 29"), (310, 350, "1,000"), (510, 550, "2,000")]),
+                (70, [(20, 100, "재고자산"), (160, 170, "8"), (310, 350, "3,000"), (510, 550, "4,000")])]
+        [statement] = find_statements(group_lines(words_for(rows)))
+        self.assertEqual([row.label for row in statement.rows], ["현금", "재고자산"])
+        self.assertFalse([problem for problem in statement.problems if "넣지 못한" in problem])
+
+    def test_a_section_word_in_its_own_column_is_not_the_label(self):
+        # LG에너지솔루션: "자산", "부채" printed at the far left beside the first row of a part
+        rows = [(40, [(250, 300, "재무상태표")]), (80, [(470, 540, "(단위: 백만원)")]),
+                (100, [(60, 90, "과 목"), (330, 400, "제6기"), (480, 550, "제5기")]),
+                (120, [(64, 111, "Ⅱ. 비유동자산"), (400, 460, "354,532"), (550, 610, "293,532")]),
+                (140, [(38, 54, "자산"), (74, 125, "1. 장기매출채권"), (330, 380, "146,664"), (480, 530, "148,296")]),
+                (160, [(74, 140, "2. 기타장기수취채권"), (330, 380, "207,868"), (480, 530, "145,236")]),
+                (180, [(38, 67, "자산총계"), (400, 460, "354,532"), (550, 610, "293,532")])]
+        [statement] = find_statements(group_lines(words_for(rows)))
+        self.assertEqual([row.label for row in statement.rows], ["비유동자산", "장기매출채권", "기타장기수취채권", "자산총계"])
+
     def test_a_business_report_layout(self):
         """영업보고서: numbered 별도 titles, a 결손금처리계산서 after the 포괄손익계산서, and a page-number footer."""
         page_35 = [(40, [(34, 200, "3. 별도포괄손익계산서")]), (80, [(470, 540, "(단위: 백만 원)")]),
@@ -288,6 +318,73 @@ class SubtotalTests(unittest.TestCase):
         self.assertNotIn(("기타비유동부채", 1), flagged)  # the prior period adds up
 
 
+    @staticmethod
+    def flagged(statement):
+        return {(statement.rows[item.row].label, item.column) for item in check([statement]) if item.status == REVIEW}
+
+    @staticmethod
+    def statement(title, rows, closing=None):
+        """Two periods, each with a detail position (right edge 380 / 530) and a subtotal position (460 / 610),
+        80 apart as on a real report. ``rows``: (label x0, label, position "d" or "s", amount); the prior period
+        repeats the amount. ``closing``: a last subtotal row (label, amount), so each position has two amounts."""
+        rights = {"d": (380, 530), "s": (460, 610)}
+        head = [(40, [(250, 300, title)]), (80, [(570, 640, "(단위: 백만원)")]),
+                (100, [(60, 90, "과 목"), (330, 400, "제 57 (당) 기"), (480, 550, "제 56 (전) 기")])]
+        rows = rows + ([(60, closing[0], "s", closing[1])] if closing else [])
+        body = [(120 + 20 * n, [(lx, lx + 60, label)] + [(right - 8 * len(amount), right, amount) for right in rights[pos]])
+                for n, (lx, label, pos, amount) in enumerate(rows)]
+        [statement] = find_statements(group_lines(words_for(head + body)))
+        return statement
+
+    def test_a_third_level_is_known_from_the_item_markers_not_from_the_numbers(self):
+        rows = [(60, "Ⅰ. 영업활동 현금흐름", "s", "85,315,148"),
+                (70, "1. 영업에서 창출된 현금흐름", "d", "87,988,515"),
+                (70, "가. 당기순이익", "d", "45,206,805"), (70, "나. 조정", "d", "52,395,616"),
+                (70, "다. 자산부채의 변동", "d", "(9,613,906)"),
+                (70, "2. 이자의 수취", "d", "4,680,553"), (70, "3. 이자의 지급", "d", "(469,730)"),
+                (70, "4. 배당금 수입", "d", "253,105"), (70, "5. 법인세 납부액", "d", "(7,137,295)")]
+        closing = ("Ⅱ. 기말 현금", "57,856,378")
+        statement = self.statement("현금흐름표", rows, closing)
+        self.assertEqual(self.flagged(statement), set())
+        self.assertEqual(statement.sums_checked, 4)  # per period: the section, and 영업에서 창출 = 가 + 나 + 다
+        rows[3] = (70, "나. 조정", "d", "52,395,617")  # one off in the third level
+        flagged = self.flagged(self.statement("현금흐름표", rows, closing))
+        self.assertIn(("조정", 0), flagged)
+        self.assertIn(("영업에서 창출된 현금흐름", 0), flagged)
+
+    def test_numbers_that_happen_to_add_up_are_not_a_third_level(self):
+        # Codex's case: details 10, 5, 5 under a subtotal of 10. With no label structure the first detail cannot be
+        # taken to stand for the next two: the sum is reported as not checked, never counted as checked
+        rows = [(60, "Ⅰ. 투자활동 현금흐름", "s", "10,000"), (70, "단기금융상품", "d", "10,000"),
+                (70, "장기금융상품", "d", "5,000"), (70, "유형자산", "d", "5,000")]
+        closing = ("Ⅱ. 기말 현금", "57,856,378")
+        statement = self.statement("현금흐름표", rows, closing)
+        self.assertEqual((self.flagged(statement), statement.sums_checked), (set(), 0))
+        self.assertTrue(any("검산하지 못했다" in problem and "투자활동" in problem for problem in statement.problems),
+                        statement.problems)
+        rows[3] = (70, "유형자산", "d", "6,000")  # no coincidence: the plain sum is wrong and is marked
+        self.assertIn(("유형자산", 0), self.flagged(self.statement("현금흐름표", rows, closing)))
+
+    def test_a_dash_is_zero_and_wide_amounts_stay_in_one_part(self):
+        # the detail and subtotal positions 80 apart (NAVER) once split every row into its own part: no sum ran
+        rows = [(60, "Ⅰ. 재무활동 현금흐름", "s", "(13,478,040)"), (70, "단기차입금의 순증가", "d", "4,655,349"),
+                (70, "자기주식의 처분", "d", "-"), (70, "배당금의 지급", "d", "(18,133,389)")]
+        statement = self.statement("현금흐름표", rows, ("Ⅱ. 기말 현금", "57,856,378"))
+        self.assertEqual((self.flagged(statement), statement.sums_checked), (set(), 2))
+        rows[3] = (70, "배당금의 지급", "d", "(18,133,398)")  # a misread detail is caught in this layout too
+        self.assertIn(("배당금의 지급", 0), self.flagged(self.statement("현금흐름표", rows, ("Ⅱ. 기말 현금", "57,856,378"))))
+
+    def test_a_closing_total_is_checked_against_the_rows_before_it(self):
+        rows = [(38, "부채총계", "s", "16,007,801"), (64, "Ⅰ. 자본금", "d", "117,000"),
+                (64, "Ⅱ. 자본잉여금", "d", "17,589,722"), (64, "Ⅲ. 기타포괄손익누계액", "d", "(54,705)"),
+                (64, "Ⅳ. 결손금", "d", "(2,492,044)"), (38, "자본총계", "s", "15,159,973")]
+        statement = self.statement("재무상태표", rows)
+        self.assertEqual(self.flagged(statement), set())  # 부채총계 does not take the 자본 rows after it
+        self.assertEqual(statement.sums_checked, 2)
+        rows[-1] = (38, "자본총계", "s", "15,159,974")
+        self.assertIn(("자본총계", 0), self.flagged(self.statement("재무상태표", rows)))
+
+
 @unittest.skipUnless(HAS_PDF, "pip install -e '.[docs]'")
 class TextPdfTests(unittest.TestCase):
     def test_every_value_of_a_text_pdf(self):
@@ -385,7 +482,9 @@ class WorkbookTests(unittest.TestCase):
         self.assertTrue(all("자산총계 = 부채총계 + 자본총계" in cell.comment.text for cell in marked))
         values = {row[0].value: row[2].value for row in sheet.iter_rows(min_row=3) if row[0].value}
         self.assertEqual(values["자산총계"], 523_659_586_000_000)
-        self.assertEqual(book["검증"].max_row, 4)  # header + three cells
+        problems = [row[4].value for row in book["검증"].iter_rows(min_row=2)]
+        self.assertEqual(len(problems), 4)  # three cells, and the subtotal check that could not run
+        self.assertEqual(problems[3], "소계와 그 아래 항목을 구분하지 못해 소계 검산을 하지 못했다")
 
 
 if __name__ == "__main__":

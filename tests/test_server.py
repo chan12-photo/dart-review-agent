@@ -85,6 +85,62 @@ class JobStoreTests(unittest.TestCase):
             self.store.get(job["id"])
 
 
+class DeletionAndRestartTests(unittest.TestCase):
+    """Codex's review (D4): a deletion could race a job starting, and a failed file removal was ignored."""
+
+    def setUp(self):
+        self.folder = tempfile.TemporaryDirectory()
+        self.store = JobStore(Path(self.folder.name))
+
+    def tearDown(self):
+        self.folder.cleanup()
+
+    def test_a_job_that_starts_cannot_be_deleted_and_a_deleted_job_does_not_start(self):
+        job = self.store.create("a.pdf", b"%PDF-1.4 test", "rules", None)
+        self.assertTrue(self.store.transition(job["id"], ("queued",), "running"))
+        with self.assertRaises(UploadError):
+            self.store.delete(job["id"])
+        self.assertTrue((Path(self.folder.name) / job["id"] / "source.pdf").exists())
+
+        other = self.store.create("b.pdf", b"%PDF-1.4 test", "rules", None)
+        self.store.update(other["id"], status="deleting")  # a deletion took it first
+        ran = []
+        Worker(self.store, runner=lambda *args: ran.append(args), executor=Inline()).submit(other["id"])
+        self.assertEqual(ran, [])
+
+    def test_files_that_cannot_be_removed_keep_the_record(self):
+        from unittest import mock
+        from dart_review.server import DeleteError
+        job = self.store.create("a.pdf", b"%PDF-1.4 test", "rules", None)
+        self.store.update(job["id"], status="done")
+        with mock.patch("dart_review.server.shutil.rmtree", side_effect=PermissionError("denied")):
+            with self.assertRaises(DeleteError):
+                self.store.delete(job["id"])
+        kept = self.store.get(job["id"])
+        self.assertEqual(kept["status"], "delete_failed")
+        self.assertTrue((Path(self.folder.name) / job["id"] / "source.pdf").exists())
+        self.store.delete(job["id"])  # a retry works
+        with self.assertRaises(KeyError):
+            self.store.get(job["id"])
+
+    def test_jobs_left_unfinished_by_a_stopped_server_are_marked_failed(self):
+        queued = self.store.create("a.pdf", b"%PDF-1.4 test", "rules", None)
+        running = self.store.create("b.pdf", b"%PDF-1.4 test", "rules", None)
+        self.store.update(running["id"], status="running")
+        self.assertEqual(JobStore(Path(self.folder.name)).abandon_unfinished(), 2)
+        self.assertEqual({self.store.get(job["id"])["status"] for job in (queued, running)}, {"failed"})
+
+    def test_only_this_packages_own_messages_are_shown(self):
+        from dart_review.documents.words import DocumentError
+        from dart_review.server import _error_message
+        self.assertEqual(_error_message(RuntimeError("synthetic private document text")),
+                         "읽는 중 오류가 났습니다 (RuntimeError)")
+        self.assertEqual(_error_message(DocumentError("tesseract failed with exit code 1")),
+                         "tesseract failed with exit code 1")
+        self.assertEqual(_error_message(DocumentError("cannot read the PDF: 매출액 1,000")),
+                         "읽는 중 오류가 났습니다 (DocumentError)")
+
+
 class WorkerTests(unittest.TestCase):
     def setUp(self):
         self.folder = tempfile.TemporaryDirectory()

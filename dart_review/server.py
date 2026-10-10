@@ -10,7 +10,8 @@ the job's files. Every job is logged in SQLite (file name, size, SHA-256, reader
 so a result can be traced to its input.
 
 It is meant for one person on their own machine: it listens on 127.0.0.1 and has no accounts. Uploaded
-documents stay in the data folder until their job is deleted.
+documents stay in the data folder until their job is deleted. Jobs left unfinished when the server stops are
+marked failed when it starts again (they are not run again); their files stay until deleted.
 """
 
 from __future__ import annotations
@@ -22,6 +23,7 @@ from datetime import datetime, timezone
 import hashlib
 import json
 from pathlib import Path
+import re
 import shutil
 import sqlite3
 import threading
@@ -61,6 +63,10 @@ create table if not exists jobs (
 
 class UploadError(ValueError):
     """The upload is not a document this service reads; the message is shown to the user."""
+
+
+class DeleteError(RuntimeError):
+    """A job's files could not be removed; the message is shown to the user."""
 
 
 def _now() -> str:
@@ -131,13 +137,44 @@ class JobStore:
         with self._connect() as db:
             return [dict(row) for row in db.execute("select * from jobs order by created_at desc limit ?", (limit,))]
 
+    def transition(self, job_id: str, from_states: tuple[str, ...], to_state: str, **fields: Any) -> bool:
+        """Move a job to ``to_state`` only if it is in one of ``from_states``, in one statement; whether it moved.
+        The worker starting a job and a request deleting it go through this, so they cannot both win."""
+        assignments = {"status": to_state, **fields}
+        with self._lock, self._connect() as db:
+            cursor = db.execute(f"update jobs set {', '.join(f'{name} = ?' for name in assignments)} "
+                                f"where id = ? and status in ({', '.join('?' for _ in from_states)})",
+                                [*assignments.values(), job_id, *from_states])
+            return cursor.rowcount == 1
+
     def delete(self, job_id: str) -> None:
-        job = self.get(job_id)
-        if job["status"] in ("queued", "running"):
+        """Remove a finished job's files, then its record. A job being read cannot be deleted. If the files cannot
+        be removed, the record stays (status delete_failed) so the deletion can be retried and is not lost."""
+        self.get(job_id)
+        if not self.transition(job_id, ("done", "failed", "delete_failed"), "deleting"):
             raise UploadError("읽는 중인 작업은 지울 수 없습니다")
-        shutil.rmtree(self.folder(job_id), ignore_errors=True)
+        folder = self.folder(job_id)
+        try:
+            shutil.rmtree(folder)
+        except FileNotFoundError:
+            pass
+        except OSError as exc:
+            self.update(job_id, status="delete_failed", error=f"파일을 지우지 못했습니다 ({type(exc).__name__})")
+            raise DeleteError("파일을 지우지 못했습니다. 다시 시도하세요") from None
+        if folder.exists():
+            self.update(job_id, status="delete_failed", error="파일을 지우지 못했습니다")
+            raise DeleteError("파일을 지우지 못했습니다. 다시 시도하세요")
         with self._lock, self._connect() as db:
             db.execute("delete from jobs where id = ?", (job_id,))
+
+    def abandon_unfinished(self) -> int:
+        """Jobs left queued or running by a previous server process are not run again: they are marked failed (their
+        files stay until deleted). Called when the server starts."""
+        with self._lock, self._connect() as db:
+            cursor = db.execute("update jobs set status = 'failed', finished_at = ?, error = ? "
+                                "where status in ('queued', 'running', 'deleting')",
+                                (_now(), "서버가 다시 시작되어 읽기가 끝나지 않았습니다. 다시 올려 주세요"))
+            return cursor.rowcount
 
 
 def report(extraction, source_name: str, reader: str) -> dict[str, Any]:
@@ -182,10 +219,11 @@ class Worker:
         self.executor.submit(self.run, job_id)
 
     def run(self, job_id: str) -> None:
+        if not self.store.transition(job_id, ("queued",), "running", started_at=_now()):
+            return  # deleted or abandoned before its turn
         job = self.store.get(job_id)
         folder = self.store.folder(job_id)
         pages = [int(page) for page in job["pages"].split(",")] if job["pages"] else None
-        self.store.update(job_id, status="running", started_at=_now())
         try:
             extraction = self.runner(folder / "source.pdf", folder / "result.xlsx", job["reader"], pages)
             data = report(extraction, job["filename"], job["reader"])
@@ -197,11 +235,25 @@ class Worker:
             self.store.update(job_id, status="failed", finished_at=_now(), error=_error_message(exc))
 
 
+# the messages this package raises, by shape; only these are shown as they are (they hold no document text).
+# Anything else, a library's RuntimeError included, is shown as a fixed message with the exception's class name.
+_SAFE_MESSAGES = tuple(re.compile(pattern) for pattern in (
+    r"no text was found \(the scan may be empty or unreadable\)",
+    r"cannot read the PDF: \w+",
+    r"tesseract failed with exit code -?\d+",
+    r"(pdfplumber|pypdfium2|openpyxl) is not installed: pip install -e '\.\[docs\]'",
+    r"tesseract is not installed \(brew install tesseract tesseract-lang\)",
+    r"could not reach the local vision model \(\w+\); is Ollama running\?",
+    r"the model ran out of its output budget on one band",
+))
+
+
 def _error_message(exc: Exception) -> str:
     from .documents.vision import VisionError
     from .documents.words import DocumentError
-    if isinstance(exc, (DocumentError, VisionError, RuntimeError)):
-        return str(exc)[:300]
+    text = str(exc)
+    if isinstance(exc, (DocumentError, VisionError, RuntimeError)) and any(p.fullmatch(text) for p in _SAFE_MESSAGES):
+        return text
     return f"읽는 중 오류가 났습니다 ({type(exc).__name__})"
 
 
@@ -217,6 +269,7 @@ def create_app(data_dir: Path = DEFAULT_DATA_DIR, runner: Runner = run_extractio
         raise RuntimeError("fastapi is not installed: pip install -e '.[docs,server]'")
 
     store = JobStore(Path(data_dir))
+    store.abandon_unfinished()
     worker = Worker(store, runner, executor)
     app = FastAPI(title="dart-review documents", version="0.2.0-dev",
                   description="PDF 재무제표 → 검증된 엑셀 (로컬 전용)")
@@ -284,5 +337,7 @@ def create_app(data_dir: Path = DEFAULT_DATA_DIR, runner: Runner = run_extractio
             store.delete(job_id)
         except UploadError as exc:
             raise HTTPException(409, str(exc)) from None
+        except DeleteError as exc:
+            raise HTTPException(500, str(exc)) from None
 
     return app

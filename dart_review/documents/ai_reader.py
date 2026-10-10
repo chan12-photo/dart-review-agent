@@ -201,28 +201,12 @@ def _is_amount_like(cell: Cell, header: Header | None) -> bool:
             and bool(re.fullmatch(r"[(（]?[-−△]?\d{1,3}[)）]?", text)))
 
 
-def _existing_row(statement: Statement, label: str, line: Line | None, recent_from: int | None = None,
-                  amounts: Sequence[str] = ()) -> int | None:
-    """The row this reading continues: the one read from the same printed line (the overlap of two bands).
-    Without an evidence line, a row of the same label among the last few rows. A label may appear twice in
+def _existing_row(statement: Statement, line: Line) -> int | None:
+    """The row read from the same printed line before (the overlap of two bands). A label may appear twice in
     a statement (관계기업 지분 under both parts of 기타포괄손익); matching on the label alone once merged
     the second row into the first and dropped its amounts."""
-    if line is not None:
-        return next((index for index, row in enumerate(statement.rows)
-                     if row.label_cell is not None and any(row.label_cell is cell for cell in line.cells)), None)
-    first = recent_from if recent_from is not None else len(statement.rows) - BAND_OVERLAP - 1
-    recent = range(max(0, first), len(statement.rows))
-    found = next((index for index in recent if _key(statement.rows[index].label) == _key(label)), None)
-    if found is None and amounts:
-        # the overlap of two photo bands, read with a different label ("3 단기당손익…" for "단기당기손익…"):
-        # the same digits in the same order as a row of the previous band
-        digits = [_digits(printed) for printed in amounts]
-        for index in recent:
-            row = statement.rows[index]
-            known = [_digits(row.amounts[column].printed) for column in sorted(row.amounts)]
-            if known and known == digits[:len(known)]:
-                return index
-    return found
+    return next((index for index, row in enumerate(statement.rows)
+                 if row.label_cell is not None and any(row.label_cell is cell for cell in line.cells)), None)
 
 
 def _bands(lines: Sequence[Line]) -> list[tuple[float, float, list[Line]]]:
@@ -281,6 +265,10 @@ def read_document(path: Path, model: VisionModel, pages: Sequence[int] | None = 
                 check.flag(f"단위를 원본에서 확인하지 못했다 (AI가 읽은 단위: {statement.unit_text})")
         if statement.kind == "SCE":
             continue
+        unverified = {check.row for check in own if "계정명 미확인" in check.evidence}
+        if unverified:
+            statement.problems.append(f"계정명을 원본(OCR)으로 확인하지 못한 행 {len(unverified)}개: 숫자는 OCR로 확인했지만 "
+                                      "계정명은 AI가 읽은 그대로다 (원본과 대조 필요)")
         by_cell = {(check.row, check.column): check for check in own}
         check_sums(statement, by_cell)
     return Reading(state.statements, state.checks, state.problems, state.calls)
@@ -415,7 +403,7 @@ def _read_with_model_structure(part: Part, model: VisionModel, state: _State) ->
         statement.problems.append(f"{part.page}쪽: 열 머리글(당기·전기)을 찾지 못해 금액의 기간을 정하지 못했다")
         return
     s_index = len(state.statements) - 1
-    claimed: set[int] = set()
+    claimed: dict[int, int] = {}  # id of an OCR token -> the row it confirmed
     band, step = 0.20 * height, 0.15 * height
     y = 0.0
     previous_start = len(statement.rows)  # rows of the previous band: the overlap may read them again
@@ -424,26 +412,51 @@ def _read_with_model_structure(part: Part, model: VisionModel, state: _State) ->
         answer = state.ask(model, part.image.crop(box), BAND_PROMPT, split=True)
         tokens = [word for word in part.tokens if box[1] <= (word.top + word.bottom) / 2 <= box[3]]
         band_start = len(statement.rows)
+        reread: set[int] = set()  # tokens of the previous band already matched by a re-reading in this band
         for item in parse_band(answer or ""):
-            _add_row_by_tokens(statement, state.checks, s_index, item, tokens, part, claimed, previous_start)
+            _add_row_by_tokens(statement, state.checks, s_index, item, tokens, part, claimed, previous_start, reread)
         previous_start = band_start
         if y + band >= height:
             break
         y += step
+    _report_unread_tokens(statement, part, claimed)
 
 
 def _add_row_by_tokens(statement: Statement, checks: list[CellCheck], s_index: int, item: BandLine,
-                       tokens: Sequence[Word], part: Part, claimed: set[int], recent_from: int | None = None) -> None:
-    """Without evidence lines: an amount is confirmed when OCR read the same digits in the same band; its period
-    is the model's left-to-right order, which is checked against the number of period columns."""
+                       tokens: Sequence[Word], part: Part, claimed: dict[int, int], recent_from: int | None = None,
+                       reread: set[int] | None = None) -> None:
+    """Without evidence lines (a photo): an amount is confirmed by an OCR token of the same digits on the row's
+    printed line, and the row's label by the OCR words left of it on that line.
+
+    - The amounts of one row must be on one OCR line, left to right in period order. When a digit string is
+      in the band more than once and the row's other amounts do not pick the line, the cell is marked.
+    - A re-reading in the overlap of two bands is known by its OCR token, which the previous band's row has
+      already claimed; matching on the label or the digits once merged two different rows into one.
+    - The label is compared with the OCR words on the line: a clearly different account is marked; a label
+      the OCR could not read stays as the model read it and is counted as unverified on the statement.
+    """
     label, own_unit = row_unit(clean_label(item.label, ocr=True))
     unit = own_unit or statement.unit
     amounts = [printed for printed in item.amounts if printed not in ("-", "–", "—")]
     if not label or not amounts:
         return
-    existing = _existing_row(statement, label, None, recent_from, amounts)
+    first = recent_from if recent_from is not None else len(statement.rows)
+    existing = _overlap_row(amounts, tokens, claimed, first, reread if reread is not None else set())
+    if existing is None:
+        existing = _ai_only_repeat(statement, label, amounts, tokens, claimed, first)
     row = statement.rows[existing] if existing is not None else Row(label, account_of(label), None, {})
     r_index = existing if existing is not None else len(statement.rows)
+    chosen, unsure = _row_tokens(amounts, tokens, claimed, owner=existing)
+    label_reason, label_known = None, False
+    line_words = _line_words(chosen, part.tokens)
+    if line_words is not None:
+        ocr_label = clean_label(" ".join(word.text for word in line_words), ocr=True)
+        if len(re.findall(r"[가-힣]", ocr_label)) >= 2:
+            a, b = _key(label), _key(ocr_label)
+            if a == b or (SequenceMatcher(None, a, b).ratio() >= LABEL_AGREEMENT and not (a in b or b in a)):
+                label_known = True
+            elif a in b or b in a or SequenceMatcher(None, a, b).ratio() < 0.5:
+                label_reason = f"AI가 읽은 계정명 '{label}'과 같은 줄에서 OCR이 읽은 계정명 '{ocr_label}'이 다르다"
     for position, printed in enumerate(amounts):
         if position >= len(statement.columns):
             break
@@ -452,18 +465,25 @@ def _add_row_by_tokens(statement: Statement, checks: list[CellCheck], s_index: i
             value = parse_amount(printed, unit)
         except ValueError:
             continue
+        token = chosen[position]
         if column in row.amounts:
             if row.amounts[column].value != value:  # two overlapping bands read this cell differently
                 for check in checks:
                     if (check.statement, check.row, check.column) == (s_index, r_index, column):
                         check.flag(f"겹친 두 띠에서 다른 숫자로 읽었다 ({row.amounts[column].printed}, {printed})")
+            if token is not None:
+                _claim(token, part.tokens, claimed, r_index)
             continue
-        token = next((word for word in tokens if _digits(word.text) == _digits(printed) and id(word) not in claimed), None)
-        check = CellCheck(s_index, r_index, column, evidence="OCR" if token else "")
+        evidence = ("OCR" if label_known else "OCR (숫자만, 계정명 미확인)") if token is not None else ""
+        check = CellCheck(s_index, r_index, column, evidence=evidence)
         if token is not None:
-            claimed.add(id(token))
+            _claim(token, part.tokens, claimed, r_index)
         else:
             check.flag("원본 OCR에서 같은 숫자를 찾지 못했다 (AI만 읽은 숫자)")
+        for reason in unsure[position]:
+            check.flag(reason)
+        if label_reason:
+            check.flag(label_reason)
         if len(amounts) != len(statement.columns):
             check.flag(f"이 줄에서 금액 {len(amounts)}개를 읽었는데 기간 열은 {len(statement.columns)}개라 기간 배정이 불확실하다")
         problem = separator_problem(printed)
@@ -474,6 +494,128 @@ def _add_row_by_tokens(statement: Statement, checks: list[CellCheck], s_index: i
         checks.append(check)
     if existing is None and row.amounts:
         statement.rows.append(row)
+
+
+def _overlap_row(amounts: Sequence[str], tokens: Sequence[Word], claimed: dict[int, int], first: int,
+                 reread: set[int]) -> int | None:
+    """The row of the previous band whose OCR token this reading shares: the overlap of two bands. A token
+    serves one re-reading per band, so a second row of the same label and value is not folded into the first."""
+    for printed in amounts:
+        for word in tokens:
+            owner = claimed.get(id(word))
+            if (owner is not None and owner >= first and id(word) not in reread
+                    and _digits(word.text) == _digits(printed)):
+                reread.update(id(other) for other in tokens if claimed.get(id(other)) == owner)
+                return owner
+    return None
+
+
+def _ai_only_repeat(statement: Statement, label: str, amounts: Sequence[str], tokens: Sequence[Word],
+                    claimed: dict[int, int], first: int) -> int | None:
+    """A reading with no OCR token at all that repeats a recent row also read by the AI only (same label and
+    digits): the overlap again, as far as can be told. A reading with a token of its own is a new row."""
+    digits = [_digits(printed) for printed in amounts]
+    if any(_digits(word.text) in digits and id(word) not in claimed for word in tokens):
+        return None
+    for index in range(max(0, first), len(statement.rows)):
+        row = statement.rows[index]
+        if (_key(row.label) == _key(label) and all(amount.cell.method == "ai" for amount in row.amounts.values())
+                and [_digits(row.amounts[column].printed) for column in sorted(row.amounts)] == digits[:len(row.amounts)]):
+            return index
+    return None
+
+
+def _row_tokens(amounts: Sequence[str], tokens: Sequence[Word], claimed: dict[int, int],
+                owner: int | None = None) -> tuple[list[Word | None], list[list[str]]]:
+    """For each amount, an OCR token of the same digits, chosen so that the row's tokens are on one line and in
+    period order; with the reasons a choice is not certain. A new row takes unclaimed tokens; a row read again
+    in a band overlap (``owner``) takes its own tokens first, never another row's."""
+    def usable(word: Word) -> bool:
+        holder = claimed.get(id(word))
+        return holder is None or (owner is not None and holder == owner)
+
+    candidates = []
+    for printed in amounts:
+        options = [word for word in tokens if usable(word) and _digits(word.text) == _digits(printed)]
+        own = [word for word in options if owner is not None and claimed.get(id(word)) == owner]
+        candidates.append(own or options)
+    reasons: list[list[str]] = [[] for _ in amounts]
+    best: list[Word | None] = [options[0] if options else None for options in candidates]
+    found = [index for index, options in enumerate(candidates) if options]
+    if len(found) >= 2:
+        # the combination whose tokens share a line, left to right
+        combos = [[]]
+        for index in found:
+            combos = [combo + [word] for combo in combos for word in candidates[index]][:200]
+        good = [combo for combo in combos if _same_line(combo) and all(a.x0 < b.x0 for a, b in zip(combo, combo[1:]))]
+        if good:
+            for index, word in zip(found, good[0]):
+                best[index] = word
+            if len({tuple(id(word) for word in combo) for combo in good}) > 1:
+                for index in found:
+                    reasons[index].append("같은 숫자들이 띠 안 여러 줄에 있어 어느 줄인지 확정하지 못했다")
+        else:
+            for index in found:
+                reasons[index].append("이 줄의 숫자들을 원본(OCR)의 한 줄에서 찾지 못했다 (다른 줄의 숫자일 수 있다)")
+    elif len(found) == 1 and len(candidates[found[0]]) > 1:
+        lines = {round((word.top + word.bottom) / 2 / max(word.bottom - word.top, 1)) for word in candidates[found[0]]}
+        if len(lines) > 1:
+            reasons[found[0]].append("같은 숫자가 띠 안 여러 줄에 있어 어느 줄인지 확정하지 못했다")
+    return best, reasons
+
+
+def _same_line(words: Sequence[Word]) -> bool:
+    centres = [(word.top + word.bottom) / 2 for word in words]
+    height = max(1.0, min(word.bottom - word.top for word in words))
+    return max(centres) - min(centres) <= 0.6 * height
+
+
+def _line_words(chosen: Sequence[Word | None], tokens: Sequence[Word]) -> list[Word] | None:
+    """The OCR words with Hangul on the line of the row's first confirmed amount, left of it (its label)."""
+    anchor = next((word for word in chosen if word is not None), None)
+    if anchor is None:
+        return None
+    centre, height = (anchor.top + anchor.bottom) / 2, max(1.0, anchor.bottom - anchor.top)
+    words = [word for word in tokens if abs((word.top + word.bottom) / 2 - centre) <= 0.6 * height
+             and word.x1 <= anchor.x0 and re.search(r"[가-힣]", word.text)]
+    # the three OCR passes read the same words: keep one reading per position, left to right
+    kept: list[Word] = []
+    for word in sorted(words, key=lambda w: (w.x0, -(w.confidence or 0))):
+        if not any(_overlaps(word, other) for other in kept):
+            kept.append(word)
+    return kept
+
+
+def _overlaps(a: Word, b: Word) -> bool:
+    width = min(a.x1 - a.x0, b.x1 - b.x0)
+    height = min(a.bottom - a.top, b.bottom - b.top)
+    if width <= 0 or height <= 0:
+        return False
+    across = min(a.x1, b.x1) - max(a.x0, b.x0)
+    down = min(a.bottom, b.bottom) - max(a.top, b.top)
+    return across > 0.5 * width and down > 0.5 * height
+
+
+def _claim(token: Word, tokens: Sequence[Word], claimed: dict[int, int], r_index: int) -> None:
+    """Claim a token and the other OCR passes' readings of the same printed number (same place)."""
+    for word in tokens:
+        if word is token or (_overlaps(word, token) and _is_amount_word(word.text)):
+            claimed.setdefault(id(word), r_index)
+
+
+def _report_unread_tokens(statement: Statement, part: Part, claimed: dict[int, int]) -> None:
+    """OCR amounts on the page that no row of the AI's reading claimed: a row it may have skipped. One report per
+    printed place (the OCR passes overlap), and none where any reading of that place was claimed."""
+    reported: list[Word] = []
+    for word in part.tokens:
+        if id(word) in claimed or not _is_amount_word(word.text) or len(_digits(word.text)) < 4:
+            continue
+        if any(id(other) in claimed and _overlaps(word, other) for other in part.tokens):
+            continue
+        if any(_overlaps(word, other) for other in reported):
+            continue
+        reported.append(word)
+        statement.problems.append(f"{part.page}쪽: OCR이 읽은 금액 '{word.text}'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)")
 
 
 def _add_row(statement: Statement, checks: list[CellCheck], s_index: int, item: BandLine, band_lines: Sequence[Line],
@@ -500,7 +642,7 @@ def _add_row(statement: Statement, checks: list[CellCheck], s_index: int, item: 
     if own_unit is None:
         _, own_unit = row_unit(item.label)
     unit = own_unit or statement.unit
-    existing = _existing_row(statement, label, evidence_line)
+    existing = _existing_row(statement, evidence_line) if evidence_line is not None else None
     row = statement.rows[existing] if existing is not None else Row(
         label, account_of(label), _label_cell(evidence_line), {})
     for position, printed in enumerate(item.amounts):

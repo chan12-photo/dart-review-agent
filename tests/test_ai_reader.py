@@ -219,5 +219,77 @@ class TextLayerEvidenceTests(unittest.TestCase):
         self.assertIn("AI가 읽지 않았다", problems)
 
 
+class PhotoEvidenceTests(unittest.TestCase):
+    """The photo path (no text layer, OCR words only), on synthetic OCR tokens. Codex's review (D4) showed that a
+    token anywhere in the band confirmed a number, labels were not compared, and two rows could merge."""
+
+    def setUp(self):
+        from dart_review.documents.statement import PeriodColumn, Statement
+        self.statement = Statement("BS", True, "재무상태표", 1, 1, "원", [PeriodColumn("당기"), PeriodColumn("전기")], [], [])
+        self.checks, self.claimed = [], {}
+
+    def word(self, text, x0, top, method="ocr"):
+        from dart_review.documents.words import Word
+        return Word(text, 1, x0, x0 + 12 * len(text), top, top + 20, method, 95.0)
+
+    def read(self, label, amounts, tokens, recent_from=0, reread=None):
+        from dart_review.documents.ai_reader import Part, _add_row_by_tokens
+        from dart_review.documents.vision import BandLine
+        part = Part(1, None, [], "OCR", (0, 1000), list(tokens))
+        _add_row_by_tokens(self.statement, self.checks, 0, BandLine(label, amounts), tokens, part, self.claimed,
+                           recent_from, reread if reread is not None else set())
+        return part
+
+    def flags(self, label):
+        rows = [index for index, row in enumerate(self.statement.rows) if row.label == label]
+        return [reason for check in self.checks if check.row in rows for reason in check.reasons]
+
+    def test_a_row_confirmed_on_its_own_line_with_its_label(self):
+        tokens = [self.word("매출채권", 50, 100), self.word("1,000", 400, 100), self.word("2,000", 600, 100)]
+        self.read("매출채권", ["1,000", "2,000"], tokens)
+        self.assertEqual([(c.status, c.evidence) for c in self.checks], [("검사 통과", "OCR")] * 2)
+
+    def test_two_rows_of_the_same_label_and_value_in_two_bands_stay_two(self):
+        # Codex's case: they once merged into one row, and the second OCR token was left unclaimed
+        first = [self.word("매출액", 50, 100), self.word("1,000", 400, 100)]
+        second = [self.word("매출액", 50, 140), self.word("1,000", 400, 140)]
+        self.read("매출액", ["1,000"], first)
+        reread = set()  # the next band covers both lines: the model re-reads the first and reads the second
+        self.read("매출액", ["1,000"], first + second, recent_from=0, reread=reread)
+        self.read("매출액", ["1,000"], first + second, recent_from=0, reread=reread)
+        self.assertEqual(len(self.statement.rows), 2)
+        self.assertEqual([c.evidence for c in self.checks], ["OCR", "OCR"])
+
+    def test_the_same_token_read_again_in_the_overlap_is_the_same_row(self):
+        tokens = [self.word("매출액", 50, 100), self.word("1,000", 400, 100), self.word("2,000", 600, 100)]
+        self.read("매출액", ["1,000", "2,000"], tokens)
+        self.read("3 매출액", ["1,000", "2,000"], tokens, recent_from=0, reread=set())  # re-read, another label
+        self.assertEqual(len(self.statement.rows), 1)
+
+    def test_numbers_from_two_lines_are_marked(self):
+        tokens = [self.word("1,000", 400, 100), self.word("2,000", 600, 160)]
+        self.read("매출액", ["1,000", "2,000"], tokens)
+        self.assertTrue(any("한 줄에서 찾지 못했다" in reason for reason in self.flags("매출액")))
+
+    def test_a_label_the_ocr_reads_differently_is_marked(self):
+        # the photo case: the model wrote "부채" for the line OCR reads as "유동부채"
+        tokens = [self.word("1.", 30, 100), self.word("유동부채", 50, 100), self.word("106,411,348", 400, 100)]
+        self.read("부채", ["106,411,348"], tokens)
+        self.assertTrue(any("OCR이 읽은 계정명 '유동부채'" in reason for reason in self.flags("부채")), self.flags("부채"))
+
+    def test_a_label_the_ocr_could_not_read_is_unverified_not_confirmed(self):
+        tokens = [self.word("1,000", 400, 100)]
+        self.read("매출액", ["1,000"], tokens)
+        self.assertEqual(self.checks[0].evidence, "OCR (숫자만, 계정명 미확인)")
+
+    def test_ocr_amounts_the_model_skipped_are_reported(self):
+        from dart_review.documents.ai_reader import _report_unread_tokens
+        tokens = [self.word("매출액", 50, 100), self.word("1,000", 400, 100),
+                  self.word("재고자산", 50, 140), self.word("7,953,586", 400, 140), self.word("7,953,586", 401, 141)]
+        part = self.read("매출액", ["1,000"], tokens)
+        _report_unread_tokens(self.statement, part, self.claimed)
+        self.assertEqual(self.statement.problems, ["1쪽: OCR이 읽은 금액 '7,953,586'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)"])
+
+
 if __name__ == "__main__":
     unittest.main()

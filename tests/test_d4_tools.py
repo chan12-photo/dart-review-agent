@@ -29,10 +29,13 @@ HAS_PDF = find_spec("pdfplumber") is not None
 SID = "연결재무상태표@1"
 
 
+CONFIRMED = {"status": "confirmed", "confirmed_by": "user", "confirmed_at": "2026-10-11"}
+
+
 def gold(*cells, statements=None):
     statements = statements or [{"id": SID, "kind": "BS", "title": "연결재무상태표", "consolidated": True, "page": 1,
                                  "end_page": 1, "unit_text": "원"}]
-    return {"statements": statements, "needs_mapping": [],
+    return {"statements": statements, "needs_mapping": [], "mapping": CONFIRMED,
             "cells": [{"statement_id": sid, "statement": "연결재무상태표", "kind": "BS", "page": page, "label": label,
                        "period": period, "printed": printed, "value": value}
                       for sid, page, label, period, printed, value in cells]}
@@ -203,13 +206,17 @@ class ScorerTests(unittest.TestCase):
         self.assertEqual([x["id"] for x in result["statements"][0]["extras"]], ["0/1/2"])
 
     def test_a_draft_mapping_is_never_official(self):
+        # also with no item to decide: the development records showed "official" for two documents
         g = gold(cell("유동자산", 0, "1,000", 1000))
-        g["needs_mapping"] = [{"id": "n1", "why": "dart_only"}]
-        g["mapping"] = {"status": "draft", "confirmed_by": None, "confirmed_at": None}
-        status = self.totals(g, report([("유동자산", 0, 1000, False)]), sha="abc")["status"]
-        self.assertEqual((status["mapping_confirmed"], status["official_ready"]), (False, False))
-        g["mapping"] = {"status": "confirmed", "confirmed_by": "user", "confirmed_at": "2026-10-11"}
-        self.assertTrue(self.totals(g, report([("유동자산", 0, 1000, False)]), sha="abc")["status"]["official_ready"])
+        for needs in ([], [{"id": "n1", "why": "dart_only"}]):
+            g["needs_mapping"] = needs
+            g["mapping"] = {"status": "draft", "confirmed_by": None, "confirmed_at": None}
+            status = self.totals(g, report([("유동자산", 0, 1000, False)]), sha="abc")["status"]
+            self.assertEqual((status["mapping_confirmed"], status["official_ready"]), (False, False))
+            g["mapping"] = CONFIRMED
+            self.assertTrue(self.totals(g, report([("유동자산", 0, 1000, False)]), sha="abc")["status"]["official_ready"])
+        del g["mapping"]  # a gold the mapping was never applied to
+        self.assertFalse(self.totals(g, report([("유동자산", 0, 1000, False)]), sha="abc")["status"]["mapping_confirmed"])
 
     def test_sums_are_counted_per_statement(self):
         # Codex third review 7: A4 counts statements with sums left unchecked and statements without a check

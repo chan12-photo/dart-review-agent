@@ -262,9 +262,9 @@ def score(gold: dict, report: dict, extras: dict | None = None, report_sha256: s
     totals["sums_checked"] = sum(s["sums_checked"] or 0 for s in found)
     totals["statements_with_uncertain_sums"] = sum(1 for s in found if s["sums_uncertain"])
     totals["statements_without_sums"] = sum(1 for s in found if not s["sums_checked"])
+    # a person confirms the mapping file even when the gold has no item to decide: a draft is never official
     mapping = gold.get("mapping") or {}
-    mapping_confirmed = not gold.get("needs_mapping") or (mapping.get("status") == "confirmed"
-                                                          and bool(mapping.get("confirmed_by")))
+    mapping_confirmed = mapping.get("status") == "confirmed" and bool(mapping.get("confirmed_by"))
     extras_judged = totals["unjudged_extras"] == 0
     totals["status"] = {"machine_scored": True, "mapping_confirmed": mapping_confirmed, "extras_judged": extras_judged,
                         "report_saved": report_sha256 is not None,

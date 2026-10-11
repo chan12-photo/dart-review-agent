@@ -431,6 +431,37 @@ class CandidateRuleTests(unittest.TestCase):
                 self.assertEqual(check_pdf(scan)["verdict"], "글자 층 없음")
 
 
+@unittest.skipUnless(HAS_PDF, "pip install -e '.[docs]'")
+class ScanTests(unittest.TestCase):
+    """Contract 3.3: the statement pages, whole, as images, under fixed conditions, with a page map for the gold."""
+
+    def test_a_scan_of_the_statement_pages(self):
+        from dart_review.documents.samples import SampleStatement, text_pdf
+        from eval.d4_scan import CONDITIONS, make_scan, scan_gold, statement_pages
+        sample = SampleStatement("재무상태표", "주식회사 예시", ["제 57 기 2025년 12월 31일 현재"], "원", ["당기", "전기"],
+                                 [(f"계정{i}", ["1,000", "2,000"]) for i in range(20)])
+        gold_ = {"statements": [{"id": "재무상태표@2", "kind": "BS", "title": "재무상태표", "page": 2, "end_page": 3}],
+                 "cells": [{"statement_id": "재무상태표@2", "page": 3, "label": "계정1", "period": 0, "printed": "1,000",
+                            "value": 1000}], "needs_mapping": []}
+        self.assertEqual(statement_pages(gold_), [2, 3])
+        with tempfile.TemporaryDirectory() as folder, mock.patch.object(d4_candidates, "MIN_CHARS", 100):
+            source = Path(folder) / "text.pdf"
+            text_pdf(source, [sample, sample, sample, sample])
+            records = {}
+            for condition in CONDITIONS:
+                out = Path(folder) / f"{condition}.pdf"
+                records[condition] = make_scan(source, [2, 3], condition, out)
+                self.assertEqual(check_pdf(out)["verdict"], "글자 층 없음")  # images only
+                self.assertEqual(check_pdf(out)["pages"], 2)
+            again = make_scan(source, [2, 3], "tilt", Path(folder) / "again.pdf")
+        self.assertEqual((again["scan_sha256"], again["pixels_sha256"]),
+                         (records["tilt"]["scan_sha256"], records["tilt"]["pixels_sha256"]))  # nothing random
+        self.assertEqual((records["tilt"]["dpi"], records["tilt"]["rotate"]), (150, 1.0))
+        scanned = scan_gold(gold_, records["blur"])
+        self.assertEqual((scanned["statements"][0]["page"], scanned["statements"][0]["end_page"],
+                          scanned["cells"][0]["page"]), (1, 2, 2))
+
+
 class PreflightTests(unittest.TestCase):
     """Codex third review 8: a commit diff did not see a frozen file changed only in the working tree."""
 

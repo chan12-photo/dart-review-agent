@@ -287,6 +287,7 @@ def main() -> int:
     parser.add_argument("--mapping", type=Path, help="the decisions for the gold's mapping items")
     parser.add_argument("--extras", type=Path, help="a person's verdicts on cells of --report outside the gold")
     parser.add_argument("--reader", choices=("rules", "ai"), default="ai")
+    parser.add_argument("--page-map", type=Path, help="a synthetic scan's map (eval/d4_scan.py): renumber the gold")
     parser.add_argument("--out", type=Path, required=True)
     args = parser.parse_args()
     gold = json.loads(args.gold.read_text(encoding="utf-8"))
@@ -296,6 +297,9 @@ def main() -> int:
     except ValueError as exc:
         print(f"the gold is not confirmed: {exc}")
         return 2
+    if args.page_map:
+        from eval.d4_scan import scan_gold
+        gold = scan_gold(gold, json.loads(args.page_map.read_text(encoding="utf-8")))
     if args.pdf:
         if args.report.exists():
             print(f"{args.report} exists: a saved report is never overwritten (verdicts may name its cells)")

@@ -26,7 +26,7 @@ import sys
 
 ROOT = Path(__file__).resolve().parents[1]
 PRODUCT_PATHS = ("dart_review", "pyproject.toml")
-# the scorer, the gold builder, the candidate rules, this check, and the synthetic scan maker with its seed
+# the gold builder, the scorer, the candidate rules, this check, and the synthetic scan maker with its conditions
 TOOL_PATHS = ("eval/d4_gold.py", "eval/d4_score.py", "eval/d4_candidates.py", "eval/d4_preflight.py", "eval/d4_scan.py")
 MODEL = "qwen3-vl:8b"
 

@@ -164,19 +164,25 @@ def score(gold: dict, report: dict, extras: dict | None = None, report_sha256: s
         gold_cells = [c for c in gold["cells"] if c["statement_id"] == g_statement["id"]]
         problems = (product["problems"] if product else []) + document_problems
         generic = any(GENERIC in problem for problem in problems)
-        outcome: list[tuple[str | None, dict | None]] = []
-        for g in gold_cells:  # pass 1: same label and period
-            match = next((c for c in cells if not c["used"] and c["key"] == label_key(g["label"])
-                          and c["period"] == g["period"]), None)
-            if match is None:
-                outcome.append((None, None))
-                continue
-            match["used"] = True
-            if g["value"] is None:
-                outcome.append(("dash_filled", match))  # the print has "-": any value here is wrong
-            else:
-                outcome.append(("correct" if match["value"] == g["value"] else "value_wrong", match))
-        for i, (g, (result, _)) in enumerate(zip(gold_cells, outcome)):  # pass 2: the gold value under another label
+        outcome: list[tuple[str | None, dict | None]] = [(None, None)] * len(gold_cells)
+
+        def same_place(g: dict, value_too: bool) -> dict | None:
+            # an unused cell of the label and period (and value), on the gold's page first: when a label is printed
+            # on two rows and the product lost one, the other row is not paired with the wrong one
+            found = [c for c in cells if not c["used"] and c["key"] == label_key(g["label"]) and c["period"] == g["period"]
+                     and (not value_too or c["value"] == g["value"])]
+            return next((c for c in found if c["page"] == g["page"]), found[0] if found else None)
+
+        for i, g in enumerate(gold_cells):  # pass 1: same label, period, and value
+            match = same_place(g, True) if g["value"] is not None else None
+            if match:
+                match["used"] = True
+                outcome[i] = ("correct", match)
+        for i, g in enumerate(gold_cells):  # pass 2: same label and period, another value
+            if outcome[i][0] is None and (match := same_place(g, False)):
+                match["used"] = True
+                outcome[i] = ("dash_filled" if g["value"] is None else "value_wrong", match)  # "-" printed: any value is wrong
+        for i, (g, (result, _)) in enumerate(zip(gold_cells, outcome)):  # pass 3: the gold value under another label
             if result is not None:
                 continue
             if g["value"] is None:

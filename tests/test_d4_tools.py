@@ -149,6 +149,16 @@ class ScorerTests(unittest.TestCase):
         self.assertEqual(self.totals(g, report([], [one]))["S2"], 1)
         self.assertEqual(self.totals(g, report([], [one, one]))["S2"], 0)
 
+    def test_a_label_on_two_rows_pairs_the_right_row(self):
+        # two "기타" rows; the product lost the first: the second is right and the first is missing, not wrong
+        g = gold(cell("기타", 0, "5", 5, 1), cell("기타", 0, "7", 7, 2),
+                 statements=[{"id": SID, "kind": "BS", "title": "연결재무상태표", "consolidated": True, "page": 1,
+                              "end_page": 2, "unit_text": "원"}])
+        rep = report([("기타", 0, 7, False)])
+        rep["statements"][0]["rows"][0]["values"][0]["page"] = 2
+        result = self.totals(g, rep)
+        self.assertEqual((result["correct"], result["value_wrong"], result["missing"], result["S1"]), (1, 0, 1, 0))
+
     def test_the_same_value_in_another_row_does_not_hide_a_missing_row(self):
         g = gold(cell("유동자산", 0, "1,000", 1000), cell("비유동자산", 0, "1,000", 1000))
         result = self.totals(g, report([("유동자산", 0, 1000, False)]))

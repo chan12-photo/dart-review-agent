@@ -3,7 +3,7 @@
     python eval/d4_scan.py --pdf report.pdf --gold gold.json --condition tilt --out report.tilt.pdf
 
 The pages are those of the gold's statements (each statement's first to last page), each rendered whole (never
-cropped) in grey, then turned and blurred as the condition says. Nothing is random: the same PDF and condition give
+cropped) in grey, then turned on a larger canvas (corners are kept) and blurred as the condition says. Nothing is random: the same PDF and condition give
 the same images, so there is no seed. The conditions were set before any scan was read, not tuned on a document.
 Next to the PDF goes a map (``<out>.map.json``): the source's SHA-256, the condition, the original page of each
 scanned page, and the SHA-256 of the scan and of its pixels. ``scan_gold`` renumbers a confirmed gold by that map,
@@ -30,19 +30,24 @@ def statement_pages(gold: dict) -> list[int]:
     return sorted({page for s in gold["statements"] for page in range(s["page"], s.get("end_page", s["page"]) + 1)})
 
 
+def transform(image, spec: dict):
+    """Turned on a larger canvas (``expand``: the corners of the page are never cut off), then blurred."""
+    from PIL import Image, ImageFilter
+    if spec["rotate"]:
+        image = image.rotate(spec["rotate"], resample=Image.BICUBIC, fillcolor=255, expand=True)
+    if spec["blur"]:
+        image = image.filter(ImageFilter.GaussianBlur(spec["blur"]))
+    return image
+
+
 def make_scan(source: Path, pages: list[int], condition: str, out: Path) -> dict:
     import pypdfium2
-    from PIL import Image, ImageFilter
     spec = CONDITIONS[condition]
     document = pypdfium2.PdfDocument(str(source))
     images = []
     for page in pages:
         image = document[page - 1].render(scale=spec["dpi"] / 72).to_pil().convert("L")
-        if spec["rotate"]:
-            image = image.rotate(spec["rotate"], resample=Image.BICUBIC, fillcolor=255)
-        if spec["blur"]:
-            image = image.filter(ImageFilter.GaussianBlur(spec["blur"]))
-        images.append(image)
+        images.append(transform(image, spec))
     document.close()
     pixels = hashlib.sha256()
     for image in images:
@@ -63,13 +68,23 @@ def make_scan(source: Path, pages: list[int], condition: str, out: Path) -> dict
 
 
 def scan_gold(gold: dict, page_map: dict) -> dict:
-    """A confirmed gold with the scan's page numbers (scan page n is original page pages[n-1])."""
+    """A confirmed gold with the scan's page numbers (scan page n is original page pages[n-1]). The map must be of
+    this gold's PDF (its SHA-256) and list exactly the gold's statement pages in order, else ValueError; the
+    returned gold's source is the scan, so only a report of that scan file fits it."""
+    source = (gold.get("source") or {}).get("sha256")
+    if not source or page_map.get("source_sha256") != source:
+        raise ValueError("the page map is of another PDF than the gold (source_sha256)")
+    if page_map.get("pages") != statement_pages(gold):
+        raise ValueError(f"the page map lists pages {page_map.get('pages')}, not the gold's {statement_pages(gold)}")
+    if page_map.get("condition") not in CONDITIONS or not page_map.get("scan_sha256"):
+        raise ValueError("the page map names no known condition or no scan SHA-256")
     number = {original: index for index, original in enumerate(page_map["pages"], 1)}
     statements = [{**s, "page": number[s["page"]], "end_page": number[s.get("end_page", s["page"])]}
                   for s in gold["statements"]]
     cells = [{**c, "page": number[c["page"]]} for c in gold["cells"]]
-    return {**gold, "statements": statements, "cells": cells, "scan": {k: page_map[k] for k in
-                                                                       ("source_sha256", "condition", "scan_sha256")}}
+    return {**gold, "statements": statements, "cells": cells,
+            "source": {"file": page_map.get("scan"), "sha256": page_map["scan_sha256"]},
+            "scan": {k: page_map[k] for k in ("source_sha256", "condition", "scan_sha256", "pages")}}
 
 
 def main() -> int:

@@ -19,14 +19,16 @@ gold statement's page range (each used once). Each gold cell (statement, printed
 - a printed "-": right when the product has no value there; a value there is "dash filled"  -> S1 if unmarked
 Only printed amounts (not "-") are gold cells: the denominator does not depend on the product.
 A missing cell is pointed at only by the product's structured reports of an amount it did not place (``pointers``):
-the report names the page and the printed number, and the row and period when it knows them; the gold cells it
-fits must be one printed place (one page, row, and period), and each report points at one cell. A missing cell in
+the report names the page and the printed number with its sign ("(47)" is not "47"), and the row and period when
+it knows them; the gold cells it fits must be one printed place (one page, row, and period), and each report
+points at one cell. A missing cell in
 a statement with the generic "AI가 한 부분을 읽지 못했다" is counted in G1 too.
 Product cells left over, also those of product statements no gold statement took, are "not in gold": each unmarked
 one needs a person's verdict ("wrong" or "ok", with a note) by its id ("statement/row/column" of the report). An
 unmarked extra judged wrong counts in S1. Labels are compared without spaces, item markers, and note references.
-The status separates what is done: machine scored; mapping confirmed by a person; extras judged by a person; and
-official (all of these, on a saved report).
+The status separates what is done: machine scored; mapping confirmed by a person; extras judged by a person; the
+document scorable (no statement a person marked "unscorable"); the report is of the gold's PDF (its source SHA-256,
+or the scan's for a synthetic scan); and official (all of these, on a saved report).
 """
 
 from __future__ import annotations
@@ -41,17 +43,16 @@ import sys
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-from eval.d4_gold import apply_mapping  # noqa: E402
+from eval.d4_gold import apply_mapping, label_key  # noqa: E402
 
 GENERIC = "한 부분을 읽지 못했다"
 PERIODS = {"당기": 0, "전기": 1}
 VERDICTS = ("wrong", "ok")
 
 
-def label_key(label: str) -> str:
-    label = re.sub(r"\(\s*주\s*석?\s*[\d,\s]+\)\s*$", "", label or "")
-    label = re.sub(r"^\s*(?:[ⅠⅡⅢⅣⅤⅥⅦⅧⅨⅩ]+\.?|[IVXlI|]{1,4}\.|\d{1,2}[.)]|\(\d{1,2}\)|[가-하]\.|[①-⑳])\s*", "", label)
-    return re.sub(r"\s+", "", label)
+def negative(text: str) -> bool:
+    """A printed amount's sign: parentheses or a leading minus (−, △) make it negative."""
+    return bool(re.match(r"^\s*[(\-−△]", text or ""))
 
 
 def digits(text: str) -> str:
@@ -84,7 +85,8 @@ def pointers(problems: list[str]) -> list[dict]:
         listed = ORPHANS.match(problem)
         if listed:
             hits += [(m.group(1), m.group(2), None, m.group(3)) for m in ORPHAN.finditer(listed.group(1))]
-        found += [{"page": int(page), "label": label, "period": period, "number": digits(number), "text": problem}
+        found += [{"page": int(page), "label": label, "period": period, "number": digits(number),
+                   "negative": negative(number), "text": problem}
                   for page, label, period, number in hits if digits(number)]
     return found
 
@@ -101,7 +103,7 @@ def covered(marks: list[dict], gold_cells: list[dict], missing: set[int]) -> set
     done: set[int] = set()
     for mark in marks:
         fits = [i for i, g in enumerate(gold_cells) if g["value"] is not None and g["page"] == mark["page"]
-                and digits(g["printed"]) == mark["number"]
+                and digits(g["printed"]) == mark["number"] and negative(g["printed"]) == mark["negative"]
                 and (mark["label"] is None or label_key(g["label"]) == label_key(mark["label"]))
                 and (mark["period"] is None or g["period"] == mark["period"])]
         if len({_place(gold_cells[i]) for i in fits}) != 1:
@@ -148,6 +150,9 @@ def check_verdicts(extras: dict, ids: set[str], report_sha256: str | None) -> di
 
 
 def score(gold: dict, report: dict, extras: dict | None = None, report_sha256: str | None = None) -> dict:
+    gold_source, report_source = (gold.get("source") or {}).get("sha256"), report.get("source_sha256")
+    if gold_source and report_source and gold_source != report_source:
+        raise ValueError("the report is of another PDF than the gold (source_sha256 differs)")
     extras = extras or {}
     unused = list(enumerate(report["statements"]))
     document_problems = report.get("problems", [])
@@ -188,7 +193,8 @@ def score(gold: dict, report: dict, extras: dict | None = None, report_sha256: s
             if g["value"] is None:
                 outcome[i] = ("dash", None)  # printed "-", nothing in the workbook: right, and not a gold cell
                 continue
-            match = next((c for c in cells if not c["used"] and c["period"] == g["period"] and c["value"] == g["value"]), None)
+            found = [c for c in cells if not c["used"] and c["period"] == g["period"] and c["value"] == g["value"]]
+            match = next((c for c in found if c["page"] == g["page"]), found[0] if found else None)  # same page first
             if match:
                 match["used"] = True
             outcome[i] = ("label_wrong", match) if match else ("missing", None)
@@ -274,9 +280,13 @@ def score(gold: dict, report: dict, extras: dict | None = None, report_sha256: s
     mapping = gold.get("mapping") or {}
     mapping_confirmed = mapping.get("status") == "confirmed" and bool(mapping.get("confirmed_by"))
     extras_judged = totals["unjudged_extras"] == 0
+    scorable = not gold.get("unscorable")
+    source_verified = bool(gold_source) and gold_source == report_source
     totals["status"] = {"machine_scored": True, "mapping_confirmed": mapping_confirmed, "extras_judged": extras_judged,
-                        "report_saved": report_sha256 is not None,
-                        "official_ready": mapping_confirmed and extras_judged and report_sha256 is not None}
+                        "scorable": scorable, "source_verified": source_verified, "report_saved": report_sha256 is not None,
+                        "official_ready": (mapping_confirmed and extras_judged and scorable and source_verified
+                                           and report_sha256 is not None)}
+    totals["unscorable"] = list(gold.get("unscorable") or [])
     return {"report_sha256": report_sha256, "totals": totals, "statements": statements,
             "product_statements_not_in_gold": others}
 
@@ -305,22 +315,30 @@ def main() -> int:
         return 2
     if args.page_map:
         from eval.d4_scan import scan_gold
-        gold = scan_gold(gold, json.loads(args.page_map.read_text(encoding="utf-8")))
+        try:
+            gold = scan_gold(gold, json.loads(args.page_map.read_text(encoding="utf-8")))
+        except ValueError as exc:
+            print(f"the page map does not fit: {exc}")
+            return 2
     if args.pdf:
+        source = sha256(args.pdf)
+        if source != (gold.get("source") or {}).get("sha256"):
+            print(f"{args.pdf} is not the PDF of the gold (or of the page map's scan)")
+            return 2
         if args.report.exists():
             print(f"{args.report} exists: a saved report is never overwritten (verdicts may name its cells)")
             return 2
         from dart_review.documents import extract
         from dart_review.server import report
         extraction = extract(args.pdf, ocr="auto", reader=args.reader)
-        data = report(extraction, args.pdf.name, args.reader)
+        data = {**report(extraction, args.pdf.name, args.reader), "source_sha256": source}
         args.report.write_text(json.dumps(data, ensure_ascii=False, indent=1), encoding="utf-8")
     data = json.loads(args.report.read_text(encoding="utf-8"))
     extras = json.loads(args.extras.read_text(encoding="utf-8")) if args.extras else {}
     try:
         result = score(gold, data, extras, sha256(args.report))
     except ValueError as exc:
-        print(f"the verdicts are not valid: {exc}")
+        print(f"not scored: {exc}")
         return 2
     args.out.write_text(json.dumps(result, ensure_ascii=False, indent=1), encoding="utf-8")
     print(json.dumps(result["totals"], ensure_ascii=False))

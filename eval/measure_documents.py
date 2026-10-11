@@ -312,7 +312,8 @@ def main() -> int:
             continue
         seconds = round(time.monotonic() - started)
         if args.reports:
-            saved = report(extraction, path.name, args.reader)
+            # the source's hash ties the saved report to the PDF of a D4 gold (eval/d4_score.py checks it)
+            saved = {**report(extraction, path.name, args.reader), "source_sha256": hashlib.sha256(data).hexdigest()}
             (args.reports / f"{document['key']}.{args.reader}.report.json").write_text(
                 json.dumps(saved, ensure_ascii=False, indent=1), encoding="utf-8")
         result = {"company": document["company"], "corp_code": document["corp_code"], "file": document["file"],

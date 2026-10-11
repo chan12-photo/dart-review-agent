@@ -35,7 +35,7 @@ CONFIRMED = {"status": "confirmed", "confirmed_by": "user", "confirmed_at": "202
 def gold(*cells, statements=None):
     statements = statements or [{"id": SID, "kind": "BS", "title": "연결재무상태표", "consolidated": True, "page": 1,
                                  "end_page": 1, "unit_text": "원"}]
-    return {"statements": statements, "needs_mapping": [], "mapping": CONFIRMED,
+    return {"source": {"file": "x.pdf", "sha256": "src"}, "statements": statements, "needs_mapping": [], "mapping": CONFIRMED,
             "cells": [{"statement_id": sid, "statement": "연결재무상태표", "kind": "BS", "page": page, "label": label,
                        "period": period, "printed": printed, "value": value}
                       for sid, page, label, period, printed, value in cells]}
@@ -50,7 +50,7 @@ def report(rows, problems=(), statements=None):
     return {"statements": [{"title": "연결재무상태표", "page": page, "problems": probs, "rows": [
         {"label": label, "values": [{"column": period, "value": value, "printed": f"{value:,}",
                                      "status": "확인 필요" if flagged else "검사 통과", "page": page}]}
-        for label, period, value, flagged in rs]} for page, rs, probs in statements], "problems": []}
+        for label, period, value, flagged in rs]} for page, rs, probs in statements], "problems": [], "source_sha256": "src"}
 
 
 def verdicts(sha=None, by="user", **cells):
@@ -71,7 +71,8 @@ class ScorerTests(unittest.TestCase):
         self.assertEqual((result["correct"], result["S1"], result["L1"], result["S2"]), (3, 0, 0, 0))
         # Codex third review 12: a score of an unsaved report is machine scored, never official
         self.assertEqual(result["status"], {"machine_scored": True, "mapping_confirmed": True, "extras_judged": True,
-                                            "report_saved": False, "official_ready": False})
+                                            "scorable": True, "source_verified": True, "report_saved": False,
+                                            "official_ready": False})
         self.assertTrue(self.totals(self.GOLD, report(rows), sha="abc")["status"]["official_ready"])
 
     def test_an_unmarked_wrong_value_is_s1_and_a_marked_one_is_not(self):
@@ -159,6 +160,40 @@ class ScorerTests(unittest.TestCase):
         result = self.totals(g, rep)
         self.assertEqual((result["correct"], result["value_wrong"], result["missing"], result["S1"]), (1, 0, 1, 0))
 
+    def test_a_label_wrong_pairs_on_the_same_page_first(self):
+        # Codex fourth review 5: the third pass took a marked cell of page 1 before the unmarked one of page 2
+        g = gold(cell("A", 0, "10", 10, 2), statements=[{"id": SID, "kind": "BS", "title": "연결재무상태표",
+                                                          "consolidated": True, "page": 1, "end_page": 2, "unit_text": "원"}])
+        rep = report([("B", 0, 10, True), ("C", 0, 10, False)])
+        rep["statements"][0]["rows"][1]["values"][0]["page"] = 2
+        result = score(g, rep)
+        self.assertEqual([(c["product_label"], c["flagged"]) for c in result["statements"][0]["cells"]], [("C", False)])
+        self.assertEqual((result["totals"]["L1"], [x["label"] for x in result["statements"][0]["extras"]]), (1, ["B"]))
+
+    def test_a_report_of_another_sign_points_at_nothing(self):
+        # Codex fourth review 6: "'47'" pointed at the printed "(47)"
+        g = gold(cell("손실", 0, "(47)", -47))
+        for problem, s2 in (("1쪽 '손실' 줄 당기: 원본의 금액 '47'를 AI가 읽지 않았다", 1),
+                            ("1쪽 '손실' 줄 당기: 원본의 금액 '(47)'를 AI가 읽지 않았다", 0),
+                            ("표에 넣지 못한 금액 1개 (1쪽 '손실' 줄 '(47)'): 줄이나 열을 복원하지 못한 행이 있을 수 있다", 0)):
+            self.assertEqual(self.totals(g, report([], [problem]))["S2"], s2, problem)
+
+    def test_a_report_of_another_pdf_is_not_scored_and_an_unknown_source_is_not_official(self):
+        # Codex fourth review 8: nothing tied the gold, the scan map, and the report to one PDF
+        rep = report([("유동자산", 0, 1000, False)])
+        with self.assertRaisesRegex(ValueError, "another PDF"):
+            score(gold(cell("유동자산", 0, "1,000", 1000)), {**rep, "source_sha256": "other"}, None, "abc")
+        del rep["source_sha256"]
+        status = self.totals(gold(cell("유동자산", 0, "1,000", 1000)), rep, sha="abc")["status"]
+        self.assertEqual((status["source_verified"], status["official_ready"]), (False, False))
+
+    def test_an_unscorable_document_is_never_official(self):
+        # Codex fourth review 3: a statement neither the gold nor the product found left an official zero
+        g = gold(cell("유동자산", 0, "1,000", 1000))
+        g["unscorable"] = ["n3: 현금흐름표를 원본에서 찾지 못했다"]
+        status = self.totals(g, report([("유동자산", 0, 1000, False)]), sha="abc")["status"]
+        self.assertEqual((status["scorable"], status["official_ready"]), (False, False))
+
     def test_the_same_value_in_another_row_does_not_hide_a_missing_row(self):
         g = gold(cell("유동자산", 0, "1,000", 1000), cell("비유동자산", 0, "1,000", 1000))
         result = self.totals(g, report([("유동자산", 0, 1000, False)]))
@@ -166,7 +201,7 @@ class ScorerTests(unittest.TestCase):
 
     def test_a_statement_the_product_did_not_find_is_missing_cells(self):
         # it made the result "incomplete" before: a statement the product lost is S2, not a reason to stop
-        result = self.totals(self.GOLD, {"statements": [], "problems": []}, sha="abc")
+        result = self.totals(self.GOLD, {"statements": [], "problems": [], "source_sha256": "src"}, sha="abc")
         self.assertEqual((result["statements_not_found"], result["missing"], result["S2"]), (1, 3, 3))
         self.assertTrue(result["status"]["official_ready"])
 
@@ -303,9 +338,50 @@ class GoldBuilderTests(unittest.TestCase):
         items = [{"sj_div": sj, "account_nm": n, "thstrm_amount": a, "frmtrm_amount": "0"}
                  for sj, n, a in (("CIS", "매출액", "1000"), ("BS", "자산총계", "5000"), ("CF", "현금", "7"),
                                   ("SCE", "자본", "9"))]
-        result = self.build_lines(lines, items)  # the block is a 손익계산서: 포괄손익 is the same statement
-        self.assertEqual(sorted(n["kind"] for n in result["needs_mapping"] if n["why"] == "statement_not_found"),
-                         ["BS", "CF"])
+        result = self.build_lines(lines, items)  # the block is a 손익계산서; OpenDART has a 포괄손익계산서 too
+        needs = {n["kind"]: n["id"] for n in result["needs_mapping"] if n["why"] == "statement_not_found"}
+        self.assertEqual(sorted(needs), ["BS", "CF", "CIS"])  # Codex fourth review 3: IS and CIS are looked for apart
+        others = {n["id"]: {"decision": "keep", "note": f"{n['id']} 인쇄 그대로"} for n in result["needs_mapping"]
+                  if n["why"] != "statement_not_found"}
+        for decision in ({"decision": "ignore"}, {"decision": "same_statement"}):  # no plain ignore; BS has no pair
+            with self.assertRaises(ValueError):
+                apply_mapping(result, {"status": "draft", "decisions": {**others, needs["BS"]: {**decision, "note": "a"},
+                                       needs["CF"]: {"decision": "unscorable", "note": "b"},
+                                       needs["CIS"]: {"decision": "same_statement", "note": "c"}}})
+        bs = {"id": "연결재무상태표@3", "kind": "BS", "title": "연결재무상태표", "consolidated": True, "page": 3, "end_page": 3,
+              "unit_text": "원"}
+        decided = apply_mapping(result, {"status": "draft", "decisions": {
+            **others, needs["CIS"]: {"decision": "same_statement", "note": "1쪽 손익계산서가 포괄손익을 함께 보인다"},
+            needs["BS"]: {"decision": "add_statement", "note": "3쪽 재무상태표를 사람이 옮겼다", "statement": bs,
+                          "cells": [{"statement_id": bs["id"], "page": 3, "label": "자산총계", "period": 0,
+                                     "printed": "5,000", "value": 5000}]},
+            needs["CF"]: {"decision": "unscorable", "note": "현금흐름표를 원본에서 찾지 못했다"}}})
+        self.assertEqual(([s["id"] for s in decided["statements"]], decided["unscorable"]),
+                         (["손익계산서@1", "연결재무상태표@3"], [f"{needs['CF']}: 현금흐름표를 원본에서 찾지 못했다"]))
+        self.assertIn(("자산총계", 5000), [(c["label"], c["value"]) for c in decided["cells"]])
+
+    def test_amounts_without_separators_go_to_a_person(self):
+        # Codex fourth review 2: "매출액 1000 2000" left neither cells nor an item
+        only = self.build_lines([line("매출액", "1000", "2000", 100)], [])
+        self.assertEqual([(n["why"], n.get("lines")) for n in only["needs_mapping"]],
+                         [("no_grouped_amounts", ["매출액 1000 2000"])])
+        mixed = self.build_lines([line("매출액", "1,000", "2,000", 100), line("기타", "1000", "-", 120)], [])
+        self.assertEqual([(n["why"], n.get("line")) for n in mixed["needs_mapping"] if n["why"] != "not_in_dart"],
+                         [("ungrouped_amount", "기타 1000 -")])
+        self.assertNotIn("기타", {c["label"] for c in mixed["cells"]})
+
+    def test_a_marker_does_not_make_a_second_cell_at_a_place(self):
+        # Codex fourth review 4: "Ⅰ. 유동자산" was added beside "유동자산", one printed row counted twice
+        lines = [line("유동자산", "1,000", "2,000", 100), line("B계정", "47", "48", 930)]
+        result = self.build_lines(lines, [])
+        need = next(n["id"] for n in result["needs_mapping"] if n["why"] == "uncertain_line")
+        cell_ = {"statement_id": "손익계산서@1", "page": 1, "label": "Ⅰ. 유동자산", "period": 0, "printed": "1,000",
+                 "value": 1000}
+        others = {n["id"]: {"decision": "keep", "note": f"{n['id']} 인쇄 그대로"} for n in result["needs_mapping"]
+                  if n["id"] != need}
+        with self.assertRaisesRegex(ValueError, "already"):
+            apply_mapping(result, {"status": "draft",
+                                   "decisions": {**others, need: {"decision": "add", "note": "x", "cells": [cell_]}}})
 
     def test_numbers_without_a_label_at_the_page_bottom_go_to_a_person(self):
         lines = [line("매출액", "1,000", "2,000", 100), words_line([("47", 310, 350), ("48", 510, 550)], 940),
@@ -356,9 +432,11 @@ class GoldBuilderTests(unittest.TestCase):
                                               status="confirmed", confirmed_by="user", confirmed_at="2026-10-11"))
         self.assertEqual([(c["label"], c["value"], c["source"]) for c in added["cells"] if c["label"] == "C계정"],
                          [("C계정", 1000, f"mapping:{need}")])
-        result["statements"][0]["unit_text"] = "백만원"  # a 백만원 statement: 10^6, or 원 for a per-share row
-        for value, ok in ((1_000_000_000, True), (1000, True), (1_000_000, False)):
-            cell_ = {**a_cell, "label": "C계정", "value": value}
+        result["statements"][0]["unit_text"] = "백만원"  # a 백만원 statement: 10^6, or 원 for a per-share row only
+        # Codex fourth review 4: "1,000" of an ordinary row passed as 1,000원 in a 백만원 statement
+        for label, value, ok in (("C계정", 1_000_000_000, True), ("C계정", 1000, False), ("C계정", 1_000_000, False),
+                                 ("기본주당이익", 1000, True)):
+            cell_ = {**a_cell, "label": label, "value": value}
             if ok:
                 apply_mapping(result, mapping({"decision": "add", "cells": [cell_]}))
             else:
@@ -461,12 +539,15 @@ class ScanTests(unittest.TestCase):
         sample = SampleStatement("재무상태표", "주식회사 예시", ["제 57 기 2025년 12월 31일 현재"], "원", ["당기", "전기"],
                                  [(f"계정{i}", ["1,000", "2,000"]) for i in range(20)])
         gold_ = {"statements": [{"id": "재무상태표@2", "kind": "BS", "title": "재무상태표", "page": 2, "end_page": 3}],
+                 "source": {"file": "text.pdf", "sha256": None},
                  "cells": [{"statement_id": "재무상태표@2", "page": 3, "label": "계정1", "period": 0, "printed": "1,000",
                             "value": 1000}], "needs_mapping": []}
         self.assertEqual(statement_pages(gold_), [2, 3])
         with tempfile.TemporaryDirectory() as folder, mock.patch.object(d4_candidates, "MIN_CHARS", 100):
             source = Path(folder) / "text.pdf"
             text_pdf(source, [sample, sample, sample, sample])
+            import hashlib
+            gold_["source"]["sha256"] = hashlib.sha256(source.read_bytes()).hexdigest()
             records = {}
             for condition in CONDITIONS:
                 out = Path(folder) / f"{condition}.pdf"
@@ -479,7 +560,27 @@ class ScanTests(unittest.TestCase):
         self.assertEqual((records["tilt"]["dpi"], records["tilt"]["rotate"]), (150, 1.0))
         scanned = scan_gold(gold_, records["blur"])
         self.assertEqual((scanned["statements"][0]["page"], scanned["statements"][0]["end_page"],
-                          scanned["cells"][0]["page"]), (1, 2, 2))
+                          scanned["cells"][0]["page"], scanned["source"]["sha256"]), (1, 2, 2, records["blur"]["scan_sha256"]))
+        # Codex fourth review 8: a map with its pages reversed, or of another PDF, was taken
+        for bad, message in (({**records["blur"], "pages": [3, 2]}, "pages"),
+                             ({**records["blur"], "source_sha256": "0" * 64}, "another PDF")):
+            with self.assertRaisesRegex(ValueError, message):
+                scan_gold(gold_, bad)
+
+    def test_turning_keeps_the_corners(self):
+        # Codex fourth review 7: a 1 degree turn without expand cut the page's corners off
+        from PIL import Image
+        from eval.d4_scan import CONDITIONS, transform
+        image = Image.new("L", (100, 100), 255)
+        for x, y in ((0, 0), (99, 0), (0, 99), (99, 99)):
+            image.putpixel((x, y), 0)
+        turned = transform(image, CONDITIONS["tilt"])
+        self.assertGreater(turned.size, (100, 100))
+        self.assertLess(min(turned.getdata()), 200)  # the black corners are still there, if softened
+        corners = [turned.crop(box).getextrema()[0] for box in ((0, 0, 6, 6), (turned.width - 6, 0, turned.width, 6),
+                                                                (0, turned.height - 6, 6, turned.height),
+                                                                (turned.width - 6, turned.height - 6, turned.width, turned.height))]
+        self.assertTrue(all(value < 250 for value in corners), corners)
 
 
 class PreflightTests(unittest.TestCase):

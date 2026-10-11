@@ -19,7 +19,10 @@ from unittest import mock
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
+from eval import d4_candidates  # noqa: E402
+from eval.d4_candidates import check_pdf, pick_attachment, report_filings  # noqa: E402
 from eval.d4_gold import apply_mapping, build  # noqa: E402
+from eval.d4_preflight import MODEL, TOOL_PATHS, check, freeze_record  # noqa: E402
 from eval.d4_score import score  # noqa: E402
 
 HAS_PDF = find_spec("pdfplumber") is not None
@@ -275,6 +278,15 @@ class GoldBuilderTests(unittest.TestCase):
         self.assertEqual([(n["why"], n["lines"]) for n in result["needs_mapping"]],
                          [("no_grouped_amounts", ["기본주당이익 47 48"])])
 
+    def test_a_statement_opendart_has_but_the_builder_did_not_find_goes_to_a_person(self):
+        lines = [line("매출액", "1,000", "2,000", 100)]
+        items = [{"sj_div": sj, "account_nm": n, "thstrm_amount": a, "frmtrm_amount": "0"}
+                 for sj, n, a in (("CIS", "매출액", "1000"), ("BS", "자산총계", "5000"), ("CF", "현금", "7"),
+                                  ("SCE", "자본", "9"))]
+        result = self.build_lines(lines, items)  # the block is a 손익계산서: 포괄손익 is the same statement
+        self.assertEqual(sorted(n["kind"] for n in result["needs_mapping"] if n["why"] == "statement_not_found"),
+                         ["BS", "CF"])
+
     def test_numbers_without_a_label_at_the_page_bottom_go_to_a_person(self):
         lines = [line("매출액", "1,000", "2,000", 100), words_line([("47", 310, 350), ("48", 510, 550)], 940),
                  words_line([("12", 290, 300)], 960)]
@@ -368,6 +380,103 @@ class GoldBuilderPdfTests(unittest.TestCase):
         self.assertIn(("dart_only", "부채총계"), whys)
         self.assertIn(("not_in_dart", "비유동자산"), whys)
         self.assertTrue(all(n["id"].startswith("n") for n in result["needs_mapping"]))
+
+
+class CandidateRuleTests(unittest.TestCase):
+    """Codex third review 9: which filing and attachment, and when a PDF counts as not opening, by fixed rules."""
+
+    def test_the_latest_2025_business_report_filing_comes_first(self):
+        filings = [{"report_nm": "사업보고서 (2025.12)", "rcept_dt": "20260310", "rcept_no": "20260310000100"},
+                   {"report_nm": "[기재정정]사업보고서 (2025.12)", "rcept_dt": "20260320", "rcept_no": "20260320000200"},
+                   {"report_nm": "[첨부추가]사업보고서 (2025.12)", "rcept_dt": "20260320", "rcept_no": "20260320000300"},
+                   {"report_nm": "사업보고서 (2024.12)", "rcept_dt": "20250310", "rcept_no": "20250310000100"},
+                   {"report_nm": "반기보고서 (2025.06)", "rcept_dt": "20250814", "rcept_no": "20250814000100"}]
+        self.assertEqual([f["rcept_no"] for f in report_filings(filings)],
+                         ["20260320000300", "20260320000200", "20260310000100"])
+
+    def test_the_consolidated_audit_report_attachment(self):
+        self.assertEqual(pick_attachment(["감사보고서", "연결내부회계관리제도 감사보고서", "연결 감사보고서", "연결감사보고서(정정)"]),
+                         "연결 감사보고서")
+        self.assertIsNone(pick_attachment(["감사보고서", "내부회계관리제도 감사보고서"]))
+
+    def test_a_file_that_is_not_a_pdf_does_not_open(self):
+        with tempfile.TemporaryDirectory() as folder:
+            path = Path(folder) / "x.pdf"
+            path.write_bytes(b"not a pdf")
+            record = check_pdf(path)
+        self.assertEqual((record["verdict"], len(record["sha256"])), ("열리지 않음", 64))
+
+    @unittest.skipUnless(HAS_PDF, "pip install -e '.[docs]'")
+    def test_a_text_pdf_is_included_and_a_scan_has_no_text_layer(self):
+        from dart_review.documents.samples import SampleStatement, korean_font, scan_pdf, text_pdf
+        sample = SampleStatement("재무상태표", "주식회사 예시", ["제 57 기 2025년 12월 31일 현재"], "원", ["당기", "전기"],
+                                 [(f"계정{i}", ["1,000", "2,000"]) for i in range(20)])
+        with tempfile.TemporaryDirectory() as folder, mock.patch.object(d4_candidates, "MIN_CHARS", 100):
+            text = Path(folder) / "text.pdf"
+            text_pdf(text, [sample])
+            self.assertEqual(check_pdf(text)["verdict"], "포함")
+            if korean_font():
+                scan = Path(folder) / "scan.pdf"
+                scan_pdf(scan, [sample])
+                self.assertEqual(check_pdf(scan)["verdict"], "글자 층 없음")
+
+
+class PreflightTests(unittest.TestCase):
+    """Codex third review 8: a commit diff did not see a frozen file changed only in the working tree."""
+
+    ENV = {"python": "3.13.12", "packages": ["pdfplumber==0.11.0"], "model": {MODEL: "abc123"},
+           "tesseract": "tesseract 5.5.3"}
+
+    def setUp(self):
+        self.folder = tempfile.TemporaryDirectory()
+        self.root = Path(self.folder.name)
+        for path in ("dart_review/__init__.py", "pyproject.toml") + TOOL_PATHS:
+            (self.root / path).parent.mkdir(parents=True, exist_ok=True)
+            (self.root / path).write_text(f"# {path}\n", encoding="utf-8")
+        self.git("init", "-q")
+        self.commit()
+        self.record = freeze_record(self.root, "HEAD", "HEAD", self.ENV)
+
+    def tearDown(self):
+        self.folder.cleanup()
+
+    def git(self, *args):
+        import subprocess
+        subprocess.run(["git", "-c", "user.name=t", "-c", "user.email=t@example.com", "-c", "commit.gpgsign=false",
+                        *args], cwd=self.root, check=True, capture_output=True)
+
+    def commit(self):
+        self.git("add", "-A")
+        self.git("commit", "-q", "-m", "x")
+
+    def failed(self, env=None, imported_from=None):
+        result = check(self.root, self.record, env or self.ENV, imported_from)
+        return [c["check"] for c in result["checks"] if not c["ok"]]
+
+    def test_the_frozen_checkout_passes(self):
+        self.assertEqual(self.failed(imported_from=self.root / "dart_review/__init__.py"), [])
+
+    def test_a_change_only_in_the_working_tree_fails(self):
+        (self.root / "eval/d4_score.py").write_text("# changed after the freeze\n", encoding="utf-8")
+        self.assertEqual(self.failed(), ["clean working tree and index (git status --porcelain)"])
+        (self.root / "notes.txt").write_text("x", encoding="utf-8")
+        self.commit()  # committed: the tree is clean, but the tool is not the frozen one
+        self.assertEqual(self.failed(), ["tools eval/d4_score.py at HEAD is the frozen object"])
+
+    def test_an_untracked_file_and_another_environment_fail(self):
+        (self.root / "eval/extra.py").write_text("x", encoding="utf-8")
+        self.assertEqual(self.failed(), ["clean working tree and index (git status --porcelain)"])
+        (self.root / "eval/extra.py").unlink()
+        other = {**self.ENV, "packages": ["pdfplumber==0.11.1"], "model": {MODEL: None}}
+        self.assertEqual(self.failed(other), ["packages as frozen", "model as frozen"])
+        self.assertEqual(self.failed(imported_from=Path("/elsewhere/dart_review/__init__.py")),
+                         ["dart_review imported from this checkout"])
+
+    def test_a_tool_missing_at_its_commit_cannot_be_frozen(self):
+        self.git("rm", "-q", "eval/d4_scan.py")
+        self.commit()
+        with self.assertRaisesRegex(ValueError, "eval/d4_scan.py"):
+            freeze_record(self.root, "HEAD", "HEAD", self.ENV)
 
 
 if __name__ == "__main__":

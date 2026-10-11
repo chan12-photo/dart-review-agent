@@ -15,6 +15,9 @@ cannot decide is a mapping item (``needs_mapping``, each with an id) for a perso
   its proposed cells; never dropped silently
 - no_grouped_amounts: a statement without any amount printed with thousands separators (all amounts small, or
   none), with its lines that have numbers: the builder cannot place its amount columns
+- statement_not_found: a consolidated statement OpenDART has (재무상태표, 손익 or 포괄손익계산서, 현금흐름표) that the
+  builder found no block for; the only decision is "ignore", and the product's statement of that kind is then
+  outside the gold, so a person judges each of its cells (the scorer's extras)
 - slots (more than two amounts on a line), no_label, one_slot_no_boundary, no_unit
 A line is dropped without a person only when it is a known page footer, a dated period line, or nothing but
 heading and unit words ("과 목", "제 57 (당) 기", "(단위: 원)"): a line with a row label of its own is never
@@ -262,6 +265,12 @@ def build(path: Path, items_by_division: dict[str, list[dict]]) -> dict:
             if not entry["used"]:
                 needs.append({"why": "dart_only", "statement_id": statement["id"], "statement": statement["title"],
                               "name": entry["name"], "period": entry["period"], "value": entry["value"]})
+    # a consolidated statement OpenDART has but no block was found for (손익 and 포괄손익 are one: a single 포괄손익계산서
+    # prints both); never left without an item
+    printed = {("IS" if s["kind"] == "CIS" else s["kind"]) for s in statements if s["consolidated"]}
+    for kind in sorted({("IS" if item["sj_div"] == "CIS" else item["sj_div"]) for item in items_by_division.get("CFS", [])}
+                       & {"BS", "IS", "CF"} - printed):
+        needs.append({"why": "statement_not_found", "division": "CFS", "kind": kind})
     for number, need in enumerate(needs, 1):
         need["id"] = f"n{number}"
     return {"statements": statements, "cells": cells, "needs_mapping": needs}
@@ -273,7 +282,7 @@ def cell_key(cell: dict) -> str:
 
 ALLOWED = {"not_in_dart": {"keep", "drop"}, "dart_only": {"ignore", "add"}, "uncertain_line": {"ignore", "add"},
            "no_grouped_amounts": {"ignore", "add"}, "slots": {"ignore", "add"}, "no_label": {"ignore", "add"},
-           "one_slot_no_boundary": {"ignore", "add"}, "no_unit": {"ignore", "add"}}
+           "one_slot_no_boundary": {"ignore", "add"}, "no_unit": {"ignore", "add"}, "statement_not_found": {"ignore"}}
 
 
 def _place(cell: dict) -> tuple:

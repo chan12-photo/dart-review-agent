@@ -312,7 +312,8 @@ def _place(cell: dict) -> tuple:
 
 def _checked_cell(cell: object, statements: dict[str, dict], source: str) -> dict:
     """A cell a person adds: of a gold statement and a page in its range, a label, period 0 or 1, and the value its
-    printed text gives (in 원: the printed number in the statement's unit, or in 원 for a per-share row (주당), with
+    printed text gives (in 원: the printed number in the statement's unit, or in 원 for a per-share row (주당) or a
+    row the person marks "row_unit": "원" (printed "(단위: 원)" or "… 원" on its line, as the builder reads it), with
     its sign; any unit only when the statement's unit is unknown; None for "-")."""
     if not isinstance(cell, dict):
         raise ValueError(f"{source}: a cell is an object, not {cell!r}")
@@ -332,15 +333,18 @@ def _checked_cell(cell: object, statements: dict[str, dict], source: str) -> dic
         fits = value is None
     else:
         if statement.get("unit_text") in UNITS:
-            units = {UNITS[statement["unit_text"]]} | ({1} if "주당" in label else set())
+            units = {UNITS[statement["unit_text"]]} | ({1} if "주당" in label or cell.get("row_unit") == "원" else set())
         else:
             units = set(UNITS.values())
         fits = isinstance(value, int) and not isinstance(value, bool) and any(
             value == value_of(printed, unit) for unit in units)
     if not fits:
         raise ValueError(f"{source}: value {value!r} is not what {printed!r} prints")
+    if cell.get("row_unit") not in (None, "원"):
+        raise ValueError(f"{source}: row_unit is only \"원\", not {cell.get('row_unit')!r}")
     return {"statement_id": statement["id"], "statement": statement["title"], "kind": statement["kind"], "page": page,
-            "label": label, "period": period, "printed": printed, "value": value, "source": source}
+            "label": label, "period": period, "printed": printed, "value": value, "source": source,
+            **({"row_unit": "원"} if cell.get("row_unit") == "원" else {})}
 
 
 def apply_mapping(gold: dict, mapping: dict) -> dict:

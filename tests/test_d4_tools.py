@@ -437,6 +437,8 @@ class GoldBuilderTests(unittest.TestCase):
         for label, value, ok in (("C계정", 1_000_000_000, True), ("C계정", 1000, False), ("C계정", 1_000_000, False),
                                  ("기본주당이익", 1000, True)):
             cell_ = {**a_cell, "label": label, "value": value}
+            if label == "C계정" and value == 1000:  # a row printed in 원 can still be added, said so explicitly
+                apply_mapping(result, mapping({"decision": "add", "cells": [{**cell_, "row_unit": "원"}]}))
             if ok:
                 apply_mapping(result, mapping({"decision": "add", "cells": [cell_]}))
             else:

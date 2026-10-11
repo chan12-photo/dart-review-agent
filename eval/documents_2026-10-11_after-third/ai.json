@@ -1,0 +1,1978 @@
+{
+ "classification": "v2",
+ "code_commit": "99c72f7af798e02d37c2a95456db036e70bea17b",
+ "code_commit_at_start": "aeb9733bec8a01f532e23153a7ff9ffbe579bcc5",
+ "code_changed_since_commit": false,
+ "opendart": {
+  "year": 2025,
+  "report": "11011",
+  "fs_div": "CFS or OFS"
+ },
+ "documents": [
+  {
+   "company": "삼성전자",
+   "corp_code": "00126380",
+   "file": "2025_con_quarter04_all.pdf",
+   "sha256": "5abc1d73bfcde7abce83ca0540e16c9acf3639d77ccf59b207d56660eced6ae3",
+   "bytes": 1055381,
+   "reader": "ai",
+   "seconds": 149,
+   "model": "qwen3-vl:8b",
+   "prompt_version": "band-v1",
+   "model_calls": 20,
+   "cells": 237,
+   "needs_review": 1,
+   "document_problems": [],
+   "statements": [
+    {
+     "title": "연결재무상태표",
+     "page": 10,
+     "opendart": "CFS",
+     "rows": 49,
+     "cells": 98,
+     "flagged": 0,
+     "classes": {
+      "dart_exact": 98,
+      "dart_value": 0,
+      "dart_sign_cf": 0,
+      "sign_as_printed": 0,
+      "pdf_confirmed": 0,
+      "wrong_period": 0,
+      "unit_mismatch": 0,
+      "sign_review": 0,
+      "unconfirmed": 0
+     },
+     "labels": {
+      "label_ok": 98,
+      "label_differs": 0,
+      "label_review": 0,
+      "label_unknown": 0
+     },
+     "sums_checked": 18,
+     "silent_candidates": [],
+     "review": [],
+     "missing": [],
+     "problems": [
+      "10쪽: AI가 '순확정급여자산' 줄을 '순환정금여자산'(으)로 읽어 원본 계정명을 썼다",
+      "10쪽: AI가 '유동부채' 줄을 '부채'(으)로 읽어 원본 계정명을 썼다",
+      "10쪽: AI가 '매입채무' 줄을 '유동부채'(으)로 읽어 원본 계정명을 썼다",
+      "10쪽: AI가 '충당부채' 줄을 '총당부채'(으)로 읽어 원본 계정명을 썼다"
+     ]
+    },
+    {
+     "title": "연결손익계산서",
+     "page": 12,
+     "opendart": "CFS",
+     "rows": 17,
+     "cells": 34,
+     "flagged": 0,
+     "classes": {
+      "dart_exact": 34,
+      "dart_value": 0,
+      "dart_sign_cf": 0,
+      "sign_as_printed": 0,
+      "pdf_confirmed": 0,
+      "wrong_period": 0,
+      "unit_mismatch": 0,
+      "sign_review": 0,
+      "unconfirmed": 0
+     },
+     "labels": {
+      "label_ok": 34,
+      "label_differs": 0,
+      "label_review": 0,
+      "label_unknown": 0
+     },
+     "sums_checked": null,
+     "silent_candidates": [],
+     "review": [],
+     "missing": [],
+     "problems": [
+      "12쪽: AI가 '기본주당이익(단위 : 원)' 줄을 '주당이익'(으)로 읽어 원본 계정명을 썼다",
+      "12쪽: AI가 '희석주당이익(단위 : 원)' 줄을 '회석주당이익(단위：원)'(으)로 읽어 원본 계정명을 썼다"
+     ]
+    },
+    {
+     "title": "연결포괄손익계산서",
+     "page": 13,
+     "opendart": "CFS",
+     "rows": 13,
+     "cells": 26,
+     "flagged": 0,
+     "classes": {
+      "dart_exact": 24,
+      "dart_value": 2,
+      "dart_sign_cf": 0,
+      "sign_as_printed": 0,
+      "pdf_confirmed": 0,
+      "wrong_period": 0,
+      "unit_mismatch": 0,
+      "sign_review": 0,
+      "unconfirmed": 0
+     },
+     "labels": {
+      "label_ok": 26,
+      "label_differs": 0,
+      "label_review": 0,
+      "label_unknown": 0
+     },
+     "sums_checked": null,
+     "silent_candidates": [],
+     "review": [],
+     "missing": [],
+     "problems": [
+      "13쪽: AI가 '후속적으로당기손익으로재분류되지않는포괄손익' 줄을 '후속적으로당기순익으로재분류되지않는포괄손익'(으)로 읽어 원본 계정명을 썼다",
+      "13쪽: AI가 '후속적으로당기손익으로재분류되는포괄손익' 줄을 '후속적으로당기순익으로재분류되는포괄손익'(으)로 읽어 원본 계정명을 썼다"
+     ]
+    },
+    {
+     "title": "연결자본변동표",
+     "page": 14,
+     "skipped": true,
+     "problems": [
+      "자본변동표는 행과 열이 모두 항목인 표라 이 도구가 아직 읽지 않는다 (v0.2 범위 밖, 원본을 직접 확인)"
+     ]
+    },
+    {
+     "title": "연결현금흐름표",
+     "page": 15,
+     "opendart": "CFS",
+     "rows": 41,
+     "cells": 79,
+     "flagged": 1,
+     "classes": {
+      "dart_exact": 50,
+      "dart_value": 2,
+      "dart_sign_cf": 26,
+      "sign_as_printed": 0,
+      "pdf_confirmed": 0,
+      "wrong_period": 1,
+      "unit_mismatch": 0,
+      "sign_review": 0,
+      "unconfirmed": 0
+     },
+     "labels": {
+      "label_ok": 78,
+      "label_differs": 0,
+      "label_review": 0,
+      "label_unknown": 1
+     },
+     "sums_checked": 5,
+     "silent_candidates": [],
+     "review": [
+      {
+       "label": "매각예정분류자산처분으로인한현금유입액",
+       "period": 0,
+       "printed": "101,563",
+       "class": "wrong_period",
+       "label_class": "label_unknown",
+       "dart_name": null,
+       "printed_label": null,
+       "flagged": true
+      }
+     ],
+     "missing": [],
+     "problems": [
+      "15쪽: AI가 '매각예정분류자산처분으로인한현금유입액' 줄을 '매각예정분유자산처분으로인한현금유입액'(으)로 읽어 원본 계정명을 썼다",
+      "16쪽: AI가 '현금및현금성자산의증가(감소)(Ⅰ+Ⅱ+Ⅲ+Ⅳ)' 줄을 '현금및현금성자산의증가(감소)( I +II +III +IV)'(으)로 읽어 원본 계정명을 썼다"
+     ]
+    }
+   ]
+  },
+  {
+   "company": "NAVER",
+   "corp_code": "00266961",
+   "file": "연결감사보고서_FY2025.pdf",
+   "sha256": "1cd29568d9c14c17c60c1fdd51ee716382151e97aa6a9c757e5dc93b7c364951",
+   "bytes": 1327044,
+   "reader": "ai",
+   "seconds": 191,
+   "model": "qwen3-vl:8b",
+   "prompt_version": "band-v1",
+   "model_calls": 21,
+   "cells": 254,
+   "needs_review": 0,
+   "document_problems": [],
+   "statements": [
+    {
+     "title": "연결재무상태표",
+     "page": 11,
+     "opendart": "CFS",
+     "rows": 50,
+     "cells": 97,
+     "flagged": 0,
+     "classes": {
+      "dart_exact": 95,
+      "dart_value": 2,
+      "dart_sign_cf": 0,
+      "sign_as_printed": 0,
+      "pdf_confirmed": 0,
+      "wrong_period": 0,
+      "unit_mismatch": 0,
+      "sign_review": 0,
+      "unconfirmed": 0
+     },
+     "labels": {
+      "label_ok": 97,
+      "label_differs": 0,
+      "label_review": 0,
+      "label_unknown": 0
+     },
+     "sums_checked": 14,
+     "silent_candidates": [],
+     "review": [],
+     "missing": [],
+     "problems": [
+      "11쪽: AI가 '매출채권및기타채권' 줄을 '매출채권및타채권'(으)로 읽어 원본 계정명을 썼다"
+     ]
+    },
+    {
+     "title": "연결포괄손익계산서",
+     "page": 13,
+     "opendart": "CFS",
+     "rows": 30,
+     "cells": 59,
+     "flagged": 0,
+     "classes": {
+      "dart_exact": 45,
+      "dart_value": 4,
+      "dart_sign_cf": 0,
+      "sign_as_printed": 10,
+      "pdf_confirmed": 0,
+      "wrong_period": 0,
+      "unit_mismatch": 0,
+      "sign_review": 0,
+      "unconfirmed": 0
+     },
+     "labels": {
+      "label_ok": 59,
+      "label_differs": 0,
+      "label_review": 0,
+      "label_unknown": 0
+     },
+     "sums_checked": null,
+     "silent_candidates": [],
+     "review": [],
+     "missing": [],
+     "problems": [
+      "13쪽: AI가 '법인세비용차감전순이익' 줄을 'M. 법인세비용차감전순이익'(으)로 읽어 원본 계정명을 썼다",
+      "13쪽: AI가 '기타포괄손익' 줄을 'M. 기타포괄손익'(으)로 읽어 원본 계정명을 썼다",
+      "13쪽: AI가 '기타포괄손익' 줄을 'M. 기타포괄손익'(으)로 읽어 원본 계정명을 썼다",
+      "13쪽: AI가 '지분법자본변동' 줄을 '지분법자분변동'(으)로 읽어 원본 계정명을 썼다",
+      "13쪽: AI가 '기타포괄손익-공정가치측정지분상품평가손익' 줄을 '기타포괄손익-공정가치측정자산상품평가손익'(으)로 읽어 원본 계정명을 썼다",
+      "13쪽: AI가 '기타포괄손익-공정가치측정지분상품처분손익' 줄을 '기타포괄손익-공정가치측정자산상품처분손익'(으)로 읽어 원본 계정명을 썼다"
+     ]
+    },
+    {
+     "title": "연결자본변동표",
+     "page": 14,
+     "skipped": true,
+     "problems": [
+      "자본변동표는 행과 열이 모두 항목인 표라 이 도구가 아직 읽지 않는다 (v0.2 범위 밖, 원본을 직접 확인)"
+     ]
+    },
+    {
+     "title": "연결현금흐름표",
+     "page": 15,
+     "opendart": "CFS",
+     "rows": 53,
+     "cells": 98,
+     "flagged": 0,
+     "classes": {
+      "dart_exact": 53,
+      "dart_value": 2,
+      "dart_sign_cf": 43,
+      "sign_as_printed": 0,
+      "pdf_confirmed": 0,
+      "wrong_period": 0,
+      "unit_mismatch": 0,
+      "sign_review": 0,
+      "unconfirmed": 0
+     },
+     "labels": {
+      "label_ok": 98,
+      "label_differs": 0,
+      "label_review": 0,
+      "label_unknown": 0
+     },
+     "sums_checked": 6,
+     "silent_candidates": [],
+     "review": [],
+     "missing": [],
+     "problems": [
+      "16쪽: AI가 '현금및현금성자산의환율변동효과' 줄을 'M. 현금및현금성자산의환율변동효과'(으)로 읽어 원본 계정명을 썼다",
+      "16쪽: AI가 '기초현금및현금성자산' 줄을 'M. 기초현금및현금성자산'(으)로 읽어 원본 계정명을 썼다"
+     ]
+    }
+   ]
+  },
+  {
+   "company": "한화시스템",
+   "corp_code": "00339391",
+   "file": "한화시스템_연결감사보고서(2026.03.13).pdf",
+   "sha256": "311bb0e6a74fc28400a06eedb10b1f169464d57d494cb56c5444fe7f74b20410",
+   "bytes": 1202374,
+   "reader": "ai",
+   "seconds": 165,
+   "model": "qwen3-vl:8b",
+   "prompt_version": "band-v1",
+   "model_calls": 18,
+   "cells": 230,
+   "needs_review": 16,
+   "document_problems": [],
+   "statements": [
+    {
+     "title": "연결재무상태표",
+     "page": 9,
+     "opendart": "CFS",
+     "rows": 42,
+     "cells": 82,
+     "flagged": 0,
+     "classes": {
+      "dart_exact": 45,
+      "dart_value": 37,
+      "dart_sign_cf": 0,
+      "sign_as_printed": 0,
+      "pdf_confirmed": 0,
+      "wrong_period": 0,
+      "unit_mismatch": 0,
+      "sign_review": 0,
+      "unconfirmed": 0
+     },
+     "labels": {
+      "label_ok": 82,
+      "label_differs": 0,
+      "label_review": 0,
+      "label_unknown": 0
+     },
+     "sums_checked": 18,
+     "silent_candidates": [],
+     "review": [],
+     "missing": [],
+     "problems": [
+      "9쪽: AI가 '차입금및사채' 줄을 '자입금및사채'(으)로 읽어 원본 계정명을 썼다"
+     ]
+    },
+    {
+     "title": "연결포괄손익계산서",
+     "page": 10,
+     "opendart": "CFS",
+     "rows": 31,
+     "cells": 61,
+     "flagged": 0,
+     "classes": {
+      "dart_exact": 18,
+      "dart_value": 43,
+      "dart_sign_cf": 0,
+      "sign_as_printed": 0,
+      "pdf_confirmed": 0,
+      "wrong_period": 0,
+      "unit_mismatch": 0,
+      "sign_review": 0,
+      "unconfirmed": 0
+     },
+     "labels": {
+      "label_ok": 60,
+      "label_differs": 0,
+      "label_review": 1,
+      "label_unknown": 0
+     },
+     "sums_checked": null,
+     "silent_candidates": [],
+     "review": [
+      {
+       "label": "기본및희석주당순손익",
+       "period": 0,
+       "printed": "47",
+       "class": "dart_value",
+       "label_class": "label_review",
+       "dart_name": "중단영업기본주당이익",
+       "printed_label": null,
+       "flagged": false
+      }
+     ],
+     "missing": [
+      {
+       "period": 0,
+       "value": 47,
+       "dart_name": "중단영업희석주당이익",
+       "status": "silent"
+      },
+      {
+       "period": 1,
+       "value": -122,
+       "dart_name": "중단영업희석주당이익",
+       "status": "silent"
+      }
+     ],
+     "problems": [
+      "10쪽: AI가 '지배기업소유주지분귀속' 줄을 '지배기업소유주지분커속'(으)로 읽어 원본 계정명을 썼다",
+      "10쪽: AI가 '비지배지분귀속' 줄을 '비지배지분커속'(으)로 읽어 원본 계정명을 썼다",
+      "10쪽: AI가 '지배기업소유주지분귀속' 줄을 '지배기업소유주지분커속'(으)로 읽어 원본 계정명을 썼다",
+      "10쪽: AI가 '비지배지분귀속' 줄을 '비지배지분커속'(으)로 읽어 원본 계정명을 썼다",
+      "10쪽: AI가 '기본주당순이익' 줄을 '계속영업주당순손익'(으)로 읽어 원본 계정명을 썼다",
+      "10쪽: AI가 '기본및희석주당순손익' 줄을 '중단영업주당순손익'(으)로 읽어 원본 계정명을 썼다"
+     ]
+    },
+    {
+     "title": "연결자본변동표",
+     "page": 11,
+     "skipped": true,
+     "problems": [
+      "자본변동표는 행과 열이 모두 항목인 표라 이 도구가 아직 읽지 않는다 (v0.2 범위 밖, 원본을 직접 확인)"
+     ]
+    },
+    {
+     "title": "연결현금흐름표",
+     "page": 12,
+     "opendart": "CFS",
+     "rows": 47,
+     "cells": 87,
+     "flagged": 16,
+     "classes": {
+      "dart_exact": 28,
+      "dart_value": 27,
+      "dart_sign_cf": 32,
+      "sign_as_printed": 0,
+      "pdf_confirmed": 0,
+      "wrong_period": 0,
+      "unit_mismatch": 0,
+      "sign_review": 0,
+      "unconfirmed": 0
+     },
+     "labels": {
+      "label_ok": 83,
+      "label_differs": 0,
+      "label_review": 4,
+      "label_unknown": 0
+     },
+     "sums_checked": 4,
+     "silent_candidates": [],
+     "review": [
+      {
+       "label": "기타포괄손익-공정가치측정금융자산의감소",
+       "period": 0,
+       "printed": "122,448,720,753",
+       "class": "dart_value",
+       "label_class": "label_review",
+       "dart_name": "기타포괄손익-공정가치측정금융자산의처분",
+       "printed_label": null,
+       "flagged": false
+      },
+      {
+       "label": "기타포괄손익-공정가치측정금융자산의감소",
+       "period": 1,
+       "printed": "126,768",
+       "class": "dart_value",
+       "label_class": "label_review",
+       "dart_name": "기타포괄손익-공정가치측정금융자산의처분",
+       "printed_label": null,
+       "flagged": false
+      },
+      {
+       "label": "기타포괄손익-공정가치측정금융자산의증가",
+       "period": 0,
+       "printed": "(244,103,739,664)",
+       "class": "dart_sign_cf",
+       "label_class": "label_review",
+       "dart_name": "기타포괄손익-공정가치측정금융자산의취득",
+       "printed_label": null,
+       "flagged": false
+      },
+      {
+       "label": "기타포괄손익-공정가치측정금융자산의증가",
+       "period": 1,
+       "printed": "(500,000,000)",
+       "class": "dart_sign_cf",
+       "label_class": "label_review",
+       "dart_name": "기타포괄손익-공정가치측정금융자산의취득",
+       "printed_label": null,
+       "flagged": false
+      }
+     ],
+     "missing": [],
+     "problems": [
+      "소계 '영업활동현금흐름'는 세부 항목의 층(어느 항목이 다른 항목의 합인지)을 표에서 확인하지 못해 검산하지 못했다 (들여쓰기나 숫자로는 맞지만 항목 기호가 없다)"
+     ]
+    }
+   ]
+  },
+  {
+   "company": "포스코",
+   "corp_code": "01620971",
+   "file": "POSCO_consolidated_FY25.pdf",
+   "sha256": "d40aed2056f35b039d4577bdec0dd33f58310c783cf4d294d0db5798f2d43a91",
+   "bytes": 571879,
+   "reader": "ai",
+   "seconds": 210,
+   "model": "qwen3-vl:8b",
+   "prompt_version": "band-v1",
+   "model_calls": 22,
+   "cells": 270,
+   "needs_review": 55,
+   "document_problems": [],
+   "statements": [
+    {
+     "title": "연결재무상태표",
+     "page": 7,
+     "opendart": "CFS",
+     "rows": 45,
+     "cells": 88,
+     "flagged": 0,
+     "classes": {
+      "dart_exact": 70,
+      "dart_value": 18,
+      "dart_sign_cf": 0,
+      "sign_as_printed": 0,
+      "pdf_confirmed": 0,
+      "wrong_period": 0,
+      "unit_mismatch": 0,
+      "sign_review": 0,
+      "unconfirmed": 0
+     },
+     "labels": {
+      "label_ok": 88,
+      "label_differs": 0,
+      "label_review": 0,
+      "label_unknown": 0
+     },
+     "sums_checked": 18,
+     "silent_candidates": [],
+     "review": [],
+     "missing": [],
+     "problems": [
+      "7쪽: AI가 '충당부채' 줄을 '총당부채'(으)로 읽어 원본 계정명을 썼다"
+     ]
+    },
+    {
+     "title": "연결포괄손익계산서",
+     "page": 9,
+     "opendart": "CFS",
+     "rows": 32,
+     "cells": 64,
+     "flagged": 0,
+     "classes": {
+      "dart_exact": 44,
+      "dart_value": 2,
+      "dart_sign_cf": 0,
+      "sign_as_printed": 10,
+      "pdf_confirmed": 8,
+      "wrong_period": 0,
+      "unit_mismatch": 0,
+      "sign_review": 0,
+      "unconfirmed": 0
+     },
+     "labels": {
+      "label_ok": 64,
+      "label_differs": 0,
+      "label_review": 0,
+      "label_unknown": 0
+     },
+     "sums_checked": null,
+     "silent_candidates": [],
+     "review": [],
+     "missing": [
+      {
+       "period": 0,
+       "value": 320048685,
+       "dart_name": "대손상각비",
+       "status": "silent"
+      },
+      {
+       "period": 1,
+       "value": 3900925604,
+       "dart_name": "대손상각비",
+       "status": "silent"
+      },
+      {
+       "period": 0,
+       "value": 1210818182949,
+       "dart_name": "기타일반관리비",
+       "status": "silent"
+      },
+      {
+       "period": 1,
+       "value": 1171616168608,
+       "dart_name": "기타일반관리비",
+       "status": "silent"
+      },
+      {
+       "period": 0,
+       "value": 338655658738,
+       "dart_name": "기타영업외비용",
+       "status": "silent"
+      },
+      {
+       "period": 1,
+       "value": 428110787012,
+       "dart_name": "기타영업외비용",
+       "status": "silent"
+      },
+      {
+       "period": 0,
+       "value": 4416665459,
+       "dart_name": "기타의대손상각비",
+       "status": "silent"
+      },
+      {
+       "period": 1,
+       "value": -2301914334,
+       "dart_name": "기타의대손상각비",
+       "status": "silent"
+      }
+     ],
+     "problems": [
+      "9쪽: AI가 '법인세비용차감전순이익' 줄을 '범인세비용차감전순이익'(으)로 읽어 원본 계정명을 썼다",
+      "9쪽: AI가 '당기순이익의귀속' 줄을 '당기순이익의케속'(으)로 읽어 원본 계정명을 썼다",
+      "9쪽: AI가 '총포괄이익의귀속' 줄을 '총포괄이익의케속'(으)로 읽어 원본 계정명을 썼다",
+      "9쪽: AI가 '기본주당순이익' 줄을 '주당이익'(으)로 읽어 원본 계정명을 썼다"
+     ]
+    },
+    {
+     "title": "연결자본변동표",
+     "page": 10,
+     "skipped": true,
+     "problems": [
+      "자본변동표는 행과 열이 모두 항목인 표라 이 도구가 아직 읽지 않는다 (v0.2 범위 밖, 원본을 직접 확인)"
+     ]
+    },
+    {
+     "title": "연결현금흐름표",
+     "page": 11,
+     "opendart": "CFS",
+     "rows": 61,
+     "cells": 118,
+     "flagged": 55,
+     "classes": {
+      "dart_exact": 87,
+      "dart_value": 2,
+      "dart_sign_cf": 18,
+      "sign_as_printed": 0,
+      "pdf_confirmed": 11,
+      "wrong_period": 0,
+      "unit_mismatch": 0,
+      "sign_review": 0,
+      "unconfirmed": 0
+     },
+     "labels": {
+      "label_ok": 118,
+      "label_differs": 0,
+      "label_review": 0,
+      "label_unknown": 0
+     },
+     "sums_checked": 4,
+     "silent_candidates": [],
+     "review": [],
+     "missing": [
+      {
+       "period": 0,
+       "value": -18593553233,
+       "dart_name": "기타재무활동으로인한현금유출입액",
+       "status": "silent"
+      },
+      {
+       "period": 0,
+       "value": 79682508119,
+       "dart_name": "관계기업투자주식의취득",
+       "status": "silent"
+      },
+      {
+       "period": 0,
+       "value": -230812809,
+       "dart_name": "기타수익",
+       "status": "silent"
+      },
+      {
+       "period": 1,
+       "value": 13202368884,
+       "dart_name": "기타수익",
+       "status": "silent"
+      }
+     ],
+     "problems": [
+      "12쪽: AI가 '현금의증가(Ⅰ+Ⅱ+Ⅲ+Ⅳ)' 줄을 '현금의증가( I + II + III + IV)'(으)로 읽어 원본 계정명을 썼다",
+      "12쪽: AI가 '현금의증가(Ⅰ+Ⅱ+Ⅲ+Ⅳ)' 줄을 '현금의증가( I + II + III + IV)'(으)로 읽어 원본 계정명을 썼다",
+      "소계 '영업활동으로인한현금흐름'는 세부 항목의 층(어느 항목이 다른 항목의 합인지)을 표에서 확인하지 못해 검산하지 못했다 (들여쓰기나 숫자로는 맞지만 항목 기호가 없다)"
+     ]
+    }
+   ]
+  },
+  {
+   "company": "LG에너지솔루션",
+   "corp_code": "01515323",
+   "file": "2025_LGES_Business_Report.pdf",
+   "sha256": "c0ba2ad0e1e61aad5ddfeb52d2cadfd14af60d4fa42f15697d30674384c0f3f1",
+   "bytes": 2725695,
+   "reader": "ai",
+   "seconds": 247,
+   "model": "qwen3-vl:8b",
+   "prompt_version": "band-v1",
+   "model_calls": 35,
+   "cells": 416,
+   "needs_review": 1,
+   "document_problems": [],
+   "statements": [
+    {
+     "title": "별도재무상태표",
+     "page": 34,
+     "opendart": "OFS",
+     "rows": 40,
+     "cells": 78,
+     "flagged": 0,
+     "classes": {
+      "dart_exact": 68,
+      "dart_value": 6,
+      "dart_sign_cf": 0,
+      "sign_as_printed": 0,
+      "pdf_confirmed": 4,
+      "wrong_period": 0,
+      "unit_mismatch": 0,
+      "sign_review": 0,
+      "unconfirmed": 0
+     },
+     "labels": {
+      "label_ok": 78,
+      "label_differs": 0,
+      "label_review": 0,
+      "label_unknown": 0
+     },
+     "sums_checked": 18,
+     "silent_candidates": [],
+     "review": [],
+     "missing": [
+      {
+       "period": 0,
+       "value": 16193800000000,
+       "dart_name": "종속기업관계기업및공동기업투자",
+       "status": "silent"
+      },
+      {
+       "period": 1,
+       "value": 13449510000000,
+       "dart_name": "종속기업관계기업및공동기업투자",
+       "status": "silent"
+      }
+     ],
+     "problems": [
+      "34쪽: AI가 '자본잉여금' 줄을 '자본'(으)로 읽어 원본 계정명을 썼다",
+      "34쪽: AI가 '기타포괄손익누계액' 줄을 '자본'(으)로 읽어 원본 계정명을 썼다",
+      "34쪽: AI가 '결손금' 줄을 '자본'(으)로 읽어 원본 계정명을 썼다"
+     ]
+    },
+    {
+     "title": "별도손익계산서",
+     "page": 35,
+     "opendart": "OFS",
+     "rows": 12,
+     "cells": 24,
+     "flagged": 0,
+     "classes": {
+      "dart_exact": 16,
+      "dart_value": 8,
+      "dart_sign_cf": 0,
+      "sign_as_printed": 0,
+      "pdf_confirmed": 0,
+      "wrong_period": 0,
+      "unit_mismatch": 0,
+      "sign_review": 0,
+      "unconfirmed": 0
+     },
+     "labels": {
+      "label_ok": 24,
+      "label_differs": 0,
+      "label_review": 0,
+      "label_unknown": 0
+     },
+     "sums_checked": null,
+     "silent_candidates": [],
+     "review": [],
+     "missing": [
+      {
+       "period": 0,
+       "value": -2447,
+       "dart_name": "보통주기본및희석주당이익",
+       "status": "silent"
+      },
+      {
+       "period": 1,
+       "value": -4007,
+       "dart_name": "보통주기본및희석주당이익",
+       "status": "silent"
+      }
+     ],
+     "problems": [
+      "35쪽: AI가 '법인세비용(수익)' 줄을 'X I. 법인세비용(수익)'(으)로 읽어 원본 계정명을 썼다",
+      "35쪽: AI가 '당기순손실' 줄을 'X II. 당기순손실'(으)로 읽어 원본 계정명을 썼다",
+      "35쪽 '보통주기본및희석주당손실' 줄 당기: 원본의 금액 '(2,447) 원'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "35쪽 '보통주기본및희석주당손실' 줄 전기: 원본의 금액 '(4,007) 원'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)"
+     ]
+    },
+    {
+     "title": "별도포괄손익계산서",
+     "page": 35,
+     "opendart": "OFS",
+     "rows": 10,
+     "cells": 20,
+     "flagged": 0,
+     "classes": {
+      "dart_exact": 10,
+      "dart_value": 6,
+      "dart_sign_cf": 0,
+      "sign_as_printed": 4,
+      "pdf_confirmed": 0,
+      "wrong_period": 0,
+      "unit_mismatch": 0,
+      "sign_review": 0,
+      "unconfirmed": 0
+     },
+     "labels": {
+      "label_ok": 20,
+      "label_differs": 0,
+      "label_review": 0,
+      "label_unknown": 0
+     },
+     "sums_checked": null,
+     "silent_candidates": [],
+     "review": [],
+     "missing": [],
+     "problems": [
+      "35쪽: AI가 '당기손익으로재분류되지않는항목' 줄을 '당기순익으로재분류되지않는항목'(으)로 읽어 원본 계정명을 썼다",
+      "35쪽: AI가 '후속적으로당기손익으로재분류될수있는항목' 줄을 '후속적으로당기순익으로재분류될수있는항목'(으)로 읽어 원본 계정명을 썼다"
+     ]
+    },
+    {
+     "title": "별도결손금처리계산서",
+     "page": 36,
+     "opendart": "OFS",
+     "rows": 6,
+     "cells": 11,
+     "flagged": 0,
+     "classes": {
+      "dart_exact": 0,
+      "dart_value": 0,
+      "dart_sign_cf": 0,
+      "sign_as_printed": 0,
+      "pdf_confirmed": 0,
+      "wrong_period": 0,
+      "unit_mismatch": 0,
+      "sign_review": 0,
+      "unconfirmed": 11
+     },
+     "labels": {
+      "label_ok": 11,
+      "label_differs": 0,
+      "label_review": 0,
+      "label_unknown": 0
+     },
+     "sums_checked": 2,
+     "silent_candidates": [
+      {
+       "label": "미처리결손금",
+       "period": 0,
+       "printed": "(2,492,044)",
+       "class": "unconfirmed",
+       "label_class": "label_ok"
+      },
+      {
+       "label": "미처리결손금",
+       "period": 1,
+       "printed": "(1,938,044)",
+       "class": "unconfirmed",
+       "label_class": "label_ok"
+      },
+      {
+       "label": "전기이월미처리결손금",
+       "period": 0,
+       "printed": "(1,938,044)",
+       "class": "unconfirmed",
+       "label_class": "label_ok"
+      },
+      {
+       "label": "전기이월미처리결손금",
+       "period": 1,
+       "printed": "(1,051,712)",
+       "class": "unconfirmed",
+       "label_class": "label_ok"
+      },
+      {
+       "label": "기타포괄손익-공정가치측정금융자산의처분",
+       "period": 0,
+       "printed": "(7,171)",
+       "class": "unconfirmed",
+       "label_class": "label_ok"
+      },
+      {
+       "label": "당기순손실",
+       "period": 0,
+       "printed": "(572,713)",
+       "class": "unconfirmed",
+       "label_class": "label_ok"
+      },
+      {
+       "label": "당기순손실",
+       "period": 1,
+       "printed": "(937,643)",
+       "class": "unconfirmed",
+       "label_class": "label_ok"
+      },
+      {
+       "label": "순확정급여부채의재측정요소",
+       "period": 0,
+       "printed": "25,884",
+       "class": "unconfirmed",
+       "label_class": "label_ok"
+      },
+      {
+       "label": "순확정급여부채의재측정요소",
+       "period": 1,
+       "printed": "51,311",
+       "class": "unconfirmed",
+       "label_class": "label_ok"
+      },
+      {
+       "label": "차기이월미처리결손금",
+       "period": 0,
+       "printed": "(2,492,044)",
+       "class": "unconfirmed",
+       "label_class": "label_ok"
+      },
+      {
+       "label": "차기이월미처리결손금",
+       "period": 1,
+       "printed": "(1,938,044)",
+       "class": "unconfirmed",
+       "label_class": "label_ok"
+      }
+     ],
+     "review": [
+      {
+       "label": "미처리결손금",
+       "period": 0,
+       "printed": "(2,492,044)",
+       "class": "unconfirmed",
+       "label_class": "label_ok",
+       "dart_name": null,
+       "printed_label": "미처리결손금",
+       "flagged": false
+      },
+      {
+       "label": "미처리결손금",
+       "period": 1,
+       "printed": "(1,938,044)",
+       "class": "unconfirmed",
+       "label_class": "label_ok",
+       "dart_name": null,
+       "printed_label": "미처리결손금",
+       "flagged": false
+      },
+      {
+       "label": "전기이월미처리결손금",
+       "period": 0,
+       "printed": "(1,938,044)",
+       "class": "unconfirmed",
+       "label_class": "label_ok",
+       "dart_name": null,
+       "printed_label": "전기이월미처리결손금",
+       "flagged": false
+      },
+      {
+       "label": "전기이월미처리결손금",
+       "period": 1,
+       "printed": "(1,051,712)",
+       "class": "unconfirmed",
+       "label_class": "label_ok",
+       "dart_name": null,
+       "printed_label": "전기이월미처리결손금",
+       "flagged": false
+      },
+      {
+       "label": "기타포괄손익-공정가치측정금융자산의처분",
+       "period": 0,
+       "printed": "(7,171)",
+       "class": "unconfirmed",
+       "label_class": "label_ok",
+       "dart_name": null,
+       "printed_label": "기타포괄손익-공정가치측정 금융자산의 처분",
+       "flagged": false
+      },
+      {
+       "label": "당기순손실",
+       "period": 0,
+       "printed": "(572,713)",
+       "class": "unconfirmed",
+       "label_class": "label_ok",
+       "dart_name": null,
+       "printed_label": "당기순손실",
+       "flagged": false
+      },
+      {
+       "label": "당기순손실",
+       "period": 1,
+       "printed": "(937,643)",
+       "class": "unconfirmed",
+       "label_class": "label_ok",
+       "dart_name": null,
+       "printed_label": "당기순손실",
+       "flagged": false
+      },
+      {
+       "label": "순확정급여부채의재측정요소",
+       "period": 0,
+       "printed": "25,884",
+       "class": "unconfirmed",
+       "label_class": "label_ok",
+       "dart_name": null,
+       "printed_label": "순확정급여부채의 재측정요소",
+       "flagged": false
+      },
+      {
+       "label": "순확정급여부채의재측정요소",
+       "period": 1,
+       "printed": "51,311",
+       "class": "unconfirmed",
+       "label_class": "label_ok",
+       "dart_name": null,
+       "printed_label": "순확정급여부채의 재측정요소",
+       "flagged": false
+      },
+      {
+       "label": "차기이월미처리결손금",
+       "period": 0,
+       "printed": "(2,492,044)",
+       "class": "unconfirmed",
+       "label_class": "label_ok",
+       "dart_name": null,
+       "printed_label": "차기이월미처리결손금",
+       "flagged": false
+      },
+      {
+       "label": "차기이월미처리결손금",
+       "period": 1,
+       "printed": "(1,938,044)",
+       "class": "unconfirmed",
+       "label_class": "label_ok",
+       "dart_name": null,
+       "printed_label": "차기이월미처리결손금",
+       "flagged": false
+      }
+     ],
+     "missing": [],
+     "problems": []
+    },
+    {
+     "title": "별도자본변동표",
+     "page": 36,
+     "skipped": true,
+     "problems": [
+      "자본변동표는 행과 열이 모두 항목인 표라 이 도구가 아직 읽지 않는다 (v0.2 범위 밖, 원본을 직접 확인)"
+     ]
+    },
+    {
+     "title": "별도현금흐름표",
+     "page": 37,
+     "opendart": "OFS",
+     "rows": 33,
+     "cells": 63,
+     "flagged": 0,
+     "classes": {
+      "dart_exact": 29,
+      "dart_value": 10,
+      "dart_sign_cf": 24,
+      "sign_as_printed": 0,
+      "pdf_confirmed": 0,
+      "wrong_period": 0,
+      "unit_mismatch": 0,
+      "sign_review": 0,
+      "unconfirmed": 0
+     },
+     "labels": {
+      "label_ok": 63,
+      "label_differs": 0,
+      "label_review": 0,
+      "label_unknown": 0
+     },
+     "sums_checked": 14,
+     "silent_candidates": [],
+     "review": [],
+     "missing": [],
+     "problems": [
+      "37쪽: AI가 '현금및현금성자산의증가(감소)(Ⅰ+Ⅱ+Ⅲ)' 줄을 '현금및현금성자산의증가(감소)(I + II + III)'(으)로 읽어 원본 계정명을 썼다",
+      "37쪽: AI가 '당기말현금및현금성자산(Ⅳ+Ⅴ+Ⅵ)' 줄을 '당기말현금및현금성자산(IV + V + VI)'(으)로 읽어 원본 계정명을 썼다"
+     ]
+    },
+    {
+     "title": "연결재무상태표",
+     "page": 38,
+     "opendart": "CFS",
+     "rows": 44,
+     "cells": 87,
+     "flagged": 0,
+     "classes": {
+      "dart_exact": 81,
+      "dart_value": 6,
+      "dart_sign_cf": 0,
+      "sign_as_printed": 0,
+      "pdf_confirmed": 0,
+      "wrong_period": 0,
+      "unit_mismatch": 0,
+      "sign_review": 0,
+      "unconfirmed": 0
+     },
+     "labels": {
+      "label_ok": 87,
+      "label_differs": 0,
+      "label_review": 0,
+      "label_unknown": 0
+     },
+     "sums_checked": 18,
+     "silent_candidates": [],
+     "review": [],
+     "missing": [],
+     "problems": []
+    },
+    {
+     "title": "연결손익계산서",
+     "page": 39,
+     "opendart": "CFS",
+     "rows": 17,
+     "cells": 34,
+     "flagged": 0,
+     "classes": {
+      "dart_exact": 32,
+      "dart_value": 2,
+      "dart_sign_cf": 0,
+      "sign_as_printed": 0,
+      "pdf_confirmed": 0,
+      "wrong_period": 0,
+      "unit_mismatch": 0,
+      "sign_review": 0,
+      "unconfirmed": 0
+     },
+     "labels": {
+      "label_ok": 34,
+      "label_differs": 0,
+      "label_review": 0,
+      "label_unknown": 0
+     },
+     "sums_checked": null,
+     "silent_candidates": [],
+     "review": [],
+     "missing": [],
+     "problems": [
+      "39쪽: AI가 '기타영업외비용' 줄을 'X I. 기타영업외비용'(으)로 읽어 원본 계정명을 썼다",
+      "39쪽: AI가 '법인세비용차감전순이익' 줄을 'X II. 법인세비용차감전순이익'(으)로 읽어 원본 계정명을 썼다",
+      "39쪽: AI가 '법인세비용' 줄을 'X III. 법인세비용'(으)로 읽어 원본 계정명을 썼다",
+      "39쪽: AI가 '당기순이익' 줄을 'X IV. 당기순이익'(으)로 읽어 원본 계정명을 썼다"
+     ]
+    },
+    {
+     "title": "연결포괄손익계산서",
+     "page": 39,
+     "opendart": "CFS",
+     "rows": 14,
+     "cells": 28,
+     "flagged": 0,
+     "classes": {
+      "dart_exact": 24,
+      "dart_value": 0,
+      "dart_sign_cf": 0,
+      "sign_as_printed": 4,
+      "pdf_confirmed": 0,
+      "wrong_period": 0,
+      "unit_mismatch": 0,
+      "sign_review": 0,
+      "unconfirmed": 0
+     },
+     "labels": {
+      "label_ok": 28,
+      "label_differs": 0,
+      "label_review": 0,
+      "label_unknown": 0
+     },
+     "sums_checked": null,
+     "silent_candidates": [],
+     "review": [],
+     "missing": [],
+     "problems": [
+      "39쪽: AI가 '당기손익으로재분류되지않는항목' 줄을 '당기순이익으로재분류되지않는항목'(으)로 읽어 원본 계정명을 썼다",
+      "39쪽: AI가 '후속적으로당기손익으로재분류될수있는항목' 줄을 '후속적으로당기순이익으로재분류될수있는항목'(으)로 읽어 원본 계정명을 썼다",
+      "39쪽: AI가 '해외사업장환산외환차이' 줄을 '해외사업장장산외환차이'(으)로 읽어 원본 계정명을 썼다",
+      "39쪽: AI가 '당기총포괄이익' 줄을 '당기충포괄이익'(으)로 읽어 원본 계정명을 썼다"
+     ]
+    },
+    {
+     "title": "연결자본변동표",
+     "page": 40,
+     "skipped": true,
+     "problems": [
+      "자본변동표는 행과 열이 모두 항목인 표라 이 도구가 아직 읽지 않는다 (v0.2 범위 밖, 원본을 직접 확인)"
+     ]
+    },
+    {
+     "title": "연결현금흐름표",
+     "page": 41,
+     "opendart": "CFS",
+     "rows": 37,
+     "cells": 71,
+     "flagged": 1,
+     "classes": {
+      "dart_exact": 30,
+      "dart_value": 13,
+      "dart_sign_cf": 27,
+      "sign_as_printed": 0,
+      "pdf_confirmed": 0,
+      "wrong_period": 1,
+      "unit_mismatch": 0,
+      "sign_review": 0,
+      "unconfirmed": 0
+     },
+     "labels": {
+      "label_ok": 70,
+      "label_differs": 0,
+      "label_review": 0,
+      "label_unknown": 1
+     },
+     "sums_checked": 11,
+     "silent_candidates": [],
+     "review": [
+      {
+       "label": "기타투자활동의유입",
+       "period": 0,
+       "printed": "150",
+       "class": "wrong_period",
+       "label_class": "label_unknown",
+       "dart_name": null,
+       "printed_label": null,
+       "flagged": true
+      }
+     ],
+     "missing": [],
+     "problems": [
+      "41쪽: AI가 '현금및현금성자산의증가(감소)(Ⅰ+Ⅱ+Ⅲ)' 줄을 '현금및현금성자산의증가(감소)(I + II + III)'(으)로 읽어 원본 계정명을 썼다",
+      "41쪽: AI가 '당기말현금및현금성자산(Ⅳ+Ⅴ+Ⅵ)' 줄을 '당기말현금및현금성자산(IV + V + VI)'(으)로 읽어 원본 계정명을 썼다"
+     ]
+    }
+   ]
+  },
+  {
+   "company": "삼성전자 (사진 PDF)",
+   "corp_code": "00126380",
+   "file": "%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90_%EC%97%B0%EA%B2%B0%EC%9E%AC%EB%AC%B4%EC%A0%9C%ED%91%9C_%ED%86%B5%ED%95%A9.pdf",
+   "sha256": "5e25dc9d1211db0354871f2d4e3dd480adf09cc74eb680a45265d6c96505054e",
+   "bytes": 7609709,
+   "reader": "ai",
+   "seconds": 2973,
+   "model": "qwen3-vl:8b",
+   "prompt_version": "band-v1",
+   "model_calls": 175,
+   "cells": 246,
+   "needs_review": 102,
+   "document_problems": [
+    "3쪽: 글자 높이가 약 10픽셀로 작아 OCR 증거가 약하다 (한 쪽씩 가까이 찍거나 스캔 해상도를 높이면 확인되는 칸이 늘어난다)",
+    "4쪽: 글자 높이가 약 11픽셀로 작아 OCR 증거가 약하다 (한 쪽씩 가까이 찍거나 스캔 해상도를 높이면 확인되는 칸이 늘어난다)",
+    "5쪽: 글자 높이가 약 10픽셀로 작아 OCR 증거가 약하다 (한 쪽씩 가까이 찍거나 스캔 해상도를 높이면 확인되는 칸이 늘어난다)",
+    "8쪽: 글자 높이가 약 10픽셀로 작아 OCR 증거가 약하다 (한 쪽씩 가까이 찍거나 스캔 해상도를 높이면 확인되는 칸이 늘어난다)",
+    "8쪽: 글자 높이가 약 10픽셀로 작아 OCR 증거가 약하다 (한 쪽씩 가까이 찍거나 스캔 해상도를 높이면 확인되는 칸이 늘어난다)"
+   ],
+   "statements": [
+    {
+     "title": "연결재무상태표",
+     "page": 1,
+     "opendart": "CFS",
+     "rows": 49,
+     "cells": 98,
+     "flagged": 33,
+     "classes": {
+      "dart_exact": 93,
+      "dart_value": 4,
+      "dart_sign_cf": 0,
+      "sign_as_printed": 0,
+      "pdf_confirmed": 0,
+      "wrong_period": 0,
+      "unit_mismatch": 0,
+      "sign_review": 0,
+      "unconfirmed": 1
+     },
+     "labels": {
+      "label_ok": 93,
+      "label_differs": 0,
+      "label_review": 4,
+      "label_unknown": 1
+     },
+     "sums_checked": 11,
+     "silent_candidates": [],
+     "review": [
+      {
+       "label": "부채",
+       "period": 0,
+       "printed": "106,411,348",
+       "class": "dart_value",
+       "label_class": "label_review",
+       "dart_name": "유동부채",
+       "printed_label": null,
+       "flagged": true
+      },
+      {
+       "label": "부채",
+       "period": 1,
+       "printed": "93,326,299",
+       "class": "dart_value",
+       "label_class": "label_review",
+       "dart_name": "유동부채",
+       "printed_label": null,
+       "flagged": true
+      },
+      {
+       "label": "총당부채",
+       "period": 0,
+       "printed": "7,690,559",
+       "class": "dart_value",
+       "label_class": "label_review",
+       "dart_name": "충당부채",
+       "printed_label": null,
+       "flagged": true
+      },
+      {
+       "label": "총당부채",
+       "period": 1,
+       "printed": "8,216,469",
+       "class": "dart_value",
+       "label_class": "label_review",
+       "dart_name": "충당부채",
+       "printed_label": null,
+       "flagged": true
+      },
+      {
+       "label": "기타비유동부채",
+       "period": 0,
+       "printed": "7,963,586",
+       "class": "unconfirmed",
+       "label_class": "label_unknown",
+       "dart_name": null,
+       "printed_label": null,
+       "flagged": true
+      }
+     ],
+     "missing": [
+      {
+       "period": 0,
+       "value": 7953586000000,
+       "dart_name": "기타비유동부채",
+       "status": "generic"
+      }
+     ],
+     "problems": [
+      "1쪽 '관계기업및공동기업투자' 줄: OCR이 읽은 금액 '12,582,117'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "1쪽 '현금및현금성자산' 줄: OCR이 읽은 금액 '53,706,579'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "1쪽 '미지급비용' 줄: OCR이 읽은 금액 '23,613,258'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "AI가 한 부분을 읽지 못했다: the model ran out of its output budget on one band",
+      "AI가 한 부분을 읽지 못했다: the model ran out of its output budget on one band",
+      "1쪽 '주식발행초과금' 줄: OCR이 읽은 금액 '4,403,883'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "1쪽 '이익잉여금' 줄: OCR이 읽은 금액 '135,600'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "1쪽 '기타자본항목' 줄: OCR이 읽은 금액 '15,873,006'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "1쪽 '자본총계' 줄: OCR이 읽은 금액 '192.070'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "계정명을 원본(OCR)으로 확인하지 못한 행 6개: 숫자는 OCR로 확인했지만 계정명은 AI가 읽은 그대로다 (원본과 대조 필요)"
+     ]
+    },
+    {
+     "title": "연결손익계산서",
+     "page": 2,
+     "opendart": "CFS",
+     "rows": 16,
+     "cells": 32,
+     "flagged": 6,
+     "classes": {
+      "dart_exact": 32,
+      "dart_value": 0,
+      "dart_sign_cf": 0,
+      "sign_as_printed": 0,
+      "pdf_confirmed": 0,
+      "wrong_period": 0,
+      "unit_mismatch": 0,
+      "sign_review": 0,
+      "unconfirmed": 0
+     },
+     "labels": {
+      "label_ok": 32,
+      "label_differs": 0,
+      "label_review": 0,
+      "label_unknown": 0
+     },
+     "sums_checked": null,
+     "silent_candidates": [],
+     "review": [],
+     "missing": [
+      {
+       "period": 0,
+       "value": 6603,
+       "dart_name": "희석주당이익",
+       "status": "generic"
+      },
+      {
+       "period": 1,
+       "value": 4950,
+       "dart_name": "희석주당이익",
+       "status": "generic"
+      }
+     ],
+     "problems": [
+      "AI가 한 부분을 읽지 못했다: the model ran out of its output budget on one band",
+      "AI가 한 부분을 읽지 못했다: the model ran out of its output budget on one band",
+      "AI가 한 부분을 읽지 못했다: the model ran out of its output budget on one band",
+      "AI가 한 부분을 읽지 못했다: the model ran out of its output budget on one band",
+      "2쪽 '희석주당이익(단위원)' 줄: OCR이 읽은 금액 '4,950'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "2쪽 '판매비와관리비' 줄: OCR이 읽은 금액 '87,768,374'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "2쪽 '지배기업소유주지분' 줄: OCR이 읽은 금액 '44,260,966'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "계정명을 원본(OCR)으로 확인하지 못한 행 2개: 숫자는 OCR로 확인했지만 계정명은 AI가 읽은 그대로다 (원본과 대조 필요)"
+     ]
+    },
+    {
+     "title": "연결포괄손익계산서",
+     "page": 2,
+     "opendart": "CFS",
+     "rows": 13,
+     "cells": 26,
+     "flagged": 15,
+     "classes": {
+      "dart_exact": 22,
+      "dart_value": 4,
+      "dart_sign_cf": 0,
+      "sign_as_printed": 0,
+      "pdf_confirmed": 0,
+      "wrong_period": 0,
+      "unit_mismatch": 0,
+      "sign_review": 0,
+      "unconfirmed": 0
+     },
+     "labels": {
+      "label_ok": 22,
+      "label_differs": 0,
+      "label_review": 4,
+      "label_unknown": 0
+     },
+     "sums_checked": null,
+     "silent_candidates": [],
+     "review": [
+      {
+       "label": "연결당기순이익",
+       "period": 0,
+       "printed": "45,206,805",
+       "class": "dart_value",
+       "label_class": "label_review",
+       "dart_name": "당기순이익",
+       "printed_label": null,
+       "flagged": true
+      },
+      {
+       "label": "연결당기순이익",
+       "period": 1,
+       "printed": "34,451,351",
+       "class": "dart_value",
+       "label_class": "label_review",
+       "dart_name": "당기순이익",
+       "printed_label": null,
+       "flagged": false
+      },
+      {
+       "label": "해외사업연결회사외환차이",
+       "period": 0,
+       "printed": "960,019",
+       "class": "dart_value",
+       "label_class": "label_review",
+       "dart_name": "해외사업장환산외환차이",
+       "printed_label": null,
+       "flagged": true
+      },
+      {
+       "label": "해외사업연결회사외환차이",
+       "period": 1,
+       "printed": "15,116,099",
+       "class": "dart_value",
+       "label_class": "label_review",
+       "dart_name": "해외사업장환산외환차이",
+       "printed_label": null,
+       "flagged": true
+      }
+     ],
+     "missing": [],
+     "problems": [
+      "AI가 한 부분을 읽지 못했다: the model ran out of its output budget on one band",
+      "AI가 한 부분을 읽지 못했다: the model ran out of its output budget on one band",
+      "AI가 한 부분을 읽지 못했다: the model ran out of its output budget on one band",
+      "AI가 한 부분을 읽지 못했다: the model ran out of its output budget on one band",
+      "AI가 한 부분을 읽지 못했다: the model ran out of its output budget on one band",
+      "AI가 한 부분을 읽지 못했다: the model ran out of its output budget on one band",
+      "2쪽 '연결당기순이익' 줄: OCR이 읽은 금액 '45,206,806'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "2쪽 '순화정근여부채(자신) 재측정요소' 줄: OCR이 읽은 금액 '106,601'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "2쪽 '해외사업장환산외환차이' 줄: OCR이 읽은 금액 '15,116,096'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "2쪽 '비지배지분' 줄: OCR이 읽은 금액 '1,248,138'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "계정명을 원본(OCR)으로 확인하지 못한 행 6개: 숫자는 OCR로 확인했지만 계정명은 AI가 읽은 그대로다 (원본과 대조 필요)"
+     ]
+    },
+    {
+     "title": "연결자본변동표",
+     "page": 3,
+     "skipped": true,
+     "problems": [
+      "자본변동표는 행과 열이 모두 항목인 표라 이 도구가 아직 읽지 않는다 (v0.2 범위 밖, 원본을 직접 확인)"
+     ]
+    },
+    {
+     "title": "연결현금흐름표",
+     "page": 3,
+     "opendart": "CFS",
+     "rows": 47,
+     "cells": 90,
+     "flagged": 48,
+     "classes": {
+      "dart_exact": 44,
+      "dart_value": 5,
+      "dart_sign_cf": 26,
+      "sign_as_printed": 0,
+      "pdf_confirmed": 0,
+      "wrong_period": 2,
+      "unit_mismatch": 0,
+      "sign_review": 0,
+      "unconfirmed": 13
+     },
+     "labels": {
+      "label_ok": 70,
+      "label_differs": 0,
+      "label_review": 5,
+      "label_unknown": 15
+     },
+     "sums_checked": 0,
+     "silent_candidates": [],
+     "review": [
+      {
+       "label": "단기상각후원가금융자산의순감소(증가)",
+       "period": 0,
+       "printed": "620,858",
+       "class": "wrong_period",
+       "label_class": "label_unknown",
+       "dart_name": null,
+       "printed_label": null,
+       "flagged": true
+      },
+      {
+       "label": "기타프로젝트-고정자산의처분",
+       "period": 0,
+       "printed": "851,834",
+       "class": "dart_value",
+       "label_class": "label_review",
+       "dart_name": "기타포괄손익-공정가치금융자산의처분",
+       "printed_label": null,
+       "flagged": true
+      },
+      {
+       "label": "기타프로젝트-고정자산의처분",
+       "period": 1,
+       "printed": "399,690",
+       "class": "unconfirmed",
+       "label_class": "label_unknown",
+       "dart_name": null,
+       "printed_label": null,
+       "flagged": true
+      },
+      {
+       "label": "매각예정분류자산처분으로인한현금유입액",
+       "period": 0,
+       "printed": "101,563",
+       "class": "wrong_period",
+       "label_class": "label_unknown",
+       "dart_name": null,
+       "printed_label": null,
+       "flagged": true
+      },
+      {
+       "label": "기타투자활동으로인한현금유출액",
+       "period": 0,
+       "printed": "(226,491)",
+       "class": "dart_value",
+       "label_class": "label_review",
+       "dart_name": "기타투자활동으로인한현금유출입액",
+       "printed_label": null,
+       "flagged": true
+      },
+      {
+       "label": "기타투자활동으로인한현금유출액",
+       "period": 1,
+       "printed": "17,114",
+       "class": "dart_value",
+       "label_class": "label_review",
+       "dart_name": "기타투자활동으로인한현금유출입액",
+       "printed_label": null,
+       "flagged": true
+      },
+      {
+       "label": "현금및현금성자산의증가(감소)(I+II+III+IV)",
+       "period": 0,
+       "printed": "4,150,799",
+       "class": "dart_value",
+       "label_class": "label_review",
+       "dart_name": "현금및현금성자산의증가",
+       "printed_label": null,
+       "flagged": true
+      },
+      {
+       "label": "현금및현금성자산의증가(감소)(I+II+III+IV)",
+       "period": 1,
+       "printed": "(15,375,314)",
+       "class": "dart_value",
+       "label_class": "label_review",
+       "dart_name": "현금및현금성자산의증가",
+       "printed_label": null,
+       "flagged": true
+      },
+      {
+       "label": "삼성디스플레이㈜",
+       "period": 0,
+       "printed": "76,710,079",
+       "class": "unconfirmed",
+       "label_class": "label_unknown",
+       "dart_name": null,
+       "printed_label": null,
+       "flagged": true
+      },
+      {
+       "label": "삼성디스플레이㈜",
+       "period": 1,
+       "printed": "8,779,728",
+       "class": "unconfirmed",
+       "label_class": "label_unknown",
+       "dart_name": null,
+       "printed_label": null,
+       "flagged": true
+      },
+      {
+       "label": "삼성디스플레이㈜",
+       "period": 0,
+       "printed": "67,541,382",
+       "class": "unconfirmed",
+       "label_class": "label_unknown",
+       "dart_name": null,
+       "printed_label": null,
+       "flagged": true
+      },
+      {
+       "label": "삼성디스플레이㈜",
+       "period": 1,
+       "printed": "8,305,660",
+       "class": "unconfirmed",
+       "label_class": "label_unknown",
+       "dart_name": null,
+       "printed_label": null,
+       "flagged": true
+      },
+      {
+       "label": "Harman과그종속기업(*2)",
+       "period": 0,
+       "printed": "20,934,732",
+       "class": "unconfirmed",
+       "label_class": "label_unknown",
+       "dart_name": null,
+       "printed_label": null,
+       "flagged": true
+      },
+      {
+       "label": "Harman과그종속기업(*2)",
+       "period": 1,
+       "printed": "6,714,174",
+       "class": "unconfirmed",
+       "label_class": "label_unknown",
+       "dart_name": null,
+       "printed_label": null,
+       "flagged": true
+      },
+      {
+       "label": "Harman과그종속기업(+2)",
+       "period": 0,
+       "printed": "22,395,744",
+       "class": "unconfirmed",
+       "label_class": "label_unknown",
+       "dart_name": null,
+       "printed_label": null,
+       "flagged": true
+      },
+      {
+       "label": "Harman과그종속기업(+2)",
+       "period": 1,
+       "printed": "6,618,051",
+       "class": "unconfirmed",
+       "label_class": "label_unknown",
+       "dart_name": null,
+       "printed_label": null,
+       "flagged": true
+      },
+      {
+       "label": "세메스㈜",
+       "period": 0,
+       "printed": "2,637,216",
+       "class": "unconfirmed",
+       "label_class": "label_unknown",
+       "dart_name": null,
+       "printed_label": null,
+       "flagged": true
+      },
+      {
+       "label": "세메스㈜",
+       "period": 1,
+       "printed": "768,123",
+       "class": "unconfirmed",
+       "label_class": "label_unknown",
+       "dart_name": null,
+       "printed_label": null,
+       "flagged": true
+      },
+      {
+       "label": "세메스㈜",
+       "period": 0,
+       "printed": "2,365,712",
+       "class": "unconfirmed",
+       "label_class": "label_unknown",
+       "dart_name": null,
+       "printed_label": null,
+       "flagged": true
+      },
+      {
+       "label": "세메스㈜",
+       "period": 1,
+       "printed": "705,818",
+       "class": "unconfirmed",
+       "label_class": "label_unknown",
+       "dart_name": null,
+       "printed_label": null,
+       "flagged": true
+      }
+     ],
+     "missing": [
+      {
+       "period": 1,
+       "value": 389680000000,
+       "dart_name": "기타포괄손익-공정가치금융자산의처분",
+       "status": "generic"
+      },
+      {
+       "period": 1,
+       "value": 101563000000,
+       "dart_name": "매각예정분류자산처분으로인한현금유입액",
+       "status": "generic"
+      },
+      {
+       "period": 1,
+       "value": 620858000000,
+       "dart_name": "단기상각후원가금융자산의순감소",
+       "status": "generic"
+      }
+     ],
+     "problems": [
+      "3쪽 '이자의수취' 줄: OCR이 읽은 금액 '4,680,563'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "3쪽 '법인세납부액' 줄: OCR이 읽은 금액 '(7.137.296)'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "3쪽 '사업양도로인한현금유입액' 줄: OCR이 읽은 금액 '418,083'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "3쪽 '우형자산의처분' 줄: OCR이 읽은 금액 '15,860'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "3쪽 '배당금의지급' 줄: OCR이 읽은 금액 '(10,888.149'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "AI가 한 부분을 읽지 못했다: the model ran out of its output budget on one band",
+      "AI가 한 부분을 읽지 못했다: the model ran out of its output budget on one band",
+      "AI가 한 부분을 읽지 못했다: the model ran out of its output budget on one band",
+      "AI가 한 부분을 읽지 못했다: the model ran out of its output budget on one band",
+      "AI가 한 부분을 읽지 못했다: the model ran out of its output budget on one band",
+      "AI가 한 부분을 읽지 못했다: the model ran out of its output budget on one band",
+      "AI가 한 부분을 읽지 못했다: the model ran out of its output budget on one band",
+      "AI가 한 부분을 읽지 못했다: the model ran out of its output budget on one band",
+      "4쪽 '현금및현금성자산의증가(감소)(' 줄: OCR이 읽은 금액 '4,150,798'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "AI가 한 부분을 읽지 못했다: the model ran out of its output budget on one band",
+      "AI가 한 부분을 읽지 못했다: the model ran out of its output budget on one band",
+      "AI가 한 부분을 읽지 못했다: the model ran out of its output budget on one band",
+      "AI가 한 부분을 읽지 못했다: the model ran out of its output budget on one band",
+      "AI가 한 부분을 읽지 못했다: the model ran out of its output budget on one band",
+      "AI가 한 부분을 읽지 못했다: the model ran out of its output budget on one band",
+      "AI가 한 부분을 읽지 못했다: the model ran out of its output budget on one band",
+      "AI가 한 부분을 읽지 못했다: the model ran out of its output budget on one band",
+      "AI가 한 부분을 읽지 못했다: the model ran out of its output budget on one band",
+      "AI가 한 부분을 읽지 못했다: the model ran out of its output budget on one band",
+      "10쪽 '(단위백만원)' 줄: OCR이 읽은 금액 '3,722'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '1.475.169'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '74.236)'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽 '삼성디스플레이주' 줄: OCR이 읽은 금액 '25,998,317'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽 '삼성디스플레이주' 줄: OCR이 읽은 금액 '5,822,684'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '18,796,411'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '52,966,362'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '41,064,994'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '35,742,415)'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '350,888'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '5,296,559'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '29,787,509'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '18,505,380'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '3,755,810)'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '24,977'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '438,476'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '1,105,878'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽 'Haman과그종속기업(*2)' 줄: OCR이 읽은 금액 '7.819.060)'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽 'Haman과그종속기업(*2)' 줄: OCR이 읽은 금액 '2.167.121'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '168,077'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '14,049,410)'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '4,454,771'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '36,928,373'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '6.467.878'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '10,369,065'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '2,967,992'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '18,415,931'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '1,543,542)'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '9,474,930'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '8,969,730)'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '31,954,060'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '123,913'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '(311,121)'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '3,174,054'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '2,025,539)'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '6,521,190)'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '206,612'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '2,658,925'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '683,405'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '7,409,501'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '154,357'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽 '세메스주' 줄: OCR이 읽은 금액 '210,584)'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽 '세메스주' 줄: OCR이 읽은 금액 '2,457,516)'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '2,324,358'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '27.378'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '1,855,724'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '1,779,446'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '6,586,924)'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '(1,682)'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '27.146.631'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '16,042,086'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '14,604,845'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '9,351.798'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '7,996,205'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '7,975,597'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '5,263,351'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '4,815,175'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '2.267,579'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '2.115,046'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '2,072,011'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '1,967,890'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '138,323'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '1.114.773'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '13,562,847'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '2,985,765'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '2,551,991'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '886,685'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '1,617,379'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '621,508'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '813,376'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '1,784,638'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '1,816,197'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '1.619.589'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '59,278,787'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽 'Haman과그종속기업(*2)' 줄: OCR이 읽은 금액 '15,752,203'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '8,635,744'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '20,027,552'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '23,750,445'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '7.609,150'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '7,288,189'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '5,022,979'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '4,280,240'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '7.146,910'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '16,169,338'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '3,807.767'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽 'Haman과그종속기업(*2)' 줄: OCR이 읽은 금액 '1,150,350'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '2,382.125'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '483,630'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '877,997'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '1,555,475'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '415,907'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '205,028'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '123,815'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '(20.337)'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '50.777.503'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽 '(단위백만원)' 줄: OCR이 읽은 금액 '31,226,978'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '27.546,958'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽 '기업명(*) 자산부채매출액' 줄: OCR이 읽은 금액 '21.719.875'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '16,111.528'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '13.497.264'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '9,561,708'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽 'Haman과그종속기업(*2)' 줄: OCR이 읽은 금액 '9,083,393'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '7.724,664'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '4,863,158'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '4,679,383'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '3,267,763'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '2,637.138'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '2,484.711'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '2,118,638'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽 '세메스주' 줄: OCR이 읽은 금액 '1,928,760'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '1,894,968'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽 '당기삼성디스플레이(주)' 줄: OCR이 읽은 금액 '8,305,680'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '18,663,435'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '16,107,374'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '900,205'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '15,246,946'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '3,802,507'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '3,226,735'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽 'Haman과그종속기업(*2)' 줄: OCR이 읽은 금액 '3,452,430'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '1.955,376'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '5,635,634'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '807,341'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '1,486,272'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '2,042.914'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '502,266'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '646,678'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '1.642.510'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '2,049,463'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '845,480'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽 '세메스주' 줄: OCR이 읽은 금액 '1.710.124'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '726.412'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽 '삼성디스플레이(주)' 줄: OCR이 읽은 금액 '25,401.419'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '40,650,074'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '4,998,707'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽 '기업명(*) 자산부채매출액(손실)' 줄: OCR이 읽은 금액 '46,873,584'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽 '삼성디스플레이주 Hamren과그종속기업(*2)' 줄: OCR이 읽은 금액 '14,257,130'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '11,180,211'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '2,754.791'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '32.962.634'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '17.048,976'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '21,294,696'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '20.394.839'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '7.003.325'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '7.935,236'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '6,158,787'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '4,513,870'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '7.473,309'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '5,744,458'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽 '세에스(주)' 줄: OCR이 읽은 금액 '2.432.656'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '6,259,384'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '4,086,721'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '15.682,546'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽 '삼성디스플레이(주)' 줄: OCR이 읽은 금액 '5,989,037'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '1,628,652'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽 '(단위백만원)' 줄: OCR이 읽은 금액 '5.326,248'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '1,171,180'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽 '기업명(*) 자산부채매출액(손실)' 줄: OCR이 읽은 금액 '779,010'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽 '삼성디스플레이주 Hamren과그종속기업(*2)' 줄: OCR이 읽은 금액 '1,003,560'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '1,195,361'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '300.719'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '2.078,833'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '1,408,392'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽 'Haman과그종속기업(*2)' 줄: OCR이 읽은 금액 '195.012'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '1,359,308'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '841.058'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '468,408'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '381,576'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '208,102'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '181,457'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '166.928'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '138,140'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '62.255'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽 '세에스(주)' 줄: OCR이 읽은 금액 '144.665)'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '(1,661)'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '125.857'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '(12,249)'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "10쪽: OCR이 읽은 금액 '12.514'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+      "계정명을 원본(OCR)으로 확인하지 못한 행 16개: 숫자는 OCR로 확인했지만 계정명은 AI가 읽은 그대로다 (원본과 대조 필요)",
+      "소계 '영업활동현금흐름'는 세부 항목의 층(어느 항목이 다른 항목의 합인지)을 표에서 확인하지 못해 검산하지 못했다 (들여쓰기나 숫자로는 맞지만 항목 기호가 없다)",
+      "소계와 그 아래 항목을 구분하지 못해 소계 검산을 하지 못했다"
+     ]
+    }
+   ]
+  }
+ ]
+}

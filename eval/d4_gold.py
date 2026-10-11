@@ -13,8 +13,13 @@ cannot decide is a mapping item (``needs_mapping``, each with an id) for a perso
 - dart_only: an OpenDART value printed nowhere in the statement (a value printed on two rows counts twice)
 - uncertain_line: a line near the page bottom without a grouped amount (a footer or a small-amount row), with
   its proposed cells; never dropped silently
+- no_grouped_amounts: a statement without any amount printed with thousands separators (all amounts small, or
+  none), with its lines that have numbers: the builder cannot place its amount columns
 - slots (more than two amounts on a line), no_label, one_slot_no_boundary, no_unit
-``apply_mapping`` takes the person's decisions; the scorer refuses a gold with an undecided item.
+A line is dropped without a person only when it is a known page footer, a dated period line, or nothing but
+heading and unit words ("과 목", "제 57 (당) 기", "(단위: 원)"): a line with a row label of its own is never
+dropped, so "당기순이익 47 48" or "기본주당이익(단위: 원) 47 48" is a row.
+``apply_mapping`` takes the person's decisions and checks them; the scorer refuses a gold with an undecided item.
 Statements run from a title followed by a dated period line to the next title or the notes heading. 자본변동표
 is skipped (the product does not read it).
 """
@@ -22,6 +27,7 @@ is skipped (the product does not read it).
 from __future__ import annotations
 
 import argparse
+from collections import Counter
 import json
 from pathlib import Path
 import re
@@ -98,21 +104,29 @@ def statements_of(lines: list[dict]) -> list[dict]:
     return [block for block in blocks if block["kind"] != "SCE"]
 
 
-HEADER = re.compile(r"제\s*\d+\s*(\(\s*[당전]\s*\))?\s*기|과\s*목|구\s*분|당\s*기|전\s*기")
+# the words of a period or column heading ("과 목", "주 석", "제 57 (당) 기", "당기말"); a heading line has nothing else
+HEADING = re.compile(r"제\s*\d+\s*(\(\s*[당전]\s*\))?\s*기\s*[말초]?|계\s*정\s*과\s*목|과\s*목|구\s*분|주\s*석|"
+                     r"[당전]\s*기\s*[말초]?|금\s*액")
 FOOTER = re.compile(r"^-\s*\d+\s*-$|Page\s*\d+|dart\.fss\.or\.kr|^Part\s*\d|BUSINESS\s+REPORT")
+PAGE_NUMBER = re.compile(r"^[-–—]?\s*\d{1,3}\s*[-–—]?$")
+
+
+def _is_heading(text: str) -> bool:
+    """Nothing but heading and unit words: no label of a row is left ("당기순이익 47 48" leaves "순이익")."""
+    return not re.search(r"[가-힣A-Za-z]", HEADING.sub("", UNIT_TEXT.sub("", text)))
 
 
 def _line_kind(line: dict) -> str:
-    """"row", "drop" (a known page footer, a period or column heading, a dated or unit line), or "uncertain" (a
-    line near the page bottom without a grouped amount: a footer or a small-amount row; a person decides, it is
-    never dropped silently). A line with a grouped amount is always a row."""
+    """"row", "drop" (a known page footer, a dated period line, a heading or unit line, a lone page number at the
+    page bottom), or "uncertain" (a line near the page bottom without a grouped amount: a footer or a small-amount
+    row; a person decides, it is never dropped silently). A line with a grouped amount is always a row."""
     if any(GROUPED.match(w["text"]) for w in line["words"]):
         return "row"
     text = line["text"]
-    if FOOTER.search(text) or DATED.search(text) or UNIT.search(text) or (HEADER.search(text) and "주당" not in text):
+    if FOOTER.search(text) or DATED.search(text) or _is_heading(text) and re.search(r"[가-힣]", text):
         return "drop"
     if line["top"] > 0.92 * line["words"][0]["page_height"]:
-        return "uncertain" if re.search(r"[가-힣]", text) else "drop"
+        return "drop" if PAGE_NUMBER.match(text.strip()) else "uncertain"
     return "row"
 
 
@@ -137,7 +151,12 @@ def cells_of(block: dict, needs: list[dict]) -> list[dict]:
         return []
     lines = block["lines"]
     grouped = [w for line in lines for w in line["words"] if GROUPED.match(w["text"])]
-    if not grouped:
+    if not grouped:  # the amount columns are found from grouped amounts: a person decides this statement
+        numbered = [line["text"] for line in lines if _line_kind(line) != "drop"
+                    and any(SMALL.match(w["text"]) or DASH.match(w["text"]) for w in line["words"])]
+        if numbered:
+            needs.append({"why": "no_grouped_amounts", "statement_id": block["id"], "statement": block["title"],
+                          "page": block["page"], "lines": numbered})
         return []
     zone = min(w["x0"] for w in grouped) - 2  # notes and labels are left of the amounts
     # the boundary between the two periods: between the right edges of first slots and left edges of second slots
@@ -252,32 +271,99 @@ def cell_key(cell: dict) -> str:
     return f"{cell['statement_id']}|{cell['page']}|{cell['label']}|{cell['period']}|{cell['printed']}"
 
 
+ALLOWED = {"not_in_dart": {"keep", "drop"}, "dart_only": {"ignore", "add"}, "uncertain_line": {"ignore", "add"},
+           "no_grouped_amounts": {"ignore", "add"}, "slots": {"ignore", "add"}, "no_label": {"ignore", "add"},
+           "one_slot_no_boundary": {"ignore", "add"}, "no_unit": {"ignore", "add"}}
+
+
+def _place(cell: dict) -> tuple:
+    return cell["statement_id"], cell["page"], re.sub(r"\s+", "", cell["label"]), cell["period"]
+
+
+def _checked_cell(cell: object, statements: dict[str, dict], source: str) -> dict:
+    """A cell a person adds: of a gold statement and a page in its range, a label, period 0 or 1, and the value its
+    printed text gives (in 원: the printed number times 1, 10^3, 10^6, or 10^8, with its sign; None for "-")."""
+    if not isinstance(cell, dict):
+        raise ValueError(f"{source}: a cell is an object, not {cell!r}")
+    statement = statements.get(cell.get("statement_id"))
+    if statement is None:
+        raise ValueError(f"{source}: no gold statement {cell.get('statement_id')!r}")
+    page, label, period, printed, value = (cell.get(k) for k in ("page", "label", "period", "printed", "value"))
+    if not isinstance(page, int) or not statement["page"] <= page <= statement.get("end_page", statement["page"]):
+        raise ValueError(f"{source}: page {page!r} is not in {statement['id']}")
+    if not isinstance(label, str) or not re.search(r"[가-힣A-Za-z]", label):
+        raise ValueError(f"{source}: label {label!r} is not a row label")
+    if period not in (0, 1):
+        raise ValueError(f"{source}: period {period!r} is not 0 or 1")
+    if not isinstance(printed, str) or not (DASH.match(printed) or GROUPED.match(printed) or SMALL.match(printed)):
+        raise ValueError(f"{source}: printed {printed!r} is not an amount or '-'")
+    if DASH.match(printed):
+        fits = value is None
+    else:
+        fits = isinstance(value, int) and not isinstance(value, bool) and any(
+            value == value_of(printed, unit) for unit in UNITS.values())
+    if not fits:
+        raise ValueError(f"{source}: value {value!r} is not what {printed!r} prints")
+    return {"statement_id": statement["id"], "statement": statement["title"], "kind": statement["kind"], "page": page,
+            "label": label, "period": period, "printed": printed, "value": value, "source": source}
+
+
 def apply_mapping(gold: dict, mapping: dict) -> dict:
-    """The gold a person confirmed: every ``needs_mapping`` item must have a decision in ``mapping["decisions"]``:
+    """The gold with a person's decisions. ``mapping`` has a ``status`` ("draft", or "confirmed" with
+    ``confirmed_by`` and ``confirmed_at``) and ``decisions``: one per ``needs_mapping`` item and no other, each with
+    a ``note`` of its own (the page and printed text it rests on; two items never share a note):
     - "keep": the automatic cell stands (printed, OpenDART shows it otherwise)
     - "drop": the automatic cell is removed (``not_in_dart`` only)
     - "ignore": nothing changes (an OpenDART-only value not printed, a footer line)
-    - "add": ``cells`` (or, for an ``uncertain_line``, its ``proposed`` cells when ``cells`` is absent) join the gold
-    Raises ValueError naming the undecided items; the scorer does not score an unconfirmed gold."""
+    - "add": ``cells`` (or, for an ``uncertain_line``, its ``proposed`` cells when ``cells`` is absent) join the
+      gold: at least one, each checked (``_checked_cell``), none at the place (statement, page, label, period) of
+      another gold cell
+    Raises ValueError; the scorer does not score a gold whose mapping does not pass. The returned gold carries the
+    mapping's status for the scorer (only a confirmed mapping makes an official score)."""
+    status = mapping.get("status")
+    if status not in ("draft", "confirmed"):
+        raise ValueError(f"mapping status {status!r} is not 'draft' or 'confirmed'")
+    if status == "confirmed" and not (mapping.get("confirmed_by") and mapping.get("confirmed_at")):
+        raise ValueError("a confirmed mapping names who confirmed it and when (confirmed_by, confirmed_at)")
     decisions = mapping.get("decisions", {})
+    ids = {need["id"] for need in gold["needs_mapping"]}
     missing = [need["id"] for need in gold["needs_mapping"] if need["id"] not in decisions]
     if missing:
         raise ValueError(f"mapping has no decision for {len(missing)} item(s): {', '.join(missing[:10])}")
-    allowed = {"not_in_dart": {"keep", "drop"}, "dart_only": {"ignore", "add"}, "uncertain_line": {"ignore", "add"},
-               "slots": {"ignore", "add"}, "no_label": {"ignore", "add"}, "one_slot_no_boundary": {"ignore", "add"},
-               "no_unit": {"ignore", "add"}}
+    unknown = sorted(set(decisions) - ids)
+    if unknown:
+        raise ValueError(f"mapping decides {len(unknown)} item(s) the gold does not have: {', '.join(unknown[:10])}")
+    notes = [str(decisions[i].get("note") or "").strip() for i in sorted(ids)]
+    if not all(notes):
+        raise ValueError("every decision has a note (the page and printed text it rests on)")
+    repeated = [note for note, n in Counter(notes).items() if n > 1]
+    if repeated:
+        raise ValueError(f"{len(repeated)} note(s) repeated across items: each item's note says what is printed where")
+    statements = {statement["id"]: statement for statement in gold["statements"]}
     cells = list(gold["cells"])
+    added: list[dict] = []
     for need in gold["needs_mapping"]:
         decision = decisions[need["id"]]
         kind = decision.get("decision")
-        if kind not in allowed.get(need["why"], set()):
-            raise ValueError(f"{need['id']} ({need['why']}): decision {kind!r} is not one of {sorted(allowed[need['why']])}")
+        if kind not in ALLOWED.get(need["why"], set()):
+            raise ValueError(f"{need['id']} ({need['why']}): decision {kind!r} is not one of {sorted(ALLOWED[need['why']])}")
         if kind == "drop":
             key = f"{need['statement_id']}|{need['page']}|{need['label']}|{need['period']}|{need['printed']}"
-            cells = [c for c in cells if cell_key(c) != key]
+            index = next((i for i, c in enumerate(cells) if cell_key(c) == key), None)
+            if index is None:
+                raise ValueError(f"{need['id']}: no gold cell {key} to drop")
+            cells.pop(index)
         elif kind == "add":
-            cells += decision.get("cells") or need.get("proposed") or []
-    return {**gold, "cells": cells, "mapping_confirmed_by": mapping.get("confirmed_by")}
+            given = decision["cells"] if "cells" in decision else need.get("proposed")
+            if not given:
+                raise ValueError(f"{need['id']}: 'add' needs at least one cell")
+            added += [_checked_cell(cell, statements, f"mapping:{need['id']}") for cell in given]
+    places = Counter(_place(c) for c in cells + added)
+    for cell in added:
+        if places[_place(cell)] > 1:
+            raise ValueError(f"{cell['source']}: a gold cell is already at {'|'.join(map(str, _place(cell)))}")
+    return {**gold, "cells": cells + added,
+            "mapping": {k: mapping.get(k) for k in ("status", "confirmed_by", "confirmed_at")}}
 
 
 def main() -> int:

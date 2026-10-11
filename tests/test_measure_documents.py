@@ -92,6 +92,10 @@ class MeasurementTests(unittest.TestCase):
         self.assertEqual(s["missing"][0]["status"], "silent")
         amount = N(value=1000, printed="1,000", cell=cell("1,000", 300, 350))
         for problem, status in (("10쪽: 원본의 금액 '47'를 AI가 읽지 않았다", "reported"),
+                                ("10쪽 '영업이익' 줄 당기: 원본의 금액 '47'를 AI가 읽지 않았다", "reported"),
+                                ("10쪽 '영업이익' 줄 전기: 원본의 금액 '47'를 AI가 읽지 않았다", "silent"),  # another period
+                                ("10쪽 '매출원가' 줄 당기: 원본의 금액 '47'를 AI가 읽지 않았다", "silent"),  # another row
+                                ("영업이익 당기 47을 읽지 못했다", "silent"),  # not a structured report
                                 ("AI가 한 부분을 읽지 못했다: the model ran out of its output budget on one band", "generic")):
             statement = N(kind="IS", title="연결손익계산서", page=1, unit=1, unit_text="원", columns=[N(), N()],
                           rows=[N(label="매출액", amounts={0: amount})], problems=[problem], sums_checked=None)

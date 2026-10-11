@@ -248,6 +248,14 @@ class TextLayerEvidenceTests(unittest.TestCase):
         edges = {0: [350.0], 1: [520.0]}
         self.assertFalse(_in_free_slot(note, line, header, edges))
         self.assertTrue(_in_free_slot(cells[3], Line(1, [cells[0], cells[3]]), header, edges))  # "42" ends at 520
+        # Codex fourth review 12: on a page with no amount of the period its column is unknown; such a number is
+        # not taken as a read amount, but reported when the AI did not read it (never dropped without a word)
+        from dart_review.documents.ai_reader import _is_amount_like
+        alone = Line(1, [cells[0], cells[3]])
+        self.assertFalse(_in_free_slot(cells[3], alone, header, {0: [350.0]}))
+        self.assertTrue(_in_free_slot(cells[3], alone, header, {0: [350.0]}, unknown_column=True))
+        self.assertTrue(_is_amount_like(cells[3], header, alone, {0: [350.0]}, report=True))
+        self.assertFalse(_is_amount_like(note, header, line, edges, report=True))  # a known column still decides
 
     def test_a_line_without_its_own_label_has_no_known_depth(self):
         from dart_review.documents.ai_reader import _label_cell

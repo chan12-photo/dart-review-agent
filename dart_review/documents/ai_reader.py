@@ -217,24 +217,28 @@ def _is_bare_small(text: str) -> bool:
 
 
 def _is_amount_like(cell: Cell, header: Header | None, line: Line | None = None,
-                    edges: dict[int, list[float]] | None = None) -> bool:
+                    edges: dict[int, list[float]] | None = None, report: bool = False) -> bool:
     """An amount, or a small number printed under a period heading (a per-share amount "47"). A bare one- or
-    two-digit number counts only in a free period slot of its line (see ``_in_free_slot``)."""
+    two-digit number counts only in a free period slot of its line (see ``_in_free_slot``); with ``report`` (an
+    amount the AI did not read is reported) also where the page shows no column of its period."""
     if _is_amount_word(cell.text):
         return True
     text = re.sub(r"(백만|천)?원$", "", cell.text.replace(" ", ""))
     if header is None or header.period_of(cell.x1) is None:
         return False
     if _is_bare_small(text):
-        return line is None or _in_free_slot(cell, line, header, edges)
+        return line is None or _in_free_slot(cell, line, header, edges, unknown_column=report)
     return bool(re.fullmatch(r"[(（]?[-−△]?\d{1,3}[)）]?", text))
 
 
-def _in_free_slot(cell: Cell, line: Line, header: Header, edges: dict[int, list[float]] | None = None) -> bool:
+def _in_free_slot(cell: Cell, line: Line, header: Header, edges: dict[int, list[float]] | None = None,
+                  unknown_column: bool = False) -> bool:
     """A bare one- or two-digit number is an amount only where its period has no other amount on the line, and,
     when the page's amount columns are known (``edges``), only where it is right-aligned with one of that period's
     columns. A note number printed right of an amount either shares the amount's period ("매출액 1,000 | 1") or
-    lines up with no column of the next period; a per-share amount "42" sits in its period's column."""
+    lines up with no column of the next period; a per-share amount "42" sits in its period's column. Where the
+    page has no amount of that period, its column is unknown: ``unknown_column`` decides (true when the number is
+    only reported as unread, so a small amount on such a page is never dropped without a word)."""
     period = header.period_of(cell.x1)
     if period is None:
         return False
@@ -242,8 +246,11 @@ def _in_free_slot(cell: Cell, line: Line, header: Header, edges: dict[int, list[
            for other in line.cells):
         return False
     if edges is not None:
+        columns = edges.get(period, [])
+        if not columns:
+            return unknown_column
         tolerance = 2.0 * max(cell.bottom - cell.top, 1.0)
-        return any(abs(cell.x1 - edge) <= tolerance for edge in edges.get(period, []))
+        return any(abs(cell.x1 - edge) <= tolerance for edge in columns)
     return True
 
 
@@ -419,7 +426,7 @@ def _read_with_page_structure(part: Part, lines: Sequence[Line], title_line: Lin
             _add_row(statement, state.checks, s_index, item, band_lines, state.header, part, claimed, edges)
     for line in body:
         for cell in line.cells:
-            if _is_amount_like(cell, state.header, line, edges) and id(cell) not in claimed:
+            if _is_amount_like(cell, state.header, line, edges, report=True) and id(cell) not in claimed:
                 period = state.header.period_of(cell.x1) if state.header else None
                 statement.problems.append(f"{_where(part.page, _line_label(line), period)}: 원본의 금액 '{cell.text}'를 AI가 읽지 않았다 "
                                           "(행이 빠졌을 수 있다)")

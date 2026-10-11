@@ -188,8 +188,9 @@ def _check_sum(statement: Statement, by_cell: dict[tuple[int, int], CellCheck], 
                details: list[int]) -> int:
     """``parent`` against ``details``; returns the number of sums checked.
 
-    - Item markers that differ among the details ("1." over "가.") give the structure: the parent equals the sum
-      of its top-level details, and each detail with children (deeper markers) is checked against them.
+    - Item markers that differ among the details ("1." over "가."), with each deeper item indented further right,
+      give the structure: the parent equals the sum of its top-level details, and each detail with children
+      (deeper markers) is checked against them.
     - Otherwise every detail is a direct part: the plain sum must hold. If it fails but would hold were some
       detail the sum of the ones after it (shown only by indentation, or only by the numbers), a third level
       cannot be told from a wrong cell: the sum is not counted as checked, and its cells are marked.
@@ -236,16 +237,17 @@ def _check_sum(statement: Statement, by_cell: dict[tuple[int, int], CellCheck], 
 
 def _trusted_structure(details: list[int], markers: list[int | None], indents: list[float | None]) -> bool:
     """Whether the item markers can be trusted to give the levels: every detail has one (none is unmarked), they
-    are not all the same, and the indentation, where known, does not contradict them (a deeper marker is not
-    printed further left). A table with markers on some rows only once let a wrong subtotal pass (Codex third
-    review 7: A=5, (1) B=5, C=5 under 10)."""
+    are not all the same, and the indentation confirms them: each deeper item is printed further right than the
+    item it belongs to. A table with markers on some rows only once let a wrong subtotal pass (Codex third review
+    7: A=5, (1) B=5, C=5 under 10), and so did markers of different kinds at one indentation (Codex fourth review
+    9: 1. A=10, 가. B=5, 가. C=5 under 10, all at one x)."""
     if None in markers or 6 in markers or len(set(markers)) < 2:
         return False
     for parent, children in _levels(details, markers):
         p = details.index(parent)
         for child in children:
             c = details.index(child)
-            if indents[p] is not None and indents[c] is not None and indents[c] < indents[p] - 1.0:
+            if indents[p] is None or indents[c] is None or indents[c] <= indents[p] + 1.0:
                 return False
     return True
 

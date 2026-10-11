@@ -387,15 +387,15 @@ class SubtotalTests(unittest.TestCase):
     def test_a_third_level_is_known_from_the_item_markers_not_from_the_numbers(self):
         rows = [(60, "Ⅰ. 영업활동 현금흐름", "s", "85,315,148"),
                 (70, "1. 영업에서 창출된 현금흐름", "d", "87,988,515"),
-                (70, "가. 당기순이익", "d", "45,206,805"), (70, "나. 조정", "d", "52,395,616"),
-                (70, "다. 자산부채의 변동", "d", "(9,613,906)"),
+                (80, "가. 당기순이익", "d", "45,206,805"), (80, "나. 조정", "d", "52,395,616"),
+                (80, "다. 자산부채의 변동", "d", "(9,613,906)"),
                 (70, "2. 이자의 수취", "d", "4,680,553"), (70, "3. 이자의 지급", "d", "(469,730)"),
                 (70, "4. 배당금 수입", "d", "253,105"), (70, "5. 법인세 납부액", "d", "(7,137,295)")]
         closing = ("Ⅱ. 기말 현금", "57,856,378")
         statement = self.statement("현금흐름표", rows, closing)
         self.assertEqual(self.flagged(statement), set())
         self.assertEqual(statement.sums_checked, 4)  # per period: the section, and 영업에서 창출 = 가 + 나 + 다
-        rows[3] = (70, "나. 조정", "d", "52,395,617")  # one off in the third level
+        rows[3] = (80, "나. 조정", "d", "52,395,617")  # one off in the third level
         flagged = self.flagged(self.statement("현금흐름표", rows, closing))
         self.assertIn(("조정", 0), flagged)
         self.assertIn(("영업에서 창출된 현금흐름", 0), flagged)
@@ -443,6 +443,19 @@ class SubtotalTests(unittest.TestCase):
         flagged = self.flagged(statement)
         self.assertEqual((statement.sums_checked, statement.sums_uncertain > 0), (0, True))
         self.assertTrue({("가항목", 0), ("나항목", 0), ("다항목", 0)} <= flagged)
+
+    def test_markers_at_one_indentation_do_not_make_a_level(self):
+        # Codex fourth review 9: 1. A=10, 가. B=5, 가. C=5 under 10, all at one x, passed as checked
+        flat = [(60, "Ⅰ. 투자활동 현금흐름", "s", "10"), (70, "1. 가항목", "d", "10"),
+                (70, "가. 나항목", "d", "5"), (70, "가. 다항목", "d", "5")]
+        statement = self.statement("현금흐름표", flat, ("Ⅱ. 기말 현금", "57,856,378"))
+        flagged = self.flagged(statement)
+        self.assertEqual((statement.sums_checked, statement.sums_uncertain > 0), (0, True))
+        self.assertTrue({("가항목", 0), ("나항목", 0), ("다항목", 0)} <= flagged)
+        indented = [flat[0], flat[1], (80, "가. 나항목", "d", "5"), (80, "가. 다항목", "d", "5")]
+        statement = self.statement("현금흐름표", indented, ("Ⅱ. 기말 현금", "57,856,378"))
+        flagged = self.flagged(statement)
+        self.assertEqual((flagged, statement.sums_checked, statement.sums_uncertain), (set(), 4, 0))
 
     def test_a_dash_is_zero_and_wide_amounts_stay_in_one_part(self):
         # the detail and subtotal positions 80 apart (NAVER) once split every row into its own part: no sum ran

@@ -5,7 +5,7 @@
 
 The freeze record names the product commit P and the tools commit T, the git object of every frozen path at
 its commit (the product: dart_review/ and pyproject.toml; the tools: TOOL_PATHS), the Python version, every
-installed package with its version, the model's digest, and the Tesseract version.
+installed package with its version, the model's digest, and the Ollama, Tesseract, and macOS versions.
 
 The check runs in the checkout the run will use (a fresh ``git worktree`` at the registration commit R) and
 fails unless all hold: no change in the working tree or the index and no untracked file (``git status
@@ -29,6 +29,7 @@ PRODUCT_PATHS = ("dart_review", "pyproject.toml")
 # the gold builder, the scorer, the candidate rules, this check, and the synthetic scan maker with its conditions
 TOOL_PATHS = ("eval/d4_gold.py", "eval/d4_score.py", "eval/d4_candidates.py", "eval/d4_preflight.py", "eval/d4_scan.py")
 MODEL = "qwen3-vl:8b"
+ENVIRONMENT = ("python", "packages", "model", "ollama", "tesseract", "macos")
 
 
 def _git(root: Path, *args: str) -> str:
@@ -60,8 +61,10 @@ def environment() -> dict:
         model = next((line.split()[1] for line in listed.splitlines()[1:] if line.split()[:1] == [MODEL]), None)
     except (OSError, subprocess.SubprocessError, IndexError):
         model = None
+    # Ollama's version can change a model's output; macOS's version is the Vision OCR's
     return {"python": platform.python_version(), "packages": packages, "model": {MODEL: model},
-            "tesseract": first_line(["tesseract", "--version"])}
+            "ollama": first_line(["ollama", "--version"]), "tesseract": first_line(["tesseract", "--version"]),
+            "macos": platform.mac_ver()[0] or None}
 
 
 def freeze_record(root: Path, product: str, tools: str, env: dict) -> dict:
@@ -91,7 +94,7 @@ def check(root: Path, record: dict, env: dict, imported_from: Path | None = None
         add("dart_review imported from this checkout", imported_from.resolve().is_relative_to(root.resolve()),
             str(imported_from))
     frozen = record["environment"]
-    for key in ("python", "packages", "model", "tesseract"):
+    for key in ENVIRONMENT:
         same = frozen.get(key) == env.get(key) and env.get(key) is not None
         if key == "model":
             same = same and all(frozen[key].values())

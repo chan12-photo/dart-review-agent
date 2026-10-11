@@ -486,7 +486,7 @@ class PreflightTests(unittest.TestCase):
     """Codex third review 8: a commit diff did not see a frozen file changed only in the working tree."""
 
     ENV = {"python": "3.13.12", "packages": ["pdfplumber==0.11.0"], "model": {MODEL: "abc123"},
-           "tesseract": "tesseract 5.5.3"}
+           "ollama": "ollama version is 0.34.4", "tesseract": "tesseract 5.5.3", "macos": "27.2"}
 
     def setUp(self):
         self.folder = tempfile.TemporaryDirectory()
@@ -528,8 +528,8 @@ class PreflightTests(unittest.TestCase):
         (self.root / "eval/extra.py").write_text("x", encoding="utf-8")
         self.assertEqual(self.failed(), ["clean working tree and index (git status --porcelain)"])
         (self.root / "eval/extra.py").unlink()
-        other = {**self.ENV, "packages": ["pdfplumber==0.11.1"], "model": {MODEL: None}}
-        self.assertEqual(self.failed(other), ["packages as frozen", "model as frozen"])
+        other = {**self.ENV, "packages": ["pdfplumber==0.11.1"], "model": {MODEL: None}, "ollama": "ollama version is 0.35.0"}
+        self.assertEqual(self.failed(other), ["packages as frozen", "model as frozen", "ollama as frozen"])
         self.assertEqual(self.failed(imported_from=Path("/elsewhere/dart_review/__init__.py")),
                          ["dart_review imported from this checkout"])
 

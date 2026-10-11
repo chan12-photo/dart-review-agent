@@ -1,0 +1,8 @@
+{
+ "status": "draft",
+ "drafted_by": "Claude 1차 (개발 문서)",
+ "confirmed_by": null,
+ "confirmed_at": null,
+ "basis": "PDF 글자 층(pdfplumber)의 인쇄 줄과 OpenDART 캐시(fnlttSinglAcntAll, 2025, 11011)의 값을 항목마다 대조했다. 합·차는 원 단위 정수로 계산해 맞는 것만 적었다. 사용자 확인 전이다.",
+ "decisions": {}
+}

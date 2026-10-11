@@ -195,7 +195,8 @@ def report(extraction, source_name: str, reader: str) -> dict[str, Any]:
         statements.append({"title": statement.title, "kind": KINDS.get(statement.kind, statement.kind),
                            "page": statement.page, "unit": statement.unit_text,
                            "columns": [{"header": c.header, "year": c.year, "end": c.end} for c in statement.columns],
-                           "rows": rows, "problems": statement.problems, "sums_checked": statement.sums_checked})
+                           "rows": rows, "problems": statement.problems, "sums_checked": statement.sums_checked,
+                           "sums_uncertain": statement.sums_uncertain})
     return {"source": source_name, "reader": reader, "cells": len(extraction.checks),
             "needs_review": extraction.needs_review, "statements": statements, "problems": extraction.problems}
 

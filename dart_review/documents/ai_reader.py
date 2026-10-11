@@ -184,10 +184,16 @@ def _is_amount_word(text: str) -> bool:
     return bool(SMALL_OR_GROUPED.fullmatch(re.sub(r"(백만|천)?원$", "", text.replace(" ", ""))))
 
 
-def _where(page: int, label: str) -> str:
-    """Where a reported amount is: its page, and its row's printed label when there is one ("10쪽 '매출액' 줄"), so a
-    report points at one cell even when the same number is printed on another row."""
-    return f"{page}쪽 '{label}' 줄" if re.search(r"[가-힣A-Za-z]", label or "") else f"{page}쪽"
+PERIOD_WORDS = ("당기", "전기")
+
+
+def _where(page: int, label: str, period: int | None = None) -> str:
+    """Where a reported amount is: its page, its row's printed label, and its period when known ("10쪽 '매출액' 줄
+    전기"), so a report points at one cell even when the same number is printed on another row or in both periods."""
+    where = f"{page}쪽 '{label}' 줄" if re.search(r"[가-힣A-Za-z]", label or "") else f"{page}쪽"
+    if period is not None:
+        where += " " + (PERIOD_WORDS[period] if period < len(PERIOD_WORDS) else f"{period + 1}번째 기간")
+    return where
 
 
 def _line_label(line: Line) -> str:
@@ -210,7 +216,8 @@ def _is_bare_small(text: str) -> bool:
     return bool(re.fullmatch(r"[-−△]?\d{1,2}", text.replace(" ", "")))
 
 
-def _is_amount_like(cell: Cell, header: Header | None, line: Line | None = None) -> bool:
+def _is_amount_like(cell: Cell, header: Header | None, line: Line | None = None,
+                    edges: dict[int, list[float]] | None = None) -> bool:
     """An amount, or a small number printed under a period heading (a per-share amount "47"). A bare one- or
     two-digit number counts only in a free period slot of its line (see ``_in_free_slot``)."""
     if _is_amount_word(cell.text):
@@ -219,19 +226,39 @@ def _is_amount_like(cell: Cell, header: Header | None, line: Line | None = None)
     if header is None or header.period_of(cell.x1) is None:
         return False
     if _is_bare_small(text):
-        return line is None or _in_free_slot(cell, line, header)
+        return line is None or _in_free_slot(cell, line, header, edges)
     return bool(re.fullmatch(r"[(（]?[-−△]?\d{1,3}[)）]?", text))
 
 
-def _in_free_slot(cell: Cell, line: Line, header: Header) -> bool:
-    """A bare one- or two-digit number is an amount only where its period has no other amount on the line. A note
-    number printed right of an amount falls under the same period as that amount ("매출액 1,000 | 1"); a per-share
-    amount "42" fills a period of its own."""
+def _in_free_slot(cell: Cell, line: Line, header: Header, edges: dict[int, list[float]] | None = None) -> bool:
+    """A bare one- or two-digit number is an amount only where its period has no other amount on the line, and,
+    when the page's amount columns are known (``edges``), only where it is right-aligned with one of that period's
+    columns. A note number printed right of an amount either shares the amount's period ("매출액 1,000 | 1") or
+    lines up with no column of the next period; a per-share amount "42" sits in its period's column."""
     period = header.period_of(cell.x1)
     if period is None:
         return False
-    return not any(other is not cell and _is_amount_word(other.text) and header.period_of(other.x1) == period
-                   for other in line.cells)
+    if any(other is not cell and _is_amount_word(other.text) and header.period_of(other.x1) == period
+           for other in line.cells):
+        return False
+    if edges is not None:
+        tolerance = 2.0 * max(cell.bottom - cell.top, 1.0)
+        return any(abs(cell.x1 - edge) <= tolerance for edge in edges.get(period, []))
+    return True
+
+
+def _period_edges(lines: Sequence[Line], header: Header | None) -> dict[int, list[float]]:
+    """The right edges of the grouped amounts of each period on a page (amounts are right-aligned)."""
+    edges: dict[int, list[float]] = {}
+    if header is None:
+        return edges
+    for line in lines:
+        for cell in line.cells:
+            if _is_amount_word(cell.text):
+                period = header.period_of(cell.x1)
+                if period is not None:
+                    edges.setdefault(period, []).append(cell.x1)
+    return edges
 
 
 def _existing_row(statement: Statement, line: Line) -> int | None:
@@ -382,17 +409,19 @@ def _read_with_page_structure(part: Part, lines: Sequence[Line], title_line: Lin
         statement.problems.append(f"{part.page}쪽: 열 머리글(당기·전기)을 찾지 못해 이 쪽의 금액은 기간을 정하지 못했다")
     top = part_header.bottom if part_header else (title_line.cells[0].bottom if title_line else 0.0)
     body = [line for line in lines if line.top > top and any(_is_amount_like(cell, state.header) for cell in line.cells)]
+    edges = _period_edges(body, state.header)
     claimed: set[int] = set()
     s_index = len(state.statements) - 1
     for band_top, band_bottom, band_lines in _bands(body):
         crop = part.image.crop((int(part.x_range[0]), int(band_top), int(part.x_range[1]), int(band_bottom)))
         answer = state.ask(model, crop, BAND_PROMPT, split=True)
         for item in parse_band(answer or ""):
-            _add_row(statement, state.checks, s_index, item, band_lines, state.header, part, claimed)
+            _add_row(statement, state.checks, s_index, item, band_lines, state.header, part, claimed, edges)
     for line in body:
         for cell in line.cells:
-            if _is_amount_like(cell, state.header, line) and id(cell) not in claimed:
-                statement.problems.append(f"{_where(part.page, _line_label(line))}: 원본의 금액 '{cell.text}'를 AI가 읽지 않았다 "
+            if _is_amount_like(cell, state.header, line, edges) and id(cell) not in claimed:
+                period = state.header.period_of(cell.x1) if state.header else None
+                statement.problems.append(f"{_where(part.page, _line_label(line), period)}: 원본의 금액 '{cell.text}'를 AI가 읽지 않았다 "
                                           "(행이 빠졌을 수 있다)")
     if notes is not None:
         state.closed = True
@@ -669,7 +698,7 @@ def _report_unread_tokens(statement: Statement, part: Part, claimed: dict[int, i
 
 
 def _add_row(statement: Statement, checks: list[CellCheck], s_index: int, item: BandLine, band_lines: Sequence[Line],
-             header: Header | None, part: Part, claimed: set[int]) -> None:
+             header: Header | None, part: Part, claimed: set[int], edges: dict[int, list[float]] | None = None) -> None:
     label = clean_label(item.label, ocr=True)
     if not label:
         return
@@ -702,7 +731,7 @@ def _add_row(statement: Statement, checks: list[CellCheck], s_index: int, item: 
         # the model copied, ignored (no flag, no row)
         cell = next((c for c in (evidence_line.cells if evidence_line is not None else ())
                      if _digits(c.text) == _digits(printed) and id(c) not in claimed and header is not None
-                     and _is_bare_small(c.text) and _in_free_slot(c, evidence_line, header)), None)
+                     and _is_bare_small(c.text) and _in_free_slot(c, evidence_line, header, edges)), None)
         if cell is not None:
             regular.append(printed)
     for position, printed in enumerate(regular):
@@ -713,7 +742,7 @@ def _add_row(statement: Statement, checks: list[CellCheck], s_index: int, item: 
         if evidence_line is not None:
             cell = next((c for c in evidence_line.cells if _digits(c.text) == digits and id(c) not in claimed
                          and (_is_amount_word(c.text) or (_is_bare_small(c.text) and header is not None
-                                                          and _in_free_slot(c, evidence_line, header)))), None)
+                                                          and _in_free_slot(c, evidence_line, header, edges)))), None)
         reasons = [label_problem] if label_problem else []
         if cell is not None:
             claimed.add(id(cell))

@@ -57,6 +57,7 @@ class PeriodColumn:
     ordinal: int | None = None  # 기수 ("제 56 기")
     year: int | None = None
     end: str | None = None  # the period end (YYYY-MM-DD) when a period line states it
+    uncertain: bool = False  # a column of small numbers with no heading above it: notes or amounts cannot be told
 
 
 @dataclass
@@ -71,6 +72,7 @@ class Statement:
     rows: list[Row]
     problems: list[str] = field(default_factory=list)
     sums_checked: int | None = None  # balance identities and subtotals checked (per period column), when run
+    sums_uncertain: int = 0  # subtotals not checked because their levels could not be told from the table
 
 
 def parse_amount(printed: str, unit: int | None) -> int | None:
@@ -234,11 +236,17 @@ def read_statement(title_line: Line, body: Sequence[Line], context: Sequence[Lin
     placed_left = [cell.x0 for line in body for cell in line.cells if cell.is_amount and not _is_dash(cell.text)
                    and _period_index(cell, columns, periods, tolerance) is not None]
     amounts_left = min(placed_left) if placed_left else float("inf")
+    for period in periods:
+        if period.uncertain:
+            problems.append(f"'{period.header or '머리글 없음'}' 열은 작은 숫자만 있고 위에 기간이나 주석 머리글이 없어, "
+                            "주석 번호인지 금액인지 확인하지 못했다 (그 열의 칸은 확인 필요)")
     rows = []
     orphans: list[str] = []  # amounts that end up in no row: a broken table, never silently dropped
 
     def unplaced_of(cells, label=""):
-        return [f"{cell.page}쪽 '{cell.text}'" + (f" ({label})" if label else "") for cell in cells
+        # "1쪽 '기본주당이익' 줄 '47'": the label quoted like the AI reader's reports (a label with parentheses,
+        # "기타(손실)", cannot be cut short), so a report points at one row
+        return [(f"{cell.page}쪽 '{label}' 줄 '{cell.text}'" if label else f"{cell.page}쪽 '{cell.text}'") for cell in cells
                 if not _is_note_like(cell, columns, periods, tolerance, amounts_left)]
 
     for line in body:
@@ -306,24 +314,54 @@ PERIOD_MARK = re.compile(r"제\s*\d+|당\s*기|전\s*기|전\s*전\s*기|\d{4}\s
 
 def _set_note_columns(body: Sequence[Line], columns: list[Column], periods: list[PeriodColumn],
                       tolerance: float) -> tuple[list[Column], list[PeriodColumn]]:
-    """A number column holding only note references ("1", "4, 29") is the note column, wherever it is printed. A
-    note column right of the amounts once became a second period whose values were the note numbers, every cell
-    passing its checks. Columns are returned in the merged form (header = period index, or the note mark)."""
-    def only_notes(column: Column) -> bool:
+    """A number column holding only small numbers ("1", "47", "4, 29") is told by the heading printed above it:
+    "주석" makes it the note column (a note column right of the amounts once became a second period whose values
+    were the note numbers); a period heading keeps it a period (per-share amounts "47", "48" under 당기·전기 were
+    once dropped as notes, their rows lost without a word); no heading leaves it a period whose cells are marked
+    (``PeriodColumn.uncertain``). Columns are returned in the merged form (header = period index, or the note mark)."""
+    headings = _heading_cells(body)
+
+    def kind(column: Column) -> str:
         cells = [cell for line in body for cell in line.cells
                  if cell.is_amount and not _is_dash(cell.text) and column.holds(cell, tolerance)]
-        return bool(cells) and all(_NOTE_REFERENCE.fullmatch(cell.text.strip()) for cell in cells)
+        if not cells or not all(_NOTE_REFERENCE.fullmatch(cell.text.strip()) for cell in cells):
+            return "amounts"
+        left, right = min(cell.x0 for cell in cells) - tolerance, max(cell.x1 for cell in cells) + tolerance
+        above = [h for h in headings if h.x0 < right and h.x1 > left]
+        nearest = min(above, key=lambda h: abs((h.x0 + h.x1) / 2 - (left + right) / 2), default=None)
+        text = re.sub(r"\s+", "", nearest.text) if nearest is not None else ""
+        if "주석" in text or text == "주":
+            return "notes"
+        return "small_amounts" if PERIOD_MARK.search(nearest.text if nearest is not None else "") else "unknown"
 
     if columns and all(column.header.isdigit() or column.header == NOTE_COLUMN for column in columns):
-        return [Column(c.right, NOTE_COLUMN) if c.header != NOTE_COLUMN and only_notes(c) else c for c in columns], periods
+        merged = []
+        for column in columns:
+            found = kind(column) if column.header != NOTE_COLUMN else "notes"
+            merged.append(Column(column.right, NOTE_COLUMN) if found == "notes" else column)
+            if found == "unknown" and column.header.isdigit():
+                periods[int(column.header)].uncertain = True
+        return merged, periods
     merged, kept = [], []
     for column, period in zip(columns, periods):
-        if _is_note_column(period) or only_notes(column):
+        found = "notes" if _is_note_column(period) else kind(column)
+        if found == "notes":
             merged.append(Column(column.right, NOTE_COLUMN))
         else:
+            period.uncertain = found == "unknown"
             merged.append(Column(column.right, str(len(kept))))
             kept.append(period)
     return merged, kept
+
+
+def _heading_cells(body: Sequence[Line]) -> list[Cell]:
+    """The text cells of the heading lines: the lines before the first line with a grouped amount."""
+    cells = []
+    for line in body:
+        if any(cell.is_amount and len(re.sub(r"\D", "", cell.text)) >= 4 for cell in line.cells):
+            break
+        cells += [cell for cell in line.cells if not cell.is_amount]
+    return cells
 
 
 def without_section_column(cells: Sequence[Cell]) -> list[Cell]:

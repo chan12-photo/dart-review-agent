@@ -79,6 +79,8 @@ def check(statements: list[Statement]) -> list[CellCheck]:
                     result.flag("금액 단위를 알 수 없다")
                 if c_index < len(statement.columns) and not PERIOD_MARK.search(statement.columns[c_index].header or ""):
                     result.flag("이 열의 기간 머리글(제 N 기, 당기·전기, 연도)을 확인하지 못했다")
+                if c_index < len(statement.columns) and statement.columns[c_index].uncertain:
+                    result.flag("작은 숫자만 있는 열이라 주석 번호인지 금액인지 확인하지 못했다")
                 if row.unplaced:
                     result.flag("같은 줄에 열을 정하지 못한 숫자가 있다 (줄 구조가 깨졌을 수 있다)")
                 by_cell[(r_index, c_index)] = result
@@ -196,16 +198,22 @@ def _check_sum(statement: Statement, by_cell: dict[tuple[int, int], CellCheck], 
         return statement.rows[index].amounts[column].value or 0  # a dash is zero
 
     markers = [_marker(statement.rows[index]) for index in details]
-    if None not in markers and len(set(markers)) > 1:
+    indents = [_indent(statement.rows[index]) for index in details]
+    if _trusted_structure(details, markers, indents):
         top = _levels(details, markers)
     else:
         top = [(index, []) for index in details]
         if value(parent) != sum(value(index) for index in details):
-            indents = [_indent(statement.rows[index]) for index in details]
-            nested = _levels(details, indents) if None not in indents and max(indents) - min(indents) > 1.0 else None
-            explained = (nested is not None and value(parent) == sum(value(index) for index, _ in nested)) or \
+            # explanations that would make it hold; none is certain enough to call the sum checked
+            candidates = []
+            if None not in markers and len(set(markers)) > 1:
+                candidates.append(_levels(details, markers))  # markers on some rows only
+            if None not in indents and max(indents) - min(indents) > 1.0:
+                candidates.append(_levels(details, indents))  # indentation only
+            explained = any(value(parent) == sum(value(index) for index, _ in nested) for nested in candidates) or \
                 _sums_by_coincidence(value(parent), [value(index) for index in details])
             if explained:
+                statement.sums_uncertain += 1
                 label = statement.rows[parent].label
                 note = (f"소계 '{label}'는 세부 항목의 층(어느 항목이 다른 항목의 합인지)을 표에서 확인하지 못해 검산하지 못했다 "
                         "(들여쓰기나 숫자로는 맞지만 항목 기호가 없다)")
@@ -224,6 +232,22 @@ def _check_sum(statement: Statement, by_cell: dict[tuple[int, int], CellCheck], 
         if children:
             checked += _check_sum(statement, by_cell, column, index, children)
     return checked
+
+
+def _trusted_structure(details: list[int], markers: list[int | None], indents: list[float | None]) -> bool:
+    """Whether the item markers can be trusted to give the levels: every detail has one (none is unmarked), they
+    are not all the same, and the indentation, where known, does not contradict them (a deeper marker is not
+    printed further left). A table with markers on some rows only once let a wrong subtotal pass (Codex third
+    review 7: A=5, (1) B=5, C=5 under 10)."""
+    if None in markers or 6 in markers or len(set(markers)) < 2:
+        return False
+    for parent, children in _levels(details, markers):
+        p = details.index(parent)
+        for child in children:
+            c = details.index(child)
+            if indents[p] is not None and indents[c] is not None and indents[c] < indents[p] - 1.0:
+                return False
+    return True
 
 
 def _levels(details: list[int], depths: list[float]) -> list[tuple[int, list[int]]]:

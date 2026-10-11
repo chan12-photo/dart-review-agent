@@ -113,7 +113,7 @@ class TextLayerEvidenceTests(unittest.TestCase):
         rows = [row for row in SAMPLE.rows if row[0] != "비유동부채"]
         reading = self.read(rows)
         problems = " ".join(reading.statements[0].problems)
-        self.assertIn("1쪽 '비유동부채' 줄: 원본의 금액 '24,210,425'를 AI가 읽지 않았다", problems)
+        self.assertIn("1쪽 '비유동부채' 줄 당기: 원본의 금액 '24,210,425'를 AI가 읽지 않았다", problems)
         self.assertIn("'19,013,579'를 AI가 읽지 않았다", problems)
 
     def test_a_band_out_of_budget_is_asked_again_in_halves(self):
@@ -240,6 +240,14 @@ class TextLayerEvidenceTests(unittest.TestCase):
         line = Line(1, cells)
         self.assertFalse(_in_free_slot(cells[2], line, header))  # the note "1" shares 당기 with 1,000
         self.assertTrue(_in_free_slot(cells[3], line, header))  # "42" is the only amount of 전기
+        # Codex third review (record 10): a note "1" at x1=420 under headings starting 300 and 400 fell in 전기; with the
+        # page's amount columns known it lines up with none of 전기's (right edge 520) and is not an amount
+        header = Header([300, 400], [], 0)
+        note = Cell([Word("1", 1, 415, 420, 100, 110)])
+        line = Line(1, [cells[0], cells[1], note])
+        edges = {0: [350.0], 1: [520.0]}
+        self.assertFalse(_in_free_slot(note, line, header, edges))
+        self.assertTrue(_in_free_slot(cells[3], Line(1, [cells[0], cells[3]]), header, edges))  # "42" ends at 520
 
     def test_a_line_without_its_own_label_has_no_known_depth(self):
         from dart_review.documents.ai_reader import _label_cell

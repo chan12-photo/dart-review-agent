@@ -197,7 +197,7 @@ class RealLayoutTests(unittest.TestCase):
                 (70, [(20, 100, "영업이익"), (310, 350, "3,000"), (510, 550, "4,000")]),
                 (90, [(20, 100, "기본주당이익"), (365, 390, "47")])]
         [statement] = find_statements(group_lines(words_for(rows)))
-        self.assertTrue(any("'47' (기본주당이익)" in problem for problem in statement.problems), statement.problems)
+        self.assertTrue(any("1쪽 '기본주당이익' 줄 '47'" in problem for problem in statement.problems), statement.problems)
 
     def test_a_note_column_right_of_the_amounts_is_not_a_period(self):
         # Codex (D4 recheck): "매출액 1,000 | 1" made the note numbers a second period, every cell passing
@@ -213,6 +213,29 @@ class RealLayoutTests(unittest.TestCase):
             self.assertEqual([c.header for c in statement.columns], ["당기", "전기"] if prior else ["당기"])
             self.assertEqual([sorted(r.amounts) for r in statement.rows], [[0, 1] if prior else [0]] * 3)
             self.assertEqual(statement.rows[0].amounts[0].printed, "1,000")
+
+    def test_small_amounts_under_period_headings_are_kept(self):
+        # Codex third review 4: per-share columns "47 48", "27 28" were taken for notes and both rows vanished
+        rows = [(0, [(20, 100, "손익계산서")]), (15, [(20, 100, "(단위: 원)")]),
+                (30, [(300, 350, "당기"), (500, 550, "전기")]),
+                (50, [(20, 120, "기본주당이익"), (310, 350, "47"), (510, 550, "48")]),
+                (70, [(20, 120, "희석주당이익"), (310, 350, "27"), (510, 550, "28")])]
+        [statement] = find_statements(group_lines(words_for(rows)))
+        self.assertEqual([(r.label, [r.amounts[c].value for c in sorted(r.amounts)]) for r in statement.rows],
+                         [("기본주당이익", [47, 48]), ("희석주당이익", [27, 28])])
+        self.assertEqual([item for item in check([statement]) if item.status == REVIEW], [])
+
+    def test_small_numbers_without_a_heading_are_kept_and_marked(self):
+        rows = [(0, [(20, 100, "손익계산서")]), (15, [(20, 100, "(단위: 원)")]),
+                (30, [(300, 350, "당기")]),
+                (50, [(20, 120, "매출액"), (310, 350, "1,000"), (515, 520, "3")]),
+                (70, [(20, 120, "영업이익"), (310, 350, "2,000"), (515, 520, "4")])]
+        [statement] = find_statements(group_lines(words_for(rows)))
+        self.assertEqual([sorted(r.amounts) for r in statement.rows], [[0, 1], [0, 1]])  # nothing dropped
+        reasons = {(statement.rows[i.row].label, i.column): i.reasons for i in check([statement]) if i.status == REVIEW}
+        self.assertIn(("매출액", 1), reasons)
+        self.assertNotIn(("매출액", 0), reasons)
+        self.assertTrue(any("주석 번호인지 금액인지" in p for p in statement.problems), statement.problems)
 
     def test_a_column_without_a_period_heading_is_marked(self):
         rows = [(0, [(20, 100, "재무상태표")]), (15, [(20, 90, "(단위: 원)")]),
@@ -411,6 +434,15 @@ class SubtotalTests(unittest.TestCase):
         [statement] = find_statements(group_lines(words_for(rows)))
         check([statement])
         self.assertEqual(statement.sums_checked, 1)  # 자산총계 = 부채총계 + 자본총계 in 제 56 기 only
+
+    def test_item_markers_on_some_rows_only_do_not_make_a_third_level(self):
+        # Codex third review 7: A=5, (1) B=5, C=5 under 10 passed as checked (C folded under B)
+        rows = [(60, "Ⅰ. 투자활동 현금흐름", "s", "10"), (70, "가항목", "d", "5"),
+                (70, "(1) 나항목", "d", "5"), (70, "다항목", "d", "5")]
+        statement = self.statement("현금흐름표", rows, ("Ⅱ. 기말 현금", "57,856,378"))
+        flagged = self.flagged(statement)
+        self.assertEqual((statement.sums_checked, statement.sums_uncertain > 0), (0, True))
+        self.assertTrue({("가항목", 0), ("나항목", 0), ("다항목", 0)} <= flagged)
 
     def test_a_dash_is_zero_and_wide_amounts_stay_in_one_part(self):
         # the detail and subtotal positions 80 apart (NAVER) once split every row into its own part: no sum ran

@@ -49,15 +49,15 @@ from dart_review.cache import ResponseCache  # noqa: E402
 from dart_review.client import DartClient  # noqa: E402
 
 # the four 2025 consolidated audit reports used during v0.2 development (files from the companies' DART filings)
-DOCUMENTS = [
-    {"company": "삼성전자", "corp_code": "00126380", "file": "2025_con_quarter04_all.pdf"},
-    {"company": "NAVER", "corp_code": "00266961", "file": "연결감사보고서_FY2025.pdf"},
-    {"company": "한화시스템", "corp_code": "00339391", "file": "한화시스템_연결감사보고서(2026.03.13).pdf"},
-    {"company": "포스코", "corp_code": "01620971", "file": "POSCO_consolidated_FY25.pdf"},
+DOCUMENTS = [  # "key" names the saved reports and the D4 development gold (eval/documents_*/d4_dev/<key>.*)
+    {"company": "삼성전자", "key": "samsung", "corp_code": "00126380", "file": "2025_con_quarter04_all.pdf"},
+    {"company": "NAVER", "key": "naver", "corp_code": "00266961", "file": "연결감사보고서_FY2025.pdf"},
+    {"company": "한화시스템", "key": "hanwha", "corp_code": "00339391", "file": "한화시스템_연결감사보고서(2026.03.13).pdf"},
+    {"company": "포스코", "key": "posco", "corp_code": "01620971", "file": "POSCO_consolidated_FY25.pdf"},
     # a 영업보고서 with both separate (별도) and consolidated statements, numbered titles
-    {"company": "LG에너지솔루션", "corp_code": "01515323", "file": "2025_LGES_Business_Report.pdf"},
+    {"company": "LG에너지솔루션", "key": "lges", "corp_code": "01515323", "file": "2025_LGES_Business_Report.pdf"},
     # phone photos of printed statements, as a PDF without a text layer (the AI reader's hard case)
-    {"company": "삼성전자 (사진 PDF)", "corp_code": "00126380",
+    {"company": "삼성전자 (사진 PDF)", "key": "photo", "corp_code": "00126380",
      "file": "%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90_%EC%97%B0%EA%B2%B0%EC%9E%AC%EB%AC%B4%EC%A0%9C%ED%91%9C_%ED%86%B5%ED%95%A9.pdf"},
 ]
 YEAR, REPORT = 2025, "11011"  # consolidated statements are compared with CFS, separate (별도) ones with OFS
@@ -276,11 +276,24 @@ def main() -> int:
     parser.add_argument("--cache", type=Path, default=ROOT / "cache")
     parser.add_argument("--online", action="store_true", help="fetch OpenDART responses missing from the cache")
     parser.add_argument("--only", nargs="*", help="company names to measure")
+    parser.add_argument("--reports", type=Path, help="also save each product report (API format) as "
+                        "<key>.<reader>.report.json here, for eval/d4_score.py --report (never overwritten)")
     args = parser.parse_args()
 
     from dart_review.documents import extract
     from dart_review.documents.vision import PROMPT_VERSION, OllamaVision
+    from dart_review.server import report
     client = DartClient(ResponseCache(args.cache), offline=not args.online)
+    import subprocess
+    git = lambda *a: subprocess.run(["git", *a], cwd=ROOT, capture_output=True, text=True).stdout.strip()
+    started_commit = git("rev-parse", "HEAD")
+    if args.reports:
+        args.reports.mkdir(parents=True, exist_ok=True)
+        taken = [d["key"] for d in DOCUMENTS if (args.reports / f"{d['key']}.{args.reader}.report.json").exists()
+                 and (not args.only or d["company"] in args.only)]
+        if taken:
+            print(f"saved reports exist ({', '.join(taken)}): they are never overwritten")
+            return 2
     results = []
     for document in DOCUMENTS:
         if args.only and document["company"] not in args.only:
@@ -298,6 +311,10 @@ def main() -> int:
             print(f"{document['company']}: failed ({type(exc).__name__})", flush=True)
             continue
         seconds = round(time.monotonic() - started)
+        if args.reports:
+            saved = report(extraction, path.name, args.reader)
+            (args.reports / f"{document['key']}.{args.reader}.report.json").write_text(
+                json.dumps(saved, ensure_ascii=False, indent=1), encoding="utf-8")
         result = {"company": document["company"], "corp_code": document["corp_code"], "file": document["file"],
                   "sha256": hashlib.sha256(data).hexdigest(), "bytes": len(data), "reader": args.reader,
                   "seconds": seconds, "model": model.name if model else None,
@@ -311,11 +328,11 @@ def main() -> int:
         print(f"{document['company']}: {seconds}s, " + ", ".join(f"{k} {v}" for k, v in tally.items()), flush=True)
     args.out.mkdir(parents=True, exist_ok=True)
     target = args.out / f"{args.reader}.json"
-    import subprocess
-    commit = subprocess.run(["git", "rev-parse", "HEAD"], cwd=ROOT, capture_output=True, text=True).stdout.strip()
-    dirty = bool(subprocess.run(["git", "status", "--porcelain", "dart_review"], cwd=ROOT, capture_output=True,
-                                text=True).stdout.strip())
-    target.write_text(json.dumps({"classification": "v2", "code_commit": commit, "code_changed_since_commit": dirty,
+    commit = git("rev-parse", "HEAD")
+    # the product may change during a long run: a commit made meanwhile shows as two commits, an edit as dirty
+    dirty = bool(git("status", "--porcelain", "dart_review")) or bool(git("diff", started_commit, commit, "--", "dart_review"))
+    target.write_text(json.dumps({"classification": "v2", "code_commit": commit, "code_commit_at_start": started_commit,
+                                  "code_changed_since_commit": dirty,
                                   "opendart": {"year": YEAR, "report": REPORT, "fs_div": "CFS or OFS"},
                                   "documents": results}, ensure_ascii=False, indent=1), encoding="utf-8")
     print(f"wrote {target}")

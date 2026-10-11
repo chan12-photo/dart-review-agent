@@ -291,7 +291,8 @@ def _place(cell: dict) -> tuple:
 
 def _checked_cell(cell: object, statements: dict[str, dict], source: str) -> dict:
     """A cell a person adds: of a gold statement and a page in its range, a label, period 0 or 1, and the value its
-    printed text gives (in 원: the printed number times 1, 10^3, 10^6, or 10^8, with its sign; None for "-")."""
+    printed text gives (in 원: the printed number in the statement's unit, or in 원 as per-share rows are, with its
+    sign; any unit only when the statement's unit is unknown; None for "-")."""
     if not isinstance(cell, dict):
         raise ValueError(f"{source}: a cell is an object, not {cell!r}")
     statement = statements.get(cell.get("statement_id"))
@@ -309,8 +310,9 @@ def _checked_cell(cell: object, statements: dict[str, dict], source: str) -> dic
     if DASH.match(printed):
         fits = value is None
     else:
+        units = {UNITS[statement["unit_text"]], 1} if statement.get("unit_text") in UNITS else set(UNITS.values())
         fits = isinstance(value, int) and not isinstance(value, bool) and any(
-            value == value_of(printed, unit) for unit in UNITS.values())
+            value == value_of(printed, unit) for unit in units)
     if not fits:
         raise ValueError(f"{source}: value {value!r} is not what {printed!r} prints")
     return {"statement_id": statement["id"], "statement": statement["title"], "kind": statement["kind"], "page": page,

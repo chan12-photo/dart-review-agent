@@ -340,10 +340,20 @@ class GoldBuilderTests(unittest.TestCase):
         for value, message in cases:
             with self.assertRaisesRegex(ValueError, message):
                 apply_mapping(result, value)
-        added = apply_mapping(result, mapping({"decision": "add", "cells": [{**a_cell, "label": "C계정", "value": 1_000_000}]},
+        with self.assertRaisesRegex(ValueError, "not what"):  # 1,000 in 천원, but the statement is in 원
+            apply_mapping(result, mapping({"decision": "add", "cells": [{**a_cell, "label": "C계정", "value": 1_000_000}]}))
+        added = apply_mapping(result, mapping({"decision": "add", "cells": [{**a_cell, "label": "C계정"}]},
                                               status="confirmed", confirmed_by="user", confirmed_at="2026-10-11"))
         self.assertEqual([(c["label"], c["value"], c["source"]) for c in added["cells"] if c["label"] == "C계정"],
-                         [("C계정", 1_000_000, f"mapping:{need}")])  # 1,000 printed in 천원: a unit the print allows
+                         [("C계정", 1000, f"mapping:{need}")])
+        result["statements"][0]["unit_text"] = "백만원"  # a 백만원 statement: 10^6, or 원 for a per-share row
+        for value, ok in ((1_000_000_000, True), (1000, True), (1_000_000, False)):
+            cell_ = {**a_cell, "label": "C계정", "value": value}
+            if ok:
+                apply_mapping(result, mapping({"decision": "add", "cells": [cell_]}))
+            else:
+                with self.assertRaisesRegex(ValueError, "not what"):
+                    apply_mapping(result, mapping({"decision": "add", "cells": [cell_]}))
 
     def test_notes_are_not_copied_across_items(self):
         # Codex third review 11: one general note repeated on twelve items stood for twelve checks

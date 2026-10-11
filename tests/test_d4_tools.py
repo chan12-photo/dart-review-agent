@@ -224,7 +224,10 @@ class ScorerTests(unittest.TestCase):
         rep["statements"][0].update(sums_checked=0, sums_uncertain=2)
         result = self.totals(gold(cell("유동자산", 0, "1,000", 1000)), rep)
         self.assertEqual((result["sums_checked"], result["statements_with_uncertain_sums"],
-                          result["statements_without_sums"]), (0, 1, 1))
+                          result["statements_without_sums"], result["statements_sums_not_checked_by_kind"]), (0, 1, 1, 0))
+        rep["statements"][0].update(sums_checked=None, sums_uncertain=0)  # an income statement: not a kind it checks
+        result = self.totals(gold(cell("유동자산", 0, "1,000", 1000)), rep)
+        self.assertEqual((result["statements_without_sums"], result["statements_sums_not_checked_by_kind"]), (0, 1))
 
     def test_a_title_printed_twice_is_two_statements(self):
         # Codex recheck 4: both were scored twice (gold_cells 4, missing 2)

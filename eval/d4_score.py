@@ -261,7 +261,9 @@ def score(gold: dict, report: dict, extras: dict | None = None, report_sha256: s
     found = [s for s in statements if s["found"]]
     totals["sums_checked"] = sum(s["sums_checked"] or 0 for s in found)
     totals["statements_with_uncertain_sums"] = sum(1 for s in found if s["sums_uncertain"])
-    totals["statements_without_sums"] = sum(1 for s in found if not s["sums_checked"])
+    # 0: the product checks this kind but could check no sum; None: it does not check this kind (income statements)
+    totals["statements_without_sums"] = sum(1 for s in found if s["sums_checked"] == 0)
+    totals["statements_sums_not_checked_by_kind"] = sum(1 for s in found if s["sums_checked"] is None)
     # a person confirms the mapping file even when the gold has no item to decide: a draft is never official
     mapping = gold.get("mapping") or {}
     mapping_confirmed = mapping.get("status") == "confirmed" and bool(mapping.get("confirmed_by"))

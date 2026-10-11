@@ -22,7 +22,7 @@ sys.path.insert(0, str(ROOT))
 from eval import d4_candidates  # noqa: E402
 from eval.d4_candidates import check_pdf, pick_attachment, report_filings  # noqa: E402
 from eval.d4_gold import apply_mapping, build  # noqa: E402
-from eval.d4_preflight import MODEL, TOOL_PATHS, check, freeze_record  # noqa: E402
+from eval.d4_preflight import MODEL, TOOL_PATHS, check, freeze_record, register_record  # noqa: E402
 from eval.d4_score import score  # noqa: E402
 
 HAS_PDF = find_spec("pdfplumber") is not None
@@ -504,8 +504,26 @@ class CandidateRuleTests(unittest.TestCase):
 
     def test_the_consolidated_audit_report_attachment(self):
         self.assertEqual(pick_attachment(["감사보고서", "연결내부회계관리제도 감사보고서", "연결 감사보고서", "연결감사보고서(정정)"]),
-                         "연결 감사보고서")
+                         {"position": 3, "name": "연결 감사보고서"})
         self.assertIsNone(pick_attachment(["감사보고서", "내부회계관리제도 감사보고서"]))
+        # Codex fourth review 10: "내부 회계" with a space passed the exclusion
+        self.assertEqual(pick_attachment(["내부 회계 연결 감사보고서.pdf", "연결감사보고서.pdf"]),
+                         {"position": 2, "name": "연결감사보고서.pdf"})
+
+    def test_select_decides_from_recorded_inputs_only(self):
+        # Codex fourth review 10: the filing and attachment choice was not run by any tool
+        from eval.d4_candidates import select
+        filings = [{"report_nm": "사업보고서 (2025.12)", "rcept_dt": "20260310", "rcept_no": "A"},
+                   {"report_nm": "[첨부추가]사업보고서 (2025.12)", "rcept_dt": "20260320", "rcept_no": "B"}]
+        base = {"corp_code": "001", "induty_code": "264", "filings": filings, "excluded_codes": ["009"]}
+        chosen = select({**base, "attachments": {"B": ["감사보고서"], "A": ["감사보고서", "연결감사보고서"]}})
+        self.assertEqual((chosen["decision"], chosen["rcept_no"], chosen["attachment"]["position"],
+                          [c["rcept_no"] for c in chosen["considered"]]), ("받기", "A", 2, ["B", "A"]))
+        self.assertEqual(select({**base, "attachments": {"B": ["감사보고서"]}})["decision"], "기록 부족")
+        self.assertEqual(select({**base, "attachments": {"B": [], "A": []}})["reason"], "연결감사보고서 첨부 없음")
+        self.assertEqual(select({**base, "induty_code": "6419"})["decision"], "제외")
+        self.assertEqual(select({**base, "corp_code": "009"})["reason"], "개발·봉인 회사")
+        self.assertEqual(select({**base, "filings": []})["reason"], "사업보고서 (2025.12) 없음")
 
     def test_a_file_that_is_not_a_pdf_does_not_open(self):
         with tempfile.TemporaryDirectory() as folder:
@@ -584,46 +602,95 @@ class ScanTests(unittest.TestCase):
 
 
 class PreflightTests(unittest.TestCase):
-    """Codex third review 8: a commit diff did not see a frozen file changed only in the working tree."""
+    """Codex third review 8: a commit diff did not see a frozen file changed only in the working tree. Codex fourth
+    review 1: the check did not fix the registration commit R, so a gold changed in a later commit passed."""
 
     ENV = {"python": "3.13.12", "packages": ["pdfplumber==0.11.0"], "model": {MODEL: "abc123"},
            "ollama": "ollama version is 0.34.4", "tesseract": "tesseract 5.5.3", "macos": "27.2"}
+    MAPPING = {"status": "confirmed", "confirmed_by": "user", "confirmed_at": "2026-10-11", "decisions": {}}
 
     def setUp(self):
+        import json
         self.folder = tempfile.TemporaryDirectory()
         self.root = Path(self.folder.name)
         for path in ("dart_review/__init__.py", "pyproject.toml") + TOOL_PATHS:
             (self.root / path).parent.mkdir(parents=True, exist_ok=True)
             (self.root / path).write_text(f"# {path}\n", encoding="utf-8")
         self.git("init", "-q")
-        self.commit()
+        self.commit()  # P and T
         self.record = freeze_record(self.root, "HEAD", "HEAD", self.ENV)
+        (self.root / "eval/freeze_d4.json").write_text(json.dumps(self.record), encoding="utf-8")
+        self.commit()  # F
+        (self.root / "eval/gold.json").write_text("preregistered\n", encoding="utf-8")
+        (self.root / "eval/a.mapping.json").write_text(json.dumps(self.MAPPING), encoding="utf-8")
+        self.commit()
+        self.registration = register_record(self.root, "eval/freeze_d4.json", ["eval/gold.json", "eval/a.mapping.json"])
+        (self.root / "eval/register_d4.json").write_text(json.dumps(self.registration), encoding="utf-8")
+        self.commit()  # R
+        self.R = self.head()
 
     def tearDown(self):
         self.folder.cleanup()
 
-    def git(self, *args):
+    def git(self, *args, cwd=None):
         import subprocess
         subprocess.run(["git", "-c", "user.name=t", "-c", "user.email=t@example.com", "-c", "commit.gpgsign=false",
-                        *args], cwd=self.root, check=True, capture_output=True)
+                        "-c", "tag.gpgsign=false", *args], cwd=cwd or self.root, check=True, capture_output=True)
+
+    def head(self):
+        import subprocess
+        return subprocess.run(["git", "rev-parse", "HEAD"], cwd=self.root, capture_output=True, text=True).stdout.strip()
 
     def commit(self):
         self.git("add", "-A")
         self.git("commit", "-q", "-m", "x")
 
-    def failed(self, env=None, imported_from=None):
-        result = check(self.root, self.record, env or self.ENV, imported_from)
+    def failed(self, env=None, imported_from=None, registered=None, registration=None, remote=None):
+        result = check(self.root, self.record, env or self.ENV, imported_from, registration or self.registration,
+                       registered or self.R, remote)
         return [c["check"] for c in result["checks"] if not c["ok"]]
 
-    def test_the_frozen_checkout_passes(self):
+    def test_the_registered_checkout_passes(self):
         self.assertEqual(self.failed(imported_from=self.root / "dart_review/__init__.py"), [])
 
     def test_a_change_only_in_the_working_tree_fails(self):
         (self.root / "eval/d4_score.py").write_text("# changed after the freeze\n", encoding="utf-8")
         self.assertEqual(self.failed(), ["clean working tree and index (git status --porcelain)"])
-        (self.root / "notes.txt").write_text("x", encoding="utf-8")
-        self.commit()  # committed: the tree is clean, but the tool is not the frozen one
-        self.assertEqual(self.failed(), ["tools eval/d4_score.py at HEAD is the frozen object"])
+        self.commit()  # committed: the tree is clean, but HEAD is not R and the tool is not the frozen one
+        self.assertEqual(self.failed(), ["HEAD is the registered commit R",
+                                         "tools eval/d4_score.py at HEAD is the frozen object"])
+
+    def test_a_gold_changed_after_registration_fails(self):
+        (self.root / "eval/gold.json").write_text("changed after seeing results\n", encoding="utf-8")
+        self.commit()  # R2
+        self.assertEqual(self.failed(), ["HEAD is the registered commit R",
+                                         "registered eval/gold.json at HEAD is the recorded object"])
+        self.assertEqual(self.failed(registered=self.head()),  # naming R2 as R: the recorded object still differs
+                         ["registered eval/gold.json at HEAD is the recorded object"])
+        # registering R2 anew passes locally, but the tag pushed at R before the run names R, not R2
+        remote = Path(self.folder.name + "-remote")
+        self.git("init", "-q", "--bare", str(remote))
+        self.git("tag", "-a", "d4-registered", "-m", "R", self.R)
+        self.git("push", "-q", str(remote), "refs/tags/d4-registered")
+        again = register_record(self.root, "eval/freeze_d4.json", ["eval/gold.json", "eval/a.mapping.json"])
+        self.assertEqual(self.failed(registered=self.head(), registration=again), [])
+        self.assertEqual(self.failed(registered=self.head(), registration=again, remote=str(remote)),
+                         ["the pushed tag d4-registered on " + str(remote) + " names HEAD"])
+        self.git("checkout", "-q", self.R)
+        self.assertEqual(self.failed(registered="d4-registered", remote=str(remote)), [])
+        import shutil
+        shutil.rmtree(remote)
+
+    def test_only_committed_files_and_confirmed_mappings_are_registered(self):
+        import json
+        with self.assertRaisesRegex(ValueError, "not committed"):
+            register_record(self.root, "eval/freeze_d4.json", ["eval/none.json"])
+        (self.root / "eval/b.mapping.json").write_text(json.dumps({**self.MAPPING, "status": "draft"}), encoding="utf-8")
+        with self.assertRaisesRegex(ValueError, "not clean"):
+            register_record(self.root, "eval/freeze_d4.json", ["eval/b.mapping.json"])
+        self.commit()
+        with self.assertRaisesRegex(ValueError, "not a confirmed mapping"):
+            register_record(self.root, "eval/freeze_d4.json", ["eval/b.mapping.json"])
 
     def test_an_untracked_file_and_another_environment_fail(self):
         (self.root / "eval/extra.py").write_text("x", encoding="utf-8")

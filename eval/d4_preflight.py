@@ -185,7 +185,7 @@ def main() -> int:
     run.add_argument("--freeze", type=Path, required=True)
     run.add_argument("--register", type=Path, required=True, help="the registration record committed in R")
     run.add_argument("--registered", required=True, help=f"R: a commit, or the tag {TAG}")
-    run.add_argument("--remote", help="also check that this remote's tag names HEAD (the official run uses it)")
+    run.add_argument("--remote", required=True, help=f"the remote whose pushed tag {TAG} must name HEAD")
     run.add_argument("--log", type=Path, required=True)
     args = parser.parse_args()
     if args.command == "register":

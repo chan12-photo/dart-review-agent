@@ -350,6 +350,7 @@ class GoldBuilderTests(unittest.TestCase):
                                        needs["CIS"]: {"decision": "same_statement", "note": "c"}}})
         bs = {"id": "연결재무상태표@3", "kind": "BS", "title": "연결재무상태표", "consolidated": True, "page": 3, "end_page": 3,
               "unit_text": "원"}
+        result["source"]["pages"] = 4  # the PDF's page count (None here: the test has no PDF)
         decided = apply_mapping(result, {"status": "draft", "decisions": {
             **others, needs["CIS"]: {"decision": "same_statement", "note": "1쪽 손익계산서가 포괄손익을 함께 보인다"},
             needs["BS"]: {"decision": "add_statement", "note": "3쪽 재무상태표를 사람이 옮겼다", "statement": bs,
@@ -369,6 +370,49 @@ class GoldBuilderTests(unittest.TestCase):
         self.assertEqual([(n["why"], n.get("line")) for n in mixed["needs_mapping"] if n["why"] != "not_in_dart"],
                          [("ungrouped_amount", "기타 1000 -")])
         self.assertNotIn("기타", {c["label"] for c in mixed["cells"]})
+
+    def test_amounts_without_separators_can_be_added_and_scored_and_not_ignored_into_an_empty_gold(self):
+        # Codex fifth review 1: "1000" could not be added; ignoring the item left 0 gold cells and an official score
+        result = self.build_lines([line("매출액", "1000", "2000", 100)], [])
+        need = result["needs_mapping"][0]["id"]
+        cells = [{"statement_id": "손익계산서@1", "page": 1, "label": "매출액", "period": p, "printed": text, "value": v}
+                 for p, text, v in ((0, "1000", 1000), (1, "2000", 2000))]
+        confirmed = {"status": "confirmed", "confirmed_by": "user", "confirmed_at": "2026-10-14"}
+        added = apply_mapping(result, {**confirmed, "decisions": {need: {"decision": "add", "note": "1쪽 매출액 1000 2000",
+                                                                         "cells": cells}}})
+        rep = {"statements": [{"title": "손익계산서", "page": 1, "problems": [], "rows": [
+            {"label": "매출액", "values": [{"column": 0, "value": 1000, "printed": "1000", "status": "검사 통과", "page": 1}]}]}],
+            "problems": [], "source_sha256": None}
+        totals = score(added, rep)["totals"]
+        self.assertEqual((totals["gold_cells"], totals["correct"], totals["missing"]), (2, 1, 1))
+        ignored = apply_mapping(result, {**confirmed, "decisions": {need: {"decision": "ignore", "note": "x"}}})
+        self.assertTrue(ignored["unscorable"])
+        self.assertFalse(score(ignored, {"statements": [], "problems": []}, None, "abc")["totals"]["status"]["scorable"])
+
+    def test_an_added_statement_must_lie_in_the_pdf_and_be_named_by_its_first_page(self):
+        # Codex fifth review 5: a statement on page 999 was accepted
+        items = [{"sj_div": "BS", "account_nm": "자산총계", "thstrm_amount": "5000", "frmtrm_amount": "0"}]
+        result = self.build_lines([line("매출액", "1,000", "2,000", 100)], items)
+        need = next(n["id"] for n in result["needs_mapping"] if n["why"] == "statement_not_found")
+        others = {n["id"]: {"decision": "keep", "note": f"{n['id']} 인쇄 그대로"} for n in result["needs_mapping"]
+                  if n["id"] != need}
+
+        def decide(page, sid=None, **extra):
+            bs = {"id": sid or f"연결재무상태표@{page}", "kind": "BS", "title": "연결재무상태표", "consolidated": True,
+                  "page": page, "end_page": page, "unit_text": "원"}
+            cell_ = {"statement_id": bs["id"], "page": page, "label": "자산총계", "period": 0, "printed": "5,000", "value": 5000}
+            return apply_mapping(result, {"status": "draft", "decisions": {**others, need: {
+                "decision": "add_statement", "note": "재무상태표를 사람이 옮겼다", "statement": bs, "cells": [cell_], **extra}}})
+
+        with self.assertRaisesRegex(ValueError, "lie in the PDF"):  # the page count is unknown without the PDF
+            decide(3)
+        result["source"]["pages"] = 4
+        for page, sid, message in ((999, None, "lie in the PDF"), (3, "연결재무상태표@2", "first page"),
+                                   (1, None, "shares pages")):
+            with self.assertRaisesRegex(ValueError, message):
+                decide(page, sid)
+        self.assertIn("연결재무상태표@1", [s["id"] for s in decide(1, overlap_note="1쪽 위는 손익계산서, 아래는 재무상태표")["statements"]])
+        self.assertIn("연결재무상태표@3", [s["id"] for s in decide(3)["statements"]])
 
     def test_a_marker_does_not_make_a_second_cell_at_a_place(self):
         # Codex fourth review 4: "Ⅰ. 유동자산" was added beside "유동자산", one printed row counted twice
@@ -517,15 +561,27 @@ class CandidateRuleTests(unittest.TestCase):
         from eval.d4_candidates import select
         filings = [{"report_nm": "사업보고서 (2025.12)", "rcept_dt": "20260310", "rcept_no": "A"},
                    {"report_nm": "[첨부추가]사업보고서 (2025.12)", "rcept_dt": "20260320", "rcept_no": "B"}]
-        base = {"corp_code": "001", "induty_code": "264", "filings": filings, "excluded_codes": ["009"]}
-        chosen = select({**base, "attachments": {"B": ["감사보고서"], "A": ["감사보고서", "연결감사보고서"]}})
+        base = {"corp_code": "001", "induty_code": "264", "filings": filings}
+        excluded = ["009"]
+        chosen = select({**base, "attachments": {"B": ["감사보고서"], "A": ["감사보고서", "연결감사보고서"]}}, excluded)
         self.assertEqual((chosen["decision"], chosen["rcept_no"], chosen["attachment"]["position"],
                           [c["rcept_no"] for c in chosen["considered"]]), ("받기", "A", 2, ["B", "A"]))
-        self.assertEqual(select({**base, "attachments": {"B": ["감사보고서"]}})["decision"], "기록 부족")
-        self.assertEqual(select({**base, "attachments": {"B": [], "A": []}})["reason"], "연결감사보고서 첨부 없음")
-        self.assertEqual(select({**base, "induty_code": "6419"})["decision"], "제외")
-        self.assertEqual(select({**base, "corp_code": "009"})["reason"], "개발·봉인 회사")
-        self.assertEqual(select({**base, "filings": []})["reason"], "사업보고서 (2025.12) 없음")
+        self.assertEqual(select({**base, "attachments": {"B": ["감사보고서"]}}, excluded)["decision"], "기록 부족")
+        self.assertEqual(select({**base, "attachments": {"B": [], "A": []}}, excluded)["reason"], "연결감사보고서 첨부 없음")
+        self.assertEqual(select({**base, "induty_code": "6419"}, excluded)["decision"], "제외")
+        self.assertEqual(select({**base, "corp_code": "009"}, excluded)["reason"], "개발·봉인 회사")
+        self.assertEqual(select({**base, "filings": []}, excluded)["reason"], "사업보고서 (2025.12) 없음")
+
+    def test_select_tells_a_missing_list_from_an_empty_one_and_keeps_the_period(self):
+        # Codex fifth review 6: no list.json record read as "no report"; a filing of 2027 was downloaded; the
+        # excluded companies came from the input
+        from eval.d4_candidates import select
+        base = {"corp_code": "001", "induty_code": "264", "excluded_codes": []}
+        self.assertEqual(select(base, ["009"])["decision"], "기록 부족")
+        late = select({**base, "filings": [{"report_nm": "사업보고서 (2025.12)", "rcept_dt": "20270101", "rcept_no": "C"}],
+                       "attachments": {"C": ["연결감사보고서.pdf"]}}, ["009"])
+        self.assertEqual((late["decision"], late["reason"], late["out_of_period"]), ("제외", "사업보고서 (2025.12) 없음", ["C"]))
+        self.assertEqual(select({**base, "corp_code": "009", "excluded_codes": []}, ["009"])["decision"], "제외")
 
     def test_a_file_that_is_not_a_pdf_does_not_open(self):
         with tempfile.TemporaryDirectory() as folder:
@@ -596,7 +652,7 @@ class ScanTests(unittest.TestCase):
             image.putpixel((x, y), 0)
         turned = transform(image, CONDITIONS["tilt"])
         self.assertGreater(turned.size, (100, 100))
-        self.assertLess(min(turned.getdata()), 200)  # the black corners are still there, if softened
+        self.assertLess(turned.getextrema()[0], 200)  # the black corners are still there, if softened
         corners = [turned.crop(box).getextrema()[0] for box in ((0, 0, 6, 6), (turned.width - 6, 0, turned.width, 6),
                                                                 (0, turned.height - 6, 6, turned.height),
                                                                 (turned.width - 6, turned.height - 6, turned.width, turned.height))]

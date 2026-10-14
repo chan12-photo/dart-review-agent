@@ -239,11 +239,18 @@ def cells_of(block: dict, needs: list[dict]) -> list[dict]:
     return cells
 
 
+def _page_count(path: Path) -> int:
+    import pdfplumber
+    with pdfplumber.open(path) as pdf:
+        return len(pdf.pages)
+
+
 def build(path: Path, items_by_division: dict[str, list[dict]]) -> dict:
     import hashlib
     lines = lines_of(path)
     # the PDF the gold is of: a scan's page map and a saved product report are checked against it
-    source = {"file": path.name, "sha256": hashlib.sha256(path.read_bytes()).hexdigest() if path.exists() else None}
+    source = {"file": path.name, "sha256": hashlib.sha256(path.read_bytes()).hexdigest() if path.exists() else None,
+              "pages": _page_count(path) if path.exists() else None}  # unknown: no statement can be added
     needs: list[dict] = []
     statements, cells = [], []
     for block in statements_of(lines):
@@ -327,7 +334,8 @@ def _checked_cell(cell: object, statements: dict[str, dict], source: str) -> dic
         raise ValueError(f"{source}: label {label!r} is not a row label")
     if period not in (0, 1):
         raise ValueError(f"{source}: period {period!r} is not 0 or 1")
-    if not isinstance(printed, str) or not (DASH.match(printed) or GROUPED.match(printed) or SMALL.match(printed)):
+    if not isinstance(printed, str) or not (DASH.match(printed) or GROUPED.match(printed) or SMALL.match(printed)
+                                            or UNGROUPED.match(printed)):
         raise ValueError(f"{source}: printed {printed!r} is not an amount or '-'")
     if DASH.match(printed):
         fits = value is None
@@ -388,9 +396,21 @@ def apply_mapping(gold: dict, mapping: dict) -> dict:
             statement = decision.get("statement") or {}
             if (set(statement) != set(STATEMENT_KEYS) or statement["kind"] != need["kind"] or statement["id"] in statements
                     or not isinstance(statement["page"], int) or not isinstance(statement["end_page"], int)
-                    or statement["end_page"] < statement["page"] or statement["consolidated"] is not True):
+                    or not 1 <= statement["page"] <= statement["end_page"] or statement["consolidated"] is not True
+                    or statement["id"] != f"{statement['title']}@{statement['page']}"
+                    or KIND.get(re.sub(r"^(연결|별도)", "", statement["title"])) != statement["kind"]):
                 raise ValueError(f"{need['id']}: 'add_statement' needs a new consolidated {need['kind']} statement "
-                                 f"with exactly {', '.join(STATEMENT_KEYS)}")
+                                 f"with exactly {', '.join(STATEMENT_KEYS)}, its id title@first page, its title "
+                                 "of that kind")
+            pages = (gold.get("source") or {}).get("pages")
+            if not isinstance(pages, int) or statement["end_page"] > pages:
+                raise ValueError(f"{need['id']}: 'add_statement' pages must lie in the PDF (1 to {pages})")
+            overlaps = [s["id"] for s in statements.values() if s["page"] <= statement["end_page"]
+                        and statement["page"] <= s.get("end_page", s["page"])]
+            if overlaps and not str(decision.get("overlap_note") or "").strip():
+                # two statements can share a page (one ends, the next starts): the person says where each is
+                raise ValueError(f"{need['id']}: the added statement shares pages with {', '.join(overlaps)}; "
+                                 "say where each is printed (overlap_note)")
             statements[statement["id"]] = statement
     printed = {s["kind"] for s in gold["statements"] if s.get("consolidated")}
     unscorable = []
@@ -421,6 +441,10 @@ def apply_mapping(gold: dict, mapping: dict) -> dict:
                 raise ValueError(f"{need['id']}: 'same_statement' is for 손익/포괄손익 when the other one is printed")
         elif kind == "unscorable":
             unscorable.append(f"{need['id']}: {decision['note']}")
+        elif kind == "ignore" and need["why"] == "no_grouped_amounts":
+            # a statement with numbers but no gold: if the product missed it too, nothing would be checked (Codex
+            # fifth review 1), so the document gets no official verdict
+            unscorable.append(f"{need['id']}: 숫자가 있는 재무제표를 정답 없이 넘겼다 ({decision['note']})")
     places = Counter(_place(c) for c in cells + added)
     for cell in added:
         if places[_place(cell)] > 1:

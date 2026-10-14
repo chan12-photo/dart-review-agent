@@ -5,8 +5,10 @@ text PDF. They decide by fixed rules and record every input, so no person picks 
     python eval/d4_candidates.py check --pdf candidate.pdf      # step 6: the mechanical PDF check, as JSON
 
 ``select`` takes one candidate's recorded inputs (its corp code, the 업종 code of company.json, the list.json
-filings, the excluded corp codes fixed at step ④, and the attachment names as DART lists them for each filing
-looked at) and gives the decision with every filing it considered:
+filings, and the attachment names as DART lists them for each filing looked at) and the excluded corp codes fixed
+at step ④ (a file given apart, never the candidate's own record), and gives the decision with every filing it
+considered. A candidate without a recorded filing list is "기록 부족" (an empty recorded list is not); a filing
+received outside 2026-01-01 to 2026-06-30 is not used and is listed in ``out_of_period``:
 - ``report_filings``: the 2025 사업보고서 filings of OpenDART's list.json (any prefix: [기재정정], [첨부정정],
   [첨부추가]), latest first by receipt date and number. The first of them whose attachments include a
   consolidated audit report is used (a later filing may add or correct attachments only).
@@ -52,19 +54,24 @@ def pick_attachment(names: list[str]) -> dict | None:
 
 
 FINANCE = ("64", "65", "66")
+PERIOD = ("20260101", "20260630")  # contract 3.2 step 3: 2025 사업보고서 received in the first half of 2026
 
 
-def select(candidate: dict) -> dict:
-    """Steps 1-4 of contract 3.2 for one candidate, from its recorded inputs only."""
+def select(candidate: dict, excluded: list[str]) -> dict:
+    """Steps 1-4 of contract 3.2 for one candidate, from its recorded inputs and the fixed excluded codes."""
     record = {"corp_code": candidate["corp_code"], "corp_name": candidate.get("corp_name"), "considered": []}
-    if candidate["corp_code"] in set(candidate["excluded_codes"]):
+    if candidate["corp_code"] in set(excluded):
         return record | {"decision": "제외", "reason": "개발·봉인 회사"}
     induty = candidate.get("induty_code")
     if induty is None:
         return record | {"decision": "기록 부족", "reason": "업종코드(company.json) 없음"}
     if str(induty).startswith(FINANCE):
         return record | {"decision": "제외", "reason": f"금융업 (업종코드 {induty})"}
-    filings = report_filings(candidate.get("filings", []))
+    if "filings" not in candidate:
+        return record | {"decision": "기록 부족", "reason": "공시 목록(list.json)이 기록되지 않았다"}
+    reports = report_filings(candidate["filings"])
+    filings = [f for f in reports if PERIOD[0] <= str(f.get("rcept_dt", "")) <= PERIOD[1]]
+    record["out_of_period"] = [f["rcept_no"] for f in reports if f not in filings]
     if not filings:
         return record | {"decision": "제외", "reason": "사업보고서 (2025.12) 없음"}
     attachments = candidate.get("attachments", {})
@@ -103,11 +110,14 @@ def main() -> int:
     commands = parser.add_subparsers(dest="command", required=True)
     choose = commands.add_parser("select", help="steps 1-4 from one candidate's recorded inputs (JSON)")
     choose.add_argument("--input", type=Path, required=True)
+    choose.add_argument("--excluded", type=Path, required=True,
+                        help="the excluded corp codes fixed at step ④ (a JSON list)")
     check = commands.add_parser("check", help="the mechanical PDF check of a downloaded candidate")
     check.add_argument("--pdf", type=Path, required=True)
     args = parser.parse_args()
     if args.command == "select":
-        print(json.dumps(select(json.loads(args.input.read_text(encoding="utf-8"))), ensure_ascii=False))
+        excluded = json.loads(args.excluded.read_text(encoding="utf-8"))
+        print(json.dumps(select(json.loads(args.input.read_text(encoding="utf-8")), excluded), ensure_ascii=False))
     else:
         print(json.dumps(check_pdf(args.pdf), ensure_ascii=False))
     return 0

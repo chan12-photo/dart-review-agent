@@ -98,8 +98,13 @@ def register_record(root: Path, freeze_path: str, paths: list[str]) -> dict:
         obj = _object(root, "HEAD", path)
         if obj is None:
             raise ValueError(f"{path} is not committed")
-        if path.endswith(".mapping.json"):
-            mapping = json.loads((root / path).read_text(encoding="utf-8"))
+        try:
+            content = json.loads((root / path).read_text(encoding="utf-8"))
+        except (ValueError, UnicodeDecodeError):
+            content = None  # not JSON: not a mapping (a mapping file that does not parse fails below)
+        # a mapping by its content, not only by its name (Codex sixth review, record 1)
+        if path.endswith(".mapping.json") or (isinstance(content, dict) and "decisions" in content):
+            mapping = content if isinstance(content, dict) else {}
             if mapping.get("status") != "confirmed" or not mapping.get("confirmed_by") or not mapping.get("confirmed_at"):
                 raise ValueError(f"{path} is not a confirmed mapping")
         objects[path] = obj

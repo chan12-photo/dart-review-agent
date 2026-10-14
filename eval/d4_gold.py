@@ -450,6 +450,14 @@ def apply_mapping(gold: dict, mapping: dict) -> dict:
         if places[_place(cell)] > 1:
             raise ValueError(f"{cell['source']}: a gold cell is already at {'|'.join(map(str, _place(cell)))}")
     new_statements = [s for s in statements.values() if s not in gold["statements"]]
+    # any statement left without a printed gold cell, by whatever decisions ("no_unit" or "no_grouped_amounts"
+    # ignored, every cell dropped): if the product missed it too, nothing would be checked (Codex fifth review 1,
+    # sixth review 1), so the document gets no official verdict
+    for statement in gold["statements"] + new_statements:
+        if not any(c["statement_id"] == statement["id"] and c["value"] is not None for c in cells + added):
+            reason = f"{statement['id']}: 인쇄된 정답 칸이 없는 재무제표"
+            if reason not in unscorable:
+                unscorable.append(reason)
     return {**gold, "statements": gold["statements"] + new_statements, "cells": cells + added,
             "unscorable": unscorable, "mapping": {k: mapping.get(k) for k in ("status", "confirmed_by", "confirmed_at")}}
 

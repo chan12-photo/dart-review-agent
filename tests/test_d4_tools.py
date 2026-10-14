@@ -389,6 +389,28 @@ class GoldBuilderTests(unittest.TestCase):
         self.assertTrue(ignored["unscorable"])
         self.assertFalse(score(ignored, {"statements": [], "problems": []}, None, "abc")["totals"]["status"]["scorable"])
 
+    def test_a_statement_without_any_gold_cell_is_never_official(self):
+        # Codex sixth review 1: "no_unit" ignored left a statement of numbers with 0 gold cells, scored official
+        lines = [line("매출액", "1,000", "2,000", 100)]
+        block = {"id": "연결손익계산서@1", "kind": "IS", "title": "연결손익계산서", "consolidated": True, "page": 1,
+                 "end_page": 1, "unit_text": None, "lines": lines}
+        with mock.patch("eval.d4_gold.lines_of", return_value=lines), \
+                mock.patch("eval.d4_gold.statements_of", return_value=[block]):
+            result = build(Path("unused.pdf"), {"CFS": []})
+        self.assertEqual([n["why"] for n in result["needs_mapping"]], ["no_unit"])
+        decisions = {n["id"]: {"decision": "ignore", "note": "단위 미표기"} for n in result["needs_mapping"]}
+        mapped = apply_mapping(result, {"status": "confirmed", "confirmed_by": "user", "confirmed_at": "2026-10-15",
+                                        "decisions": decisions})
+        self.assertEqual(mapped["unscorable"], ["연결손익계산서@1: 인쇄된 정답 칸이 없는 재무제표"])
+        status = score(mapped, {"statements": [], "problems": []}, None, "abc")["totals"]["status"]
+        self.assertEqual((status["scorable"], status["official_ready"]), (False, False))
+        cells = [{"statement_id": "연결손익계산서@1", "page": 1, "label": "매출액", "period": 0, "printed": "1,000",
+                  "value": 1000}]
+        added = apply_mapping(result, {"status": "draft", "decisions": {n["id"]: {
+            "decision": "add", "note": "1쪽 매출액 1,000: 단위 미표기, 사람이 원으로 확인", "cells": cells}
+            for n in result["needs_mapping"]}})
+        self.assertEqual(added["unscorable"], [])
+
     def test_an_added_statement_must_lie_in_the_pdf_and_be_named_by_its_first_page(self):
         # Codex fifth review 5: a statement on page 999 was accepted
         items = [{"sj_div": "BS", "account_nm": "자산총계", "thstrm_amount": "5000", "frmtrm_amount": "0"}]
@@ -749,6 +771,11 @@ class PreflightTests(unittest.TestCase):
         self.commit()
         with self.assertRaisesRegex(ValueError, "not a confirmed mapping"):
             register_record(self.root, "eval/freeze_d4.json", ["eval/b.mapping.json"])
+        # Codex sixth review (record 1): a draft mapping under another name was accepted
+        (self.root / "eval/mapping.json").write_text(json.dumps({**self.MAPPING, "status": "draft"}), encoding="utf-8")
+        self.commit()
+        with self.assertRaisesRegex(ValueError, "not a confirmed mapping"):
+            register_record(self.root, "eval/freeze_d4.json", ["eval/mapping.json"])
 
     def test_an_untracked_file_and_another_environment_fail(self):
         (self.root / "eval/extra.py").write_text("x", encoding="utf-8")

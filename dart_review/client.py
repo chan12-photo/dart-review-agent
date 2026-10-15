@@ -35,6 +35,7 @@ BASE_URL = "https://opendart.fss.or.kr/api/"
 # are archives on success and an XML <result> on failure)
 ALLOWED_ENDPOINTS = {
     "corpCode.xml": "zip",
+    "company.json": "json",  # 기업개황: the industry code D4 uses to exclude financial companies
     "fnlttSinglAcntAll.json": "json",
     "list.json": "json",
     "document.xml": "zip",

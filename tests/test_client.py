@@ -152,7 +152,7 @@ class ClientTests(unittest.TestCase):
     def test_endpoint_allowlist_and_key_parameter_guard(self):
         client = self.client(FakeNetwork())
         with self.assertRaises(EndpointNotAllowed):
-            client.request("company.json", corp_code="00126380")
+            client.request("majorstock.json", corp_code="00126380")
         with self.assertRaises(ValueError):
             client.request("list.json", crtfc_key=FAKE_KEY)
         self.assertEqual(client.network_requests, 0)

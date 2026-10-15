@@ -1,0 +1,47 @@
+{
+ "rank": 18,
+ "corp_code": "00110608",
+ "corp_name": "DSR",
+ "stock_code": "155660",
+ "induty_code": "242",
+ "company_fetched_at": "2026-10-15T14:47:06+00:00",
+ "company_status": "000",
+ "filings": [
+  {
+   "rcept_no": "20260515000740",
+   "report_nm": "분기보고서 (2026.03)",
+   "rcept_dt": "20260515",
+   "corp_name": "DSR",
+   "flr_nm": "DSR"
+  },
+  {
+   "rcept_no": "20260319001193",
+   "report_nm": "사업보고서 (2025.12)",
+   "rcept_dt": "20260319",
+   "corp_name": "DSR",
+   "flr_nm": "DSR"
+  }
+ ],
+ "list_fetched_at": [
+  "2026-10-15T14:47:06+00:00"
+ ],
+ "attachments": {
+  "20260319001193": [
+   "2026.03.19 감사보고서",
+   "2026.03.19 감사의감사보고서",
+   "2026.03.19 내부감시장치에대한감사의의견서",
+   "2026.03.19 내부회계관리제도운영보고서",
+   "2026.03.19 연결감사보고서",
+   "2026.03.19 영업보고서",
+   "2026.03.19 정관"
+  ]
+ },
+ "recorded_at": "2026-10-15T14:47:06+00:00",
+ "attachments_recorded": {
+  "20260319001193": {
+   "by": "user",
+   "how": "DART web 첨부 select box, screenshot; address bar not visible, company and date match",
+   "at": "2026-10-16T00:10+09:00"
+  }
+ }
+}

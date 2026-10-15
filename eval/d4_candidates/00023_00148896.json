@@ -1,0 +1,30 @@
+{
+ "rank": 23,
+ "corp_code": "00148896",
+ "corp_name": "OCI홀딩스",
+ "stock_code": "010060",
+ "induty_code": "64992",
+ "company_fetched_at": "2026-10-15T14:47:11+00:00",
+ "company_status": "000",
+ "filings": [
+  {
+   "rcept_no": "20260514000992",
+   "report_nm": "분기보고서 (2026.03)",
+   "rcept_dt": "20260514",
+   "corp_name": "OCI홀딩스",
+   "flr_nm": "OCI홀딩스"
+  },
+  {
+   "rcept_no": "20260318000617",
+   "report_nm": "사업보고서 (2025.12)",
+   "rcept_dt": "20260318",
+   "corp_name": "OCI홀딩스",
+   "flr_nm": "OCI홀딩스"
+  }
+ ],
+ "list_fetched_at": [
+  "2026-10-15T14:47:12+00:00"
+ ],
+ "attachments": {},
+ "recorded_at": "2026-10-15T14:47:12+00:00"
+}

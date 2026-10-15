@@ -1,0 +1,23 @@
+{
+ "rank": 10,
+ "corp_code": "01690235",
+ "corp_name": "유안타제12호기업인수목적",
+ "stock_code": "446150",
+ "induty_code": "661",
+ "company_fetched_at": "2026-10-15T14:38:47+00:00",
+ "company_status": "000",
+ "filings": [
+  {
+   "rcept_no": "20260305001286",
+   "report_nm": "사업보고서 (2025.12)",
+   "rcept_dt": "20260305",
+   "corp_name": "유안타제12호기업인수목적",
+   "flr_nm": "유안타제12호기업인수목적"
+  }
+ ],
+ "list_fetched_at": [
+  "2026-10-15T14:38:47+00:00"
+ ],
+ "attachments": {},
+ "recorded_at": "2026-10-15T14:38:47+00:00"
+}

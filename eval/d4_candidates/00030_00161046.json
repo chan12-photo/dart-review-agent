@@ -1,0 +1,30 @@
+{
+ "rank": 30,
+ "corp_code": "00161046",
+ "corp_name": "한독",
+ "stock_code": "002390",
+ "induty_code": "212",
+ "company_fetched_at": "2026-10-15T14:47:18+00:00",
+ "company_status": "000",
+ "filings": [
+  {
+   "rcept_no": "20260514001203",
+   "report_nm": "분기보고서 (2026.03)",
+   "rcept_dt": "20260514",
+   "corp_name": "한독",
+   "flr_nm": "한독"
+  },
+  {
+   "rcept_no": "20260318000762",
+   "report_nm": "[첨부추가]사업보고서 (2025.12)",
+   "rcept_dt": "20260318",
+   "corp_name": "한독",
+   "flr_nm": "한독"
+  }
+ ],
+ "list_fetched_at": [
+  "2026-10-15T14:47:19+00:00"
+ ],
+ "attachments": {},
+ "recorded_at": "2026-10-15T14:47:19+00:00"
+}

@@ -1,0 +1,47 @@
+{
+ "rank": 15,
+ "corp_code": "00479705",
+ "corp_name": "케스피온",
+ "stock_code": "079190",
+ "induty_code": "26422",
+ "company_fetched_at": "2026-10-15T14:38:52+00:00",
+ "company_status": "000",
+ "filings": [
+  {
+   "rcept_no": "20260515002157",
+   "report_nm": "분기보고서 (2026.03)",
+   "rcept_dt": "20260515",
+   "corp_name": "케스피온",
+   "flr_nm": "케스피온"
+  },
+  {
+   "rcept_no": "20260319000021",
+   "report_nm": "사업보고서 (2025.12)",
+   "rcept_dt": "20260319",
+   "corp_name": "케스피온",
+   "flr_nm": "케스피온"
+  }
+ ],
+ "list_fetched_at": [
+  "2026-10-15T14:38:53+00:00"
+ ],
+ "attachments": {
+  "20260319000021": [
+   "2026.03.19 감사보고서",
+   "2026.03.19 감사의감사보고서",
+   "2026.03.19 내부감시장치에대한감사의의견서",
+   "2026.03.19 내부회계관리제도운영보고서",
+   "2026.03.19 연결감사보고서",
+   "2026.03.19 영업보고서",
+   "2026.03.19 정관"
+  ]
+ },
+ "recorded_at": "2026-10-15T14:38:53+00:00",
+ "attachments_recorded": {
+  "20260319000021": {
+   "by": "user",
+   "how": "DART web 첨부 select box, screenshot; address bar not visible, company and date match",
+   "at": "2026-10-15T23:55+09:00"
+  }
+ }
+}

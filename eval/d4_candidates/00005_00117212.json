@@ -1,0 +1,48 @@
+{
+ "rank": 5,
+ "corp_code": "00117212",
+ "corp_name": "두산",
+ "stock_code": "000150",
+ "induty_code": "26221",
+ "company_fetched_at": "2026-10-15T14:38:42+00:00",
+ "company_status": "000",
+ "filings": [
+  {
+   "rcept_no": "20260515001456",
+   "report_nm": "분기보고서 (2026.03)",
+   "rcept_dt": "20260515",
+   "corp_name": "두산",
+   "flr_nm": "두산"
+  },
+  {
+   "rcept_no": "20260323000945",
+   "report_nm": "사업보고서 (2025.12)",
+   "rcept_dt": "20260323",
+   "corp_name": "두산",
+   "flr_nm": "두산"
+  }
+ ],
+ "list_fetched_at": [
+  "2026-10-15T14:38:43+00:00"
+ ],
+ "attachments": {
+  "20260323000945": [
+   "2026.03.23 감사보고서",
+   "2026.03.23 감사의감사보고서",
+   "2026.03.23 내부감시장치에대한감사의의견서",
+   "2026.03.23 내부회계관리제도운영보고서",
+   "2026.03.23 연결감사보고서",
+   "2026.03.23 영업보고서",
+   "2026.03.23 자기주식보고서",
+   "2026.03.23 정관"
+  ]
+ },
+ "recorded_at": "2026-10-15T14:38:43+00:00",
+ "attachments_recorded": {
+  "20260323000945": {
+   "by": "user",
+   "how": "DART web 첨부 select box, screenshot; address bar not visible, company and date match",
+   "at": "2026-10-15T23:55+09:00"
+  }
+ }
+}

@@ -1,0 +1,30 @@
+{
+ "rank": 22,
+ "corp_code": "01105621",
+ "corp_name": "엔투텍",
+ "stock_code": "227950",
+ "induty_code": "292",
+ "company_fetched_at": "2026-10-15T14:47:10+00:00",
+ "company_status": "000",
+ "filings": [
+  {
+   "rcept_no": "20260515000320",
+   "report_nm": "분기보고서 (2026.03)",
+   "rcept_dt": "20260515",
+   "corp_name": "엔투텍",
+   "flr_nm": "엔투텍"
+  },
+  {
+   "rcept_no": "20260323000313",
+   "report_nm": "사업보고서 (2025.12)",
+   "rcept_dt": "20260323",
+   "corp_name": "엔투텍",
+   "flr_nm": "엔투텍"
+  }
+ ],
+ "list_fetched_at": [
+  "2026-10-15T14:47:11+00:00"
+ ],
+ "attachments": {},
+ "recorded_at": "2026-10-15T14:47:11+00:00"
+}

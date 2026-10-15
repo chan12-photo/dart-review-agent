@@ -1,0 +1,30 @@
+{
+ "rank": 28,
+ "corp_code": "01160363",
+ "corp_name": "에코프로비엠",
+ "stock_code": "247540",
+ "induty_code": "28202",
+ "company_fetched_at": "2026-10-15T14:47:16+00:00",
+ "company_status": "000",
+ "filings": [
+  {
+   "rcept_no": "20260515001109",
+   "report_nm": "분기보고서 (2026.03)",
+   "rcept_dt": "20260515",
+   "corp_name": "에코프로비엠",
+   "flr_nm": "에코프로비엠"
+  },
+  {
+   "rcept_no": "20260318001622",
+   "report_nm": "사업보고서 (2025.12)",
+   "rcept_dt": "20260318",
+   "corp_name": "에코프로비엠",
+   "flr_nm": "에코프로비엠"
+  }
+ ],
+ "list_fetched_at": [
+  "2026-10-15T14:47:17+00:00"
+ ],
+ "attachments": {},
+ "recorded_at": "2026-10-15T14:47:17+00:00"
+}

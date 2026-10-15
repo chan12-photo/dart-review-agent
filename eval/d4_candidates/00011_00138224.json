@@ -1,0 +1,47 @@
+{
+ "rank": 11,
+ "corp_code": "00138224",
+ "corp_name": "쌍용씨앤이",
+ "stock_code": "003410",
+ "induty_code": "23311",
+ "company_fetched_at": "2026-10-15T14:38:48+00:00",
+ "company_status": "000",
+ "filings": [
+  {
+   "rcept_no": "20260514000201",
+   "report_nm": "분기보고서 (2026.03)",
+   "rcept_dt": "20260514",
+   "corp_name": "쌍용씨앤이",
+   "flr_nm": "쌍용씨앤이"
+  },
+  {
+   "rcept_no": "20260331004655",
+   "report_nm": "사업보고서 (2025.12)",
+   "rcept_dt": "20260331",
+   "corp_name": "쌍용씨앤이",
+   "flr_nm": "쌍용씨앤이"
+  }
+ ],
+ "list_fetched_at": [
+  "2026-10-15T14:38:49+00:00"
+ ],
+ "attachments": {
+  "20260331004655": [
+   "2026.03.31 감사보고서",
+   "2026.03.31 감사의감사보고서",
+   "2026.03.31 내부감시장치에대한감사의의견서",
+   "2026.03.31 내부회계관리제도운영보고서",
+   "2026.03.31 연결감사보고서",
+   "2026.03.31 영업보고서",
+   "2026.03.31 정관"
+  ]
+ },
+ "recorded_at": "2026-10-15T14:38:49+00:00",
+ "attachments_recorded": {
+  "20260331004655": {
+   "by": "user",
+   "how": "DART web 첨부 select box, screenshot; address bar not visible, company and date match",
+   "at": "2026-10-15T23:55+09:00"
+  }
+ }
+}

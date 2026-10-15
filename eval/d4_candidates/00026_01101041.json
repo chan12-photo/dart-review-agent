@@ -1,0 +1,30 @@
+{
+ "rank": 26,
+ "corp_code": "01101041",
+ "corp_name": "패션플랫폼",
+ "stock_code": "225590",
+ "induty_code": "141",
+ "company_fetched_at": "2026-10-15T14:47:14+00:00",
+ "company_status": "000",
+ "filings": [
+  {
+   "rcept_no": "20260515002486",
+   "report_nm": "분기보고서 (2026.03)",
+   "rcept_dt": "20260515",
+   "corp_name": "패션플랫폼",
+   "flr_nm": "패션플랫폼"
+  },
+  {
+   "rcept_no": "20260320000970",
+   "report_nm": "사업보고서 (2025.12)",
+   "rcept_dt": "20260320",
+   "corp_name": "패션플랫폼",
+   "flr_nm": "패션플랫폼"
+  }
+ ],
+ "list_fetched_at": [
+  "2026-10-15T14:47:15+00:00"
+ ],
+ "attachments": {},
+ "recorded_at": "2026-10-15T14:47:15+00:00"
+}

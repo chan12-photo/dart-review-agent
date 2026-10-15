@@ -1,0 +1,44 @@
+{
+ "rank": 27,
+ "corp_code": "00525679",
+ "corp_name": "차바이오텍",
+ "stock_code": "085660",
+ "induty_code": "211",
+ "company_fetched_at": "2026-10-15T14:47:15+00:00",
+ "company_status": "000",
+ "filings": [
+  {
+   "rcept_no": "20260609000370",
+   "report_nm": "[기재정정]사업보고서 (2025.12)",
+   "rcept_dt": "20260609",
+   "corp_name": "차바이오텍",
+   "flr_nm": "차바이오텍"
+  },
+  {
+   "rcept_no": "20260515000195",
+   "report_nm": "분기보고서 (2026.03)",
+   "rcept_dt": "20260515",
+   "corp_name": "차바이오텍",
+   "flr_nm": "차바이오텍"
+  },
+  {
+   "rcept_no": "20260331004822",
+   "report_nm": "[기재정정]사업보고서 (2025.12)",
+   "rcept_dt": "20260331",
+   "corp_name": "차바이오텍",
+   "flr_nm": "차바이오텍"
+  },
+  {
+   "rcept_no": "20260320001318",
+   "report_nm": "사업보고서 (2025.12)",
+   "rcept_dt": "20260320",
+   "corp_name": "차바이오텍",
+   "flr_nm": "차바이오텍"
+  }
+ ],
+ "list_fetched_at": [
+  "2026-10-15T14:47:16+00:00"
+ ],
+ "attachments": {},
+ "recorded_at": "2026-10-15T14:47:16+00:00"
+}

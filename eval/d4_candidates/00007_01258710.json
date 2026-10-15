@@ -1,0 +1,47 @@
+{
+ "rank": 7,
+ "corp_code": "01258710",
+ "corp_name": "이노메트리",
+ "stock_code": "302430",
+ "induty_code": "29299",
+ "company_fetched_at": "2026-10-15T14:38:44+00:00",
+ "company_status": "000",
+ "filings": [
+  {
+   "rcept_no": "20260514000098",
+   "report_nm": "분기보고서 (2026.03)",
+   "rcept_dt": "20260514",
+   "corp_name": "이노메트리",
+   "flr_nm": "이노메트리"
+  },
+  {
+   "rcept_no": "20260320000994",
+   "report_nm": "사업보고서 (2025.12)",
+   "rcept_dt": "20260320",
+   "corp_name": "이노메트리",
+   "flr_nm": "이노메트리"
+  }
+ ],
+ "list_fetched_at": [
+  "2026-10-15T14:38:44+00:00"
+ ],
+ "attachments": {
+  "20260320000994": [
+   "2026.03.20 감사보고서",
+   "2026.03.20 감사의감사보고서",
+   "2026.03.20 내부감시장치에대한감사의의견서",
+   "2026.03.20 내부회계관리제도운영보고서",
+   "2026.03.20 연결감사보고서",
+   "2026.03.20 영업보고서",
+   "2026.03.20 정관"
+  ]
+ },
+ "recorded_at": "2026-10-15T14:38:44+00:00",
+ "attachments_recorded": {
+  "20260320000994": {
+   "by": "user",
+   "how": "DART web 첨부 select box, screenshot; address bar not visible, company and date match",
+   "at": "2026-10-15T23:55+09:00"
+  }
+ }
+}

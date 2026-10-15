@@ -1,0 +1,47 @@
+{
+ "rank": 17,
+ "corp_code": "00759294",
+ "corp_name": "와이솔",
+ "stock_code": "122990",
+ "induty_code": "2629",
+ "company_fetched_at": "2026-10-15T14:47:05+00:00",
+ "company_status": "000",
+ "filings": [
+  {
+   "rcept_no": "20260514001116",
+   "report_nm": "분기보고서 (2026.03)",
+   "rcept_dt": "20260514",
+   "corp_name": "와이솔",
+   "flr_nm": "와이솔"
+  },
+  {
+   "rcept_no": "20260318000465",
+   "report_nm": "사업보고서 (2025.12)",
+   "rcept_dt": "20260318",
+   "corp_name": "와이솔",
+   "flr_nm": "와이솔"
+  }
+ ],
+ "list_fetched_at": [
+  "2026-10-15T14:47:05+00:00"
+ ],
+ "attachments": {
+  "20260318000465": [
+   "2026.03.18 감사보고서",
+   "2026.03.18 감사의감사보고서",
+   "2026.03.18 내부감시장치에대한감사의의견서",
+   "2026.03.18 내부회계관리제도운영보고서",
+   "2026.03.18 연결감사보고서",
+   "2026.03.18 영업보고서",
+   "2026.03.18 정관"
+  ]
+ },
+ "recorded_at": "2026-10-15T14:47:05+00:00",
+ "attachments_recorded": {
+  "20260318000465": {
+   "by": "user",
+   "how": "DART web 첨부 select box, screenshot; address bar not visible, company and date match",
+   "at": "2026-10-16T00:10+09:00"
+  }
+ }
+}

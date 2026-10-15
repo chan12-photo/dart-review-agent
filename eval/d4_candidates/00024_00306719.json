@@ -1,0 +1,30 @@
+{
+ "rank": 24,
+ "corp_code": "00306719",
+ "corp_name": "에스텍",
+ "stock_code": "069510",
+ "induty_code": "26529",
+ "company_fetched_at": "2026-10-15T14:47:12+00:00",
+ "company_status": "000",
+ "filings": [
+  {
+   "rcept_no": "20260515001252",
+   "report_nm": "분기보고서 (2026.03)",
+   "rcept_dt": "20260515",
+   "corp_name": "에스텍",
+   "flr_nm": "에스텍"
+  },
+  {
+   "rcept_no": "20260316001663",
+   "report_nm": "사업보고서 (2025.12)",
+   "rcept_dt": "20260316",
+   "corp_name": "에스텍",
+   "flr_nm": "에스텍"
+  }
+ ],
+ "list_fetched_at": [
+  "2026-10-15T14:47:13+00:00"
+ ],
+ "attachments": {},
+ "recorded_at": "2026-10-15T14:47:13+00:00"
+}

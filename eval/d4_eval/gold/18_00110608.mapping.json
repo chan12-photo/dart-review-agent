@@ -1,0 +1,1765 @@
+{
+ "status": "draft",
+ "drafted_by": "Claude 1차",
+ "confirmed_by": null,
+ "confirmed_at": null,
+ "basis": "PDF 글자 층(pdfplumber)의 인쇄 줄과 OpenDART 캐시(cache/d4, fnlttSinglAcntAll, 2025, 11011, CFS)의 값을 항목마다 대조했다. 합·차는 원 단위 정수로 계산해 맞는 것만 적었다. 사용자 확인 전이다.",
+ "decisions": {
+  "n1": {
+   "decision": "add_statement",
+   "statement": {
+    "id": "연결재무상태표@7",
+    "kind": "BS",
+    "title": "연결재무상태표",
+    "consolidated": true,
+    "page": 7,
+    "end_page": 8,
+    "unit_text": "원"
+   },
+   "cells": [
+    {
+     "statement_id": "연결재무상태표@7",
+     "page": 7,
+     "label": "유동자산",
+     "period": 0,
+     "printed": "183,887,864,169",
+     "value": 183887864169
+    },
+    {
+     "statement_id": "연결재무상태표@7",
+     "page": 7,
+     "label": "유동자산",
+     "period": 1,
+     "printed": "157,101,448,500",
+     "value": 157101448500
+    },
+    {
+     "statement_id": "연결재무상태표@7",
+     "page": 7,
+     "label": "현금및현금성자산",
+     "period": 0,
+     "printed": "15,703,659,486",
+     "value": 15703659486
+    },
+    {
+     "statement_id": "연결재무상태표@7",
+     "page": 7,
+     "label": "현금및현금성자산",
+     "period": 1,
+     "printed": "6,983,812,113",
+     "value": 6983812113
+    },
+    {
+     "statement_id": "연결재무상태표@7",
+     "page": 7,
+     "label": "기타유동금융자산",
+     "period": 0,
+     "printed": "1,029,667,339",
+     "value": 1029667339
+    },
+    {
+     "statement_id": "연결재무상태표@7",
+     "page": 7,
+     "label": "기타유동금융자산",
+     "period": 1,
+     "printed": "850,877,362",
+     "value": 850877362
+    },
+    {
+     "statement_id": "연결재무상태표@7",
+     "page": 7,
+     "label": "최초인식시점 또는 그 이후에 지정된 유동 당기손익인식금융자산",
+     "period": 0,
+     "printed": "17,032,172,088",
+     "value": 17032172088
+    },
+    {
+     "statement_id": "연결재무상태표@7",
+     "page": 7,
+     "label": "최초인식시점 또는 그 이후에 지정된 유동 당기손익인식금융자산",
+     "period": 1,
+     "printed": "6,087,841,572",
+     "value": 6087841572
+    },
+    {
+     "statement_id": "연결재무상태표@7",
+     "page": 7,
+     "label": "매출채권 및 기타유동채권",
+     "period": 0,
+     "printed": "56,462,213,868",
+     "value": 56462213868
+    },
+    {
+     "statement_id": "연결재무상태표@7",
+     "page": 7,
+     "label": "매출채권 및 기타유동채권",
+     "period": 1,
+     "printed": "56,529,692,686",
+     "value": 56529692686
+    },
+    {
+     "statement_id": "연결재무상태표@7",
+     "page": 7,
+     "label": "기타유동자산",
+     "period": 0,
+     "printed": "9,712,055,749",
+     "value": 9712055749
+    },
+    {
+     "statement_id": "연결재무상태표@7",
+     "page": 7,
+     "label": "기타유동자산",
+     "period": 1,
+     "printed": "7,596,894,816",
+     "value": 7596894816
+    },
+    {
+     "statement_id": "연결재무상태표@7",
+     "page": 7,
+     "label": "재고자산",
+     "period": 0,
+     "printed": "83,948,095,639",
+     "value": 83948095639
+    },
+    {
+     "statement_id": "연결재무상태표@7",
+     "page": 7,
+     "label": "재고자산",
+     "period": 1,
+     "printed": "79,052,329,951",
+     "value": 79052329951
+    },
+    {
+     "statement_id": "연결재무상태표@7",
+     "page": 7,
+     "label": "비유동자산",
+     "period": 0,
+     "printed": "207,704,413,249",
+     "value": 207704413249
+    },
+    {
+     "statement_id": "연결재무상태표@7",
+     "page": 7,
+     "label": "비유동자산",
+     "period": 1,
+     "printed": "206,292,779,831",
+     "value": 206292779831
+    },
+    {
+     "statement_id": "연결재무상태표@7",
+     "page": 7,
+     "label": "최초인식시점 또는 그 이후에 지정된 비유동 당기손익인식금융자산",
+     "period": 0,
+     "printed": "19,179,555,634",
+     "value": 19179555634
+    },
+    {
+     "statement_id": "연결재무상태표@7",
+     "page": 7,
+     "label": "최초인식시점 또는 그 이후에 지정된 비유동 당기손익인식금융자산",
+     "period": 1,
+     "printed": "25,751,315,304",
+     "value": 25751315304
+    },
+    {
+     "statement_id": "연결재무상태표@7",
+     "page": 7,
+     "label": "기타포괄손익-공정가치 측정 비유동금융자산",
+     "period": 0,
+     "printed": "6,062,013,416",
+     "value": 6062013416
+    },
+    {
+     "statement_id": "연결재무상태표@7",
+     "page": 7,
+     "label": "기타포괄손익-공정가치 측정 비유동금융자산",
+     "period": 1,
+     "printed": "-",
+     "value": null
+    },
+    {
+     "statement_id": "연결재무상태표@7",
+     "page": 7,
+     "label": "장기매출채권 및 기타비유동채권",
+     "period": 0,
+     "printed": "215,433,911",
+     "value": 215433911
+    },
+    {
+     "statement_id": "연결재무상태표@7",
+     "page": 7,
+     "label": "장기매출채권 및 기타비유동채권",
+     "period": 1,
+     "printed": "167,950,958",
+     "value": 167950958
+    },
+    {
+     "statement_id": "연결재무상태표@7",
+     "page": 7,
+     "label": "관계기업에 대한 투자자산",
+     "period": 0,
+     "printed": "3,429,120,000",
+     "value": 3429120000
+    },
+    {
+     "statement_id": "연결재무상태표@7",
+     "page": 7,
+     "label": "관계기업에 대한 투자자산",
+     "period": 1,
+     "printed": "3,223,730,000",
+     "value": 3223730000
+    },
+    {
+     "statement_id": "연결재무상태표@7",
+     "page": 7,
+     "label": "유형자산",
+     "period": 0,
+     "printed": "120,357,080,086",
+     "value": 120357080086
+    },
+    {
+     "statement_id": "연결재무상태표@7",
+     "page": 7,
+     "label": "유형자산",
+     "period": 1,
+     "printed": "118,957,285,796",
+     "value": 118957285796
+    },
+    {
+     "statement_id": "연결재무상태표@7",
+     "page": 7,
+     "label": "투자부동산",
+     "period": 0,
+     "printed": "41,492,263,936",
+     "value": 41492263936
+    },
+    {
+     "statement_id": "연결재무상태표@7",
+     "page": 7,
+     "label": "투자부동산",
+     "period": 1,
+     "printed": "41,568,705,435",
+     "value": 41568705435
+    },
+    {
+     "statement_id": "연결재무상태표@7",
+     "page": 7,
+     "label": "사용권자산",
+     "period": 0,
+     "printed": "11,688,444,631",
+     "value": 11688444631
+    },
+    {
+     "statement_id": "연결재무상태표@7",
+     "page": 7,
+     "label": "사용권자산",
+     "period": 1,
+     "printed": "12,137,504,464",
+     "value": 12137504464
+    },
+    {
+     "statement_id": "연결재무상태표@7",
+     "page": 7,
+     "label": "기타비유동금융자산",
+     "period": 0,
+     "printed": "5,236,112,795",
+     "value": 5236112795
+    },
+    {
+     "statement_id": "연결재무상태표@7",
+     "page": 7,
+     "label": "기타비유동금융자산",
+     "period": 1,
+     "printed": "3,912,000,575",
+     "value": 3912000575
+    },
+    {
+     "statement_id": "연결재무상태표@7",
+     "page": 7,
+     "label": "이연법인세자산",
+     "period": 0,
+     "printed": "44,388,840",
+     "value": 44388840
+    },
+    {
+     "statement_id": "연결재무상태표@7",
+     "page": 7,
+     "label": "이연법인세자산",
+     "period": 1,
+     "printed": "574,287,299",
+     "value": 574287299
+    },
+    {
+     "statement_id": "연결재무상태표@7",
+     "page": 7,
+     "label": "자산총계",
+     "period": 0,
+     "printed": "391,592,277,418",
+     "value": 391592277418
+    },
+    {
+     "statement_id": "연결재무상태표@7",
+     "page": 7,
+     "label": "자산총계",
+     "period": 1,
+     "printed": "363,394,228,331",
+     "value": 363394228331
+    },
+    {
+     "statement_id": "연결재무상태표@7",
+     "page": 7,
+     "label": "유동부채",
+     "period": 0,
+     "printed": "131,819,483,762",
+     "value": 131819483762
+    },
+    {
+     "statement_id": "연결재무상태표@7",
+     "page": 7,
+     "label": "유동부채",
+     "period": 1,
+     "printed": "113,969,624,319",
+     "value": 113969624319
+    },
+    {
+     "statement_id": "연결재무상태표@7",
+     "page": 7,
+     "label": "매입채무 및 기타유동채무",
+     "period": 0,
+     "printed": "33,595,661,298",
+     "value": 33595661298
+    },
+    {
+     "statement_id": "연결재무상태표@7",
+     "page": 7,
+     "label": "매입채무 및 기타유동채무",
+     "period": 1,
+     "printed": "31,925,875,365",
+     "value": 31925875365
+    },
+    {
+     "statement_id": "연결재무상태표@7",
+     "page": 7,
+     "label": "유동계약부채",
+     "period": 0,
+     "printed": "2,088,686,141",
+     "value": 2088686141
+    },
+    {
+     "statement_id": "연결재무상태표@7",
+     "page": 7,
+     "label": "유동계약부채",
+     "period": 1,
+     "printed": "1,255,313,522",
+     "value": 1255313522
+    },
+    {
+     "statement_id": "연결재무상태표@7",
+     "page": 7,
+     "label": "유동 차입금",
+     "period": 0,
+     "printed": "83,961,719,495",
+     "value": 83961719495
+    },
+    {
+     "statement_id": "연결재무상태표@7",
+     "page": 7,
+     "label": "유동 차입금",
+     "period": 1,
+     "printed": "65,314,241,334",
+     "value": 65314241334
+    },
+    {
+     "statement_id": "연결재무상태표@7",
+     "page": 7,
+     "label": "유동성장기부채",
+     "period": 0,
+     "printed": "-",
+     "value": null
+    },
+    {
+     "statement_id": "연결재무상태표@7",
+     "page": 7,
+     "label": "유동성장기부채",
+     "period": 1,
+     "printed": "5,277,750,000",
+     "value": 5277750000
+    },
+    {
+     "statement_id": "연결재무상태표@7",
+     "page": 7,
+     "label": "유동 리스부채",
+     "period": 0,
+     "printed": "122,195,948",
+     "value": 122195948
+    },
+    {
+     "statement_id": "연결재무상태표@7",
+     "page": 7,
+     "label": "유동 리스부채",
+     "period": 1,
+     "printed": "41,498,897",
+     "value": 41498897
+    },
+    {
+     "statement_id": "연결재무상태표@7",
+     "page": 7,
+     "label": "미지급법인세",
+     "period": 0,
+     "printed": "5,335,658,953",
+     "value": 5335658953
+    },
+    {
+     "statement_id": "연결재무상태표@7",
+     "page": 7,
+     "label": "미지급법인세",
+     "period": 1,
+     "printed": "2,825,411,966",
+     "value": 2825411966
+    },
+    {
+     "statement_id": "연결재무상태표@7",
+     "page": 7,
+     "label": "기타유동금융부채",
+     "period": 0,
+     "printed": "98,783,377",
+     "value": 98783377
+    },
+    {
+     "statement_id": "연결재무상태표@7",
+     "page": 7,
+     "label": "기타유동금융부채",
+     "period": 1,
+     "printed": "39,120,000",
+     "value": 39120000
+    },
+    {
+     "statement_id": "연결재무상태표@7",
+     "page": 7,
+     "label": "기타 유동부채",
+     "period": 0,
+     "printed": "6,616,778,550",
+     "value": 6616778550
+    },
+    {
+     "statement_id": "연결재무상태표@7",
+     "page": 7,
+     "label": "기타 유동부채",
+     "period": 1,
+     "printed": "7,290,413,235",
+     "value": 7290413235
+    },
+    {
+     "statement_id": "연결재무상태표@7",
+     "page": 7,
+     "label": "비유동부채",
+     "period": 0,
+     "printed": "12,429,807,862",
+     "value": 12429807862
+    },
+    {
+     "statement_id": "연결재무상태표@7",
+     "page": 7,
+     "label": "비유동부채",
+     "period": 1,
+     "printed": "15,222,327,247",
+     "value": 15222327247
+    },
+    {
+     "statement_id": "연결재무상태표@7",
+     "page": 7,
+     "label": "장기차입금",
+     "period": 0,
+     "printed": "11,465,222,917",
+     "value": 11465222917
+    },
+    {
+     "statement_id": "연결재무상태표@7",
+     "page": 7,
+     "label": "장기차입금",
+     "period": 1,
+     "printed": "14,483,091,317",
+     "value": 14483091317
+    },
+    {
+     "statement_id": "연결재무상태표@7",
+     "page": 7,
+     "label": "기타비유동금융부채",
+     "period": 0,
+     "printed": "282,636,579",
+     "value": 282636579
+    },
+    {
+     "statement_id": "연결재무상태표@7",
+     "page": 7,
+     "label": "기타비유동금융부채",
+     "period": 1,
+     "printed": "433,797,813",
+     "value": 433797813
+    },
+    {
+     "statement_id": "연결재무상태표@7",
+     "page": 7,
+     "label": "순확정급여부채",
+     "period": 0,
+     "printed": "-",
+     "value": null
+    },
+    {
+     "statement_id": "연결재무상태표@7",
+     "page": 7,
+     "label": "순확정급여부채",
+     "period": 1,
+     "printed": "-",
+     "value": null
+    },
+    {
+     "statement_id": "연결재무상태표@7",
+     "page": 7,
+     "label": "비유동리스부채",
+     "period": 0,
+     "printed": "392,920,356",
+     "value": 392920356
+    },
+    {
+     "statement_id": "연결재무상태표@7",
+     "page": 7,
+     "label": "비유동리스부채",
+     "period": 1,
+     "printed": "-",
+     "value": null
+    },
+    {
+     "statement_id": "연결재무상태표@7",
+     "page": 7,
+     "label": "복구충당부채",
+     "period": 0,
+     "printed": "289,028,010",
+     "value": 289028010
+    },
+    {
+     "statement_id": "연결재무상태표@7",
+     "page": 7,
+     "label": "복구충당부채",
+     "period": 1,
+     "printed": "305,438,117",
+     "value": 305438117
+    },
+    {
+     "statement_id": "연결재무상태표@7",
+     "page": 7,
+     "label": "부채총계",
+     "period": 0,
+     "printed": "144,249,291,624",
+     "value": 144249291624
+    },
+    {
+     "statement_id": "연결재무상태표@7",
+     "page": 7,
+     "label": "부채총계",
+     "period": 1,
+     "printed": "129,191,951,566",
+     "value": 129191951566
+    },
+    {
+     "statement_id": "연결재무상태표@7",
+     "page": 7,
+     "label": "지배기업의 소유주에게 귀속되는 자본",
+     "period": 0,
+     "printed": "244,540,902,906",
+     "value": 244540902906
+    },
+    {
+     "statement_id": "연결재무상태표@7",
+     "page": 7,
+     "label": "지배기업의 소유주에게 귀속되는 자본",
+     "period": 1,
+     "printed": "231,293,246,774",
+     "value": 231293246774
+    },
+    {
+     "statement_id": "연결재무상태표@7",
+     "page": 7,
+     "label": "자본금",
+     "period": 0,
+     "printed": "8,000,000,000",
+     "value": 8000000000
+    },
+    {
+     "statement_id": "연결재무상태표@7",
+     "page": 7,
+     "label": "자본금",
+     "period": 1,
+     "printed": "8,000,000,000",
+     "value": 8000000000
+    },
+    {
+     "statement_id": "연결재무상태표@7",
+     "page": 7,
+     "label": "자본잉여금",
+     "period": 0,
+     "printed": "13,724,276,892",
+     "value": 13724276892
+    },
+    {
+     "statement_id": "연결재무상태표@7",
+     "page": 7,
+     "label": "자본잉여금",
+     "period": 1,
+     "printed": "13,724,276,892",
+     "value": 13724276892
+    },
+    {
+     "statement_id": "연결재무상태표@7",
+     "page": 8,
+     "label": "이익잉여금",
+     "period": 0,
+     "printed": "219,722,694,808",
+     "value": 219722694808
+    },
+    {
+     "statement_id": "연결재무상태표@7",
+     "page": 8,
+     "label": "이익잉여금",
+     "period": 1,
+     "printed": "205,255,339,461",
+     "value": 205255339461
+    },
+    {
+     "statement_id": "연결재무상태표@7",
+     "page": 8,
+     "label": "기타자본구성요소",
+     "period": 0,
+     "printed": "3,093,931,206",
+     "value": 3093931206
+    },
+    {
+     "statement_id": "연결재무상태표@7",
+     "page": 8,
+     "label": "기타자본구성요소",
+     "period": 1,
+     "printed": "4,313,630,421",
+     "value": 4313630421
+    },
+    {
+     "statement_id": "연결재무상태표@7",
+     "page": 8,
+     "label": "비지배지분",
+     "period": 0,
+     "printed": "2,802,082,888",
+     "value": 2802082888
+    },
+    {
+     "statement_id": "연결재무상태표@7",
+     "page": 8,
+     "label": "비지배지분",
+     "period": 1,
+     "printed": "2,909,029,991",
+     "value": 2909029991
+    },
+    {
+     "statement_id": "연결재무상태표@7",
+     "page": 8,
+     "label": "자본총계",
+     "period": 0,
+     "printed": "247,342,985,794",
+     "value": 247342985794
+    },
+    {
+     "statement_id": "연결재무상태표@7",
+     "page": 8,
+     "label": "자본총계",
+     "period": 1,
+     "printed": "234,202,276,765",
+     "value": 234202276765
+    },
+    {
+     "statement_id": "연결재무상태표@7",
+     "page": 8,
+     "label": "자본과부채총계",
+     "period": 0,
+     "printed": "391,592,277,418",
+     "value": 391592277418
+    },
+    {
+     "statement_id": "연결재무상태표@7",
+     "page": 8,
+     "label": "자본과부채총계",
+     "period": 1,
+     "printed": "363,394,228,331",
+     "value": 363394228331
+    }
+   ],
+   "note": "DSR 7~8쪽 '연결 재무상태표'(제목을 띄어 쓰고 기간 줄이 '2025.12.31 현재' 형식이라 정답 생성기가 찾지 못했다). 인쇄된 금액 줄 42개를 옮겨 적었다(금액 오른쪽 끝 x≤420 당기, 그 밖 전기). 칸 84개 중 인쇄 금액 79개, OpenDART BS와 일대일로 같은 값 79개. 검산(당기·전기 모두 맞음): 유동자산 = 그 아래 6행의 합, 비유동자산 = 10행의 합, 자산총계 = 유동+비유동, 유동부채 = 8행, 비유동부채 = 5행, 부채총계 = 유동+비유동, 지배기업 소유주 자본 = 자본금+자본잉여금+이익잉여금+기타자본구성요소, 자본총계 = 지배+비지배, 자본과부채총계 = 부채총계+자본총계. 8쪽 이익잉여금 당기는 글자 층에서 '219,722,694,80'(위치 54)과 '8'(위치 70)로 끊겨 있으나 지배기업 소유주 자본 244,540,902,906 = 8,000,000,000 + 13,724,276,892 + 219,722,694,808 + 3,093,931,206으로 219,722,694,808이다. 계정명이 금액 줄 위아래로 나뉜 두 행('최초인식시점 또는 그 이후에 지정된 / 유동(비유동) 당기손익인식금융자산')은 두 줄을 이어 적었다. '-' 칸 5개(유동성장기부채 당기 등)는 값 없음 칸이다."
+  },
+  "n4": {
+   "decision": "add_statement",
+   "statement": {
+    "id": "연결손익계산서@9",
+    "kind": "IS",
+    "title": "연결손익계산서",
+    "consolidated": true,
+    "page": 9,
+    "end_page": 9,
+    "unit_text": "원"
+   },
+   "cells": [
+    {
+     "statement_id": "연결손익계산서@9",
+     "page": 9,
+     "label": "매출액",
+     "period": 0,
+     "printed": "302,389,824,368",
+     "value": 302389824368
+    },
+    {
+     "statement_id": "연결손익계산서@9",
+     "page": 9,
+     "label": "매출액",
+     "period": 1,
+     "printed": "299,809,123,352",
+     "value": 299809123352
+    },
+    {
+     "statement_id": "연결손익계산서@9",
+     "page": 9,
+     "label": "매출원가",
+     "period": 0,
+     "printed": "255,850,365,641",
+     "value": 255850365641
+    },
+    {
+     "statement_id": "연결손익계산서@9",
+     "page": 9,
+     "label": "매출원가",
+     "period": 1,
+     "printed": "255,077,297,150",
+     "value": 255077297150
+    },
+    {
+     "statement_id": "연결손익계산서@9",
+     "page": 9,
+     "label": "매출총이익",
+     "period": 0,
+     "printed": "46,539,458,727",
+     "value": 46539458727
+    },
+    {
+     "statement_id": "연결손익계산서@9",
+     "page": 9,
+     "label": "매출총이익",
+     "period": 1,
+     "printed": "44,731,826,202",
+     "value": 44731826202
+    },
+    {
+     "statement_id": "연결손익계산서@9",
+     "page": 9,
+     "label": "판매비와관리비",
+     "period": 0,
+     "printed": "27,247,719,121",
+     "value": 27247719121
+    },
+    {
+     "statement_id": "연결손익계산서@9",
+     "page": 9,
+     "label": "판매비와관리비",
+     "period": 1,
+     "printed": "29,391,312,151",
+     "value": 29391312151
+    },
+    {
+     "statement_id": "연결손익계산서@9",
+     "page": 9,
+     "label": "영업이익",
+     "period": 0,
+     "printed": "19,291,739,606",
+     "value": 19291739606
+    },
+    {
+     "statement_id": "연결손익계산서@9",
+     "page": 9,
+     "label": "영업이익",
+     "period": 1,
+     "printed": "15,340,514,051",
+     "value": 15340514051
+    },
+    {
+     "statement_id": "연결손익계산서@9",
+     "page": 9,
+     "label": "기타수익",
+     "period": 0,
+     "printed": "3,352,295,792",
+     "value": 3352295792
+    },
+    {
+     "statement_id": "연결손익계산서@9",
+     "page": 9,
+     "label": "기타수익",
+     "period": 1,
+     "printed": "10,138,083,302",
+     "value": 10138083302
+    },
+    {
+     "statement_id": "연결손익계산서@9",
+     "page": 9,
+     "label": "기타비용",
+     "period": 0,
+     "printed": "6,036,376,814",
+     "value": 6036376814
+    },
+    {
+     "statement_id": "연결손익계산서@9",
+     "page": 9,
+     "label": "기타비용",
+     "period": 1,
+     "printed": "5,415,581,907",
+     "value": 5415581907
+    },
+    {
+     "statement_id": "연결손익계산서@9",
+     "page": 9,
+     "label": "금융수익",
+     "period": 0,
+     "printed": "9,032,519,882",
+     "value": 9032519882
+    },
+    {
+     "statement_id": "연결손익계산서@9",
+     "page": 9,
+     "label": "금융수익",
+     "period": 1,
+     "printed": "10,432,680,349",
+     "value": 10432680349
+    },
+    {
+     "statement_id": "연결손익계산서@9",
+     "page": 9,
+     "label": "금융비용",
+     "period": 0,
+     "printed": "7,721,332,372",
+     "value": 7721332372
+    },
+    {
+     "statement_id": "연결손익계산서@9",
+     "page": 9,
+     "label": "금융비용",
+     "period": 1,
+     "printed": "11,532,865,477",
+     "value": 11532865477
+    },
+    {
+     "statement_id": "연결손익계산서@9",
+     "page": 9,
+     "label": "지분법이익",
+     "period": 0,
+     "printed": "1,456,830,844",
+     "value": 1456830844
+    },
+    {
+     "statement_id": "연결손익계산서@9",
+     "page": 9,
+     "label": "지분법이익",
+     "period": 1,
+     "printed": "302,772,163",
+     "value": 302772163
+    },
+    {
+     "statement_id": "연결손익계산서@9",
+     "page": 9,
+     "label": "법인세비용차감전순이익",
+     "period": 0,
+     "printed": "19,375,676,938",
+     "value": 19375676938
+    },
+    {
+     "statement_id": "연결손익계산서@9",
+     "page": 9,
+     "label": "법인세비용차감전순이익",
+     "period": 1,
+     "printed": "19,265,602,481",
+     "value": 19265602481
+    },
+    {
+     "statement_id": "연결손익계산서@9",
+     "page": 9,
+     "label": "법인세비용",
+     "period": 0,
+     "printed": "4,507,442,765",
+     "value": 4507442765
+    },
+    {
+     "statement_id": "연결손익계산서@9",
+     "page": 9,
+     "label": "법인세비용",
+     "period": 1,
+     "printed": "4,752,796,273",
+     "value": 4752796273
+    },
+    {
+     "statement_id": "연결손익계산서@9",
+     "page": 9,
+     "label": "당기순이익",
+     "period": 0,
+     "printed": "14,868,234,173",
+     "value": 14868234173
+    },
+    {
+     "statement_id": "연결손익계산서@9",
+     "page": 9,
+     "label": "당기순이익",
+     "period": 1,
+     "printed": "14,512,806,208",
+     "value": 14512806208
+    },
+    {
+     "statement_id": "연결손익계산서@9",
+     "page": 9,
+     "label": "지배기업소유주",
+     "period": 0,
+     "printed": "14,961,441,937",
+     "value": 14961441937
+    },
+    {
+     "statement_id": "연결손익계산서@9",
+     "page": 9,
+     "label": "지배기업소유주",
+     "period": 1,
+     "printed": "14,544,326,241",
+     "value": 14544326241
+    },
+    {
+     "statement_id": "연결손익계산서@9",
+     "page": 9,
+     "label": "비지배지분",
+     "period": 0,
+     "printed": "(93,207,764)",
+     "value": -93207764
+    },
+    {
+     "statement_id": "연결손익계산서@9",
+     "page": 9,
+     "label": "비지배지분",
+     "period": 1,
+     "printed": "(31,520,033)",
+     "value": -31520033
+    },
+    {
+     "statement_id": "연결손익계산서@9",
+     "page": 9,
+     "label": "보통주 기본주당순이익",
+     "period": 0,
+     "printed": "935",
+     "value": 935
+    },
+    {
+     "statement_id": "연결손익계산서@9",
+     "page": 9,
+     "label": "보통주 기본주당순이익",
+     "period": 1,
+     "printed": "907",
+     "value": 907
+    }
+   ],
+   "note": "DSR 9~9쪽 '연결 손익계산서'(제목을 띄어 쓰고 기간 줄이 '2025.12.31 현재' 형식이라 정답 생성기가 찾지 못했다). 인쇄된 금액 줄 16개를 옮겨 적었다(금액 오른쪽 끝 x≤420 당기, 그 밖 전기). 칸 32개 중 인쇄 금액 32개, OpenDART IS와 일대일로 같은 값 32개. 검산(당기·전기): 매출총이익 = 매출액-매출원가, 영업이익 = 매출총이익-판매비와관리비, 법인세비용차감전순이익 = 영업이익+기타수익-기타비용+금융수익-금융비용+지분법이익, 당기순이익 = 차감전순이익-법인세비용 = 지배기업소유주+비지배지분. '보통주 기본주당순이익 32 935 907'은 주당 행(원)이다."
+  },
+  "n3": {
+   "decision": "add_statement",
+   "statement": {
+    "id": "연결포괄손익계산서@10",
+    "kind": "CIS",
+    "title": "연결포괄손익계산서",
+    "consolidated": true,
+    "page": 10,
+    "end_page": 10,
+    "unit_text": "원"
+   },
+   "cells": [
+    {
+     "statement_id": "연결포괄손익계산서@10",
+     "page": 10,
+     "label": "당기순이익",
+     "period": 0,
+     "printed": "14,868,234,173",
+     "value": 14868234173
+    },
+    {
+     "statement_id": "연결포괄손익계산서@10",
+     "page": 10,
+     "label": "당기순이익",
+     "period": 1,
+     "printed": "14,512,806,208",
+     "value": 14512806208
+    },
+    {
+     "statement_id": "연결포괄손익계산서@10",
+     "page": 10,
+     "label": "기타포괄손익",
+     "period": 0,
+     "printed": "(570,384,760)",
+     "value": -570384760
+    },
+    {
+     "statement_id": "연결포괄손익계산서@10",
+     "page": 10,
+     "label": "기타포괄손익",
+     "period": 1,
+     "printed": "2,447,283,582",
+     "value": 2447283582
+    },
+    {
+     "statement_id": "연결포괄손익계산서@10",
+     "page": 10,
+     "label": "순확정급여부채의 재측정요소",
+     "period": 0,
+     "printed": "625,913,410",
+     "value": 625913410
+    },
+    {
+     "statement_id": "연결포괄손익계산서@10",
+     "page": 10,
+     "label": "순확정급여부채의 재측정요소",
+     "period": 1,
+     "printed": "(517,242,208)",
+     "value": -517242208
+    },
+    {
+     "statement_id": "연결포괄손익계산서@10",
+     "page": 10,
+     "label": "세후기타포괄손익, 지분상품에 대한 투자자산",
+     "period": 0,
+     "printed": "(8,797,369)",
+     "value": -8797369
+    },
+    {
+     "statement_id": "연결포괄손익계산서@10",
+     "page": 10,
+     "label": "세후기타포괄손익, 지분상품에 대한 투자자산",
+     "period": 1,
+     "printed": "(312,013,589)",
+     "value": -312013589
+    },
+    {
+     "statement_id": "연결포괄손익계산서@10",
+     "page": 10,
+     "label": "지분법 적용대상 관계기업과 공동기업의 기타포괄손익에 대한 지분(세후기타포괄손익)",
+     "period": 0,
+     "printed": "(23,695,684)",
+     "value": -23695684
+    },
+    {
+     "statement_id": "연결포괄손익계산서@10",
+     "page": 10,
+     "label": "지분법 적용대상 관계기업과 공동기업의 기타포괄손익에 대한 지분(세후기타포괄손익)",
+     "period": 1,
+     "printed": "(23,742,881)",
+     "value": -23742881
+    },
+    {
+     "statement_id": "연결포괄손익계산서@10",
+     "page": 10,
+     "label": "해외사업장환산외환차이(세후기타포괄손익)",
+     "period": 0,
+     "printed": "(1,163,805,117)",
+     "value": -1163805117
+    },
+    {
+     "statement_id": "연결포괄손익계산서@10",
+     "page": 10,
+     "label": "해외사업장환산외환차이(세후기타포괄손익)",
+     "period": 1,
+     "printed": "3,300,282,260",
+     "value": 3300282260
+    },
+    {
+     "statement_id": "연결포괄손익계산서@10",
+     "page": 10,
+     "label": "총포괄이익",
+     "period": 0,
+     "printed": "14,297,849,413",
+     "value": 14297849413
+    },
+    {
+     "statement_id": "연결포괄손익계산서@10",
+     "page": 10,
+     "label": "총포괄이익",
+     "period": 1,
+     "printed": "16,960,089,790",
+     "value": 16960089790
+    },
+    {
+     "statement_id": "연결포괄손익계산서@10",
+     "page": 10,
+     "label": "포괄손익, 지배기업의 소유주에게 귀속되는 지분",
+     "period": 0,
+     "printed": "14,367,656,132",
+     "value": 14367656132
+    },
+    {
+     "statement_id": "연결포괄손익계산서@10",
+     "page": 10,
+     "label": "포괄손익, 지배기업의 소유주에게 귀속되는 지분",
+     "period": 1,
+     "printed": "16,773,383,754",
+     "value": 16773383754
+    },
+    {
+     "statement_id": "연결포괄손익계산서@10",
+     "page": 10,
+     "label": "포괄손익, 비지배지분",
+     "period": 0,
+     "printed": "(69,806,719)",
+     "value": -69806719
+    },
+    {
+     "statement_id": "연결포괄손익계산서@10",
+     "page": 10,
+     "label": "포괄손익, 비지배지분",
+     "period": 1,
+     "printed": "186,706,036",
+     "value": 186706036
+    }
+   ],
+   "note": "DSR 10~10쪽 '연결 포괄손익계산서'(제목을 띄어 쓰고 기간 줄이 '2025.12.31 현재' 형식이라 정답 생성기가 찾지 못했다). 인쇄된 금액 줄 9개를 옮겨 적었다(금액 오른쪽 끝 x≤420 당기, 그 밖 전기). 칸 18개 중 인쇄 금액 18개, OpenDART CIS와 일대일로 같은 값 18개; 인쇄되지 않은 OpenDART 값: 해외사업장환산외환차이(세후기타포괄손익) 당기 -1,163,805,117; 해외사업장환산외환차이(세후기타포괄손익) 전기 3,300,282,260; 당기손익으로 재분류되지 않는항목(세후기타포괄손익) 당기 593,420,357; 당기손익으로 재분류되지 않는항목(세후기타포괄손익) 전기 -852,998,678. 검산(당기·전기): 기타포괄손익 = 그 아래 금액 4행의 합, 총포괄이익 = 당기순이익+기타포괄손익 = 지배+비지배 귀속. 인쇄되지 않은 OpenDART 값 중 '해외사업장환산외환차이' 두 값은 인쇄 행과 같은 값의 소계('당기손익으로 재분류될 수 있는 항목')가 먼저 짝지어진 두 번째 저장이고, '재분류되지 않는항목' 당기 593,420,357 = 625,913,410-8,797,369-23,695,684, 전기 -852,998,678 = -517,242,208-312,013,589-23,742,881은 금액 없이 인쇄된 제목 줄 '1. 당기손익으로 재분류되지 않는항목'의 합이다. 금액 줄 위아래로 나뉜 계정명 '지분법 적용대상 ... 기타포괄손익에 / 대한 지분(세후기타포괄손익)'은 이어 적었다."
+  },
+  "n2": {
+   "decision": "add_statement",
+   "statement": {
+    "id": "연결현금흐름표@12",
+    "kind": "CF",
+    "title": "연결현금흐름표",
+    "consolidated": true,
+    "page": 12,
+    "end_page": 12,
+    "unit_text": "원"
+   },
+   "cells": [
+    {
+     "statement_id": "연결현금흐름표@12",
+     "page": 12,
+     "label": "영업활동현금흐름",
+     "period": 0,
+     "printed": "19,763,489,423",
+     "value": 19763489423
+    },
+    {
+     "statement_id": "연결현금흐름표@12",
+     "page": 12,
+     "label": "영업활동현금흐름",
+     "period": 1,
+     "printed": "16,842,236,883",
+     "value": 16842236883
+    },
+    {
+     "statement_id": "연결현금흐름표@12",
+     "page": 12,
+     "label": "당기순이익",
+     "period": 0,
+     "printed": "14,868,234,173",
+     "value": 14868234173
+    },
+    {
+     "statement_id": "연결현금흐름표@12",
+     "page": 12,
+     "label": "당기순이익",
+     "period": 1,
+     "printed": "14,512,806,208",
+     "value": 14512806208
+    },
+    {
+     "statement_id": "연결현금흐름표@12",
+     "page": 12,
+     "label": "당기순이익조정을 위한 가감",
+     "period": 0,
+     "printed": "18,002,773,400",
+     "value": 18002773400
+    },
+    {
+     "statement_id": "연결현금흐름표@12",
+     "page": 12,
+     "label": "당기순이익조정을 위한 가감",
+     "period": 1,
+     "printed": "12,340,300,045",
+     "value": 12340300045
+    },
+    {
+     "statement_id": "연결현금흐름표@12",
+     "page": 12,
+     "label": "영업활동으로인한자산ㆍ부채의변동",
+     "period": 0,
+     "printed": "(9,906,174,089)",
+     "value": -9906174089
+    },
+    {
+     "statement_id": "연결현금흐름표@12",
+     "page": 12,
+     "label": "영업활동으로인한자산ㆍ부채의변동",
+     "period": 1,
+     "printed": "(3,163,431,310)",
+     "value": -3163431310
+    },
+    {
+     "statement_id": "연결현금흐름표@12",
+     "page": 12,
+     "label": "이자수취(영업)",
+     "period": 0,
+     "printed": "1,219,581,478",
+     "value": 1219581478
+    },
+    {
+     "statement_id": "연결현금흐름표@12",
+     "page": 12,
+     "label": "이자수취(영업)",
+     "period": 1,
+     "printed": "1,640,831,287",
+     "value": 1640831287
+    },
+    {
+     "statement_id": "연결현금흐름표@12",
+     "page": 12,
+     "label": "이자지급(영업)",
+     "period": 0,
+     "printed": "(3,335,300,180)",
+     "value": -3335300180
+    },
+    {
+     "statement_id": "연결현금흐름표@12",
+     "page": 12,
+     "label": "이자지급(영업)",
+     "period": 1,
+     "printed": "(4,412,470,829)",
+     "value": -4412470829
+    },
+    {
+     "statement_id": "연결현금흐름표@12",
+     "page": 12,
+     "label": "배당금수취(영업)",
+     "period": 0,
+     "printed": "543,394,790",
+     "value": 543394790
+    },
+    {
+     "statement_id": "연결현금흐름표@12",
+     "page": 12,
+     "label": "배당금수취(영업)",
+     "period": 1,
+     "printed": "85,394,649",
+     "value": 85394649
+    },
+    {
+     "statement_id": "연결현금흐름표@12",
+     "page": 12,
+     "label": "법인세납부",
+     "period": 0,
+     "printed": "(1,629,020,149)",
+     "value": -1629020149
+    },
+    {
+     "statement_id": "연결현금흐름표@12",
+     "page": 12,
+     "label": "법인세납부",
+     "period": 1,
+     "printed": "(4,161,193,167)",
+     "value": -4161193167
+    },
+    {
+     "statement_id": "연결현금흐름표@12",
+     "page": 12,
+     "label": "투자활동현금흐름",
+     "period": 0,
+     "printed": "(23,919,222,056)",
+     "value": -23919222056
+    },
+    {
+     "statement_id": "연결현금흐름표@12",
+     "page": 12,
+     "label": "투자활동현금흐름",
+     "period": 1,
+     "printed": "(684,359,454)",
+     "value": -684359454
+    },
+    {
+     "statement_id": "연결현금흐름표@12",
+     "page": 12,
+     "label": "단기금융상품의 처분",
+     "period": 0,
+     "printed": "-",
+     "value": null
+    },
+    {
+     "statement_id": "연결현금흐름표@12",
+     "page": 12,
+     "label": "단기금융상품의 처분",
+     "period": 1,
+     "printed": "4,000,000,000",
+     "value": 4000000000
+    },
+    {
+     "statement_id": "연결현금흐름표@12",
+     "page": 12,
+     "label": "당기손익-공정가치측정금융자산의 처분",
+     "period": 0,
+     "printed": "6,707,980,951",
+     "value": 6707980951
+    },
+    {
+     "statement_id": "연결현금흐름표@12",
+     "page": 12,
+     "label": "당기손익-공정가치측정금융자산의 처분",
+     "period": 1,
+     "printed": "14,175,729,738",
+     "value": 14175729738
+    },
+    {
+     "statement_id": "연결현금흐름표@12",
+     "page": 12,
+     "label": "기타금융상품의 처분",
+     "period": 0,
+     "printed": "-",
+     "value": null
+    },
+    {
+     "statement_id": "연결현금흐름표@12",
+     "page": 12,
+     "label": "기타금융상품의 처분",
+     "period": 1,
+     "printed": "12,844,851,886",
+     "value": 12844851886
+    },
+    {
+     "statement_id": "연결현금흐름표@12",
+     "page": 12,
+     "label": "파생상품의 감소",
+     "period": 0,
+     "printed": "3,593,610,684",
+     "value": 3593610684
+    },
+    {
+     "statement_id": "연결현금흐름표@12",
+     "page": 12,
+     "label": "파생상품의 감소",
+     "period": 1,
+     "printed": "5,054,489,992",
+     "value": 5054489992
+    },
+    {
+     "statement_id": "연결현금흐름표@12",
+     "page": 12,
+     "label": "유형자산의 처분",
+     "period": 0,
+     "printed": "1,927,339,761",
+     "value": 1927339761
+    },
+    {
+     "statement_id": "연결현금흐름표@12",
+     "page": 12,
+     "label": "유형자산의 처분",
+     "period": 1,
+     "printed": "6,855,684,860",
+     "value": 6855684860
+    },
+    {
+     "statement_id": "연결현금흐름표@12",
+     "page": 12,
+     "label": "장기금융상품의 출연",
+     "period": 0,
+     "printed": "-",
+     "value": null
+    },
+    {
+     "statement_id": "연결현금흐름표@12",
+     "page": 12,
+     "label": "장기금융상품의 출연",
+     "period": 1,
+     "printed": "3,304,800,000",
+     "value": 3304800000
+    },
+    {
+     "statement_id": "연결현금흐름표@12",
+     "page": 12,
+     "label": "장기대여금의 감소",
+     "period": 0,
+     "printed": "68,080,000",
+     "value": 68080000
+    },
+    {
+     "statement_id": "연결현금흐름표@12",
+     "page": 12,
+     "label": "장기대여금의 감소",
+     "period": 1,
+     "printed": "2,201,573,120",
+     "value": 2201573120
+    },
+    {
+     "statement_id": "연결현금흐름표@12",
+     "page": 12,
+     "label": "국고보조금의 수령",
+     "period": 0,
+     "printed": "105,447,310",
+     "value": 105447310
+    },
+    {
+     "statement_id": "연결현금흐름표@12",
+     "page": 12,
+     "label": "국고보조금의 수령",
+     "period": 1,
+     "printed": "11,182,000",
+     "value": 11182000
+    },
+    {
+     "statement_id": "연결현금흐름표@12",
+     "page": 12,
+     "label": "단기금융상품의 취득",
+     "period": 0,
+     "printed": "(210,000,000)",
+     "value": -210000000
+    },
+    {
+     "statement_id": "연결현금흐름표@12",
+     "page": 12,
+     "label": "단기금융상품의 취득",
+     "period": 1,
+     "printed": "-",
+     "value": null
+    },
+    {
+     "statement_id": "연결현금흐름표@12",
+     "page": 12,
+     "label": "당기손익-공정가치측정금융자산의 취득",
+     "period": 0,
+     "printed": "(8,179,101,590)",
+     "value": -8179101590
+    },
+    {
+     "statement_id": "연결현금흐름표@12",
+     "page": 12,
+     "label": "당기손익-공정가치측정금융자산의 취득",
+     "period": 1,
+     "printed": "(12,073,500,000)",
+     "value": -12073500000
+    },
+    {
+     "statement_id": "연결현금흐름표@12",
+     "page": 12,
+     "label": "기타금융상품의 취득",
+     "period": 0,
+     "printed": "(1,031,647,900)",
+     "value": -1031647900
+    },
+    {
+     "statement_id": "연결현금흐름표@12",
+     "page": 12,
+     "label": "기타금융상품의 취득",
+     "period": 1,
+     "printed": "(2,035,540,079)",
+     "value": -2035540079
+    },
+    {
+     "statement_id": "연결현금흐름표@12",
+     "page": 12,
+     "label": "파생상품의 증가",
+     "period": 0,
+     "printed": "(3,209,431,000)",
+     "value": -3209431000
+    },
+    {
+     "statement_id": "연결현금흐름표@12",
+     "page": 12,
+     "label": "파생상품의 증가",
+     "period": 1,
+     "printed": "(6,803,824,343)",
+     "value": -6803824343
+    },
+    {
+     "statement_id": "연결현금흐름표@12",
+     "page": 12,
+     "label": "유형자산의 취득",
+     "period": 0,
+     "printed": "(17,625,171,536)",
+     "value": -17625171536
+    },
+    {
+     "statement_id": "연결현금흐름표@12",
+     "page": 12,
+     "label": "유형자산의 취득",
+     "period": 1,
+     "printed": "(22,632,422,758)",
+     "value": -22632422758
+    },
+    {
+     "statement_id": "연결현금흐름표@12",
+     "page": 12,
+     "label": "장기금융상품의 취득",
+     "period": 0,
+     "printed": "-",
+     "value": null
+    },
+    {
+     "statement_id": "연결현금흐름표@12",
+     "page": 12,
+     "label": "장기금융상품의 취득",
+     "period": 1,
+     "printed": "(5,537,383,870)",
+     "value": -5537383870
+    },
+    {
+     "statement_id": "연결현금흐름표@12",
+     "page": 12,
+     "label": "기타포괄-공정가치금융자산의 취득",
+     "period": 0,
+     "printed": "(6,020,278,494)",
+     "value": -6020278494
+    },
+    {
+     "statement_id": "연결현금흐름표@12",
+     "page": 12,
+     "label": "기타포괄-공정가치금융자산의 취득",
+     "period": 1,
+     "printed": "-",
+     "value": null
+    },
+    {
+     "statement_id": "연결현금흐름표@12",
+     "page": 12,
+     "label": "임차보증금의 증가",
+     "period": 0,
+     "printed": "(46,050,242)",
+     "value": -46050242
+    },
+    {
+     "statement_id": "연결현금흐름표@12",
+     "page": 12,
+     "label": "임차보증금의 증가",
+     "period": 1,
+     "printed": "(50,000,000)",
+     "value": -50000000
+    },
+    {
+     "statement_id": "연결현금흐름표@12",
+     "page": 12,
+     "label": "재무활동현금흐름",
+     "period": 0,
+     "printed": "13,029,120,161",
+     "value": 13029120161
+    },
+    {
+     "statement_id": "연결현금흐름표@12",
+     "page": 12,
+     "label": "재무활동현금흐름",
+     "period": 1,
+     "printed": "(15,556,021,251)",
+     "value": -15556021251
+    },
+    {
+     "statement_id": "연결현금흐름표@12",
+     "page": 12,
+     "label": "단기차입금의 증가",
+     "period": 0,
+     "printed": "185,798,788,332",
+     "value": 185798788332
+    },
+    {
+     "statement_id": "연결현금흐름표@12",
+     "page": 12,
+     "label": "단기차입금의 증가",
+     "period": 1,
+     "printed": "159,762,704,203",
+     "value": 159762704203
+    },
+    {
+     "statement_id": "연결현금흐름표@12",
+     "page": 12,
+     "label": "장기차입금의 증가",
+     "period": 0,
+     "printed": "4,038,003,503",
+     "value": 4038003503
+    },
+    {
+     "statement_id": "연결현금흐름표@12",
+     "page": 12,
+     "label": "장기차입금의 증가",
+     "period": 1,
+     "printed": "9,172,065,822",
+     "value": 9172065822
+    },
+    {
+     "statement_id": "연결현금흐름표@12",
+     "page": 12,
+     "label": "임대보증금의 증가",
+     "period": 0,
+     "printed": "28,038,766",
+     "value": 28038766
+    },
+    {
+     "statement_id": "연결현금흐름표@12",
+     "page": 12,
+     "label": "임대보증금의 증가",
+     "period": 1,
+     "printed": "7,894,063",
+     "value": 7894063
+    },
+    {
+     "statement_id": "연결현금흐름표@12",
+     "page": 12,
+     "label": "단기차입금의 상환",
+     "period": 0,
+     "printed": "(166,859,441,753)",
+     "value": -166859441753
+    },
+    {
+     "statement_id": "연결현금흐름표@12",
+     "page": 12,
+     "label": "단기차입금의 상환",
+     "period": 1,
+     "printed": "(169,526,924,385)",
+     "value": -169526924385
+    },
+    {
+     "statement_id": "연결현금흐름표@12",
+     "page": 12,
+     "label": "유동성장기부채의 상환",
+     "period": 0,
+     "printed": "(5,277,750,000)",
+     "value": -5277750000
+    },
+    {
+     "statement_id": "연결현금흐름표@12",
+     "page": 12,
+     "label": "유동성장기부채의 상환",
+     "period": 1,
+     "printed": "(11,611,050,000)",
+     "value": -11611050000
+    },
+    {
+     "statement_id": "연결현금흐름표@12",
+     "page": 12,
+     "label": "장기차입금의 상환",
+     "period": 0,
+     "printed": "(2,795,284,851)",
+     "value": -2795284851
+    },
+    {
+     "statement_id": "연결현금흐름표@12",
+     "page": 12,
+     "label": "장기차입금의 상환",
+     "period": 1,
+     "printed": "(2,210,960,615)",
+     "value": -2210960615
+    },
+    {
+     "statement_id": "연결현금흐름표@12",
+     "page": 12,
+     "label": "배당금지급",
+     "period": 0,
+     "printed": "(1,602,825,000)",
+     "value": -1602825000
+    },
+    {
+     "statement_id": "연결현금흐름표@12",
+     "page": 12,
+     "label": "배당금지급",
+     "period": 1,
+     "printed": "(960,000,000)",
+     "value": -960000000
+    },
+    {
+     "statement_id": "연결현금흐름표@12",
+     "page": 12,
+     "label": "리스부채의 상환",
+     "period": 0,
+     "printed": "(121,208,836)",
+     "value": -121208836
+    },
+    {
+     "statement_id": "연결현금흐름표@12",
+     "page": 12,
+     "label": "리스부채의 상환",
+     "period": 1,
+     "printed": "(115,250,339)",
+     "value": -115250339
+    },
+    {
+     "statement_id": "연결현금흐름표@12",
+     "page": 12,
+     "label": "임대보증금의 감소",
+     "period": 0,
+     "printed": "(179,200,000)",
+     "value": -179200000
+    },
+    {
+     "statement_id": "연결현금흐름표@12",
+     "page": 12,
+     "label": "임대보증금의 감소",
+     "period": 1,
+     "printed": "(74,500,000)",
+     "value": -74500000
+    },
+    {
+     "statement_id": "연결현금흐름표@12",
+     "page": 12,
+     "label": "현금및현금성자산에 대한 환율변동효과",
+     "period": 0,
+     "printed": "(153,540,155)",
+     "value": -153540155
+    },
+    {
+     "statement_id": "연결현금흐름표@12",
+     "page": 12,
+     "label": "현금및현금성자산에 대한 환율변동효과",
+     "period": 1,
+     "printed": "255,824,670",
+     "value": 255824670
+    },
+    {
+     "statement_id": "연결현금흐름표@12",
+     "page": 12,
+     "label": "현금및현금성자산의순증가(감소)",
+     "period": 0,
+     "printed": "8,719,847,373",
+     "value": 8719847373
+    },
+    {
+     "statement_id": "연결현금흐름표@12",
+     "page": 12,
+     "label": "현금및현금성자산의순증가(감소)",
+     "period": 1,
+     "printed": "857,680,848",
+     "value": 857680848
+    },
+    {
+     "statement_id": "연결현금흐름표@12",
+     "page": 12,
+     "label": "기초현금및현금성자산",
+     "period": 0,
+     "printed": "6,983,812,113",
+     "value": 6983812113
+    },
+    {
+     "statement_id": "연결현금흐름표@12",
+     "page": 12,
+     "label": "기초현금및현금성자산",
+     "period": 1,
+     "printed": "6,126,131,265",
+     "value": 6126131265
+    },
+    {
+     "statement_id": "연결현금흐름표@12",
+     "page": 12,
+     "label": "기말현금및현금성자산",
+     "period": 0,
+     "printed": "15,703,659,486",
+     "value": 15703659486
+    },
+    {
+     "statement_id": "연결현금흐름표@12",
+     "page": 12,
+     "label": "기말현금및현금성자산",
+     "period": 1,
+     "printed": "6,983,812,113",
+     "value": 6983812113
+    }
+   ],
+   "note": "DSR 12~12쪽 '연결 현금흐름표'(제목을 띄어 쓰고 기간 줄이 '2025.12.31 현재' 형식이라 정답 생성기가 찾지 못했다). 인쇄된 금액 줄 39개를 옮겨 적었다(금액 오른쪽 끝 x≤420 당기, 그 밖 전기). 칸 78개 중 인쇄 금액 72개, OpenDART CF와 일대일로 같은 값 72개. 검산(당기·전기): 영업활동현금흐름 = 그 아래 7행의 합, 투자활동현금흐름 = 16행, 재무활동현금흐름 = 9행, 현금및현금성자산의순증가(감소) = 영업+투자+재무+환율변동효과, 기말 = 기초+순증가. 기말현금 15,703,659,486(전기 6,983,812,113)은 재무상태표 현금및현금성자산과 같다. '-' 칸 6개(단기금융상품의 처분 당기 등)는 값 없음 칸이다."
+  }
+ }
+}

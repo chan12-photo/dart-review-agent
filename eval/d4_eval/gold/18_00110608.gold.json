@@ -1,0 +1,35 @@
+{
+ "source": {
+  "file": "18_DSR.pdf",
+  "sha256": "df6f420eb2fda07e5b6ac0570d3f5dd259888d8dc104ebcd6baed0a92c7d0eb4",
+  "pages": 93
+ },
+ "statements": [],
+ "cells": [],
+ "needs_mapping": [
+  {
+   "why": "statement_not_found",
+   "division": "CFS",
+   "kind": "BS",
+   "id": "n1"
+  },
+  {
+   "why": "statement_not_found",
+   "division": "CFS",
+   "kind": "CF",
+   "id": "n2"
+  },
+  {
+   "why": "statement_not_found",
+   "division": "CFS",
+   "kind": "CIS",
+   "id": "n3"
+  },
+  {
+   "why": "statement_not_found",
+   "division": "CFS",
+   "kind": "IS",
+   "id": "n4"
+  }
+ ]
+}

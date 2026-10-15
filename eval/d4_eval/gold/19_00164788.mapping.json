@@ -1,0 +1,37 @@
+{
+ "status": "draft",
+ "drafted_by": "Claude 1차",
+ "confirmed_by": null,
+ "confirmed_at": null,
+ "basis": "PDF 글자 층(pdfplumber)의 인쇄 줄과 OpenDART 캐시(cache/d4, fnlttSinglAcntAll, 2025, 11011, CFS)의 값을 항목마다 대조했다. 합·차는 원 단위 정수로 계산해 맞는 것만 적었다. 사용자 확인 전이다.",
+ "decisions": {
+  "n1": {
+   "decision": "add",
+   "note": "11쪽 '기본주당이익(주35) 40,861원 44,939원': 금액 뒤에 '원'이 붙어 인쇄돼 정답 생성기가 칸을 만들지 못했다. OpenDART '기본주당이익(손실)' 당기 40,861과 같다. 주당 행이라 원 단위로 당기 칸을 더한다.",
+   "cells": [
+    {
+     "statement_id": "연결손익계산서@11",
+     "page": 11,
+     "label": "기본주당이익",
+     "period": 0,
+     "printed": "40,861",
+     "value": 40861
+    }
+   ]
+  },
+  "n2": {
+   "decision": "add",
+   "note": "11쪽 같은 줄의 전기 '44,939원'은 OpenDART '기본주당이익(손실)' 전기 44,939와 같다. 주당 행이라 원 단위로 전기 칸을 더한다.",
+   "cells": [
+    {
+     "statement_id": "연결손익계산서@11",
+     "page": 11,
+     "label": "기본주당이익",
+     "period": 1,
+     "printed": "44,939",
+     "value": 44939
+    }
+   ]
+  }
+ }
+}

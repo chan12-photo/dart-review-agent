@@ -7,7 +7,8 @@
   - 4차: [결과](reviews/D4_fourth_codex_result.ko.md), [응답](reviews/D4_fourth_codex_response.ko.md)
   - 5차: [결과](reviews/D4_fifth_codex_result.ko.md), [응답](reviews/D4_fifth_codex_response.ko.md)
   - 6차: [결과](reviews/D4_sixth_codex_result.ko.md), [응답](reviews/D4_sixth_codex_response.ko.md). ④를 막는 결함 1건을 고쳤다.
-  - **사용자 결정 완료 (2026-10-15, 10절).** 기본안을 모두 택했다. 다음은 ④ 고정이다.
+  - **사용자 결정 완료 (2026-10-15, 10절).** 기본안을 모두 택했다.
+  - **④ 고정 완료 (2026-10-15):** 고정 기록 `eval/freeze_d4.json`(제품 P = 도구 T = `49c182b`, 2026-10-15), 모집단 `eval/d4_population.json`(종목코드 있는 3,998곳, 회사 목록 응답 SHA-256 `ae980849…`), 제외 고유번호 `eval/d4_excluded.json`. 이 커밋이 F다. 이 뒤로 제품과 평가 도구를 바꾸지 않는다. 다음은 ⑤ 후보 판정이다.
 - 대상 기능: v0.2 "문서 → 검증된 엑셀" (`python -m dart_review extract`, API `POST /jobs`).
 - **목적:** 처음 보는 재무제표 PDF에서 엑셀에 다음이 몇 칸인지 잰다.
   - **표시 없이 들어간 틀린 숫자**

@@ -1,0 +1,55 @@
+{
+ "product_commit": "49c182bc89d0bb384b3185f69e70997b7ce9e4a3",
+ "tools_commit": "49c182bc89d0bb384b3185f69e70997b7ce9e4a3",
+ "objects": {
+  "product": {
+   "dart_review": "61a07aa3a646887c11209b8380b952e97efb860c",
+   "pyproject.toml": "ec33ff10d002fd9bcd52efa587df2e0023d6a894"
+  },
+  "tools": {
+   "eval/d4_gold.py": "1630c694b422601521495482f7f8d3180f68d542",
+   "eval/d4_score.py": "2e79d79c4e698133393cdeb34c5920b3a7805fc7",
+   "eval/d4_candidates.py": "59c91f8654b99f97148071cc60b41e83236f9091",
+   "eval/d4_preflight.py": "cfac43f20b15266784529f5588276e25d3495243",
+   "eval/d4_scan.py": "b6bef64eea911ddaf92f98a966a6a5dd17358815"
+  }
+ },
+ "environment": {
+  "python": "3.13.12",
+  "packages": [
+   "annotated-doc==0.0.5",
+   "annotated-types==0.8.0",
+   "anyio==4.15.1",
+   "cffi==2.1.1",
+   "charset-normalizer==3.5.2",
+   "click==8.5.0",
+   "cryptography==50.0.2",
+   "et_xmlfile==2.0.0",
+   "fastapi==0.143.0",
+   "h11==0.16.0",
+   "idna==3.20",
+   "openpyxl==3.1.5",
+   "opentelemetry-api==1.45.1",
+   "pdfminer.six==20260107",
+   "pdfplumber==0.11.10",
+   "pillow==12.3.0",
+   "pip==26.2.1",
+   "pycparser==3.11",
+   "pydantic==2.14.0",
+   "pydantic_core==2.50.0",
+   "pypdfium2==5.14.0",
+   "python-multipart==0.0.32",
+   "starlette==1.7.0",
+   "typing-inspection==0.4.4",
+   "typing_extensions==4.16.0",
+   "uvicorn==0.54.0"
+  ],
+  "model": {
+   "qwen3-vl:8b": "901cae732162"
+  },
+  "ollama": "ollama version is 0.34.4",
+  "tesseract": "tesseract 5.5.3",
+  "macos": "27.2"
+ },
+ "frozen_at": "2026-10-15T14:37:30+00:00"
+}

@@ -158,6 +158,34 @@ class RunTests(Inputs):
                          "--out", str(ROOT / "d4_run_never_created"), "--dry-run"])
         self.assertFalse((ROOT / "d4_run_never_created").exists())
 
+    def test_readers_once_each_in_the_registered_order(self):
+        for readers in (["ai", "ai"], ["ai", "rules"], ["rules", "rules", "ai"]):
+            with self.subTest(readers=readers):
+                with self.assertRaises(SystemExit):
+                    self.run_main("--readers", *readers, "--preflight", str(self.preflight))
+        self.assertEqual(self.called, [])
+        self.assertEqual(self.run_main("--readers", "ai", "--preflight", str(self.preflight)), 0)
+        self.assertEqual(self.run_json()["calls"], 8)
+
+    def test_the_official_gate_reads_this_runner_s_record(self):
+        # the record of an honest run (one call failed) lets every other call be official, and only those
+        import official_d4
+        self.exits = {"01_a.tilt.ai": 2}
+        self.assertEqual(self.run_main("--preflight", str(self.preflight)), 1)
+        names = [f"{d['key']}.{v}.{r}" for r in run_d4.READERS for d in self.documents["documents"] for v in official_d4.VARIANTS]
+        with mock.patch.object(official_d4, "DOCUMENTS", run_d4.DOCUMENTS):
+            gate = official_d4.run_gate(self.dir / "run", self.run_json(), names)
+        self.assertEqual(len(gate), 16)
+        self.assertEqual({name for name, why in gate.items() if why}, {"01_a.tilt.ai"})
+
+    def test_the_official_gate_reads_a_rerun_of_one_reader(self):
+        import official_d4
+        self.assertEqual(self.run_main("--readers", "ai", "--preflight", str(self.preflight)), 0)
+        names = [f"{d['key']}.{v}.ai" for d in self.documents["documents"] for v in official_d4.VARIANTS]
+        with mock.patch.object(official_d4, "DOCUMENTS", run_d4.DOCUMENTS):
+            gate = official_d4.run_gate(self.dir / "run", self.run_json(), names)
+        self.assertEqual(set(gate.values()), {None})
+
     def test_a_dry_run_needs_no_preflight_and_writes_nothing(self):
         self.assertEqual(self.run_main("--dry-run"), 0)
         self.assertFalse((self.dir / "run").exists())

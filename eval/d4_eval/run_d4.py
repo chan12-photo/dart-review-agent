@@ -104,6 +104,8 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--preflight", type=Path, help="the passed log of eval/d4_preflight.py check (not with --dry-run)")
     parser.add_argument("--dry-run", action="store_true")
     args = parser.parse_args(argv)
+    if args.readers != [r for r in READERS if r in args.readers]:
+        parser.error(f"--readers {' '.join(args.readers)}: each reader once, rules before ai (contract ⑧)")
     if args.out.exists():
         parser.error(f"{args.out} exists: a run folder is never reused")
     if _inside_checkout(args.out):

@@ -1,6 +1,6 @@
 # D4 공식 절차: ⑦ 등록, ⑧ 실행, ⑨ 판정 (계약 7판)
 
-- 작성: 2026-10-19, Claude. 2026-10-20에 Codex 7차 재검토 4~6번을 반영했다. 계약 [`EVAL_CONTRACT_D4.ko.md`](EVAL_CONTRACT_D4.ko.md) 7판의 1.2, 4.5, 4.6, 5, 7절을 명령으로 옮긴 것이다. ⑦에서 등록하는 파일이다. 등록 뒤에는 이 명령만 쓴다(1.3).
+- 작성: 2026-10-19, Claude. 2026-10-20에 Codex 7차 재검토 4~6번과 8차 1·2번을 반영했다. 계약 [`EVAL_CONTRACT_D4.ko.md`](EVAL_CONTRACT_D4.ko.md) 7판의 1.2, 4.5, 4.6, 5, 7절을 명령으로 옮긴 것이다. ⑦에서 등록하는 파일이다. 등록 뒤에는 이 명령만 쓴다(1.3).
 - 사용자 승인이 필요한 단계에는 **[승인]** 을 적었다. 승인 없이 하지 않는다.
 - 폴더:
 
@@ -11,7 +11,7 @@
   | 등록 커밋 R의 작업 폴더 (저장소 밖) | `~/D4_official/checkout` |
   | 사전 점검 로그 (저장소 밖) | `~/D4_official/run1.preflight.json` (실행 폴더의 **형제**, Codex 7차 3번) |
   | 실행 폴더 (저장소 밖) | `~/D4_official/run1` (실행기가 만든다. 미리 만들지 않는다) |
-  | 사람 판정 파일 (저장소 밖) | `~/D4_official/judgments/` |
+  | 사람 판정 파일 (저장소 밖) | `~/D4_official/judgments/run1/` (실행 폴더마다 따로. 파일 이름이 폴더마다 같기 때문이다) |
 
 - **파이썬:** 저장소의 가상환경을 쓴다. 아래 명령 블록은 모두 첫 줄에서 `PY`를 정한다. 새 터미널에서 블록을 통째로 붙이면 된다(Codex 7차 재검토 4번).
   - 제품(`dart_review`)은 이 가상환경에 설치돼 있지 않다. 그래서 작업 폴더 안에서 실행해 **그 폴더의 제품**을 불러온다.
@@ -92,7 +92,7 @@
    - **0:** 80회 모두 종료값 0. 채점의 `official_ready`와는 다르다. 그것은 ⑨에서 정한다.
    - **1:** 실패한 호출이 있다. `run.json`의 `failed`와 `run_log.jsonl`의 `stderr_tail`을 보고 원인을 기록한다.
      - **실패한 호출은 보고서가 남아 있어도 공식 판정이 될 수 없다.** 채점기는 보고서를 저장한 뒤 채점하므로, 보고서만 남은 실패가 있을 수 있다(Codex 7차 재검토 1번). 그 묶음은 `met`이 될 수 없다.
-     - **모델 서버 장애**(연결 실패 등)이면 그 방식 **전체**를 새 폴더에서 다시 돌린다. 새 점검 로그(`run2.preflight.json`)를 만들고 `--readers ai --out ~/D4_official/run2`로 실행한다. 두 폴더를 모두 보관한다.
+     - **모델 서버 장애**(연결 실패 등)이면 그 방식 **전체**를 새 폴더에서 다시 돌린다. 새 점검 로그(`run2.preflight.json`)를 만들고 `--readers ai --out ~/D4_official/run2`로 실행한다. 두 폴더를 모두 보관한다. 실행기는 `--readers`에 같은 방식을 두 번 쓰거나 AI를 규칙보다 앞에 쓰면 거부한다.
      - **제품 자체의 실패**(장애가 아닌 오류)는 다시 돌려 덮지 않는다. 그 묶음은 "공식 판정 불가(제품 실패)"로 보고하고 실패를 결과로 적는다.
      - 출력 한도 초과는 장애도 실패도 아니고 제품 동작이다(종료값 0).
    - 실행이 중간에 끊겨 `run.json`에 `finished_at`이 없으면 그 폴더의 어느 호출도 공식이 아니다. 새 폴더에서 다시 돌린다.
@@ -104,15 +104,17 @@
 
    ```bash
    PY="$HOME/Documents/ChatGPT/dart-review-agent/.venv/bin/python"
-   mkdir -p ~/D4_official/judgments && cd ~/D4_official/checkout && $PY eval/d4_eval/official_d4.py --run ~/D4_official/run1 --judgments ~/D4_official/judgments --out ~/D4_official/official.draft1.json
+   mkdir -p ~/D4_official/judgments/run1 && cd ~/D4_official/checkout && $PY eval/d4_eval/official_d4.py --run ~/D4_official/run1 --judgments ~/D4_official/judgments/run1 --out ~/D4_official/official.draft1.json
    ```
 
-   호출마다 다음 두 가지가 나온다.
+   호출마다 다음 두 가지가 나온다. 판정 폴더에 어느 호출의 이름도 아닌 파일이 있으면(이름을 잘못 쓴 판정 파일) `judgment_files_not_read`에 나온다. 그런 파일은 읽지 않는다.
    - `extras_to_judge`: 정답에 없는 표시 없는 칸(4.5)
    - `position_places`: 상태가 `needs_verdict`인 곳(4.6). 행마다 채점기의 결과(`scorer`)가 함께 나온다.
-2. Claude가 1차로 판정하고 근거를 적는다. 사용자가 확인한다(계약 6). 판정 파일은 호출마다 둘이다. 둘 다 그 보고서의 SHA-256(`report_sha256`, 집계 출력에 있다)과 `judged_by`를 적는다.
-   - `~/D4_official/judgments/<이름>.extras.json`: `{"report_sha256", "judged_by", "verdicts": {"<칸 id>": {"verdict": "wrong"|"ok", "note"}}}`
-   - `~/D4_official/judgments/<이름>.position.json`: `{"report_sha256", "judged_by", "verdicts": {"<자리 id>": {"verdict": "wrong", "wrong_unmarked": n, "note"} 또는 {"verdict": "ok", "note"}}}`
+2. Claude가 1차로 판정하고 근거를 적는다. 사용자가 확인한다(계약 6). 판정 파일은 호출마다 둘이다.
+   - 둘 다 그 보고서의 SHA-256(`report_sha256`, 집계 출력에 있다)과 `judged_by`를 적는다.
+   - 파일은 객체이고, `verdicts`도 객체다(비어 있어도 `{}`). `[]`, `""`, `false`, `null`은 거부된다(Codex 8차 2번).
+   - `~/D4_official/judgments/run1/<이름>.extras.json`: `{"report_sha256", "judged_by", "verdicts": {"<칸 id>": {"verdict": "wrong"|"ok", "note"}}}`
+   - `~/D4_official/judgments/run1/<이름>.position.json`: `{"report_sha256", "judged_by", "verdicts": {"<자리 id>": {"verdict": "wrong", "wrong_unmarked": n, "note"} 또는 {"verdict": "ok", "note"}}}`
      - `wrong`에는 `wrong_unmarked`를 **반드시** 정수로 적는다. 0도 적는다(틀린 칸이 모두 표시된 경우). 빠지면 거부된다(Codex 7차 재검토 2번).
      - `ok`에는 쓰지 않거나 0만 쓴다.
      - `n`은 채점기가 "맞음"으로 센 칸(각 행 `scorer`가 `correct`) 가운데, 다른 인쇄 행의 자리에 있고 표시가 없는 칸의 수다. 그런 칸의 수를 넘으면 거부된다.
@@ -120,7 +122,13 @@
    - `<이름>`은 `<문서 key>.<text|normal|tilt|blur>.<rules|ai>`.
 3. 다시 집계한다(새 파일 이름. `--out`은 덮어쓰지 않는다). 묶음(3.1, 3.3)과 방식마다 판정이 나온다.
    - `met` / `not met`: 묶음의 모든 호출이 `official_ready`일 때만 나온다. `official_ready`의 조건:
-     - 실행 기록상 성공한 호출이다. `run.json`이 끝까지 쓰였고 수가 맞고, 로그에 그 호출이 한 번, 종료값 0으로 있다.
+     - 실행 기록상 성공한 호출이다. 기록 전체가 스스로 맞아야 한다(Codex 8차 1번). 하나라도 어긋나면 그 폴더의 어느 호출도 공식이 아니다.
+       - `run.json`이 끝까지 쓰였다.
+       - 방식이 등록된 순서(규칙 → AI)로 한 번씩이다.
+       - 로그가 계획된 호출을 정확히 한 번씩, 계획된 순서로 담는다.
+       - `failed`가 로그에서 종료값이 0이 아닌 호출과 정확히 같다.
+       - 수가 맞는다.
+       - 그 호출의 종료값이 0이다.
      - 채점기가 공식 판정 가능이라고 했다.
      - 위치 검사가 끝났다.
    - `not official`: 판정이 남았거나, 보고서가 없거나, 실패한 호출이 있다(이유가 함께 나온다).
@@ -132,8 +140,8 @@
 
    ```bash
    PY="$HOME/Documents/ChatGPT/dart-review-agent/.venv/bin/python"
-   cd ~/D4_official/checkout && $PY eval/d4_eval/official_d4.py --run ~/D4_official/run1 --readers rules --judgments ~/D4_official/judgments --out ~/D4_official/official.rules.json
-   cd ~/D4_official/checkout && $PY eval/d4_eval/official_d4.py --run ~/D4_official/run2 --readers ai --judgments ~/D4_official/judgments --out ~/D4_official/official.ai.json
+   cd ~/D4_official/checkout && $PY eval/d4_eval/official_d4.py --run ~/D4_official/run1 --readers rules --judgments ~/D4_official/judgments/run1 --out ~/D4_official/official.rules.json
+   cd ~/D4_official/checkout && $PY eval/d4_eval/official_d4.py --run ~/D4_official/run2 --readers ai --judgments ~/D4_official/judgments/run2 --out ~/D4_official/official.ai.json
    ```
 
    보고서에는 방식마다 다음을 적는다.

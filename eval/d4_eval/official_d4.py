@@ -9,18 +9,24 @@ its three synthetic scans, for each reader of the run), the saved report ``<run>
   gold from ``<judgments>/<name>.extras.json`` (contract 4.5) when that file exists;
 - checked by the position check (``position_check.check``, contract 7판 4.6) with the registered places
   (``eval/d4_eval/duplicate_places.json``) and the person's verdicts from ``<judgments>/<name>.position.json``.
-Both verdict files name the report's SHA-256; the tools refuse verdicts of another report.
+Both verdict files name the report's SHA-256; the tools refuse verdicts of another report. The verdict files of
+each run folder have their own folder (their names are the same in every run folder); a file there that names no
+call is listed (``judgment_files_not_read``) and never read.
 
 Per call: ``S1_official`` = the scorer's S1 + the position check's ``S1_position``; L1, S2, G1 as scored;
 the cells and places still waiting for a person (``extras_to_judge``, and ``position_places`` with "needs_verdict");
 ``official_ready`` = the scorer's ``official_ready`` and the position check's ``position_ready``, and the run let the
-call be official. The run lets a call be official only when (Codex seventh re-check 1):
-- ``run.json`` is the finished record of a run started with a passed preflight (``finished_at``, ``preflight``) on
-  this document list (``documents_sha256``), its counts add up (``calls`` = the calls of its readers, ``succeeded`` + failed = ``calls``), and it does not list the
-  call as failed;
-- ``run_log.jsonl`` has exactly one entry of the call, with exit 0.
-A report that a failed call left behind (the scorer saves the report before it scores) is never official; its
-numbers are shown as provisional. A call without a saved report, or whose report the tools refuse, is not official.
+call be official. The run lets a call be official only when its record is whole and agrees with itself (Codex
+seventh re-check 1, eighth review 1), else no call of the folder is official:
+- ``run.json`` is the finished record (``finished_at``) of a run started with a passed preflight (``preflight``) on
+  this document list (``documents_sha256``), of readers in the registered order (rules before ai, each once);
+- ``run_log.jsonl`` lists exactly the planned calls, each once, in the planned order (``n`` = 1, 2, ...), each with a
+  whole-number exit;
+- ``calls`` is the number of planned calls, ``failed`` names exactly the logged calls whose exit was not 0 (with that
+  exit, each once), and ``succeeded`` is the rest;
+and then the call itself exited 0. A report that a failed call left behind (the scorer saves the report before it
+scores) is never official; its numbers are shown as provisional. A call without a saved report, or whose report or
+verdict file the tools refuse (a file of another shape too), is not official.
 
 Per reader and bundle (3.1: the text PDFs; 3.3: the 30 synthetic scans) the sums, and the verdict (contract 5):
 - "met" / "not met" only when every call of the bundle is ``official_ready``: 3.1 needs S1_official = L1 = S2 = 0,
@@ -47,6 +53,7 @@ from eval.d4_score import score  # noqa: E402
 import position_check  # noqa: E402
 
 DOCUMENTS = ROOT / "eval" / "d4_eval" / "documents.json"
+READERS = ("rules", "ai")  # the registered order (eval/d4_eval/run_d4.py)
 PLACES = ROOT / "eval" / "d4_eval" / "duplicate_places.json"
 VARIANTS = ("text", "normal", "tilt", "blur")
 BUNDLES = {"3.1": ("text",), "3.3": ("normal", "tilt", "blur")}
@@ -64,8 +71,13 @@ def _json(path: Path) -> dict | None:
     return json.loads(path.read_text(encoding="utf-8")) if path.exists() else None
 
 
+def _whole(value: object) -> bool:
+    return isinstance(value, int) and not isinstance(value, bool)
+
+
 def run_gate(run: Path, record: dict, names: list[str]) -> dict[str, str | None]:
-    """Per call name, why the run does not let it be official (None: the run lets it be)."""
+    """Per call name, why the run does not let it be official (None: the run lets it be). ``names`` are the planned
+    calls of the run's readers in the planned order."""
     whole = []
     if not record.get("finished_at"):
         whole.append("the run did not finish (run.json has no finished_at)")
@@ -73,31 +85,44 @@ def run_gate(run: Path, record: dict, names: list[str]) -> dict[str, str | None]
         whole.append("run.json records no passed preflight")
     if record.get("documents_sha256") != _sha256(DOCUMENTS):
         whole.append("the run read another document list (documents_sha256)")
-    failed = record.get("failed")
-    if not isinstance(failed, list) or not all(isinstance(f, dict) and f.get("name") for f in failed):
-        whole.append("run.json has no list of failed calls")
-        failed = []
-    if record.get("calls") != len(names) or record.get("succeeded") != len(names) - len(failed):
-        whole.append(f"run.json does not add up: calls {record.get('calls')}, succeeded {record.get('succeeded')}, "
-                     f"failed {len(failed)}, {len(names)} calls of its readers")
-    entries: dict[str, list[dict]] = {}
+    readers = record.get("readers")
+    if not isinstance(readers, list) or not readers or readers != [r for r in READERS if r in readers]:
+        whole.append(f"run.json readers {readers!r} are not readers in the registered order, each once")
     log = run / "run_log.jsonl"
     try:
-        for line in (log.read_text(encoding="utf-8").splitlines() if log.exists() else []):
-            item = json.loads(line)
-            entries.setdefault(item["name"], []).append(item)
-    except (ValueError, KeyError, TypeError):
+        logged = [json.loads(line) for line in (log.read_text(encoding="utf-8").splitlines() if log.exists() else [])]
+        if not all(isinstance(item, dict) for item in logged):
+            raise ValueError
+    except ValueError:
         whole.append("run_log.jsonl cannot be read")
-        entries = {}
-    listed = {f["name"] for f in failed}
+        logged = []
+    exits = {}
+    if [item.get("name") for item in logged] != names:
+        whole.append(f"run_log.jsonl does not list the planned calls once each in order ({len(logged)} entries, "
+                     f"{len(names)} planned)")
+    elif [item.get("n") for item in logged] != list(range(1, len(names) + 1)):
+        whole.append("run_log.jsonl numbers its entries out of order")
+    elif not all(_whole(item.get("exit")) for item in logged):
+        whole.append("run_log.jsonl has an entry without a whole-number exit")
+    else:
+        exits = {item["name"]: item["exit"] for item in logged}
+    failed = record.get("failed")
+    if not isinstance(failed, list) or not all(isinstance(f, dict) and isinstance(f.get("name"), str) for f in failed):
+        whole.append("run.json has no list of failed calls")
+        failed = []
+    listed = {f["name"]: f.get("exit") for f in failed}
+    if len(listed) != len(failed):
+        whole.append("run.json lists a failed call twice")
+    if exits and listed != {name: code for name, code in exits.items() if code != 0}:
+        whole.append("run.json's failed calls are not the logged calls that did not exit 0")
+    if record.get("calls") != len(names) or record.get("succeeded") != len(names) - len(failed):
+        whole.append(f"run.json does not add up: calls {record.get('calls')}, succeeded {record.get('succeeded')}, "
+                     f"failed {len(failed)}, {len(names)} calls planned")
     gate = {}
     for name in names:
         why = list(whole)
-        logged = entries.get(name, [])
-        if len(logged) != 1:
-            why.append(f"run_log.jsonl has {len(logged)} entries of the call, not one")
-        elif logged[0].get("exit") != 0:
-            why.append(f"the call exited {logged[0].get('exit')}")
+        if exits.get(name, 0) != 0:
+            why.append(f"the call exited {exits[name]}")
         if name in listed:
             why.append("run.json lists the call as failed")
         gate[name] = "; ".join(why) or None
@@ -112,16 +137,22 @@ def call(document: dict, variant: str, reader: str, run: Path, judgments: Path, 
     if not report_path.exists():
         return entry | {"official_ready": False, "why": "no saved report (the call failed or did not run)"}
     page_map = _json(ROOT / document["scans"][variant]["map"]) if variant != "text" else None
-    report, report_sha256 = json.loads(report_path.read_text(encoding="utf-8")), _sha256(report_path)
+    report_sha256 = _sha256(report_path)
     extras_path, position_path = judgments / f"{name}.extras.json", judgments / f"{name}.position.json"
-    extras, verdicts = _json(extras_path), _json(position_path)  # None: no file (an empty "[]" is a file)
-    extras = {} if extras is None else extras
     mapping = json.loads((ROOT / document["mapping"]).read_text(encoding="utf-8"))
     entry |= {"report_sha256": report_sha256, "mapping_decisions": len(mapping.get("decisions") or {}),
               "judgments": {p.name: _sha256(p) for p in (extras_path, position_path) if p.exists()}}
     try:
-        if not isinstance(extras, dict) or not isinstance(extras.get("verdicts") or {}, dict):
-            raise ValueError(f"{extras_path.name} is not {{\"report_sha256\", \"judged_by\", \"verdicts\": {{cell id: verdict}}}}")
+        report = json.loads(report_path.read_text(encoding="utf-8"))
+        if not isinstance(report, dict):
+            raise ValueError("the saved report is not a report")
+        # None: no file. A file is an object whose "verdicts", when it has them, is an object too (an empty list,
+        # string, or false is refused, not read as no verdicts: Codex eighth review 2)
+        extras, verdicts = _json(extras_path), _json(position_path)
+        for path, data in ((extras_path, extras), (position_path, verdicts)):
+            if data is not None and (not isinstance(data, dict) or not isinstance(data.get("verdicts", {}), dict)):
+                raise ValueError(f"{path.name} is not {{\"report_sha256\", \"judged_by\", \"verdicts\": {{id: verdict}}}}")
+        extras = {} if extras is None else extras
         gold = position_check._gold_for(document, page_map)
         scored_all = score(gold, report, extras, report_sha256)
         placed = position_check.check(registered, document, report, page_map, verdicts, report_sha256)
@@ -157,6 +188,8 @@ def call(document: dict, variant: str, reader: str, run: Path, judgments: Path, 
 def bundle(entries: list[dict], criteria: tuple[str, ...]) -> dict:
     sums = {key: sum(e.get(key) or 0 for e in entries) for key in SUMS}
     waiting = [{"name": e["name"], "why": e["why"]} for e in entries if not e["official_ready"]]
+    if not entries:
+        waiting = [{"name": None, "why": "no call in the bundle"}]
     result = {"calls": len(entries), "documents": len({e["key"] for e in entries}), "sums": sums,
               "A1_flagged_share": round(sums["flagged"] / sums["product_cells"], 4) if sums["product_cells"] else None,
               "A2_covered_share": round(sums["correct"] / sums["gold_cells"], 4) if sums["gold_cells"] else None,
@@ -168,13 +201,16 @@ def bundle(entries: list[dict], criteria: tuple[str, ...]) -> dict:
 
 def official(run: Path, judgments: Path, documents: dict, registered: dict, readers: list[str] | None = None) -> dict:
     record = json.loads((run / "run.json").read_text(encoding="utf-8"))
-    ran = list(record.get("readers") or [])
+    if not isinstance(record, dict):
+        raise ValueError(f"{run / 'run.json'} is not a run record")
+    ran = [r for r in READERS if r in record["readers"]] if isinstance(record.get("readers"), list) else []
     if readers is not None and not set(readers) <= set(ran):
         raise ValueError(f"the run folder ran {ran}, not {readers}")
     names = [f"{d['key']}.{v}.{r}" for r in ran for d in documents["documents"] for v in VARIANTS]
     gate = run_gate(run, record, names)
+    chosen = [r for r in READERS if r in (readers if readers is not None else ran)]  # each reader once
     entries = []
-    for reader in readers if readers is not None else ran:
+    for reader in chosen:
         for document in documents["documents"]:
             for variant in VARIANTS:
                 entry = call(document, variant, reader, run, judgments, registered)
@@ -183,11 +219,15 @@ def official(run: Path, judgments: Path, documents: dict, registered: dict, read
                     entry |= {"official_ready": False, "why": reason + (f"; {entry['why']}" if entry.get("why") else "")}
                 entries.append(entry)
     result = {}
-    for reader in readers if readers is not None else ran:
+    for reader in chosen:
         mine = [e for e in entries if e["reader"] == reader]
         result[reader] = {name: bundle([e for e in mine if e["variant"] in variants], CRITERIA[name])
                           for name, variants in BUNDLES.items()}
-    return {"run_folder": run.name,
+    # verdict files that name no call of these documents (a misspelt name is never read: its call waits)
+    known = {f"{d['key']}.{v}.{r}.{kind}.json" for d in documents["documents"] for v in VARIANTS for r in READERS
+             for kind in ("extras", "position")}
+    unused = sorted(p.name for p in judgments.glob("*") if p.name not in known) if judgments.is_dir() else []
+    return {"run_folder": run.name, "judgment_files_not_read": unused,
             "run": {key: record.get(key) for key in ("commit", "started_at", "finished_at", "preflight", "readers",
                                                      "calls", "succeeded", "failed")},
             "documents_sha256": _sha256(DOCUMENTS), "places_sha256": _sha256(PLACES), "product_reader": "ai",
@@ -211,6 +251,8 @@ def main(argv: list[str] | None = None) -> int:
         parser.error(str(exc))
     if args.out:
         args.out.write_text(json.dumps(result, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+    if result["judgment_files_not_read"]:
+        print(f"judgment files that name no call (not read): {', '.join(result['judgment_files_not_read'])}")
     for reader, bundles in result["readers"].items():
         for name, part in bundles.items():
             sums = part["sums"]

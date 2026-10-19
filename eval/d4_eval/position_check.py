@@ -35,8 +35,9 @@ skipped). For each place, the product rows of that label (with any value) in the
   printed row's place without "확인 필요": the result lists each row with the scorer's result for its cell, and the
   count may not exceed those cells. Cells the scorer counted wrong are in S1 already, and cells outside the gold are
   judged by 4.5. Otherwise no printed value can stand in a wrong row ("not_pairable_no_swap").
-A verdict is an object: "wrong" needs an explicit whole number ``wrong_unmarked`` (0 too, when every wrong cell is
-marked), "ok" takes none or 0 (Codex seventh re-check 2).
+A verdicts file is an object whose "verdicts" is an object ({} when empty; a list, string, false, or null is refused:
+Codex eighth review 2). A verdict is an object: "wrong" needs an explicit whole number ``wrong_unmarked`` (0 too,
+when every wrong cell is marked), "ok" takes none or 0 (Codex seventh re-check 2).
 The result says ``position_ready`` only when no place waits for a verdict. Each check first compares the registered
 places with the places of the gold it scores (the mapping as it is now): another set of places, or other printed
 cells in a place, refuses the check, so a changed mapping cannot leave a place unchecked.
@@ -210,7 +211,7 @@ def check(registered: dict, document: dict, report: dict, page_map: dict | None 
         for extra in part["extras"]:
             scorer_result[extra["id"]] = "not_in_gold"
     verdicts = {} if verdicts is None else verdicts
-    if not isinstance(verdicts, dict) or not isinstance(verdicts.get("verdicts") or {}, dict):
+    if not isinstance(verdicts, dict) or not isinstance(verdicts.get("verdicts", {}), dict):  # [] or "" too
         raise ValueError('the position verdicts are {"report_sha256", "judged_by", "verdicts": {place id: verdict}}')
     given = verdicts.get("verdicts") or {}
     if given:

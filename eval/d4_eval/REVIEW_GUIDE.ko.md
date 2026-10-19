@@ -80,7 +80,8 @@
 
 1. ~~Codex 7차 검토~~ (2026-10-19 끝남): [결과](../../docs/reviews/D4_registration_codex_result.ko.md), [응답](../../docs/reviews/D4_registration_codex_response.ko.md)
 2. ~~Codex 7차 재검토~~ (2026-10-20 끝남, "등록 보류" → 6건 모두 고침): [결과](../../docs/reviews/D4_registration_recheck_codex_result.ko.md), [응답](../../docs/reviews/D4_registration_recheck_codex_response.ko.md)
-3. **Codex 8차 (권장):** 재검토 수정만 짧게 본다. [요청문](../../docs/reviews/D4_registration_eighth_codex_request.ko.md). 결과는 `docs/reviews/D4_registration_eighth_codex_result.ko.md`로 저장한다.
+3. ~~Codex 8차~~ (2026-10-20 끝남, "잠시 보류" → 2건 고침): [결과](../../docs/reviews/D4_registration_eighth_codex_result.ko.md), [응답](../../docs/reviews/D4_registration_eighth_codex_response.ko.md)
+   - Codex 9차는 **선택**이다. 이번 수정만 짧게 본다: [요청문](../../docs/reviews/D4_registration_ninth_codex_request.ko.md)
 4. **매핑표 확인:** 이 안내서와 Codex 결과를 보고 "확인"이라고 알려 준다. Claude가 10개 매핑표를 `confirmed`로 바꾸고 ⑦ 관문(`position_check.py verify`)을 돌린다.
 5. **등록 커밋과 push 승인 (⑦):** 등록 커밋 R과 그 앞의 커밋들, 태그 `d4-registered`를 GitHub에 push한다. 절차: [`docs/D4_RUN_PROCEDURE.ko.md`](../../docs/D4_RUN_PROCEDURE.ko.md).
 6. **실행 승인 (⑧):** 규칙 방식 40회와 AI 방식 40회. AI 방식은 하루 이상 걸릴 수 있다.

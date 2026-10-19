@@ -1,6 +1,7 @@
 """D4 position check (contract 7판 4.6): rows that share a label in one statement, checked by their order.
 
     python eval/d4_eval/position_check.py build --pdf-dir ~/Desktop/D4 --out eval/d4_eval/duplicate_places.json
+    python eval/d4_eval/position_check.py verify --pdf-dir ~/Desktop/D4      # the registered file, built again: same?
     python eval/d4_eval/position_check.py check --key 05_00117212 --report <report.json> [--page-map <map.json>] \
         [--verdicts <verdicts.json>] --out <position.json>
 
@@ -14,6 +15,9 @@ The scorer stays frozen; this check runs on the same saved report and adds what 
 more gold cells, find each cell's printed line in the PDF's text layer (the line's label and the printed text in
 that period's column, on the cell's page) and record the cells in print order: by page, then top to bottom. A place
 whose lines cannot all be found stops the build: it is resolved by hand before registration, never guessed.
+``verify`` builds them again from the PDFs and the mappings as they are now and compares the result with the
+registered file: after the mappings are confirmed, and before registration, it must say they are the same (Codex
+seventh re-check 3).
 
 ``check`` (after the run): the gold as the scorer has it (mapping applied, scan pages renumbered), the product
 statement as the scorer finds it (same title, first page in range, first unused, gold statements in order, 자본변동표
@@ -31,7 +35,11 @@ skipped). For each place, the product rows of that label (with any value) in the
   printed row's place without "확인 필요": the result lists each row with the scorer's result for its cell, and the
   count may not exceed those cells. Cells the scorer counted wrong are in S1 already, and cells outside the gold are
   judged by 4.5. Otherwise no printed value can stand in a wrong row ("not_pairable_no_swap").
-The result says ``position_ready`` only when no place waits for a verdict.
+A verdict is an object: "wrong" needs an explicit whole number ``wrong_unmarked`` (0 too, when every wrong cell is
+marked), "ok" takes none or 0 (Codex seventh re-check 2).
+The result says ``position_ready`` only when no place waits for a verdict. Each check first compares the registered
+places with the places of the gold it scores (the mapping as it is now): another set of places, or other printed
+cells in a place, refuses the check, so a changed mapping cannot leave a place unchecked.
 """
 
 from __future__ import annotations
@@ -119,6 +127,42 @@ def build(documents: dict, pdf_dir: Path) -> dict:
     return out
 
 
+def _cells_by_place(places: dict[tuple, list[dict]]) -> dict[str, list[tuple]]:
+    return {place_id(*k): sorted(((c["page"], c["printed"], c["value"]) for c in v), key=repr) for k, v in places.items()}
+
+
+def fits_gold(entry: dict, gold: dict) -> None:
+    """ValueError unless the registered places are the places of this gold (the text PDF's: original pages), each
+    with the same printed cells (page, printed text, value)."""
+    expected = _cells_by_place(places_of(gold))
+    found = {place["id"]: sorted(((r["page"], r["printed"], r["value"]) for r in place["rows"]), key=repr)
+             for place in entry["places"]}
+    if len(found) != len(entry["places"]):
+        raise ValueError("the registered places list a place twice")
+    missing, extra = sorted(set(expected) - set(found)), sorted(set(found) - set(expected))
+    changed = sorted(k for k in set(expected) & set(found) if expected[k] != found[k])
+    if missing or extra or changed:
+        raise ValueError(f"the registered places do not fit the gold with its mapping as it is now (missing "
+                         f"{missing[:3]}, not in the gold {extra[:3]}, other cells {changed[:3]}): build them again "
+                         f"before registration")
+
+
+def _verdict_count(name: str, verdict: object) -> int:
+    """The unmarked wrong cells a person's verdict on a place counts; ValueError unless it is well formed."""
+    form = '{"verdict": "wrong", "wrong_unmarked": n, "note": ...} or {"verdict": "ok", "note": ...}'
+    if not isinstance(verdict, dict) or verdict.get("verdict") not in ("ok", "wrong") \
+            or not isinstance(verdict.get("note"), str) or not verdict["note"].strip():
+        raise ValueError(f"{name}: a verdict is {form}, not {verdict!r}")
+    count = verdict.get("wrong_unmarked")
+    whole = isinstance(count, int) and not isinstance(count, bool) and count >= 0
+    if verdict["verdict"] == "wrong" and not whole:
+        raise ValueError(f"{name}: a \"wrong\" verdict says how many unmarked cells are wrong (wrong_unmarked, 0 or "
+                         f"more), not {count!r}")
+    if verdict["verdict"] == "ok" and "wrong_unmarked" in verdict and not (whole and count == 0):
+        raise ValueError(f"{name}: an \"ok\" verdict counts no wrong cell, not wrong_unmarked {count!r}")
+    return count if verdict["verdict"] == "wrong" else 0
+
+
 def _gold_for(document: dict, page_map: dict | None) -> dict:
     gold = apply_mapping(json.loads((ROOT / document["gold"]).read_text(encoding="utf-8")),
                          json.loads((ROOT / document["mapping"]).read_text(encoding="utf-8")))
@@ -146,9 +190,10 @@ def _statement_pairs(gold: dict, report: dict) -> dict[str, dict | None]:
 def check(registered: dict, document: dict, report: dict, page_map: dict | None = None, verdicts: dict | None = None,
           report_sha256: str | None = None) -> dict:
     gold = _gold_for(document, page_map)
-    entry = registered["documents"][document["key"]]
-    if entry["pdf_sha256"] != document["sha256"]:
-        raise ValueError("the registered places are of another PDF")
+    entry = registered["documents"].get(document["key"])
+    if entry is None or entry.get("pdf_sha256") != document["sha256"]:
+        raise ValueError("the registered places are of another PDF (or of no registered document)")
+    fits_gold(entry, _gold_for(document, None) if page_map else gold)
     if report.get("source_sha256") != (gold.get("source") or {}).get("sha256"):
         raise ValueError("the report is of another PDF than the gold (source_sha256 differs)")
     pairs = _statement_pairs(gold, report)
@@ -164,7 +209,9 @@ def check(registered: dict, document: dict, report: dict, page_map: dict | None 
                 counted[(part["statement_id"], label_key(cell["label"]), cell["period"])] += 1
         for extra in part["extras"]:
             scorer_result[extra["id"]] = "not_in_gold"
-    verdicts = verdicts or {}
+    verdicts = {} if verdicts is None else verdicts
+    if not isinstance(verdicts, dict) or not isinstance(verdicts.get("verdicts") or {}, dict):
+        raise ValueError('the position verdicts are {"report_sha256", "judged_by", "verdicts": {place id: verdict}}')
     given = verdicts.get("verdicts") or {}
     if given:
         if report_sha256 is not None and verdicts.get("report_sha256") != report_sha256:
@@ -207,12 +254,7 @@ def check(registered: dict, document: dict, report: dict, page_map: dict | None 
                 verdict = given.get(place["id"])
                 result |= {"status": "needs_verdict", "printed": printed, "rows": rows}
                 if verdict is not None:
-                    count = verdict.get("wrong_unmarked", 0)
-                    if verdict.get("verdict") not in ("ok", "wrong") or not str(verdict.get("note") or "").strip() \
-                            or not isinstance(count, int) or isinstance(count, bool) or count < 0:
-                        raise ValueError(f"{place['id']}: a verdict is {{\"verdict\": \"ok\" or \"wrong\", "
-                                         f"\"wrong_unmarked\": n, \"note\": ...}}, not {verdict!r}")
-                    unmarked = count if verdict["verdict"] == "wrong" else 0
+                    unmarked = _verdict_count(place["id"], verdict)
                     could = sum(1 for r in rows if r["scorer"] == "correct" and not r["flagged"])
                     if unmarked > could:
                         raise ValueError(f"{place['id']}: wrong_unmarked {unmarked} counts more than the {could} unmarked "
@@ -241,6 +283,9 @@ def main(argv: list[str] | None = None) -> int:
     make = commands.add_parser("build")
     make.add_argument("--pdf-dir", type=Path, required=True)
     make.add_argument("--out", type=Path, required=True)
+    same = commands.add_parser("verify")
+    same.add_argument("--pdf-dir", type=Path, required=True)
+    same.add_argument("--registered", type=Path, default=ROOT / "eval" / "d4_eval" / "duplicate_places.json")
     test = commands.add_parser("check")
     test.add_argument("--key", required=True)
     test.add_argument("--report", type=Path, required=True)
@@ -257,12 +302,24 @@ def main(argv: list[str] | None = None) -> int:
         args.out.write_text(json.dumps(result, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
         print(sum(len(d["places"]) for d in result["documents"].values()), "places")
         return 0
+    if args.command == "verify":
+        registered = json.loads(args.registered.read_text(encoding="utf-8"))
+        built = build(documents, args.pdf_dir.expanduser())
+        differ = sorted(k for k in set(built["documents"]) | set(registered["documents"])
+                        if built["documents"].get(k) != registered["documents"].get(k))
+        count = sum(len(d["places"]) for d in built["documents"].values())
+        if differ:
+            print(f"NOT the same: {', '.join(differ)} differ from {args.registered}; build the places again")
+            return 1
+        print(f"the same: {count} places of {len(built['documents'])} documents, built again from the PDFs and the "
+              f"mappings as they are now")
+        return 0
     if args.out.exists():
         parser.error(f"{args.out} exists")
     document = next((d for d in documents["documents"] if d["key"] == args.key), None)
     if document is None:
         parser.error(f"{args.key} is not a registered document")
-    page_map =json.loads(args.page_map.read_text(encoding="utf-8")) if args.page_map else None
+    page_map = json.loads(args.page_map.read_text(encoding="utf-8")) if args.page_map else None
     verdicts = json.loads(args.verdicts.read_text(encoding="utf-8")) if args.verdicts else None
     registered = json.loads(args.registered.read_text(encoding="utf-8"))
     report_sha256 = hashlib.sha256(args.report.read_bytes()).hexdigest()

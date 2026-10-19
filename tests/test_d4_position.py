@@ -49,6 +49,11 @@ class Fixture(unittest.TestCase):
                                                               "decisions": {}}), encoding="utf-8")
         self.document = {"key": "a", "sha256": "src", "gold": str(self.dir / "a.gold.json"),
                          "mapping": str(self.dir / "a.mapping.json")}
+        self.write_gold(gold)
+
+    def write_gold(self, gold):
+        """The gold and the places registered from it (in the gold's order)."""
+        (self.dir / "a.gold.json").write_text(json.dumps(gold, ensure_ascii=False), encoding="utf-8")
         applied = apply_mapping(gold, json.loads((self.dir / "a.mapping.json").read_text()))
         self.registered = {"documents": {"a": {"pdf_sha256": "src", "places": gold_order(applied)}}}
 
@@ -150,9 +155,11 @@ class PositionTests(Fixture):
         self.assertEqual({p["status"] for p in self.check(rows)["places"] if "파생상품" in p["id"]}, {"position_wrong"})
 
     def test_equal_printed_values_cannot_swap(self):
-        place = next(p for p in self.registered["documents"]["a"]["places"] if "파생상품" in p["id"] and p["period"] == 0)
-        for row in place["rows"]:
-            row["value"] = 54
+        gold = json.loads((self.dir / "a.gold.json").read_text(encoding="utf-8"))
+        for cell in gold["cells"]:
+            if cell["label"] == "파생상품" and cell["period"] == 0:
+                cell.update(printed="54", value=54)
+        self.write_gold(gold)
         totals = self.check([self.row("파생상품", [(0, 54), (1, 20)])])["totals"]
         self.assertEqual(totals["needs_verdict"], 1)  # only period 1 (77 and 20 printed) waits
 
@@ -176,10 +183,48 @@ class PositionTests(Fixture):
                        {**verdicts, "verdicts": {ids[0]: {"verdict": "maybe", "note": "n"}}},
                        {**verdicts, "verdicts": {ids[0]: {"verdict": "wrong", "wrong_unmarked": -1, "note": "n"}}},
                        # 3 > the two unmarked cells the scorer scored correct (the third row is outside the gold: 4.5)
-                       {**verdicts, "verdicts": {ids[0]: {"verdict": "wrong", "wrong_unmarked": 3, "note": "n"}}}):
+                       {**verdicts, "verdicts": {ids[0]: {"verdict": "wrong", "wrong_unmarked": 3, "note": "n"}}},
+                       # Codex seventh re-check 2: "wrong" without its count, "ok" with one, not an object, no note
+                       {**verdicts, "verdicts": {ids[0]: {"verdict": "wrong", "note": "두 행이 바뀌었다"}}},
+                       {**verdicts, "verdicts": {ids[0]: {"verdict": "wrong", "wrong_unmarked": True, "note": "n"}}},
+                       {**verdicts, "verdicts": {ids[0]: {"verdict": "wrong", "wrong_unmarked": "2", "note": "n"}}},
+                       {**verdicts, "verdicts": {ids[0]: {"verdict": "ok", "wrong_unmarked": 1, "note": "n"}}},
+                       {**verdicts, "verdicts": {ids[0]: "wrong"}},
+                       {**verdicts, "verdicts": {ids[0]: {"verdict": "ok", "note": "  "}}},
+                       {**verdicts, "verdicts": ["wrong"]}):
             with self.subTest(broken=broken):
                 with self.assertRaises(ValueError):
                     self.check(rows, verdicts=broken, report_sha256="r")
+
+    def test_an_explicit_zero_and_an_ok_with_zero_are_taken(self):
+        rows = [self.row("파생상품", [(0, 54), (1, 20)], flagged=True), self.row("파생상품", [(0, 204), (1, 77)], flagged=True),
+                self.row("파생상품", [(0, 5), (1, 6)])]
+        ids = [p["id"] for p in self.registered["documents"]["a"]["places"] if "파생상품" in p["id"]]
+        verdicts = {"report_sha256": "r", "judged_by": "사용자",
+                    "verdicts": {ids[0]: {"verdict": "wrong", "wrong_unmarked": 0, "note": "바뀐 두 칸 모두 확인 필요 표시"},
+                                 ids[1]: {"verdict": "ok", "wrong_unmarked": 0, "note": "전기는 순서대로"}}}
+        totals = self.check(rows, verdicts=verdicts, report_sha256="r")["totals"]
+        self.assertEqual((totals["S1_position"], totals["position_ready"]), (0, True))
+
+    def test_registered_places_that_do_not_fit_the_gold_refuse_the_check(self):
+        # Codex seventh re-check 3: a mapping changed after the places were built
+        rows = [self.row("파생상품", [(0, 54), (1, 20)]), self.row("파생상품", [(0, 204), (1, 77)])]
+        places = self.registered["documents"]["a"]["places"]
+        broken = {"no places": [],
+                  "a place missing": places[1:],
+                  "a place added": places + [{**places[0], "id": "연결재무상태표@10|없음|0"}],
+                  "a value changed": [{**places[0], "rows": [{**places[0]["rows"][0], "value": 999}] + places[0]["rows"][1:]}]
+                                     + places[1:],
+                  "a page changed": [{**places[0], "rows": [{**places[0]["rows"][0], "page": 11}] + places[0]["rows"][1:]}]
+                                    + places[1:],
+                  "a place twice": places + [places[0]]}
+        for name, changed in broken.items():
+            with self.subTest(name):
+                registered = {"documents": {"a": {"pdf_sha256": "src", "places": changed}}}
+                with self.assertRaises(ValueError):
+                    pc.check(registered, self.document, self.report(rows))
+        with self.assertRaises(ValueError):
+            pc.check({"documents": {}}, self.document, self.report(rows))
 
     def test_statement_found_as_the_scorer_finds_it(self):
         result = pc.check(self.registered, self.document, self.report(self.in_order_rows(), title="재무상태표"))
@@ -200,6 +245,11 @@ class PositionTests(Fixture):
 
 
 class BuildTests(unittest.TestCase):
+    def save(self, folder, data):
+        path = Path(folder) / f"registered{len(list(Path(folder).glob('registered*')))}.json"
+        path.write_text(json.dumps(data, ensure_ascii=False), encoding="utf-8")
+        return str(path)
+
     def line(self, page, top, *texts):
         return {"page": page, "words": [{"text": t, "top": top, "x0": n * 10} for n, t in enumerate(texts)]}
 
@@ -218,6 +268,11 @@ class BuildTests(unittest.TestCase):
                 built = pc.build(documents, Path(temp))
             rows = built["documents"]["a"]["places"][0]["rows"]
             self.assertEqual([(r["page"], r["printed"]) for r in rows], [(10, "204"), (10, "54"), (11, "7")])
+            (Path(temp) / "documents.json").write_text(json.dumps(documents, ensure_ascii=False), encoding="utf-8")
+            with mock.patch("d4_gold.lines_of", return_value=lines), mock.patch.object(pc, "DOCUMENTS", Path(temp) / "documents.json"):
+                self.assertEqual(pc.main(["verify", "--pdf-dir", temp, "--registered", self.save(temp, built)]), 0)
+                other = {**built, "documents": {"a": {**built["documents"]["a"], "places": []}}}
+                self.assertEqual(pc.main(["verify", "--pdf-dir", temp, "--registered", self.save(temp, other)]), 1)
             lines[1] = self.line(10, 200, "확정계약자산", "55", "20")
             with mock.patch("d4_gold.lines_of", return_value=lines):
                 with self.assertRaises(ValueError):

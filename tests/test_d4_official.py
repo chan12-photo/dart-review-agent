@@ -52,9 +52,24 @@ class OfficialTests(unittest.TestCase):
         self.registered = {"documents": {"a": {"pdf_sha256": "src", "places": places}}}
         self.run = self.dir / "run"
         (self.run / "reports").mkdir(parents=True)
-        (self.run / "run.json").write_text(json.dumps({"commit": "R", "readers": ["ai"], "calls": 4, "failed": []}), encoding="utf-8")
+        self.names = [f"a.{variant}.ai" for variant in ("text", "normal", "tilt", "blur")]
+        self.write_run()
         self.judgments = self.dir / "judgments"
         self.judgments.mkdir()
+
+    def write_run(self, exits=None, finished=True, preflight=True, readers=("ai",), log=None):
+        """run.json and run_log.jsonl as eval/d4_eval/run_d4.py writes them (every call exits 0 unless ``exits``)."""
+        exits = exits or {}
+        names = [n.replace(".ai", f".{r}") for r in readers for n in self.names]
+        failed = [{"name": n, "exit": exits[n]} for n in names if exits.get(n, 0) != 0]
+        record = {"commit": "R", "readers": list(readers), "calls": len(names), "started_at": "t",
+                  "documents_sha256": official_d4._sha256(official_d4.DOCUMENTS),
+                  "preflight": {"log": "run1.preflight.json", "sha256": "p", "checked_at": "t"} if preflight else None}
+        if finished:
+            record |= {"finished_at": "t", "succeeded": len(names) - len(failed), "failed": failed}
+        (self.run / "run.json").write_text(json.dumps(record), encoding="utf-8")
+        lines = log if log is not None else [{"n": i, "name": n, "exit": exits.get(n, 0)} for i, n in enumerate(names, 1)]
+        (self.run / "run_log.jsonl").write_text("".join(json.dumps(x) + "\n" for x in lines), encoding="utf-8")
 
     def save(self, name, rows, source="src", page=10):
         values = lambda current, prior, flagged=False: [
@@ -124,6 +139,100 @@ class OfficialTests(unittest.TestCase):
         (self.judgments / "a.text.ai.position.json").write_text(json.dumps(verdicts, ensure_ascii=False), encoding="utf-8")
         part = self.result()["readers"]["ai"]["3.1"]
         self.assertEqual((part["verdict"], part["sums"]["S2"]), ("not met", 2))
+
+
+class RunGateTests(OfficialTests):
+    """Codex seventh re-check 1: a report a failed call left behind is never official."""
+
+    def setUp(self):
+        super().setUp()
+        self.save("a.text.ai", PRINTED)  # scored right: only the run's record can keep it from "met"
+
+    def verdict(self):
+        return self.result()["readers"]["ai"]["3.1"]["verdict"]
+
+    def test_a_right_report_of_a_call_that_exited_0_is_met(self):
+        self.assertEqual(self.verdict(), "met")
+
+    def test_a_report_left_by_a_failed_call_is_not_official(self):
+        self.write_run(exits={"a.text.ai": 2})
+        call = self.result()["calls"][0]
+        self.assertFalse(call["official_ready"])
+        self.assertIn("exited 2", call["why"])
+        self.assertIn("lists the call as failed", call["why"])
+        self.assertEqual(call["S1_official"], 0)  # the numbers stay, as provisional
+        self.assertEqual(self.verdict(), "not official")
+
+    def test_the_run_record_must_be_whole(self):
+        logged = [{"n": i, "name": n, "exit": 0} for i, n in enumerate(self.names, 1)]
+        cases = {"not finished": dict(finished=False), "no preflight": dict(preflight=False),
+                 "no log entry": dict(log=logged[1:]), "two log entries": dict(log=logged + logged[:1]),
+                 "a log entry without exit": dict(log=[{"n": 1, "name": "a.text.ai"}] + logged[1:])}
+        for name, kwargs in cases.items():
+            with self.subTest(name):
+                self.write_run(**kwargs)
+                self.assertEqual(self.verdict(), "not official")
+
+    def test_counts_that_do_not_add_up(self):
+        record = json.loads((self.run / "run.json").read_text(encoding="utf-8"))
+        for changed in ({**record, "succeeded": 3}, {**record, "calls": 5}, {**record, "failed": "none"},
+                        {**record, "documents_sha256": "other"}):
+            with self.subTest(changed=changed):
+                (self.run / "run.json").write_text(json.dumps(changed), encoding="utf-8")
+                self.assertEqual(self.verdict(), "not official")
+
+    def test_a_log_that_cannot_be_read(self):
+        (self.run / "run_log.jsonl").write_text("{not json\n", encoding="utf-8")
+        self.assertEqual(self.verdict(), "not official")
+
+    def test_one_reader_of_a_folder(self):
+        # rules from this folder; the AI reader ran again elsewhere after a model server failure
+        self.write_run(readers=("rules", "ai"), exits={"a.text.ai": 1})
+        (self.run / "reports" / "a.text.rules.json").write_bytes((self.run / "reports" / "a.text.ai.json").read_bytes())
+        result = official_d4.official(self.run, self.judgments, {"documents": [self.document]}, self.registered, ["rules"])
+        self.assertEqual(list(result["readers"]), ["rules"])
+        self.assertEqual(result["readers"]["rules"]["3.1"]["verdict"], "met")
+        with self.assertRaises(ValueError):
+            official_d4.official(self.run, self.judgments, {"documents": [self.document]}, self.registered, ["other"])
+
+    def test_judgment_files_of_another_shape_are_refused(self):
+        for content in ("[]", '{"verdicts": ["wrong"]}', '{"verdicts": {"0/3/0": "wrong"}}'):
+            with self.subTest(content=content):
+                (self.judgments / "a.text.ai.extras.json").write_text(content, encoding="utf-8")
+                call = self.result()["calls"][0]
+                self.assertFalse(call["official_ready"])
+                self.assertIn("refused", call["why"])
+        (self.judgments / "a.text.ai.extras.json").unlink()
+        for content in ("[]", '{"verdicts": ["x"]}'):
+            with self.subTest(content=content):
+                (self.judgments / "a.text.ai.position.json").write_text(content, encoding="utf-8")
+                self.assertIn("refused", self.result()["calls"][0]["why"])
+
+    def test_a_wrong_verdict_without_its_count_does_not_make_a_swap_met(self):
+        # Codex seventh re-check 2: two rows swapped and an empty row of the label added
+        report_sha = self.save("a.text.ai", [PRINTED[2], PRINTED[1], PRINTED[0], ("파생상품", 5, 6)])
+        ids = [p["id"] for p in self.result()["calls"][0]["position_places"]]
+        verdicts = {"report_sha256": report_sha, "judged_by": "사용자",
+                    "verdicts": {i: {"verdict": "wrong", "note": "두 금액의 인쇄 행이 바뀌었다"} for i in ids}}
+        (self.judgments / "a.text.ai.position.json").write_text(json.dumps(verdicts, ensure_ascii=False), encoding="utf-8")
+        self.assertEqual(self.verdict(), "not official")
+        verdicts["verdicts"] = {i: {"verdict": "wrong", "wrong_unmarked": 2, "note": "두 금액의 인쇄 행이 바뀌었다"} for i in ids}
+        (self.judgments / "a.text.ai.position.json").write_text(json.dumps(verdicts, ensure_ascii=False), encoding="utf-8")
+        extras = {"report_sha256": report_sha, "judged_by": "사용자",
+                  "verdicts": {"0/3/0": {"verdict": "wrong", "note": "인쇄되지 않은 행"},
+                               "0/3/1": {"verdict": "wrong", "note": "인쇄되지 않은 행, 전기"}}}
+        (self.judgments / "a.text.ai.extras.json").write_text(json.dumps(extras, ensure_ascii=False), encoding="utf-8")
+        call = self.result()["calls"][0]
+        self.assertEqual((call["official_ready"], call["S1"], call["S1_position"]), (True, 2, 4))
+        self.assertEqual(self.verdict(), "not met")
+
+    def test_registered_places_that_do_not_fit_refuse_the_call(self):
+        # Codex seventh re-check 3: an empty list of places and two rows swapped
+        self.registered["documents"]["a"]["places"] = []
+        self.save("a.text.ai", [PRINTED[2], PRINTED[1], PRINTED[0]])
+        call = self.result()["calls"][0]
+        self.assertIn("do not fit the gold", call["why"])
+        self.assertEqual(self.verdict(), "not official")
 
 
 if __name__ == "__main__":

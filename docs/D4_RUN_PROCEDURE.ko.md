@@ -1,6 +1,6 @@
 # D4 공식 절차: ⑦ 등록, ⑧ 실행, ⑨ 판정 (계약 7판)
 
-- 작성: 2026-10-19, Claude. 2026-10-20에 Codex 7차 재검토 4~6번과 8차 1·2번을 반영했다. 계약 [`EVAL_CONTRACT_D4.ko.md`](EVAL_CONTRACT_D4.ko.md) 7판의 1.2, 4.5, 4.6, 5, 7절을 명령으로 옮긴 것이다. ⑦에서 등록하는 파일이다. 등록 뒤에는 이 명령만 쓴다(1.3).
+- 작성: 2026-10-19, Claude. 2026-10-20에 Codex 7차 재검토 4~6번, 8차 1·2번, 9차 1~3번을 반영했다. 계약 [`EVAL_CONTRACT_D4.ko.md`](EVAL_CONTRACT_D4.ko.md) 7판의 1.2, 4.5, 4.6, 5, 7절을 명령으로 옮긴 것이다. ⑦에서 등록하는 파일이다. 등록 뒤에는 이 명령만 쓴다(1.3).
 - 사용자 승인이 필요한 단계에는 **[승인]** 을 적었다. 승인 없이 하지 않는다.
 - 폴더:
 
@@ -112,7 +112,9 @@
    - `position_places`: 상태가 `needs_verdict`인 곳(4.6). 행마다 채점기의 결과(`scorer`)가 함께 나온다.
 2. Claude가 1차로 판정하고 근거를 적는다. 사용자가 확인한다(계약 6). 판정 파일은 호출마다 둘이다.
    - 둘 다 그 보고서의 SHA-256(`report_sha256`, 집계 출력에 있다)과 `judged_by`를 적는다.
-   - 파일은 객체이고, `verdicts`도 객체다(비어 있어도 `{}`). `[]`, `""`, `false`, `null`은 거부된다(Codex 8차 2번).
+   - 파일은 객체이고, `verdicts`도 객체다(비어 있어도 `{}`). `[]`, `""`, `false`, `null`은 거부된다. 파일 내용 전체가 `null`이어도 거부된다(Codex 8차 2번, 9차 1번).
+   - 판정이 없는 파일이라도 `report_sha256`과 `judged_by`를 적는다. 판정할 것이 없으면 파일을 만들지 않아도 된다(9차 3번).
+   - 집계 출력의 `judgment_files_not_read`에 나오는 파일은 이번 집계가 읽지 않은 것이다. 이름이 틀렸거나 다른 방식의 파일이다(9차 2번). 이름을 고친다.
    - `~/D4_official/judgments/run1/<이름>.extras.json`: `{"report_sha256", "judged_by", "verdicts": {"<칸 id>": {"verdict": "wrong"|"ok", "note"}}}`
    - `~/D4_official/judgments/run1/<이름>.position.json`: `{"report_sha256", "judged_by", "verdicts": {"<자리 id>": {"verdict": "wrong", "wrong_unmarked": n, "note"} 또는 {"verdict": "ok", "note"}}}`
      - `wrong`에는 `wrong_unmarked`를 **반드시** 정수로 적는다. 0도 적는다(틀린 칸이 모두 표시된 경우). 빠지면 거부된다(Codex 7차 재검토 2번).

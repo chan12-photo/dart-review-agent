@@ -10,6 +10,7 @@
   - 7차(⑦ 전): [결과](reviews/D4_registration_codex_result.ko.md), [응답](reviews/D4_registration_codex_response.ko.md). 5건을 모두 받아들였다.
   - 7차 재검토(⑦ 전): [결과](reviews/D4_registration_recheck_codex_result.ko.md), [응답](reviews/D4_registration_recheck_codex_response.ko.md). 등록 보류 판단과 6건을 모두 받아들였다.
   - 8차(⑦ 전): [결과](reviews/D4_registration_eighth_codex_result.ko.md), [응답](reviews/D4_registration_eighth_codex_response.ko.md). 보류 판단과 2건을 받아들였다.
+  - 9차(⑦ 전): [결과](reviews/D4_registration_ninth_codex_result.ko.md), [응답](reviews/D4_registration_ninth_codex_response.ko.md). 3건을 받아들였다.
   - **사용자 결정 완료 (2026-10-15, 10절).** 기본안을 모두 택했다.
   - **④ 고정 완료 (2026-10-15):** 고정 기록 `eval/freeze_d4.json`(제품 P = 도구 T = `49c182b`, 2026-10-15), 모집단 `eval/d4_population.json`(종목코드 있는 3,998곳, 회사 목록 응답 SHA-256 `ae980849…`), 제외 고유번호 `eval/d4_excluded.json`. 이 커밋이 F다. 이 뒤로 제품과 평가 도구를 바꾸지 않는다. 다음은 ⑤ 후보 판정이다.
   - **7판 (2026-10-19, ⑦ 전, 제품을 평가 문서에 돌리기 전):** 다음을 더했다. 고정한 제품과 평가 도구(P·T)는 바꾸지 않았다. 새 도구는 ⑦에서 등록한다(10절 "⑦ 전 Codex 7차 반영").
@@ -263,7 +264,12 @@
     - 판정자 없음
     - 판정할 필요가 없는 자리
     - 정해진 형식이 아닌 값: 객체가 아닌 판정, 근거 없음, 정수가 아닌 수
-    - 정해진 모양이 아닌 파일(목록 등). `verdicts`가 객체가 아닌 파일도 거부한다. 비어 있어도 `{}`여야 하고, `[]`·`""`·`false`·`null`은 거부한다(8차 2번). 정답 밖 판정 파일(4.5)도 같은 모양 검사를 공식 집계가 고정 채점기 앞에서 한다. 공식 집계는 그 호출을 공식 판정 불가로 둔다.
+    - 정해진 모양이 아닌 파일. 판정 파일은 **있으면** 객체다. 있는지는 파일 경로로 정한다. 내용이 `null`인 파일도 파일이며 거부한다(9차 1번).
+    - `verdicts`가 객체가 아닌 파일. 비어 있어도 `{}`여야 하고, `[]`·`""`·`false`·`null`은 거부한다(8차 2번).
+    - 판정이 하나도 없는 파일이라도 그 보고서의 해시와 판정자를 적어야 한다. 다른 보고서의 빈 파일도 거부한다(9차 3번).
+    - 정답 밖 판정 파일(4.5)도 공식 집계가 고정 채점기 앞에서 위와 같은 검사를 한다.
+
+    공식 집계는 거부된 파일이 있는 호출을 공식 판정 불가로 둔다. 판정 폴더에서 이번 집계가 읽지 않은 파일(이름이 틀렸거나 다른 방식의 파일)은 목록으로 알린다(9차 2번).
   - 판정을 기다리는 자리가 하나라도 있으면 `position_ready`가 아니다.
 - **이 검사는 S1을 늘리거나 공식 판정을 막을 수만 있다.** 채점기가 낸 수를 줄이지 않는다. 고정 채점기만의 S1과 `S1_position`을 나눠서도 보고한다.
 - **한계:**
@@ -445,6 +451,11 @@ Claude가 더 막은 것:
 - Ollama 0.34.4
 - Tesseract
 - macOS
+
+**⑦ 전 Codex 9차 반영 (2026-10-20, 7판):** 9차는 8차 수정이 실행 기록 모순을 막고, 정직한 실행 기록은 막지 않는다고 확인했다([결과](reviews/D4_registration_ninth_codex_result.ko.md), [응답](reviews/D4_registration_ninth_codex_response.ko.md)). 다음 3건을 고쳤다(4.6).
+- 내용이 `null`인 판정 파일을 "파일 없음"으로 읽던 것
+- 읽지 않은 판정 파일 목록이 다른 방식의 파일을 빠뜨리던 것
+- 판정이 없는 빈 파일의 보고서 해시를 보지 않던 것
 
 ## 11. 개발 중 측정 (평가 아님)
 

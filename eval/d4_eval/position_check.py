@@ -35,8 +35,9 @@ skipped). For each place, the product rows of that label (with any value) in the
   printed row's place without "확인 필요": the result lists each row with the scorer's result for its cell, and the
   count may not exceed those cells. Cells the scorer counted wrong are in S1 already, and cells outside the gold are
   judged by 4.5. Otherwise no printed value can stand in a wrong row ("not_pairable_no_swap").
-A verdicts file is an object whose "verdicts" is an object ({} when empty; a list, string, false, or null is refused:
-Codex eighth review 2). A verdict is an object: "wrong" needs an explicit whole number ``wrong_unmarked`` (0 too,
+A verdicts file is an object naming the report's SHA-256 and who judged (also with no verdict: Codex ninth review 3)
+whose "verdicts" is an object ({} when empty; a list, string, false, or null is refused: eighth review 2; a file of
+"null" is refused too: ninth review 1). A verdict is an object: "wrong" needs an explicit whole number ``wrong_unmarked`` (0 too,
 when every wrong cell is marked), "ok" takes none or 0 (Codex seventh re-check 2).
 The result says ``position_ready`` only when no place waits for a verdict. Each check first compares the registered
 places with the places of the gold it scores (the mapping as it is now): another set of places, or other printed
@@ -210,15 +211,16 @@ def check(registered: dict, document: dict, report: dict, page_map: dict | None 
                 counted[(part["statement_id"], label_key(cell["label"]), cell["period"])] += 1
         for extra in part["extras"]:
             scorer_result[extra["id"]] = "not_in_gold"
-    verdicts = {} if verdicts is None else verdicts
-    if not isinstance(verdicts, dict) or not isinstance(verdicts.get("verdicts", {}), dict):  # [] or "" too
-        raise ValueError('the position verdicts are {"report_sha256", "judged_by", "verdicts": {place id: verdict}}')
-    given = verdicts.get("verdicts") or {}
-    if given:
+    # None: no verdicts file. A file is an object naming the report and who judged, also with no verdict (Codex
+    # ninth review 3), and its "verdicts" is an object ([], "", false, or null are refused)
+    if verdicts is not None:
+        if not isinstance(verdicts, dict) or not isinstance(verdicts.get("verdicts", {}), dict):
+            raise ValueError('the position verdicts are {"report_sha256", "judged_by", "verdicts": {place id: verdict}}')
         if report_sha256 is not None and verdicts.get("report_sha256") != report_sha256:
             raise ValueError("the position verdicts are for another report (report_sha256 differs)")
-        if not verdicts.get("judged_by"):
+        if not isinstance(verdicts.get("judged_by"), str) or not verdicts["judged_by"].strip():
             raise ValueError("the position verdicts do not say who judged them (judged_by)")
+    given = (verdicts or {}).get("verdicts") or {}
     results, used_verdicts = [], set()
     for place in entry["places"]:
         pair = pairs.get(place["statement_id"])
@@ -322,6 +324,8 @@ def main(argv: list[str] | None = None) -> int:
         parser.error(f"{args.key} is not a registered document")
     page_map = json.loads(args.page_map.read_text(encoding="utf-8")) if args.page_map else None
     verdicts = json.loads(args.verdicts.read_text(encoding="utf-8")) if args.verdicts else None
+    if args.verdicts and not isinstance(verdicts, dict):  # a given file is a file, also when it holds "null"
+        parser.error(f"{args.verdicts} is not a verdicts object")
     registered = json.loads(args.registered.read_text(encoding="utf-8"))
     report_sha256 = hashlib.sha256(args.report.read_bytes()).hexdigest()
     result = check(registered, document, json.loads(args.report.read_text(encoding="utf-8")), page_map, verdicts, report_sha256)

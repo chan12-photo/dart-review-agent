@@ -9,9 +9,10 @@ its three synthetic scans, for each reader of the run), the saved report ``<run>
   gold from ``<judgments>/<name>.extras.json`` (contract 4.5) when that file exists;
 - checked by the position check (``position_check.check``, contract 7판 4.6) with the registered places
   (``eval/d4_eval/duplicate_places.json``) and the person's verdicts from ``<judgments>/<name>.position.json``.
-Both verdict files name the report's SHA-256; the tools refuse verdicts of another report. The verdict files of
-each run folder have their own folder (their names are the same in every run folder); a file there that names no
-call is listed (``judgment_files_not_read``) and never read.
+A verdict file that exists is an object naming the report's SHA-256 and who judged, also when it holds no verdict;
+the tools refuse a file of another report or another shape ("null" too). The verdict files of each run folder have
+their own folder (their names are the same in every run folder); a file there that this aggregation does not read
+(another name, or another reader's) is listed (``judgment_files_not_read``).
 
 Per call: ``S1_official`` = the scorer's S1 + the position check's ``S1_position``; L1, S2, G1 as scored;
 the cells and places still waiting for a person (``extras_to_judge``, and ``position_places`` with "needs_verdict");
@@ -146,13 +147,23 @@ def call(document: dict, variant: str, reader: str, run: Path, judgments: Path, 
         report = json.loads(report_path.read_text(encoding="utf-8"))
         if not isinstance(report, dict):
             raise ValueError("the saved report is not a report")
-        # None: no file. A file is an object whose "verdicts", when it has them, is an object too (an empty list,
-        # string, or false is refused, not read as no verdicts: Codex eighth review 2)
-        extras, verdicts = _json(extras_path), _json(position_path)
-        for path, data in ((extras_path, extras), (position_path, verdicts)):
-            if data is not None and (not isinstance(data, dict) or not isinstance(data.get("verdicts", {}), dict)):
+        # A verdict file is read when it exists, by its path, not by what it holds ("null" in a file is a file: Codex
+        # ninth review 1). It is an object naming this report and who judged, also with no verdict, and its
+        # "verdicts" is an object ({} when empty; a list, string, false, or null is refused: eighth review 2)
+        loaded = {}
+        for path in (extras_path, position_path):
+            if not path.exists():
+                loaded[path] = None
+                continue
+            data = json.loads(path.read_text(encoding="utf-8"))
+            if not isinstance(data, dict) or not isinstance(data.get("verdicts", {}), dict):
                 raise ValueError(f"{path.name} is not {{\"report_sha256\", \"judged_by\", \"verdicts\": {{id: verdict}}}}")
-        extras = {} if extras is None else extras
+            if data.get("report_sha256") != report_sha256:
+                raise ValueError(f"{path.name} is for another report (report_sha256 differs)")
+            if not isinstance(data.get("judged_by"), str) or not data["judged_by"].strip():
+                raise ValueError(f"{path.name} does not say who judged (judged_by)")
+            loaded[path] = data
+        extras, verdicts = loaded[extras_path] or {}, loaded[position_path]
         gold = position_check._gold_for(document, page_map)
         scored_all = score(gold, report, extras, report_sha256)
         placed = position_check.check(registered, document, report, page_map, verdicts, report_sha256)
@@ -223,9 +234,9 @@ def official(run: Path, judgments: Path, documents: dict, registered: dict, read
         mine = [e for e in entries if e["reader"] == reader]
         result[reader] = {name: bundle([e for e in mine if e["variant"] in variants], CRITERIA[name])
                           for name, variants in BUNDLES.items()}
-    # verdict files that name no call of these documents (a misspelt name is never read: its call waits)
-    known = {f"{d['key']}.{v}.{r}.{kind}.json" for d in documents["documents"] for v in VARIANTS for r in READERS
-             for kind in ("extras", "position")}
+    # the files of the judgments folder this aggregation did not read: a misspelt name, or the verdicts of a reader
+    # not taken here (a file that is not read never counts; its call waits for its verdicts)
+    known = {f"{e['name']}.{kind}.json" for e in entries for kind in ("extras", "position")}
     unused = sorted(p.name for p in judgments.glob("*") if p.name not in known) if judgments.is_dir() else []
     return {"run_folder": run.name, "judgment_files_not_read": unused,
             "run": {key: record.get(key) for key in ("commit", "started_at", "finished_at", "preflight", "readers",
@@ -252,7 +263,7 @@ def main(argv: list[str] | None = None) -> int:
     if args.out:
         args.out.write_text(json.dumps(result, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
     if result["judgment_files_not_read"]:
-        print(f"judgment files that name no call (not read): {', '.join(result['judgment_files_not_read'])}")
+        print(f"judgment files not read by this aggregation: {', '.join(result['judgment_files_not_read'])}")
     for reader, bundles in result["readers"].items():
         for name, part in bundles.items():
             sums = part["sums"]

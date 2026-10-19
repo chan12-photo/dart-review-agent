@@ -236,8 +236,9 @@ class RunGateTests(Fixture):
 
     def test_judgment_files_of_another_shape_are_refused(self):
         # Codex eighth review 2: an empty list, string, or false is not "no verdicts"
+        # Codex ninth review 1: a file of "null" is a file, not "no file"
         for content in ("[]", '{"verdicts": ["wrong"]}', '{"verdicts": {"0/3/0": "wrong"}}', '{"verdicts": []}',
-                        '{"verdicts": ""}', '{"verdicts": false}', '{"verdicts": null}', "not json"):
+                        '{"verdicts": ""}', '{"verdicts": false}', '{"verdicts": null}', "not json", "null"):
             with self.subTest(content=content):
                 (self.judgments / "a.text.ai.extras.json").write_text(content, encoding="utf-8")
                 call = self.result()["calls"][0]
@@ -245,16 +246,23 @@ class RunGateTests(Fixture):
                 self.assertIn("refused", call["why"])
         (self.judgments / "a.text.ai.extras.json").unlink()
         for content in ("[]", '{"verdicts": ["x"]}', '{"verdicts": []}', '{"verdicts": ""}', '{"verdicts": false}',
-                        '{"verdicts": null}', "not json"):
+                        '{"verdicts": null}', "not json", "null"):
             with self.subTest(content=content):
                 (self.judgments / "a.text.ai.position.json").write_text(content, encoding="utf-8")
                 self.assertIn("refused", self.result()["calls"][0]["why"])
-        for name in ("a.text.ai.extras.json", "a.text.ai.position.json"):  # an object with no verdicts is no verdicts
-            with self.subTest(name):
-                (self.judgments / "a.text.ai.position.json").unlink(missing_ok=True)
-                (self.judgments / name).write_text('{"verdicts": {}}', encoding="utf-8")
+        (self.judgments / "a.text.ai.position.json").unlink()
+        report_sha = sha((self.run / "reports" / "a.text.ai.json").read_bytes())
+        empty = {"report_sha256": report_sha, "judged_by": "사용자", "verdicts": {}}
+        for name in ("a.text.ai.extras.json", "a.text.ai.position.json"):
+            # Codex ninth review 3: a file with no verdict still names this report and who judged
+            for broken in ({"verdicts": {}}, {**empty, "report_sha256": "other"}, {**empty, "judged_by": " "}, {}):
+                with self.subTest(name, broken=broken):
+                    (self.judgments / name).write_text(json.dumps(broken, ensure_ascii=False), encoding="utf-8")
+                    self.assertEqual(self.verdict(), "not official")
+            with self.subTest(name, empty=True):
+                (self.judgments / name).write_text(json.dumps(empty, ensure_ascii=False), encoding="utf-8")
                 self.assertEqual(self.verdict(), "met")
-                (self.judgments / name).unlink()
+            (self.judgments / name).unlink()
 
     def test_a_report_that_is_not_json_is_refused(self):
         (self.run / "reports" / "a.text.ai.json").write_text("{cut off", encoding="utf-8")
@@ -264,8 +272,11 @@ class RunGateTests(Fixture):
 
     def test_misnamed_judgment_files_are_listed_and_not_read(self):
         (self.judgments / "a.text.ai.extra.json").write_text("{}", encoding="utf-8")
+        # Codex ninth review 2: another reader's file is not read by this aggregation either
+        (self.judgments / "a.text.rules.extras.json").write_text("{}", encoding="utf-8")
         result = self.result()
-        self.assertEqual(result["judgment_files_not_read"], ["a.text.ai.extra.json"])
+        self.assertEqual(result["judgment_files_not_read"], ["a.text.ai.extra.json", "a.text.rules.extras.json"])
+        self.assertEqual(self.verdict(), "met")
 
     def test_a_reader_named_twice_is_counted_once(self):
         result = official_d4.official(self.run, self.judgments, {"documents": [self.document]}, self.registered, ["ai", "ai"])

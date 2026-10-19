@@ -196,6 +196,16 @@ class PositionTests(Fixture):
                 with self.assertRaises(ValueError):
                     self.check(rows, verdicts=broken, report_sha256="r")
 
+    def test_a_verdicts_file_with_no_verdict_still_names_its_report(self):
+        rows = self.in_order_rows()
+        for broken in ({}, {"verdicts": {}}, {"report_sha256": "other", "judged_by": "사용자", "verdicts": {}},
+                       {"report_sha256": "r", "judged_by": "", "verdicts": {}}):
+            with self.subTest(broken=broken):
+                with self.assertRaises(ValueError):
+                    self.check(rows, verdicts=broken, report_sha256="r")
+        empty = {"report_sha256": "r", "judged_by": "사용자", "verdicts": {}}
+        self.assertTrue(self.check(rows, verdicts=empty, report_sha256="r")["totals"]["position_ready"])
+
     def test_an_explicit_zero_and_an_ok_with_zero_are_taken(self):
         rows = [self.row("파생상품", [(0, 54), (1, 20)], flagged=True), self.row("파생상품", [(0, 204), (1, 77)], flagged=True),
                 self.row("파생상품", [(0, 5), (1, 6)])]

@@ -1,0 +1,18 @@
+{
+ "source": "13_유진기업.pdf",
+ "source_sha256": "6e5d714e25bca943af65b16edb78afde1dc92569b4c7ee6fc8399016b3d71f11",
+ "condition": "normal",
+ "dpi": 200,
+ "rotate": 0.0,
+ "blur": 0.0,
+ "pages": [
+  8,
+  9,
+  10,
+  13,
+  14
+ ],
+ "scan": "13_00184667.normal.pdf",
+ "scan_sha256": "eef9e8ffc740ed9096b4633de2a15bc191d7693861e3933d8f1fcf9e7b86eb04",
+ "pixels_sha256": "349fcce21858768d41ed6136290cfa297a6908cf5568a11a3b26abe4b66e74b0"
+}

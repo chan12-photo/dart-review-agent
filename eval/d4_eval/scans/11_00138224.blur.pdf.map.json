@@ -1,0 +1,19 @@
+{
+ "source": "11_쌍용씨앤이.pdf",
+ "source_sha256": "a2690cc7ecdf005055c6502064e03a7ad44c2528234704592a033b7ec7d0ed88",
+ "condition": "blur",
+ "dpi": 150,
+ "rotate": 0.0,
+ "blur": 1.2,
+ "pages": [
+  8,
+  9,
+  10,
+  11,
+  13,
+  14
+ ],
+ "scan": "11_00138224.blur.pdf",
+ "scan_sha256": "ee2f4da44a560342848ba3895092a7fc106306aba49012008c5d7c9064301e9d",
+ "pixels_sha256": "473370d12a11394dfd512f8a5265984612d5e7abbbd9f7922f462859434a99a1"
+}

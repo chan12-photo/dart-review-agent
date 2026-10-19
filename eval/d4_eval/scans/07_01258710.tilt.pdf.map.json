@@ -1,0 +1,17 @@
+{
+ "source": "07_이노메트리.pdf",
+ "source_sha256": "6f4acd8c8d12fa822de424769a36a36a8a9e6b885c882a85d03f5d971b98d57e",
+ "condition": "tilt",
+ "dpi": 150,
+ "rotate": 1.0,
+ "blur": 0.0,
+ "pages": [
+  8,
+  9,
+  10,
+  12
+ ],
+ "scan": "07_01258710.tilt.pdf",
+ "scan_sha256": "e6a3a48e1cc7a19194649db01c7b2beca7cf7a42035a97804d07420634ed7ed9",
+ "pixels_sha256": "b8249e1b94478426fcb64ca06af721ddcfc2296ee13a2506b0808fe4933fb4b1"
+}

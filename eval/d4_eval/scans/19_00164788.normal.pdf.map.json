@@ -1,0 +1,18 @@
+{
+ "source": "19_현대모비스.pdf",
+ "source_sha256": "e36cb18c688339d51ff59e55d991a00f4f1673490a6a4802fa51d0386071b3cb",
+ "condition": "normal",
+ "dpi": 200,
+ "rotate": 0.0,
+ "blur": 0.0,
+ "pages": [
+  9,
+  10,
+  11,
+  12,
+  14
+ ],
+ "scan": "19_00164788.normal.pdf",
+ "scan_sha256": "d22056f874f3a033038285fa73636711446fefc800abfdf5296b1a6d733a51a6",
+ "pixels_sha256": "b02a7725ab72a9b7888f00db5ea1e0bb4407663573d559acd75b470a23521af4"
+}

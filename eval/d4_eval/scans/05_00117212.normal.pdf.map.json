@@ -1,0 +1,19 @@
+{
+ "source": "05_두산.pdf",
+ "source_sha256": "e558209041877748832e5801ebef8d0bc474e4417d4764508e5a86cfb103fe34",
+ "condition": "normal",
+ "dpi": 200,
+ "rotate": 0.0,
+ "blur": 0.0,
+ "pages": [
+  10,
+  11,
+  12,
+  13,
+  16,
+  17
+ ],
+ "scan": "05_00117212.normal.pdf",
+ "scan_sha256": "112079b532ac512d6879937ed9158d88f247ec6c036c650154121e0884135f9d",
+ "pixels_sha256": "30dbffa2f39b2b03de1e3926a90b6d1da6801103c9c8470de7af7157996ad534"
+}

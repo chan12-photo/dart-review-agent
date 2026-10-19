@@ -1,0 +1,18 @@
+{
+ "source": "18_DSR.pdf",
+ "source_sha256": "df6f420eb2fda07e5b6ac0570d3f5dd259888d8dc104ebcd6baed0a92c7d0eb4",
+ "condition": "tilt",
+ "dpi": 150,
+ "rotate": 1.0,
+ "blur": 0.0,
+ "pages": [
+  7,
+  8,
+  9,
+  10,
+  12
+ ],
+ "scan": "18_00110608.tilt.pdf",
+ "scan_sha256": "13b064a755ad543e9f16cb81fde5a6eb7d246cb14af459fe2faec01b84bcc887",
+ "pixels_sha256": "8d315be6604f154314ab5fffc97544d04bf93ba5dfb63d4a5b724b3582c32a0a"
+}

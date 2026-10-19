@@ -1,0 +1,19 @@
+{
+ "source": "15_케스피온.pdf",
+ "source_sha256": "e053aad63b0aef69f603665e57985091c2b2369beeb16c99084157d86f1037f2",
+ "condition": "normal",
+ "dpi": 200,
+ "rotate": 0.0,
+ "blur": 0.0,
+ "pages": [
+  8,
+  9,
+  10,
+  11,
+  13,
+  14
+ ],
+ "scan": "15_00479705.normal.pdf",
+ "scan_sha256": "ba669a7f2713d036c2cc33ac99b6961b9b76d3c97ccf13f1189100a9aaf83b47",
+ "pixels_sha256": "ec11f98d8893ef8bb2ac3c4041c2d83645d909c6abcf4cf3421669405e439d44"
+}

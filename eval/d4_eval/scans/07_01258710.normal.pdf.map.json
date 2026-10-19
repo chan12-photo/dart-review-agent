@@ -1,0 +1,17 @@
+{
+ "source": "07_이노메트리.pdf",
+ "source_sha256": "6f4acd8c8d12fa822de424769a36a36a8a9e6b885c882a85d03f5d971b98d57e",
+ "condition": "normal",
+ "dpi": 200,
+ "rotate": 0.0,
+ "blur": 0.0,
+ "pages": [
+  8,
+  9,
+  10,
+  12
+ ],
+ "scan": "07_01258710.normal.pdf",
+ "scan_sha256": "1f9132f5cc7202e5114884a7c18dad7dddeb26bfa4628be9897187f8f2d0a1b7",
+ "pixels_sha256": "228866c48b29718044feecf511c370dd30a0690e2897ecc1999a7cbc17a20c03"
+}

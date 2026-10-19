@@ -1,0 +1,495 @@
+{
+ "note": "D4 evaluation documents (contract 3.1, 3.3): file names and SHA-256 only; the PDFs are not committed (contract 8). eval/d4_eval/run_d4.py reads them from --pdf-dir and --scan-dir and refuses any other bytes.",
+ "documents": [
+  {
+   "key": "05_00117212",
+   "rank": 5,
+   "company": "두산",
+   "corp_code": "00117212",
+   "pdf": "05_두산.pdf",
+   "sha256": "e558209041877748832e5801ebef8d0bc474e4417d4764508e5a86cfb103fe34",
+   "pages": 205,
+   "gold": "eval/d4_eval/gold/05_00117212.gold.json",
+   "mapping": "eval/d4_eval/gold/05_00117212.mapping.json",
+   "scans": {
+    "normal": {
+     "pdf": "05_00117212.normal.pdf",
+     "sha256": "112079b532ac512d6879937ed9158d88f247ec6c036c650154121e0884135f9d",
+     "map": "eval/d4_eval/scans/05_00117212.normal.pdf.map.json",
+     "pages": [
+      10,
+      11,
+      12,
+      13,
+      16,
+      17
+     ]
+    },
+    "tilt": {
+     "pdf": "05_00117212.tilt.pdf",
+     "sha256": "b0312f11fb897d7a91b0fff29d489e8f1175df35219eef51f08955db926b9e58",
+     "map": "eval/d4_eval/scans/05_00117212.tilt.pdf.map.json",
+     "pages": [
+      10,
+      11,
+      12,
+      13,
+      16,
+      17
+     ]
+    },
+    "blur": {
+     "pdf": "05_00117212.blur.pdf",
+     "sha256": "1e628aa45e38fdf0bb7ffd996be7e4b3805b70b2b51adcf569f1e62b4157242b",
+     "map": "eval/d4_eval/scans/05_00117212.blur.pdf.map.json",
+     "pages": [
+      10,
+      11,
+      12,
+      13,
+      16,
+      17
+     ]
+    }
+   }
+  },
+  {
+   "key": "06_00148920",
+   "rank": 6,
+   "company": "조광페인트",
+   "corp_code": "00148920",
+   "pdf": "06_조광페인트.pdf",
+   "sha256": "d64af993c223ee31b5c0b5ee47e0be0b50d9b8ee4bb5d07ac900057f3aa0083d",
+   "pages": 93,
+   "gold": "eval/d4_eval/gold/06_00148920.gold.json",
+   "mapping": "eval/d4_eval/gold/06_00148920.mapping.json",
+   "scans": {
+    "normal": {
+     "pdf": "06_00148920.normal.pdf",
+     "sha256": "c4c9eed0d0a07b951c84043450bf5ee00b3ed5abbfc2c9e0f6663e9e3f7543fb",
+     "map": "eval/d4_eval/scans/06_00148920.normal.pdf.map.json",
+     "pages": [
+      9,
+      10,
+      11,
+      13
+     ]
+    },
+    "tilt": {
+     "pdf": "06_00148920.tilt.pdf",
+     "sha256": "257da86f8acb55db8197d08dccc64ca212833e2cb2034a977b3c3bdb8ab5fe26",
+     "map": "eval/d4_eval/scans/06_00148920.tilt.pdf.map.json",
+     "pages": [
+      9,
+      10,
+      11,
+      13
+     ]
+    },
+    "blur": {
+     "pdf": "06_00148920.blur.pdf",
+     "sha256": "698ae980940864ec08b0382ba6612dd12a3be755b8c2a8acfc9d0d68505641eb",
+     "map": "eval/d4_eval/scans/06_00148920.blur.pdf.map.json",
+     "pages": [
+      9,
+      10,
+      11,
+      13
+     ]
+    }
+   }
+  },
+  {
+   "key": "07_01258710",
+   "rank": 7,
+   "company": "이노메트리",
+   "corp_code": "01258710",
+   "pdf": "07_이노메트리.pdf",
+   "sha256": "6f4acd8c8d12fa822de424769a36a36a8a9e6b885c882a85d03f5d971b98d57e",
+   "pages": 85,
+   "gold": "eval/d4_eval/gold/07_01258710.gold.json",
+   "mapping": "eval/d4_eval/gold/07_01258710.mapping.json",
+   "scans": {
+    "normal": {
+     "pdf": "07_01258710.normal.pdf",
+     "sha256": "1f9132f5cc7202e5114884a7c18dad7dddeb26bfa4628be9897187f8f2d0a1b7",
+     "map": "eval/d4_eval/scans/07_01258710.normal.pdf.map.json",
+     "pages": [
+      8,
+      9,
+      10,
+      12
+     ]
+    },
+    "tilt": {
+     "pdf": "07_01258710.tilt.pdf",
+     "sha256": "e6a3a48e1cc7a19194649db01c7b2beca7cf7a42035a97804d07420634ed7ed9",
+     "map": "eval/d4_eval/scans/07_01258710.tilt.pdf.map.json",
+     "pages": [
+      8,
+      9,
+      10,
+      12
+     ]
+    },
+    "blur": {
+     "pdf": "07_01258710.blur.pdf",
+     "sha256": "0ef446bd90df0b206c26408765a0252a9bdf07185107851729db9f7ea2c4f295",
+     "map": "eval/d4_eval/scans/07_01258710.blur.pdf.map.json",
+     "pages": [
+      8,
+      9,
+      10,
+      12
+     ]
+    }
+   }
+  },
+  {
+   "key": "11_00138224",
+   "rank": 11,
+   "company": "쌍용씨앤이",
+   "corp_code": "00138224",
+   "pdf": "11_쌍용씨앤이.pdf",
+   "sha256": "a2690cc7ecdf005055c6502064e03a7ad44c2528234704592a033b7ec7d0ed88",
+   "pages": 151,
+   "gold": "eval/d4_eval/gold/11_00138224.gold.json",
+   "mapping": "eval/d4_eval/gold/11_00138224.mapping.json",
+   "scans": {
+    "normal": {
+     "pdf": "11_00138224.normal.pdf",
+     "sha256": "aca5a2a9cd0f93243d5a239495a0cc57d0e458295de841abef6a256147a56718",
+     "map": "eval/d4_eval/scans/11_00138224.normal.pdf.map.json",
+     "pages": [
+      8,
+      9,
+      10,
+      11,
+      13,
+      14
+     ]
+    },
+    "tilt": {
+     "pdf": "11_00138224.tilt.pdf",
+     "sha256": "dd81a4e635dc41c0d9b17476ae3ab28896ec5900bdd1d3c2b82862cd521a5f0a",
+     "map": "eval/d4_eval/scans/11_00138224.tilt.pdf.map.json",
+     "pages": [
+      8,
+      9,
+      10,
+      11,
+      13,
+      14
+     ]
+    },
+    "blur": {
+     "pdf": "11_00138224.blur.pdf",
+     "sha256": "ee2f4da44a560342848ba3895092a7fc106306aba49012008c5d7c9064301e9d",
+     "map": "eval/d4_eval/scans/11_00138224.blur.pdf.map.json",
+     "pages": [
+      8,
+      9,
+      10,
+      11,
+      13,
+      14
+     ]
+    }
+   }
+  },
+  {
+   "key": "13_00184667",
+   "rank": 13,
+   "company": "유진기업",
+   "corp_code": "00184667",
+   "pdf": "13_유진기업.pdf",
+   "sha256": "6e5d714e25bca943af65b16edb78afde1dc92569b4c7ee6fc8399016b3d71f11",
+   "pages": 140,
+   "gold": "eval/d4_eval/gold/13_00184667.gold.json",
+   "mapping": "eval/d4_eval/gold/13_00184667.mapping.json",
+   "scans": {
+    "normal": {
+     "pdf": "13_00184667.normal.pdf",
+     "sha256": "eef9e8ffc740ed9096b4633de2a15bc191d7693861e3933d8f1fcf9e7b86eb04",
+     "map": "eval/d4_eval/scans/13_00184667.normal.pdf.map.json",
+     "pages": [
+      8,
+      9,
+      10,
+      13,
+      14
+     ]
+    },
+    "tilt": {
+     "pdf": "13_00184667.tilt.pdf",
+     "sha256": "bd55b567fa8f21385480ce27e235b4678e7eef8b248afc71a43c5e2c137b5273",
+     "map": "eval/d4_eval/scans/13_00184667.tilt.pdf.map.json",
+     "pages": [
+      8,
+      9,
+      10,
+      13,
+      14
+     ]
+    },
+    "blur": {
+     "pdf": "13_00184667.blur.pdf",
+     "sha256": "f922bbc3ebc62d526da566b6dfd5a1d686f0076940e2783548d4891809f83443",
+     "map": "eval/d4_eval/scans/13_00184667.blur.pdf.map.json",
+     "pages": [
+      8,
+      9,
+      10,
+      13,
+      14
+     ]
+    }
+   }
+  },
+  {
+   "key": "15_00479705",
+   "rank": 15,
+   "company": "케스피온",
+   "corp_code": "00479705",
+   "pdf": "15_케스피온.pdf",
+   "sha256": "e053aad63b0aef69f603665e57985091c2b2369beeb16c99084157d86f1037f2",
+   "pages": 77,
+   "gold": "eval/d4_eval/gold/15_00479705.gold.json",
+   "mapping": "eval/d4_eval/gold/15_00479705.mapping.json",
+   "scans": {
+    "normal": {
+     "pdf": "15_00479705.normal.pdf",
+     "sha256": "ba669a7f2713d036c2cc33ac99b6961b9b76d3c97ccf13f1189100a9aaf83b47",
+     "map": "eval/d4_eval/scans/15_00479705.normal.pdf.map.json",
+     "pages": [
+      8,
+      9,
+      10,
+      11,
+      13,
+      14
+     ]
+    },
+    "tilt": {
+     "pdf": "15_00479705.tilt.pdf",
+     "sha256": "f2ee2d73613c006ad032548c4dac68dadf3359d65506d684cc75cdd1d3ff1ee9",
+     "map": "eval/d4_eval/scans/15_00479705.tilt.pdf.map.json",
+     "pages": [
+      8,
+      9,
+      10,
+      11,
+      13,
+      14
+     ]
+    },
+    "blur": {
+     "pdf": "15_00479705.blur.pdf",
+     "sha256": "446a124f192a4337fa5cce6601313b2ef7fa882a37e738dfb7ad6b7933fa53e7",
+     "map": "eval/d4_eval/scans/15_00479705.blur.pdf.map.json",
+     "pages": [
+      8,
+      9,
+      10,
+      11,
+      13,
+      14
+     ]
+    }
+   }
+  },
+  {
+   "key": "16_00137915",
+   "rank": 16,
+   "company": "엠엑스로보틱스",
+   "corp_code": "00137915",
+   "pdf": "16_엠엑스로보틱스.pdf",
+   "sha256": "e10cace0d5ecc99cf4ce95e2ff6ebfd7ae52cd57cf2965d13c79193a80c19bc7",
+   "pages": 95,
+   "gold": "eval/d4_eval/gold/16_00137915.gold.json",
+   "mapping": "eval/d4_eval/gold/16_00137915.mapping.json",
+   "scans": {
+    "normal": {
+     "pdf": "16_00137915.normal.pdf",
+     "sha256": "6a48a18dc837b6e8883d9db4152967f2026366c9fb7556335456ad69007e7a39",
+     "map": "eval/d4_eval/scans/16_00137915.normal.pdf.map.json",
+     "pages": [
+      9,
+      10,
+      11,
+      13,
+      14
+     ]
+    },
+    "tilt": {
+     "pdf": "16_00137915.tilt.pdf",
+     "sha256": "672b7cc38a23dc621a80f2dbf470021e89f5fa08a3bd405069af75815c85f85d",
+     "map": "eval/d4_eval/scans/16_00137915.tilt.pdf.map.json",
+     "pages": [
+      9,
+      10,
+      11,
+      13,
+      14
+     ]
+    },
+    "blur": {
+     "pdf": "16_00137915.blur.pdf",
+     "sha256": "0cecec743686e7700d1326b0c7c71e4a65f737546c3ef2775343636c3b507dad",
+     "map": "eval/d4_eval/scans/16_00137915.blur.pdf.map.json",
+     "pages": [
+      9,
+      10,
+      11,
+      13,
+      14
+     ]
+    }
+   }
+  },
+  {
+   "key": "17_00759294",
+   "rank": 17,
+   "company": "와이솔",
+   "corp_code": "00759294",
+   "pdf": "17_와이솔.pdf",
+   "sha256": "72f349f400f7657763ae09b260c964fd51379f4b944b9dc32d415d8325f9609d",
+   "pages": 114,
+   "gold": "eval/d4_eval/gold/17_00759294.gold.json",
+   "mapping": "eval/d4_eval/gold/17_00759294.mapping.json",
+   "scans": {
+    "normal": {
+     "pdf": "17_00759294.normal.pdf",
+     "sha256": "05cbb263219b5ccea93aaddd1988918477a049aba36b5881c776089474e7639b",
+     "map": "eval/d4_eval/scans/17_00759294.normal.pdf.map.json",
+     "pages": [
+      9,
+      10,
+      11,
+      13
+     ]
+    },
+    "tilt": {
+     "pdf": "17_00759294.tilt.pdf",
+     "sha256": "341d13502cc2f63e846bdee585abe00a8e8d17a2765ff2eae0b780dedf927b01",
+     "map": "eval/d4_eval/scans/17_00759294.tilt.pdf.map.json",
+     "pages": [
+      9,
+      10,
+      11,
+      13
+     ]
+    },
+    "blur": {
+     "pdf": "17_00759294.blur.pdf",
+     "sha256": "73c20a65f54e725a5cf33e01489298e8389154d3f59aebf0b7c1ea7ab2bcca77",
+     "map": "eval/d4_eval/scans/17_00759294.blur.pdf.map.json",
+     "pages": [
+      9,
+      10,
+      11,
+      13
+     ]
+    }
+   }
+  },
+  {
+   "key": "18_00110608",
+   "rank": 18,
+   "company": "DSR",
+   "corp_code": "00110608",
+   "pdf": "18_DSR.pdf",
+   "sha256": "df6f420eb2fda07e5b6ac0570d3f5dd259888d8dc104ebcd6baed0a92c7d0eb4",
+   "pages": 93,
+   "gold": "eval/d4_eval/gold/18_00110608.gold.json",
+   "mapping": "eval/d4_eval/gold/18_00110608.mapping.json",
+   "scans": {
+    "normal": {
+     "pdf": "18_00110608.normal.pdf",
+     "sha256": "85eeb6078aa2e16c49ffcb477c505ef08e1417789df7ff91dab988dd29534d66",
+     "map": "eval/d4_eval/scans/18_00110608.normal.pdf.map.json",
+     "pages": [
+      7,
+      8,
+      9,
+      10,
+      12
+     ]
+    },
+    "tilt": {
+     "pdf": "18_00110608.tilt.pdf",
+     "sha256": "13b064a755ad543e9f16cb81fde5a6eb7d246cb14af459fe2faec01b84bcc887",
+     "map": "eval/d4_eval/scans/18_00110608.tilt.pdf.map.json",
+     "pages": [
+      7,
+      8,
+      9,
+      10,
+      12
+     ]
+    },
+    "blur": {
+     "pdf": "18_00110608.blur.pdf",
+     "sha256": "6e65978ecc2146227222f8beb4154ce10e88ee8803b9806135ea70fb35427154",
+     "map": "eval/d4_eval/scans/18_00110608.blur.pdf.map.json",
+     "pages": [
+      7,
+      8,
+      9,
+      10,
+      12
+     ]
+    }
+   }
+  },
+  {
+   "key": "19_00164788",
+   "rank": 19,
+   "company": "현대모비스",
+   "corp_code": "00164788",
+   "pdf": "19_현대모비스.pdf",
+   "sha256": "e36cb18c688339d51ff59e55d991a00f4f1673490a6a4802fa51d0386071b3cb",
+   "pages": 132,
+   "gold": "eval/d4_eval/gold/19_00164788.gold.json",
+   "mapping": "eval/d4_eval/gold/19_00164788.mapping.json",
+   "scans": {
+    "normal": {
+     "pdf": "19_00164788.normal.pdf",
+     "sha256": "d22056f874f3a033038285fa73636711446fefc800abfdf5296b1a6d733a51a6",
+     "map": "eval/d4_eval/scans/19_00164788.normal.pdf.map.json",
+     "pages": [
+      9,
+      10,
+      11,
+      12,
+      14
+     ]
+    },
+    "tilt": {
+     "pdf": "19_00164788.tilt.pdf",
+     "sha256": "1300ee81ed8b3729955f3d984ea5bc2c3dbf43fadc1816a89711b46e632a24b6",
+     "map": "eval/d4_eval/scans/19_00164788.tilt.pdf.map.json",
+     "pages": [
+      9,
+      10,
+      11,
+      12,
+      14
+     ]
+    },
+    "blur": {
+     "pdf": "19_00164788.blur.pdf",
+     "sha256": "bfcffb97ee984a254e8d25b04ca4b5ed7130c9f5672c0f7e7110f86581419649",
+     "map": "eval/d4_eval/scans/19_00164788.blur.pdf.map.json",
+     "pages": [
+      9,
+      10,
+      11,
+      12,
+      14
+     ]
+    }
+   }
+  }
+ ]
+}

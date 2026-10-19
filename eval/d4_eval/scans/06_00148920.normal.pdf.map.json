@@ -1,0 +1,17 @@
+{
+ "source": "06_조광페인트.pdf",
+ "source_sha256": "d64af993c223ee31b5c0b5ee47e0be0b50d9b8ee4bb5d07ac900057f3aa0083d",
+ "condition": "normal",
+ "dpi": 200,
+ "rotate": 0.0,
+ "blur": 0.0,
+ "pages": [
+  9,
+  10,
+  11,
+  13
+ ],
+ "scan": "06_00148920.normal.pdf",
+ "scan_sha256": "c4c9eed0d0a07b951c84043450bf5ee00b3ed5abbfc2c9e0f6663e9e3f7543fb",
+ "pixels_sha256": "18d2ce224409e87842174580c042f87d1291ccb0ae3b98d06da2daf2f331bf5f"
+}

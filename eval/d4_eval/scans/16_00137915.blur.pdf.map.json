@@ -1,0 +1,18 @@
+{
+ "source": "16_엠엑스로보틱스.pdf",
+ "source_sha256": "e10cace0d5ecc99cf4ce95e2ff6ebfd7ae52cd57cf2965d13c79193a80c19bc7",
+ "condition": "blur",
+ "dpi": 150,
+ "rotate": 0.0,
+ "blur": 1.2,
+ "pages": [
+  9,
+  10,
+  11,
+  13,
+  14
+ ],
+ "scan": "16_00137915.blur.pdf",
+ "scan_sha256": "0cecec743686e7700d1326b0c7c71e4a65f737546c3ef2775343636c3b507dad",
+ "pixels_sha256": "d9c65d816203e12f86d692324a163aaaedba0cc2afde7ea3d433bd42633632c1"
+}

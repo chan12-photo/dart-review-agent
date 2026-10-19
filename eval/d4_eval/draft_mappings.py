@@ -1,6 +1,7 @@
 """Claude's first-pass D4 mapping decisions (contract 4.2), written as data so each one can be reviewed.
 
-    python eval/d4_eval/draft_mappings.py   # writes eval/d4_eval/gold/<doc>.mapping.json as "draft" (never overwrites)
+    python eval/d4_eval/draft_mappings.py                    # writes eval/d4_eval/gold/<doc>.mapping.json as "draft"
+    python eval/d4_eval/draft_mappings.py --replace-drafts   # rewrites them, refusing any that is no longer a draft
 
 Every decision rests on the PDF's text layer (pdfplumber lines, page and printed text quoted in the note) and on
 the cached OpenDART statements (cache/d4, fnlttSinglAcntAll 2025 11011 CFS); sums and differences are in 원 and
@@ -225,8 +226,8 @@ def three_column_balance_sheet(name: str, pdf: Path) -> dict[str, dict]:
             else:
                 parts.append(f"{PERIOD_NAMES[period]} {printed}" + (" ('-' 칸)" if value is None else " (OpenDART에 같은 값 없음)"))
         decisions[need["id"]] = add(
-            f"{need['page']}쪽 '{need['line']}': 이 재무상태표는 당기·전기(재작성)·전기초(감사받지 아니한 재무제표) 세 열이다"
-            f"(금액 오른쪽 끝 366·455·543). 정답 기간인 당기·전기 두 칸을 더한다: " + "; ".join(parts)
+            f"{need['page']}쪽 '{need['line']}': 이 재무상태표는 당기·전기·전기초 세 열이다(머리말의 전기와 전기초에 '감사 받지 "
+            f"아니한 재무제표'가 인쇄됨, 금액 오른쪽 끝 366·455·543). 정답 기간인 당기·전기 두 칸을 더한다: " + "; ".join(parts)
             + f". 전기초 {amounts[2]['text']}는 정답 기간이 아니라 넣지 않는다.", cells)
     for need in pool:
         if need["id"] not in used:
@@ -353,10 +354,13 @@ DSR_NOTES = {  # the sum checks of each transcription (원), both periods
 }
 
 
-def write(name: str, decisions: dict[str, dict]) -> Path:
+def write(name: str, decisions: dict[str, dict], replace_drafts: bool = False) -> Path:
     path = GOLD / f"{name}.mapping.json"
     if path.exists():
-        raise SystemExit(f"{path.name} exists; drafts are never overwritten (edit it and record the change)")
+        status = json.loads(path.read_text(encoding="utf-8")).get("status")
+        if not (replace_drafts and status == "draft"):
+            # a confirmed mapping is changed only by hand, with its history (contract 4.2)
+            raise SystemExit(f"{path.name} exists ({status}); only a draft is replaced, and only with --replace-drafts")
     mapping = {"status": "draft", "drafted_by": "Claude 1차", "confirmed_by": None, "confirmed_at": None, "basis": BASIS,
                "decisions": decisions}
     path.write_text(json.dumps(mapping, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
@@ -364,6 +368,7 @@ def write(name: str, decisions: dict[str, dict]) -> Path:
 
 
 def main() -> int:
+    replace = "--replace-drafts" in sys.argv[1:]
     sys.path.insert(0, str(ROOT / "eval"))
     import d4_gold
     drafted = dict(DECISIONS)
@@ -376,8 +381,8 @@ def main() -> int:
         # the decisions must pass the same checks the scorer applies, before they are written
         applied = d4_gold.apply_mapping(gold, {"status": "draft", "decisions": decisions})
         print(name, "ok:", len(applied["cells"]), "cells,", "unscorable:", applied["unscorable"] or "none")
-        if not (GOLD / f"{name}.mapping.json").exists():
-            write(name, decisions)
+        if replace or not (GOLD / f"{name}.mapping.json").exists():
+            write(name, decisions, replace_drafts=replace)
     return 0
 
 

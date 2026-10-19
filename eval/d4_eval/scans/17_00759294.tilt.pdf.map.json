@@ -1,0 +1,17 @@
+{
+ "source": "17_와이솔.pdf",
+ "source_sha256": "72f349f400f7657763ae09b260c964fd51379f4b944b9dc32d415d8325f9609d",
+ "condition": "tilt",
+ "dpi": 150,
+ "rotate": 1.0,
+ "blur": 0.0,
+ "pages": [
+  9,
+  10,
+  11,
+  13
+ ],
+ "scan": "17_00759294.tilt.pdf",
+ "scan_sha256": "341d13502cc2f63e846bdee585abe00a8e8d17a2765ff2eae0b780dedf927b01",
+ "pixels_sha256": "3355f457e0d3ed25d71a45ff19e664e7697e40f29e19f94325a916b8608b92fc"
+}

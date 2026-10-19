@@ -74,14 +74,16 @@
 - **자동 정답 칸의 계정명 점검:** OpenDART 이름이 있는 1,886칸에서 인쇄 계정명과 OpenDART 이름이 많이 다른 39칸을 모두 봤다. 같은 값을 다른 이름으로 저장했거나(소계와 항목, 지배기업 자본과 자본총계), 표준 이름이 다를 뿐이었다. 잘린 계정명이나 잘못 짝지어진 칸은 없었다. 조광페인트 "3. 토지재평가"도 인쇄된 그대로다.
 - **조광페인트 현금흐름표:** 유출 소계는 괄호로, 그 아래 세부 유출 항목은 괄호 없이 인쇄했다. 정답은 인쇄된 부호를 따른다(계약 4.1). 제품에는 어려운 지점이라 보고서에 적는다.
 - **합성 스캔 30개:** 매핑을 적용한 정답의 쪽(문서마다 4~6쪽, 자본변동표 쪽 제외)으로 만들었다. 30개 모두 채점기의 `scan_gold` 검사를 통과했고, 같은 조건으로 다시 만들면 파일과 픽셀이 같다. 대응표는 `eval/d4_eval/scans/`, 스캔은 `~/Desktop/D4/scans/`(커밋하지 않음)에 있다.
-- **고정 확인:** ④ 고정(`49c182b`) 뒤로 제품과 평가 도구 5개는 바뀌지 않았다(`git diff 49c182b HEAD -- dart_review pyproject.toml eval/d4_{gold,score,candidates,preflight,scan}.py`가 비어 있음).
+- **고정 확인:** 고정 기록의 제품 P·도구 T 기준 커밋은 `49c182b`이고, 고정 기록을 커밋한 것(F)은 `363bd8f`다. 그 뒤로 제품과 평가 도구 5개는 바뀌지 않았다(`git diff 49c182b HEAD -- dart_review pyproject.toml eval/d4_{gold,score,candidates,preflight,scan}.py`가 비어 있음). 처음에 "④ 고정(`49c182b`)"이라고 적은 것은 두 커밋을 섞어 쓴 것이라 Codex 7차 5번을 받아 고쳤다.
 
 ## 사용자가 할 일 (남은 것 전부)
 
-1. **Codex 7차 검토 실행 (필수):** [요청문](../../docs/reviews/D4_registration_codex_request.ko.md). 결과를 `docs/reviews/D4_registration_codex_result.ko.md`로 저장한다. Claude가 반영한다.
-2. **매핑표 확인:** 이 안내서와 Codex 결과를 보고 "확인"이라고 알려 준다. Claude가 10개 매핑표를 `confirmed`로 바꾼다.
-3. **태그 push 승인 (⑦):** 등록 커밋 R의 태그 `d4-registered`를 GitHub에 push한다.
-4. **실행 승인 (⑧):** 규칙 방식 40회와 AI 방식 40회. AI 방식은 하루 이상 걸릴 수 있다.
+1. ~~Codex 7차 검토~~ (2026-10-19 끝남): [결과](../../docs/reviews/D4_registration_codex_result.ko.md), [응답](../../docs/reviews/D4_registration_codex_response.ko.md). 5건을 모두 받아들여 고쳤다.
+2. **Codex 7차 재검토 (강하게 권장):** 고친 것(위치 검사, 실행기, 공식 집계, 계약 7판)만 좁게 본다. [요청문](../../docs/reviews/D4_registration_recheck_codex_request.ko.md). 결과는 `docs/reviews/D4_registration_recheck_codex_result.ko.md`로 저장한다.
+3. **매핑표 확인:** 이 안내서와 Codex 결과를 보고 "확인"이라고 알려 준다. Claude가 10개 매핑표를 `confirmed`로 바꾼다.
+4. **등록 커밋과 태그 push 승인 (⑦):** 등록 커밋 R과 그 앞의 커밋들, 태그 `d4-registered`를 GitHub에 push한다. 절차: [`docs/D4_RUN_PROCEDURE.ko.md`](../../docs/D4_RUN_PROCEDURE.ko.md).
+5. **실행 승인 (⑧):** 규칙 방식 40회와 AI 방식 40회. AI 방식은 하루 이상 걸릴 수 있다.
+6. **실행 뒤 판정 확인 (⑨):** 정답에 없는 칸(4.5)과 위치 검사에서 사람이 정할 곳(4.6)을 Claude가 1차로 판정하면 확인한다.
 
 ## 보고서에 함께 적을 것 (⑨)
 
@@ -90,3 +92,4 @@
 - 금액 뒤 "원" 표기 2건(두산, 현대모비스)
 - OpenDART와 인쇄본의 차이(와이솔 65억 원 재분류, 소계·중복 저장)
 - 사람이 정한 항목 215개 가운데 Claude 1차, 사용자 확인 한 명(제3 검토자 없음)
+- 한 재무제표에 같은 계정명이 두 번 이상 인쇄된 곳 66곳(8개 문서, 같은 쪽 60곳과 두 쪽에 걸친 6곳): 고정 채점기는 두 행이 바뀌어도 맞음으로 센다(Codex 7차 1번). 위치 검사(계약 4.6)로 따로 잰다

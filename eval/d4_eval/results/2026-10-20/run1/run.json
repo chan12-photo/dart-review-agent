@@ -1,0 +1,30 @@
+{
+ "started_at": "2026-10-20T07:16:10+00:00",
+ "commit": "1f7b6bf915765bf8b3ea5258903ff838df9ee923",
+ "status_porcelain": "",
+ "preflight": {
+  "log": "~/D4_official/run1.preflight.json",
+  "sha256": "bfd71b141bc93b86ee73d5eac780358b8cc0d129cac9758f86315018303564bd",
+  "checked_at": "2026-10-20T07:16:10+00:00"
+ },
+ "python": "3.13.12",
+ "documents_sha256": "323c5bfd90e453a904c0eb5922087c9d0ea8f0d75a82f52dce7353948e676772",
+ "readers": [
+  "rules",
+  "ai"
+ ],
+ "calls": 80,
+ "argv": [
+  "--pdf-dir",
+  "~/Desktop/D4",
+  "--scan-dir",
+  "~/Desktop/D4/scans",
+  "--out",
+  "~/D4_official/run1",
+  "--preflight",
+  "~/D4_official/run1.preflight.json"
+ ],
+ "finished_at": "2026-10-20T09:17:30+00:00",
+ "succeeded": 80,
+ "failed": []
+}

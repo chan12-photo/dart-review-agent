@@ -1,0 +1,228 @@
+{
+ "source": "17_00759294.normal.pdf",
+ "reader": "rules",
+ "cells": 7,
+ "needs_review": 7,
+ "statements": [
+  {
+   "title": "연결재무상태표",
+   "kind": "재무상태표",
+   "page": 1,
+   "unit": "원",
+   "columns": [
+    {
+     "header": "넌 께 테 떼 제 제 테 테 테 제 떼 제 떼 떼 빼 떼 떼 떼 테 떼 039 때 i aee-aeoneaaene [ass [| score",
+     "year": null,
+     "end": null
+    },
+    {
+     "header": "넌 께 테 떼 제 제 테 테 테 제 떼 제 떼 떼 빼 떼 떼 떼 테 떼 039 때 i CT aee-aeoneaaene [ass [| score | | 390 개 71.20.90",
+     "year": null,
+     "end": null
+    },
+    {
+     "header": "넌 께 테 떼 제 제 테 테 테 제 떼 제 떼 떼 빼 떼 떼 떼 테 떼 039 때 i CT aee-aeoneaaene [ass [| score | | 390 개 71.20.90",
+     "year": null,
+     "end": null
+    }
+   ],
+   "rows": [
+    {
+     "label": "390 개 71.20.90",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 20299,
+       "printed": "20299",
+       "page": 1,
+       "status": "확인 필요",
+       "reasons": [
+        "OCR 확신도가 낮다 (46)",
+        "이 열의 기간 머리글(제 N 기, 당기·전기, 연도)을 확인하지 못했다"
+       ],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "0 | | 1 따쁘펴여 | 때",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 9604,
+       "printed": "09604",
+       "page": 1,
+       "status": "확인 필요",
+       "reasons": [
+        "OCR 확신도가 낮다 (28)",
+        "이 열의 기간 머리글(제 N 기, 당기·전기, 연도)을 확인하지 못했다"
+       ],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "90540 끼",
+     "account": null,
+     "values": [
+      {
+       "column": 1,
+       "value": 999,
+       "printed": "999",
+       "page": 1,
+       "status": "확인 필요",
+       "reasons": [
+        "OCR 확신도가 낮다 (13)",
+        "이 열의 기간 머리글(제 N 기, 당기·전기, 연도)을 확인하지 못했다"
+       ],
+       "evidence": ""
+      }
+     ]
+    }
+   ],
+   "problems": [
+    "자산총계·부채총계·자본총계 줄을 모두 찾지 못해 합계 검산을 하지 못했다",
+    "빈 칸 6개 (390 개 71.20.90, 0 | | 1 따쁘펴여 | 때, 90540 끼): 원본이 '-'(해당 없음)인지, 읽지 못한 숫자인지 확인 필요",
+    "표에 넣지 못한 금액 9개 (1쪽 '92404', 1쪽 '59097', 1쪽 '50945', 1쪽 'pea of' 줄 '030900604', 1쪽 '랜 44 TT . 19 이 400' 줄 '000', 1쪽 '960', 1쪽 '964087003', 1쪽 '00694', 1쪽 '52669'): 줄이나 열을 복원하지 못한 행이 있을 수 있다 (원본과 대조 필요)",
+    "소계와 그 아래 항목을 구분하지 못해 소계 검산을 하지 못했다"
+   ],
+   "sums_checked": 0,
+   "sums_uncertain": 0
+  },
+  {
+   "title": "연결포괄손익계산서",
+   "kind": "포괄손익계산서",
+   "page": 3,
+   "unit": "원",
+   "columns": [
+    {
+     "header": "",
+     "year": null,
+     "end": null
+    },
+    {
+     "header": "| | . . 090.59099| 45.700959.04 98096 rr.) ara ewes eer vsamuenaeeen || rae] . . 199679590",
+     "year": 959,
+     "end": null
+    }
+   ],
+   "rows": [
+    {
+     "label": "때",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 2220784069,
+       "printed": "2220784069",
+       "page": 3,
+       "status": "확인 필요",
+       "reasons": [
+        "OCR 확신도가 낮다 (0)",
+        "이 열의 기간 머리글(제 N 기, 당기·전기, 연도)을 확인하지 못했다",
+        "같은 줄에 열을 정하지 못한 숫자가 있다 (줄 구조가 깨졌을 수 있다)"
+       ],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "92609(6909 커시 00000 | 00 | . 6. 어끼 9999| 10.08.00",
+     "account": null,
+     "values": [
+      {
+       "column": 1,
+       "value": 208,
+       "printed": "208",
+       "page": 3,
+       "status": "확인 필요",
+       "reasons": [
+        "OCR 확신도가 낮다 (54)"
+       ],
+       "evidence": ""
+      }
+     ]
+    }
+   ],
+   "problems": [
+    "빈 칸 2개 (때, 92609(6909 커시 00000 | 00 | . 6. 어끼 9999| 10.08.00): 원본이 '-'(해당 없음)인지, 읽지 못한 숫자인지 확인 필요",
+    "표에 넣지 못한 금액 5개 (3쪽 '1.06609', 3쪽 'i Yai goreoa@ay incr] 0.98' 줄 '680.04', 3쪽 '때' 줄 '1', 3쪽 '69999', 3쪽 '00000'): 줄이나 열을 복원하지 못한 행이 있을 수 있다 (원본과 대조 필요)"
+   ],
+   "sums_checked": null,
+   "sums_uncertain": 0
+  },
+  {
+   "title": "연결현금흐름표",
+   "kind": "현금흐름표",
+   "page": 4,
+   "unit": "원",
+   "columns": [
+    {
+     "header": "",
+     "year": null,
+     "end": null
+    },
+    {
+     "header": "| | ___soeaazrred] . 세 이 599900 aaa 60366 | | 6467099| .09996099 기. idee 92609) arse) 199995990904 2009.49 PY as if tesa 6.04949 | san] sone f-weaaee neal rr 108 ienwseaee «rea rree) ee ienasoeeeesnaa || esis. renwal] 1900440001 eslea-saomaesenaase || resrraveaol . 16509 peesteaaa dear] re re ns 0 Pa me .00",
+     "year": 2009,
+     "end": null
+    }
+   ],
+   "rows": [
+    {
+     "label": "___soeaazrred] . 세이 599900",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 99060366,
+       "printed": "99060366",
+       "page": 4,
+       "status": "확인 필요",
+       "reasons": [
+        "OCR 확신도가 낮다 (0)",
+        "이 열의 기간 머리글(제 N 기, 당기·전기, 연도)을 확인하지 못했다"
+       ],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "lec-seassenea ne [| ceeoaraso) . 0.405907 서의",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 2826449,
+       "printed": "2826449",
+       "page": 4,
+       "status": "확인 필요",
+       "reasons": [
+        "OCR 확신도가 낮다 (16)",
+        "이 열의 기간 머리글(제 N 기, 당기·전기, 연도)을 확인하지 못했다",
+        "같은 줄에 열을 정하지 못한 숫자가 있다 (줄 구조가 깨졌을 수 있다)"
+       ],
+       "evidence": ""
+      }
+     ]
+    }
+   ],
+   "problems": [
+    "빈 칸 2개 (___soeaazrred] . 세이 599900, lec-seassenea ne [| ceeoaraso) . 0.405907 서의): 원본이 '-'(해당 없음)인지, 읽지 못한 숫자인지 확인 필요",
+    "표에 넣지 못한 금액 5개 (4쪽 'EE | | . . 9554609' 줄 '00546', 4쪽 'lec-seassenea ne [| ceeoaraso) . 0.405907 서의' 줄 '62', 4쪽 '6648754948', 4쪽 '90000', 4쪽 '2454924'): 줄이나 열을 복원하지 못한 행이 있을 수 있다 (원본과 대조 필요)",
+    "소계와 그 아래 항목을 구분하지 못해 소계 검산을 하지 못했다"
+   ],
+   "sums_checked": 0,
+   "sums_uncertain": 0
+  }
+ ],
+ "problems": [
+  "1쪽 스캔 품질이 낮다 (OCR 평균 확신도 47): 읽지 못한 줄이나 칸이 많을 수 있다",
+  "2쪽 스캔 품질이 낮다 (OCR 평균 확신도 55): 읽지 못한 줄이나 칸이 많을 수 있다",
+  "3쪽 스캔 품질이 낮다 (OCR 평균 확신도 59): 읽지 못한 줄이나 칸이 많을 수 있다",
+  "4쪽 스캔 품질이 낮다 (OCR 평균 확신도 46): 읽지 못한 줄이나 칸이 많을 수 있다"
+ ],
+ "source_sha256": "05cbb263219b5ccea93aaddd1988918477a049aba36b5881c776089474e7639b"
+}

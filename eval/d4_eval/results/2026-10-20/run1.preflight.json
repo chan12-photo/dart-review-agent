@@ -1,0 +1,937 @@
+{
+ "head": "1f7b6bf915765bf8b3ea5258903ff838df9ee923",
+ "checked_at": "2026-10-20T07:16:10+00:00",
+ "ok": true,
+ "checks": [
+  {
+   "check": "HEAD is the registered commit R",
+   "ok": true,
+   "detail": {
+    "head": "1f7b6bf915765bf8b3ea5258903ff838df9ee923",
+    "registered": "1f7b6bf915765bf8b3ea5258903ff838df9ee923"
+   }
+  },
+  {
+   "check": "registered eval/freeze_d4.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "8039695210c2d4086614307dc75d599850453a68",
+    "head": "8039695210c2d4086614307dc75d599850453a68"
+   }
+  },
+  {
+   "check": "registered docs/D4_RUN_PROCEDURE.ko.md at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "caab4b869fbf027c0a1118b5088ddbe7e1b33879",
+    "head": "caab4b869fbf027c0a1118b5088ddbe7e1b33879"
+   }
+  },
+  {
+   "check": "registered docs/EVAL_CONTRACT_D4.ko.md at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "098784103a2bf511d51be4d764121afe1b2972f1",
+    "head": "098784103a2bf511d51be4d764121afe1b2972f1"
+   }
+  },
+  {
+   "check": "registered eval/d4_candidates/00001_00188973.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "0077e294a7fac0fab3f283c98893cd7815baf983",
+    "head": "0077e294a7fac0fab3f283c98893cd7815baf983"
+   }
+  },
+  {
+   "check": "registered eval/d4_candidates/00002_01201581.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "33013370fb7c5ad4a1db67ee7a367de175858bce",
+    "head": "33013370fb7c5ad4a1db67ee7a367de175858bce"
+   }
+  },
+  {
+   "check": "registered eval/d4_candidates/00003_00115038.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "afa159284a159bfbc8d732b3a682343813c3c78e",
+    "head": "afa159284a159bfbc8d732b3a682343813c3c78e"
+   }
+  },
+  {
+   "check": "registered eval/d4_candidates/00004_00632331.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "a56d6806ca7bdfd0cf45b58c6955e74e2fd02620",
+    "head": "a56d6806ca7bdfd0cf45b58c6955e74e2fd02620"
+   }
+  },
+  {
+   "check": "registered eval/d4_candidates/00005_00117212.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "6143a9ee2285572fc35acf8ce3fdb53aefd5970d",
+    "head": "6143a9ee2285572fc35acf8ce3fdb53aefd5970d"
+   }
+  },
+  {
+   "check": "registered eval/d4_candidates/00006_00148920.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "15d0c0c7a9d9166dfccfc992154bebc1eb1aae92",
+    "head": "15d0c0c7a9d9166dfccfc992154bebc1eb1aae92"
+   }
+  },
+  {
+   "check": "registered eval/d4_candidates/00007_01258710.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "5a39a52797fb032eee62b350f8a6d044e2b8877b",
+    "head": "5a39a52797fb032eee62b350f8a6d044e2b8877b"
+   }
+  },
+  {
+   "check": "registered eval/d4_candidates/00008_00267793.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "298163803b690df819fff3e8653ef0fb27a2d794",
+    "head": "298163803b690df819fff3e8653ef0fb27a2d794"
+   }
+  },
+  {
+   "check": "registered eval/d4_candidates/00009_00255309.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "b3294fe623f4967eb772ecdaf511f6b19a5c3ddd",
+    "head": "b3294fe623f4967eb772ecdaf511f6b19a5c3ddd"
+   }
+  },
+  {
+   "check": "registered eval/d4_candidates/00010_01690235.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "65025a7502c1ee568148bac0595eb2e47707413b",
+    "head": "65025a7502c1ee568148bac0595eb2e47707413b"
+   }
+  },
+  {
+   "check": "registered eval/d4_candidates/00011_00138224.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "76e8010876534dd4288f1a59c16e8e245da82ee9",
+    "head": "76e8010876534dd4288f1a59c16e8e245da82ee9"
+   }
+  },
+  {
+   "check": "registered eval/d4_candidates/00012_00481676.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "4155d246f24175cd5168c4e033e488857711fdd3",
+    "head": "4155d246f24175cd5168c4e033e488857711fdd3"
+   }
+  },
+  {
+   "check": "registered eval/d4_candidates/00013_00184667.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "986c7da631532093bddb9182cf12dfdd14cdcbab",
+    "head": "986c7da631532093bddb9182cf12dfdd14cdcbab"
+   }
+  },
+  {
+   "check": "registered eval/d4_candidates/00014_01418260.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "0c43049dba594926a1895057e350a883c419b334",
+    "head": "0c43049dba594926a1895057e350a883c419b334"
+   }
+  },
+  {
+   "check": "registered eval/d4_candidates/00015_00479705.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "5c853dd4ce5ce8b11881c6485a853b385dbf1173",
+    "head": "5c853dd4ce5ce8b11881c6485a853b385dbf1173"
+   }
+  },
+  {
+   "check": "registered eval/d4_candidates/00016_00137915.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "b2577ee98b82870388259565c98e212c7a02ebf4",
+    "head": "b2577ee98b82870388259565c98e212c7a02ebf4"
+   }
+  },
+  {
+   "check": "registered eval/d4_candidates/00017_00759294.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "a254ae1ba36002e8276a849462b5f23978900726",
+    "head": "a254ae1ba36002e8276a849462b5f23978900726"
+   }
+  },
+  {
+   "check": "registered eval/d4_candidates/00018_00110608.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "810401aaa985c0d353ac8790dbf263d2c1c0ac7b",
+    "head": "810401aaa985c0d353ac8790dbf263d2c1c0ac7b"
+   }
+  },
+  {
+   "check": "registered eval/d4_candidates/00019_00164788.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "08fad0af467940ec8eb8ef9592cf82165ebffc2d",
+    "head": "08fad0af467940ec8eb8ef9592cf82165ebffc2d"
+   }
+  },
+  {
+   "check": "registered eval/d4_candidates/00020_01867758.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "c22bf3058aa1742ffc1aff2c962067de46cfd36c",
+    "head": "c22bf3058aa1742ffc1aff2c962067de46cfd36c"
+   }
+  },
+  {
+   "check": "registered eval/d4_candidates/00021_00161408.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "575bc8ada9de2f717b3672022ed3d7faed6d0085",
+    "head": "575bc8ada9de2f717b3672022ed3d7faed6d0085"
+   }
+  },
+  {
+   "check": "registered eval/d4_candidates/00022_01105621.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "9de3687fba6a4cf514c0a49494240b225a15237e",
+    "head": "9de3687fba6a4cf514c0a49494240b225a15237e"
+   }
+  },
+  {
+   "check": "registered eval/d4_candidates/00023_00148896.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "55ac005a63ae330e5726e1bc686a9445c81313a2",
+    "head": "55ac005a63ae330e5726e1bc686a9445c81313a2"
+   }
+  },
+  {
+   "check": "registered eval/d4_candidates/00024_00306719.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "ab029f849c26dfe9e8c4ac945cdc07ddd95e6d2d",
+    "head": "ab029f849c26dfe9e8c4ac945cdc07ddd95e6d2d"
+   }
+  },
+  {
+   "check": "registered eval/d4_candidates/00025_00229818.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "5af6ad19aad69cd919d0f005a0861f1e3a78cce0",
+    "head": "5af6ad19aad69cd919d0f005a0861f1e3a78cce0"
+   }
+  },
+  {
+   "check": "registered eval/d4_candidates/00026_01101041.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "ae1ca591479aa03821b0e817031fc995f08e3a22",
+    "head": "ae1ca591479aa03821b0e817031fc995f08e3a22"
+   }
+  },
+  {
+   "check": "registered eval/d4_candidates/00027_00525679.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "ef14730a7d1a02d6ece5d45d1a6379db401de194",
+    "head": "ef14730a7d1a02d6ece5d45d1a6379db401de194"
+   }
+  },
+  {
+   "check": "registered eval/d4_candidates/00028_01160363.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "aca274cd315e4a77e4f5991710c44493cf265353",
+    "head": "aca274cd315e4a77e4f5991710c44493cf265353"
+   }
+  },
+  {
+   "check": "registered eval/d4_candidates/00029_00110963.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "d273abeea447e7ec862f934a05fd3b2ce63f270b",
+    "head": "d273abeea447e7ec862f934a05fd3b2ce63f270b"
+   }
+  },
+  {
+   "check": "registered eval/d4_candidates/00030_00161046.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "9b4174245aa711f3ea98366962289b5a84a7a38e",
+    "head": "9b4174245aa711f3ea98366962289b5a84a7a38e"
+   }
+  },
+  {
+   "check": "registered eval/d4_candidates/checks.jsonl at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "91afce1ffba1c25ae3f6cf2b750f3a922b05b107",
+    "head": "91afce1ffba1c25ae3f6cf2b750f3a922b05b107"
+   }
+  },
+  {
+   "check": "registered eval/d4_candidates/downloads.jsonl at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "3ffcbd34c8e44c029793c8f3ac7fe2b35b100674",
+    "head": "3ffcbd34c8e44c029793c8f3ac7fe2b35b100674"
+   }
+  },
+  {
+   "check": "registered eval/d4_download.py at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "1265f88f1d0d94caa187f67daab2e798f1e2c61a",
+    "head": "1265f88f1d0d94caa187f67daab2e798f1e2c61a"
+   }
+  },
+  {
+   "check": "registered eval/d4_eval/REVIEW_GUIDE.ko.md at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "0999351b1ccb2fc052da0a12fd6116b60305fac3",
+    "head": "0999351b1ccb2fc052da0a12fd6116b60305fac3"
+   }
+  },
+  {
+   "check": "registered eval/d4_eval/documents.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "4c29b28a546d0dbe497cd3b9d82e950b451238a0",
+    "head": "4c29b28a546d0dbe497cd3b9d82e950b451238a0"
+   }
+  },
+  {
+   "check": "registered eval/d4_eval/draft_mappings.py at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "1151100a688e413a62e6d1e9d48d9ba295132d32",
+    "head": "1151100a688e413a62e6d1e9d48d9ba295132d32"
+   }
+  },
+  {
+   "check": "registered eval/d4_eval/duplicate_places.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "dbcaf2ccc36b7e84cfbf8db52830f1f741587ea9",
+    "head": "dbcaf2ccc36b7e84cfbf8db52830f1f741587ea9"
+   }
+  },
+  {
+   "check": "registered eval/d4_eval/gold/05_00117212.gold.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "5751ee05a36fd55b5a9d8e5b129e35ee85e75ed0",
+    "head": "5751ee05a36fd55b5a9d8e5b129e35ee85e75ed0"
+   }
+  },
+  {
+   "check": "registered eval/d4_eval/gold/05_00117212.mapping.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "9889216b81650bd50d1773726148be9f1d80a018",
+    "head": "9889216b81650bd50d1773726148be9f1d80a018"
+   }
+  },
+  {
+   "check": "registered eval/d4_eval/gold/06_00148920.gold.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "d3e6717490b5dfb3d54eace4a7de67307f641d0b",
+    "head": "d3e6717490b5dfb3d54eace4a7de67307f641d0b"
+   }
+  },
+  {
+   "check": "registered eval/d4_eval/gold/06_00148920.mapping.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "284570a5c6aa33e258e0d8f55fbf30d1cb1bfc3c",
+    "head": "284570a5c6aa33e258e0d8f55fbf30d1cb1bfc3c"
+   }
+  },
+  {
+   "check": "registered eval/d4_eval/gold/07_01258710.gold.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "94e105e77cf57c275c03f83d66dd0d537baed38d",
+    "head": "94e105e77cf57c275c03f83d66dd0d537baed38d"
+   }
+  },
+  {
+   "check": "registered eval/d4_eval/gold/07_01258710.mapping.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "50563d2be27e06b2e4351e3fc30fa6bb4a2bb6fd",
+    "head": "50563d2be27e06b2e4351e3fc30fa6bb4a2bb6fd"
+   }
+  },
+  {
+   "check": "registered eval/d4_eval/gold/11_00138224.gold.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "c8b84d8469791810c2362414edf5d50ccaa27251",
+    "head": "c8b84d8469791810c2362414edf5d50ccaa27251"
+   }
+  },
+  {
+   "check": "registered eval/d4_eval/gold/11_00138224.mapping.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "0b5c17209ee5e62a33781ac120c797a4577208b4",
+    "head": "0b5c17209ee5e62a33781ac120c797a4577208b4"
+   }
+  },
+  {
+   "check": "registered eval/d4_eval/gold/13_00184667.gold.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "9bc4c5ba10ef49d65ae3e4ce48c8d483df519542",
+    "head": "9bc4c5ba10ef49d65ae3e4ce48c8d483df519542"
+   }
+  },
+  {
+   "check": "registered eval/d4_eval/gold/13_00184667.mapping.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "4837e41f5d95b8151f3de1e8f7b01663d24e0e61",
+    "head": "4837e41f5d95b8151f3de1e8f7b01663d24e0e61"
+   }
+  },
+  {
+   "check": "registered eval/d4_eval/gold/15_00479705.gold.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "f8d73d84ead04a44a9ef59b51da6e88f480a66e4",
+    "head": "f8d73d84ead04a44a9ef59b51da6e88f480a66e4"
+   }
+  },
+  {
+   "check": "registered eval/d4_eval/gold/15_00479705.mapping.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "6c1301d989331909b6ae71b0813af520559486ab",
+    "head": "6c1301d989331909b6ae71b0813af520559486ab"
+   }
+  },
+  {
+   "check": "registered eval/d4_eval/gold/16_00137915.gold.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "ee274c01866f60ba0ebdb00a97ec743474e0dbf9",
+    "head": "ee274c01866f60ba0ebdb00a97ec743474e0dbf9"
+   }
+  },
+  {
+   "check": "registered eval/d4_eval/gold/16_00137915.mapping.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "b377f47b67999789fe469248b908c7dfcb402135",
+    "head": "b377f47b67999789fe469248b908c7dfcb402135"
+   }
+  },
+  {
+   "check": "registered eval/d4_eval/gold/17_00759294.gold.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "86708aabdcc8d9b60351278c69dc93f297b2f507",
+    "head": "86708aabdcc8d9b60351278c69dc93f297b2f507"
+   }
+  },
+  {
+   "check": "registered eval/d4_eval/gold/17_00759294.mapping.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "ff34d0e14d65508796bda19c1fa3dd3ac5356eaf",
+    "head": "ff34d0e14d65508796bda19c1fa3dd3ac5356eaf"
+   }
+  },
+  {
+   "check": "registered eval/d4_eval/gold/18_00110608.gold.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "a6c60d87ac8c7f0d345ce9dcf26f21421e6aea1c",
+    "head": "a6c60d87ac8c7f0d345ce9dcf26f21421e6aea1c"
+   }
+  },
+  {
+   "check": "registered eval/d4_eval/gold/18_00110608.mapping.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "623ad2e8a1448ae059bcfb4919941ba3fbdaa876",
+    "head": "623ad2e8a1448ae059bcfb4919941ba3fbdaa876"
+   }
+  },
+  {
+   "check": "registered eval/d4_eval/gold/19_00164788.gold.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "f979c6bcb3989f66ba7f2771635a58df0fefec09",
+    "head": "f979c6bcb3989f66ba7f2771635a58df0fefec09"
+   }
+  },
+  {
+   "check": "registered eval/d4_eval/gold/19_00164788.mapping.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "e29ede6e342c5f7edef432390a801206bc06ee0c",
+    "head": "e29ede6e342c5f7edef432390a801206bc06ee0c"
+   }
+  },
+  {
+   "check": "registered eval/d4_eval/inspect_pdf.py at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "4a7f1d06f917b4d0ced6334ccab887c5c0034b30",
+    "head": "4a7f1d06f917b4d0ced6334ccab887c5c0034b30"
+   }
+  },
+  {
+   "check": "registered eval/d4_eval/official_d4.py at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "610158f8f6f91cf203689a6d083dc7c94a2ad6f3",
+    "head": "610158f8f6f91cf203689a6d083dc7c94a2ad6f3"
+   }
+  },
+  {
+   "check": "registered eval/d4_eval/position_check.py at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "93deca2d71a4eeba8b31c64ec67cd5ef5abd5b7d",
+    "head": "93deca2d71a4eeba8b31c64ec67cd5ef5abd5b7d"
+   }
+  },
+  {
+   "check": "registered eval/d4_eval/run_d4.py at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "4da25d4443c4c2319bb5c7e16f49553dc424b6f3",
+    "head": "4da25d4443c4c2319bb5c7e16f49553dc424b6f3"
+   }
+  },
+  {
+   "check": "registered eval/d4_eval/scans/05_00117212.blur.pdf.map.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "7dd30a2fb188a8286ce9892736a1a9fe617f667f",
+    "head": "7dd30a2fb188a8286ce9892736a1a9fe617f667f"
+   }
+  },
+  {
+   "check": "registered eval/d4_eval/scans/05_00117212.normal.pdf.map.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "a752f8bc0802299b8d69e24269f9473ae98eb4f0",
+    "head": "a752f8bc0802299b8d69e24269f9473ae98eb4f0"
+   }
+  },
+  {
+   "check": "registered eval/d4_eval/scans/05_00117212.tilt.pdf.map.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "93606f79d1155b78020b5de8caa66ee02653e937",
+    "head": "93606f79d1155b78020b5de8caa66ee02653e937"
+   }
+  },
+  {
+   "check": "registered eval/d4_eval/scans/06_00148920.blur.pdf.map.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "412502c055e75d00a7d4cec27454145246f4c83c",
+    "head": "412502c055e75d00a7d4cec27454145246f4c83c"
+   }
+  },
+  {
+   "check": "registered eval/d4_eval/scans/06_00148920.normal.pdf.map.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "80a2c769a27c76cb4ab898246fd053c0220ef38b",
+    "head": "80a2c769a27c76cb4ab898246fd053c0220ef38b"
+   }
+  },
+  {
+   "check": "registered eval/d4_eval/scans/06_00148920.tilt.pdf.map.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "f1ef575288e6bfc9740eceba6e70f903a907f38a",
+    "head": "f1ef575288e6bfc9740eceba6e70f903a907f38a"
+   }
+  },
+  {
+   "check": "registered eval/d4_eval/scans/07_01258710.blur.pdf.map.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "9f031a38e70cf7f53d44cd5f762c242dad2d9c30",
+    "head": "9f031a38e70cf7f53d44cd5f762c242dad2d9c30"
+   }
+  },
+  {
+   "check": "registered eval/d4_eval/scans/07_01258710.normal.pdf.map.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "57089c6454dbc07e01d35740062a4716f03af7bf",
+    "head": "57089c6454dbc07e01d35740062a4716f03af7bf"
+   }
+  },
+  {
+   "check": "registered eval/d4_eval/scans/07_01258710.tilt.pdf.map.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "bbb77964d7a0374d4e6e7885e8a3150e9eb4a27f",
+    "head": "bbb77964d7a0374d4e6e7885e8a3150e9eb4a27f"
+   }
+  },
+  {
+   "check": "registered eval/d4_eval/scans/11_00138224.blur.pdf.map.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "f23f8700af4ca566329fb1655f5270ba1b91191d",
+    "head": "f23f8700af4ca566329fb1655f5270ba1b91191d"
+   }
+  },
+  {
+   "check": "registered eval/d4_eval/scans/11_00138224.normal.pdf.map.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "24228036871405a18cddbe745f80f844e6112226",
+    "head": "24228036871405a18cddbe745f80f844e6112226"
+   }
+  },
+  {
+   "check": "registered eval/d4_eval/scans/11_00138224.tilt.pdf.map.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "2ba35e9f8ab65754996f4aea45fd243e82ea935b",
+    "head": "2ba35e9f8ab65754996f4aea45fd243e82ea935b"
+   }
+  },
+  {
+   "check": "registered eval/d4_eval/scans/13_00184667.blur.pdf.map.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "2683f539e4de9c3801587cf28e1675c39462258d",
+    "head": "2683f539e4de9c3801587cf28e1675c39462258d"
+   }
+  },
+  {
+   "check": "registered eval/d4_eval/scans/13_00184667.normal.pdf.map.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "c1346556afaf1418c8bb05dc8899bf855731d566",
+    "head": "c1346556afaf1418c8bb05dc8899bf855731d566"
+   }
+  },
+  {
+   "check": "registered eval/d4_eval/scans/13_00184667.tilt.pdf.map.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "89b1c53b85847ded7e3c9175632e66a7566ff404",
+    "head": "89b1c53b85847ded7e3c9175632e66a7566ff404"
+   }
+  },
+  {
+   "check": "registered eval/d4_eval/scans/15_00479705.blur.pdf.map.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "e013440a80e7f5786a235cf40e029c7e7af6c204",
+    "head": "e013440a80e7f5786a235cf40e029c7e7af6c204"
+   }
+  },
+  {
+   "check": "registered eval/d4_eval/scans/15_00479705.normal.pdf.map.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "77677e4f021af3f120940a3cbc861d444357eabb",
+    "head": "77677e4f021af3f120940a3cbc861d444357eabb"
+   }
+  },
+  {
+   "check": "registered eval/d4_eval/scans/15_00479705.tilt.pdf.map.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "755e9278bd12aa12c96427da70d331708934cd9e",
+    "head": "755e9278bd12aa12c96427da70d331708934cd9e"
+   }
+  },
+  {
+   "check": "registered eval/d4_eval/scans/16_00137915.blur.pdf.map.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "4ac628325da3c8f4688517633775eeca87b63c3a",
+    "head": "4ac628325da3c8f4688517633775eeca87b63c3a"
+   }
+  },
+  {
+   "check": "registered eval/d4_eval/scans/16_00137915.normal.pdf.map.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "13d1e29a9480cdfe5a26e60ee7f4ac338bafa6b2",
+    "head": "13d1e29a9480cdfe5a26e60ee7f4ac338bafa6b2"
+   }
+  },
+  {
+   "check": "registered eval/d4_eval/scans/16_00137915.tilt.pdf.map.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "0b957e4fb27c1dc75f575a63b92362acd4d24ab7",
+    "head": "0b957e4fb27c1dc75f575a63b92362acd4d24ab7"
+   }
+  },
+  {
+   "check": "registered eval/d4_eval/scans/17_00759294.blur.pdf.map.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "08291798f6312e701c0231cde5dd432924680141",
+    "head": "08291798f6312e701c0231cde5dd432924680141"
+   }
+  },
+  {
+   "check": "registered eval/d4_eval/scans/17_00759294.normal.pdf.map.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "f9e259045174aa64c1b74d59d2641790211e58e4",
+    "head": "f9e259045174aa64c1b74d59d2641790211e58e4"
+   }
+  },
+  {
+   "check": "registered eval/d4_eval/scans/17_00759294.tilt.pdf.map.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "0e35b6a2b28a7686b7f713c53db2351a15709bc7",
+    "head": "0e35b6a2b28a7686b7f713c53db2351a15709bc7"
+   }
+  },
+  {
+   "check": "registered eval/d4_eval/scans/18_00110608.blur.pdf.map.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "8e10a21ea2d47fb3a169c4fad2f530a78a21da7f",
+    "head": "8e10a21ea2d47fb3a169c4fad2f530a78a21da7f"
+   }
+  },
+  {
+   "check": "registered eval/d4_eval/scans/18_00110608.normal.pdf.map.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "bfe9ca6fd32ff3dbefb6a0e2dfe09c2bd611a955",
+    "head": "bfe9ca6fd32ff3dbefb6a0e2dfe09c2bd611a955"
+   }
+  },
+  {
+   "check": "registered eval/d4_eval/scans/18_00110608.tilt.pdf.map.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "820eb066291f8e6c5185b09c9642f622669830fa",
+    "head": "820eb066291f8e6c5185b09c9642f622669830fa"
+   }
+  },
+  {
+   "check": "registered eval/d4_eval/scans/19_00164788.blur.pdf.map.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "fba1b17372633a64b623eccdbc6d1496bbf61acf",
+    "head": "fba1b17372633a64b623eccdbc6d1496bbf61acf"
+   }
+  },
+  {
+   "check": "registered eval/d4_eval/scans/19_00164788.normal.pdf.map.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "39adf9e7ac03b6556a8122b98624bb3d73c4d452",
+    "head": "39adf9e7ac03b6556a8122b98624bb3d73c4d452"
+   }
+  },
+  {
+   "check": "registered eval/d4_eval/scans/19_00164788.tilt.pdf.map.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "3e5305fe95a7442713c6438ad60430b1476d0bb1",
+    "head": "3e5305fe95a7442713c6438ad60430b1476d0bb1"
+   }
+  },
+  {
+   "check": "registered eval/d4_excluded.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "45f6cd11c0e347a45d21212b3990c839196efd22",
+    "head": "45f6cd11c0e347a45d21212b3990c839196efd22"
+   }
+  },
+  {
+   "check": "registered eval/d4_population.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "ff60c8fd0b4e7e07b5ba54ee3890f192c3eab63c",
+    "head": "ff60c8fd0b4e7e07b5ba54ee3890f192c3eab63c"
+   }
+  },
+  {
+   "check": "registered eval/d4_population.py at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "49bd88d1b66cacada7bb853f6ffe7732ba4293e6",
+    "head": "49bd88d1b66cacada7bb853f6ffe7732ba4293e6"
+   }
+  },
+  {
+   "check": "the registration names the frozen P and T",
+   "ok": true,
+   "detail": {
+    "registration": [
+     "49c182bc89d0bb384b3185f69e70997b7ce9e4a3",
+     "49c182bc89d0bb384b3185f69e70997b7ce9e4a3"
+    ]
+   }
+  },
+  {
+   "check": "product_commit is an ancestor of HEAD",
+   "ok": true,
+   "detail": "49c182bc89d0bb384b3185f69e70997b7ce9e4a3"
+  },
+  {
+   "check": "tools_commit is an ancestor of HEAD",
+   "ok": true,
+   "detail": "49c182bc89d0bb384b3185f69e70997b7ce9e4a3"
+  },
+  {
+   "check": "the pushed tag d4-registered on origin names HEAD",
+   "ok": true,
+   "detail": [
+    "5c67c752076db45c4171569a959699cf259d09b4\trefs/tags/d4-registered",
+    "1f7b6bf915765bf8b3ea5258903ff838df9ee923\trefs/tags/d4-registered^{}"
+   ]
+  },
+  {
+   "check": "clean working tree and index (git status --porcelain)",
+   "ok": true,
+   "detail": []
+  },
+  {
+   "check": "product dart_review at HEAD is the frozen object",
+   "ok": true,
+   "detail": {
+    "frozen": "61a07aa3a646887c11209b8380b952e97efb860c",
+    "head": "61a07aa3a646887c11209b8380b952e97efb860c"
+   }
+  },
+  {
+   "check": "product pyproject.toml at HEAD is the frozen object",
+   "ok": true,
+   "detail": {
+    "frozen": "ec33ff10d002fd9bcd52efa587df2e0023d6a894",
+    "head": "ec33ff10d002fd9bcd52efa587df2e0023d6a894"
+   }
+  },
+  {
+   "check": "tools eval/d4_gold.py at HEAD is the frozen object",
+   "ok": true,
+   "detail": {
+    "frozen": "1630c694b422601521495482f7f8d3180f68d542",
+    "head": "1630c694b422601521495482f7f8d3180f68d542"
+   }
+  },
+  {
+   "check": "tools eval/d4_score.py at HEAD is the frozen object",
+   "ok": true,
+   "detail": {
+    "frozen": "2e79d79c4e698133393cdeb34c5920b3a7805fc7",
+    "head": "2e79d79c4e698133393cdeb34c5920b3a7805fc7"
+   }
+  },
+  {
+   "check": "tools eval/d4_candidates.py at HEAD is the frozen object",
+   "ok": true,
+   "detail": {
+    "frozen": "59c91f8654b99f97148071cc60b41e83236f9091",
+    "head": "59c91f8654b99f97148071cc60b41e83236f9091"
+   }
+  },
+  {
+   "check": "tools eval/d4_preflight.py at HEAD is the frozen object",
+   "ok": true,
+   "detail": {
+    "frozen": "cfac43f20b15266784529f5588276e25d3495243",
+    "head": "cfac43f20b15266784529f5588276e25d3495243"
+   }
+  },
+  {
+   "check": "tools eval/d4_scan.py at HEAD is the frozen object",
+   "ok": true,
+   "detail": {
+    "frozen": "b6bef64eea911ddaf92f98a966a6a5dd17358815",
+    "head": "b6bef64eea911ddaf92f98a966a6a5dd17358815"
+   }
+  },
+  {
+   "check": "dart_review imported from this checkout",
+   "ok": true,
+   "detail": "~/D4_official/checkout/dart_review/__init__.py"
+  },
+  {
+   "check": "python as frozen",
+   "ok": true,
+   "detail": {
+    "frozen": "3.13.12",
+    "now": "3.13.12"
+   }
+  },
+  {
+   "check": "packages as frozen",
+   "ok": true,
+   "detail": {
+    "only_frozen": [],
+    "only_now": []
+   }
+  },
+  {
+   "check": "model as frozen",
+   "ok": true,
+   "detail": {
+    "frozen": {
+     "qwen3-vl:8b": "901cae732162"
+    },
+    "now": {
+     "qwen3-vl:8b": "901cae732162"
+    }
+   }
+  },
+  {
+   "check": "ollama as frozen",
+   "ok": true,
+   "detail": {
+    "frozen": "ollama version is 0.34.4",
+    "now": "ollama version is 0.34.4"
+   }
+  },
+  {
+   "check": "tesseract as frozen",
+   "ok": true,
+   "detail": {
+    "frozen": "tesseract 5.5.3",
+    "now": "tesseract 5.5.3"
+   }
+  },
+  {
+   "check": "macos as frozen",
+   "ok": true,
+   "detail": {
+    "frozen": "27.2",
+    "now": "27.2"
+   }
+  }
+ ]
+}

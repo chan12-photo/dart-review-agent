@@ -1,0 +1,535 @@
+{
+ "source": "19_00164788.tilt.pdf",
+ "reader": "ai",
+ "cells": 27,
+ "needs_review": 27,
+ "statements": [
+  {
+   "title": "연결재무상태표",
+   "kind": "재무상태표",
+   "page": 1,
+   "unit": "백만원",
+   "columns": [],
+   "rows": [
+    {
+     "label": "기타유동자산",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 813365000000,
+       "printed": "813,365",
+       "page": 1,
+       "status": "확인 필요",
+       "reasons": [
+        "원본에서 같은 숫자를 찾지 못했다 (AI가 잘못 읽었을 수 있다)"
+       ],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "매각예정비유동자산",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 50334000000,
+       "printed": "50,334",
+       "page": 1,
+       "status": "확인 필요",
+       "reasons": [
+        "원본에서 같은 숫자를 찾지 못했다 (AI가 잘못 읽었을 수 있다)"
+       ],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "비유동자산",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 40034134000000,
+       "printed": "40,034,134",
+       "page": 1,
+       "status": "확인 필요",
+       "reasons": [
+        "원본에서 같은 숫자를 찾지 못했다 (AI가 잘못 읽었을 수 있다)"
+       ],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "유형자산",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 12346592000000,
+       "printed": "12,346,592",
+       "page": 1,
+       "status": "확인 필요",
+       "reasons": [
+        "원본에서 같은 숫자를 찾지 못했다 (AI가 잘못 읽었을 수 있다)"
+       ],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "무형자산",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 1265628000000,
+       "printed": "1,265,628",
+       "page": 1,
+       "status": "확인 필요",
+       "reasons": [
+        "원본에서 같은 숫자를 찾지 못했다 (AI가 잘못 읽었을 수 있다)"
+       ],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "투자부동산",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 38267000000,
+       "printed": "38,267",
+       "page": 1,
+       "status": "확인 필요",
+       "reasons": [
+        "원본에서 같은 숫자를 찾지 못했다 (AI가 잘못 읽었을 수 있다)"
+       ],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "사용권자산",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 726784000000,
+       "printed": "726,784",
+       "page": 1,
+       "status": "확인 필요",
+       "reasons": [
+        "원본에서 같은 숫자를 찾지 못했다 (AI가 잘못 읽었을 수 있다)"
+       ],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "관계기업및공동기업투자주식",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 23679049000000,
+       "printed": "23,679,049",
+       "page": 1,
+       "status": "확인 필요",
+       "reasons": [
+        "원본에서 같은 숫자를 찾지 못했다 (AI가 잘못 읽었을 수 있다)"
+       ],
+       "evidence": ""
+      }
+     ]
+    }
+   ],
+   "problems": [
+    "1쪽: 열 머리글(당기·전기)을 찾지 못해 이 쪽의 금액은 기간을 정하지 못했다",
+    "1쪽: 원본의 금액 '594'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+    "1쪽: 원본의 금액 '999'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+    "1쪽: 원본의 금액 '500'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+    "2쪽: 열 머리글(당기·전기)을 찾지 못해 금액의 기간을 정하지 못했다",
+    "합계 줄을 찾지 못해 재무상태표 항등식(자산총계 = 부채총계 + 자본총계 등)을 검산하지 못했다",
+    "소계와 그 아래 항목을 구분하지 못해 소계 검산을 하지 못했다"
+   ],
+   "sums_checked": 0,
+   "sums_uncertain": 0
+  },
+  {
+   "title": "연결손익계산서",
+   "kind": "손익계산서",
+   "page": 3,
+   "unit": "백만원",
+   "columns": [],
+   "rows": [],
+   "problems": [
+    "3쪽: 열 머리글(당기·전기)을 찾지 못해 이 쪽의 금액은 기간을 정하지 못했다"
+   ],
+   "sums_checked": null,
+   "sums_uncertain": 0
+  },
+  {
+   "title": "연결포괄손익계산서",
+   "kind": "포괄손익계산서",
+   "page": 4,
+   "unit": "백만원",
+   "columns": [],
+   "rows": [],
+   "problems": [
+    "4쪽: 열 머리글(당기·전기)을 찾지 못해 이 쪽의 금액은 기간을 정하지 못했다"
+   ],
+   "sums_checked": null,
+   "sums_uncertain": 0
+  },
+  {
+   "title": "연결현금흐름표",
+   "kind": "현금흐름표",
+   "page": 5,
+   "unit": "백만원",
+   "columns": [],
+   "rows": [
+    {
+     "label": "관계기업및동기업무자주식의처분",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 62059000000,
+       "printed": "62,059",
+       "page": 5,
+       "status": "확인 필요",
+       "reasons": [
+        "원본에서 같은 숫자를 찾지 못했다 (AI가 잘못 읽었을 수 있다)"
+       ],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "관계기업및공동기업투자주식의취득",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": -538400000000,
+       "printed": "(538,400)",
+       "page": 5,
+       "status": "확인 필요",
+       "reasons": [
+        "원본에서 같은 숫자를 찾지 못했다 (AI가 잘못 읽었을 수 있다)"
+       ],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "유형자산의처분",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 66288000000,
+       "printed": "66,288",
+       "page": 5,
+       "status": "확인 필요",
+       "reasons": [
+        "원본에서 같은 숫자를 찾지 못했다 (AI가 잘못 읽었을 수 있다)"
+       ],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "유형자산의취득",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": -1347770000000,
+       "printed": "(1,347,770)",
+       "page": 5,
+       "status": "확인 필요",
+       "reasons": [
+        "원본에서 같은 숫자를 찾지 못했다 (AI가 잘못 읽었을 수 있다)"
+       ],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "무형자산의처분",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 4954000000,
+       "printed": "4,954",
+       "page": 5,
+       "status": "확인 필요",
+       "reasons": [
+        "원본에서 같은 숫자를 찾지 못했다 (AI가 잘못 읽었을 수 있다)"
+       ],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "무형자산의취득",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": -167887000000,
+       "printed": "(167,887)",
+       "page": 5,
+       "status": "확인 필요",
+       "reasons": [
+        "원본에서 같은 숫자를 찾지 못했다 (AI가 잘못 읽었을 수 있다)"
+       ],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "보증금의순증감",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": -19578000000,
+       "printed": "(19,578)",
+       "page": 5,
+       "status": "확인 필요",
+       "reasons": [
+        "원본에서 같은 숫자를 찾지 못했다 (AI가 잘못 읽었을 수 있다)"
+       ],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "재무활동현금흐름",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": -1204688000000,
+       "printed": "(1,204,688)",
+       "page": 5,
+       "status": "확인 필요",
+       "reasons": [
+        "원본에서 같은 숫자를 찾지 못했다 (AI가 잘못 읽었을 수 있다)"
+       ],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "유동성장기부채및단기차입금의차입",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 473085000000,
+       "printed": "473,085",
+       "page": 5,
+       "status": "확인 필요",
+       "reasons": [
+        "원본에서 같은 숫자를 찾지 못했다 (AI가 잘못 읽었을 수 있다)"
+       ],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "유동성장기부채및단기차입금의상환",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": -664404000000,
+       "printed": "(664,404)",
+       "page": 5,
+       "status": "확인 필요",
+       "reasons": [
+        "원본에서 같은 숫자를 찾지 못했다 (AI가 잘못 읽었을 수 있다)"
+       ],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "사채및기타임금의차입",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 437672000000,
+       "printed": "437,672",
+       "page": 5,
+       "status": "확인 필요",
+       "reasons": [
+        "원본에서 같은 숫자를 찾지 못했다 (AI가 잘못 읽었을 수 있다)"
+       ],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "사채및기타임금의상환",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": -273299000000,
+       "printed": "(273,299)",
+       "page": 5,
+       "status": "확인 필요",
+       "reasons": [
+        "원본에서 같은 숫자를 찾지 못했다 (AI가 잘못 읽었을 수 있다)"
+       ],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "자기주식의취득",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": -414529000000,
+       "printed": "(414,529)",
+       "page": 5,
+       "status": "확인 필요",
+       "reasons": [
+        "원본에서 같은 숫자를 찾지 못했다 (AI가 잘못 읽었을 수 있다)"
+       ],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "배당금의지급",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": -583383000000,
+       "printed": "(583,383)",
+       "page": 5,
+       "status": "확인 필요",
+       "reasons": [
+        "원본에서 같은 숫자를 찾지 못했다 (AI가 잘못 읽었을 수 있다)"
+       ],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "리스부채의상환",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": -179830000000,
+       "printed": "(179,830)",
+       "page": 5,
+       "status": "확인 필요",
+       "reasons": [
+        "원본에서 같은 숫자를 찾지 못했다 (AI가 잘못 읽었을 수 있다)"
+       ],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "외화환산으로인한현금및현금성자산의변동",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 99748000000,
+       "printed": "99,748",
+       "page": 5,
+       "status": "확인 필요",
+       "reasons": [
+        "원본에서 같은 숫자를 찾지 못했다 (AI가 잘못 읽었을 수 있다)"
+       ],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "현금및현금성자산의증가(감소)(I+II+III+IV)",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 133886000000,
+       "printed": "133,886",
+       "page": 5,
+       "status": "확인 필요",
+       "reasons": [
+        "원본에서 같은 숫자를 찾지 못했다 (AI가 잘못 읽었을 수 있다)"
+       ],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "기초의현금및현금성자산",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 4788492000000,
+       "printed": "4,788,492",
+       "page": 5,
+       "status": "확인 필요",
+       "reasons": [
+        "원본에서 같은 숫자를 찾지 못했다 (AI가 잘못 읽었을 수 있다)"
+       ],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "기말의현금및현금성자산",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 4922378000000,
+       "printed": "4,922,378",
+       "page": 5,
+       "status": "확인 필요",
+       "reasons": [
+        "원본에서 같은 숫자를 찾지 못했다 (AI가 잘못 읽었을 수 있다)"
+       ],
+       "evidence": ""
+      }
+     ]
+    }
+   ],
+   "problems": [
+    "5쪽: 열 머리글(당기·전기)을 찾지 못해 이 쪽의 금액은 기간을 정하지 못했다",
+    "5쪽: 원본의 금액 '999'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+    "5쪽 '000 | . 509 띠' 줄: 원본의 금액 '909'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+    "소계와 그 아래 항목을 구분하지 못해 소계 검산을 하지 못했다"
+   ],
+   "sums_checked": 0,
+   "sums_uncertain": 0
+  }
+ ],
+ "problems": [
+  "2쪽: 글자 높이가 약 6픽셀로 작아 OCR 증거가 약하다 (한 쪽씩 가까이 찍거나 스캔 해상도를 높이면 확인되는 칸이 늘어난다)",
+  "AI 호출 3번, 증거: 없음"
+ ],
+ "source_sha256": "1300ee81ed8b3729955f3d984ea5bc2c3dbf43fadc1816a89711b46e632a24b6"
+}

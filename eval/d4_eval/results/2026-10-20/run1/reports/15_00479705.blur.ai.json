@@ -1,0 +1,482 @@
+{
+ "source": "15_00479705.blur.pdf",
+ "reader": "ai",
+ "cells": 25,
+ "needs_review": 25,
+ "statements": [
+  {
+   "title": "연결재무상태표",
+   "kind": "재무상태표",
+   "page": 1,
+   "unit": "원",
+   "columns": [],
+   "rows": [],
+   "problems": [
+    "1쪽: 열 머리글(당기·전기)을 찾지 못해 이 쪽의 금액은 기간을 정하지 못했다",
+    "2쪽: 열 머리글(당기·전기)을 찾지 못해 금액의 기간을 정하지 못했다",
+    "합계 줄을 찾지 못해 재무상태표 항등식(자산총계 = 부채총계 + 자본총계 등)을 검산하지 못했다",
+    "소계와 그 아래 항목을 구분하지 못해 소계 검산을 하지 못했다"
+   ],
+   "sums_checked": 0,
+   "sums_uncertain": 0
+  },
+  {
+   "title": "연결포괄손익계산서",
+   "kind": "포괄손익계산서",
+   "page": 3,
+   "unit": "원",
+   "columns": [],
+   "rows": [
+    {
+     "label": "기본주당손익",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 122,
+       "printed": "122",
+       "page": 3,
+       "status": "확인 필요",
+       "reasons": [
+        "원본에서 같은 숫자를 찾지 못했다 (AI가 잘못 읽었을 수 있다)"
+       ],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "계속영업기본주당손익",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 135,
+       "printed": "135",
+       "page": 3,
+       "status": "확인 필요",
+       "reasons": [
+        "원본에서 같은 숫자를 찾지 못했다 (AI가 잘못 읽었을 수 있다)"
+       ],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "회석주당손익",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 122,
+       "printed": "122",
+       "page": 3,
+       "status": "확인 필요",
+       "reasons": [
+        "원본에서 같은 숫자를 찾지 못했다 (AI가 잘못 읽었을 수 있다)"
+       ],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "계속영업회석주당손익",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 135,
+       "printed": "135",
+       "page": 3,
+       "status": "확인 필요",
+       "reasons": [
+        "원본에서 같은 숫자를 찾지 못했다 (AI가 잘못 읽었을 수 있다)"
+       ],
+       "evidence": ""
+      }
+     ]
+    }
+   ],
+   "problems": [
+    "3쪽: 열 머리글(당기·전기)을 찾지 못해 이 쪽의 금액은 기간을 정하지 못했다",
+    "3쪽: 원본의 금액 '091'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+    "3쪽: 원본의 금액 '091'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+    "3쪽: 원본의 금액 '009'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+    "4쪽: 열 머리글(당기·전기)을 찾지 못해 금액의 기간을 정하지 못했다"
+   ],
+   "sums_checked": null,
+   "sums_uncertain": 0
+  },
+  {
+   "title": "연결현금흐름표",
+   "kind": "현금흐름표",
+   "page": 5,
+   "unit": "원",
+   "columns": [],
+   "rows": [
+    {
+     "label": "영업활동현금흐름",
+     "account": "operating_cash_flow",
+     "values": [
+      {
+       "column": 0,
+       "value": -3346114821,
+       "printed": "(3,346,114,821)",
+       "page": 5,
+       "status": "확인 필요",
+       "reasons": [
+        "원본에서 같은 숫자를 찾지 못했다 (AI가 잘못 읽었을 수 있다)"
+       ],
+       "evidence": ""
+      },
+      {
+       "column": 1,
+       "value": 163021312,
+       "printed": "163,021,312",
+       "page": 5,
+       "status": "확인 필요",
+       "reasons": [
+        "열 머리글이 없어 기간을 AI가 읽은 순서로 정했다"
+       ],
+       "evidence": "OCR"
+      }
+     ]
+    },
+    {
+     "label": "영업으로부터창출된현금흐름",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": -3277876306,
+       "printed": "(3,277,876,306)",
+       "page": 5,
+       "status": "확인 필요",
+       "reasons": [
+        "AI가 읽은 계정명 '영업으로부터창출된현금흐름'과 숫자를 찾은 원본 줄의 계정명 '중단영업으로인한현금흐롬(주석 15) ㅣ'이 다르다 (숫자를 다른 줄에 붙였을 수 있다)",
+        "원본에서 같은 숫자를 찾지 못했다 (AI가 잘못 읽었을 수 있다)"
+       ],
+       "evidence": ""
+      },
+      {
+       "column": 1,
+       "value": -1610120,
+       "printed": "(1,610,120)",
+       "page": 5,
+       "status": "확인 필요",
+       "reasons": [
+        "열 머리글이 없어 기간을 AI가 읽은 순서로 정했다"
+       ],
+       "evidence": "OCR"
+      }
+     ]
+    },
+    {
+     "label": "이자의지급",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": -216800941,
+       "printed": "(216,800,941)",
+       "page": 5,
+       "status": "확인 필요",
+       "reasons": [
+        "원본에서 같은 숫자를 찾지 못했다 (AI가 잘못 읽었을 수 있다)"
+       ],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "이자의수령",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 356534045,
+       "printed": "356,534,045",
+       "page": 5,
+       "status": "확인 필요",
+       "reasons": [
+        "원본에서 같은 숫자를 찾지 못했다 (AI가 잘못 읽었을 수 있다)"
+       ],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "법인세의환급(납부)",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": -88622446,
+       "printed": "(88,622,446)",
+       "page": 5,
+       "status": "확인 필요",
+       "reasons": [
+        "원본에서 같은 숫자를 찾지 못했다 (AI가 잘못 읽었을 수 있다)"
+       ],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "투자활동현금흐름",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 326103129,
+       "printed": "326,103,129",
+       "page": 5,
+       "status": "확인 필요",
+       "reasons": [
+        "원본에서 같은 숫자를 찾지 못했다 (AI가 잘못 읽었을 수 있다)"
+       ],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "단기금융상품의감소",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 3072474768,
+       "printed": "3,072,474,768",
+       "page": 5,
+       "status": "확인 필요",
+       "reasons": [
+        "원본에서 같은 숫자를 찾지 못했다 (AI가 잘못 읽었을 수 있다)"
+       ],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "단기대여금의감소",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 67461180,
+       "printed": "67,461,180",
+       "page": 5,
+       "status": "확인 필요",
+       "reasons": [
+        "원본에서 같은 숫자를 찾지 못했다 (AI가 잘못 읽었을 수 있다)"
+       ],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "보증금의감소",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 337473107,
+       "printed": "337,473,107",
+       "page": 5,
+       "status": "확인 필요",
+       "reasons": [
+        "원본에서 같은 숫자를 찾지 못했다 (AI가 잘못 읽었을 수 있다)"
+       ],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "유형자산의처분",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 52058169,
+       "printed": "52,058,169",
+       "page": 5,
+       "status": "확인 필요",
+       "reasons": [
+        "AI가 읽은 계정명 '유형자산의처분'과 숫자를 찾은 원본 줄의 계정명 '무형자산의취득'이 다르다 (숫자를 다른 줄에 붙였을 수 있다)",
+        "원본에서 같은 숫자를 찾지 못했다 (AI가 잘못 읽었을 수 있다)"
+       ],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "단기금융상품의증가",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": -3296638692,
+       "printed": "(3,296,638,692)",
+       "page": 5,
+       "status": "확인 필요",
+       "reasons": [
+        "원본에서 같은 숫자를 찾지 못했다 (AI가 잘못 읽었을 수 있다)"
+       ],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "단기대여금의증가",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": -200000000,
+       "printed": "(200,000,000)",
+       "page": 5,
+       "status": "확인 필요",
+       "reasons": [
+        "원본에서 같은 숫자를 찾지 못했다 (AI가 잘못 읽었을 수 있다)"
+       ],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "보증금의증가",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": -95296109,
+       "printed": "(95,296,109)",
+       "page": 5,
+       "status": "확인 필요",
+       "reasons": [
+        "원본에서 같은 숫자를 찾지 못했다 (AI가 잘못 읽었을 수 있다)"
+       ],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "재무활동현금흐름",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": -2203617447,
+       "printed": "(2,203,617,447)",
+       "page": 5,
+       "status": "확인 필요",
+       "reasons": [
+        "원본에서 같은 숫자를 찾지 못했다 (AI가 잘못 읽었을 수 있다)"
+       ],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "단기차입금의차입",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 4397991777,
+       "printed": "4,397,991,777",
+       "page": 5,
+       "status": "확인 필요",
+       "reasons": [
+        "원본에서 같은 숫자를 찾지 못했다 (AI가 잘못 읽었을 수 있다)"
+       ],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "예수보증금의증가",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 1000000,
+       "printed": "1,000,000",
+       "page": 5,
+       "status": "확인 필요",
+       "reasons": [
+        "원본에서 같은 숫자를 찾지 못했다 (AI가 잘못 읽었을 수 있다)"
+       ],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "단기차입금의상환",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": -6021731262,
+       "printed": "(6,021,731,262)",
+       "page": 5,
+       "status": "확인 필요",
+       "reasons": [
+        "원본에서 같은 숫자를 찾지 못했다 (AI가 잘못 읽었을 수 있다)"
+       ],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "리스부채의상환",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": -557825609,
+       "printed": "(557,825,609)",
+       "page": 5,
+       "status": "확인 필요",
+       "reasons": [
+        "원본에서 같은 숫자를 찾지 못했다 (AI가 잘못 읽었을 수 있다)"
+       ],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "현금및현금성자산의환원변동효과",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": -226238717,
+       "printed": "(226,238,717)",
+       "page": 5,
+       "status": "확인 필요",
+       "reasons": [
+        "원본에서 같은 숫자를 찾지 못했다 (AI가 잘못 읽었을 수 있다)"
+       ],
+       "evidence": ""
+      }
+     ]
+    }
+   ],
+   "problems": [
+    "5쪽: 열 머리글(당기·전기)을 찾지 못해 이 쪽의 금액은 기간을 정하지 못했다",
+    "5쪽 '2003 의강소' 줄: 원본의 금액 '000'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+    "5쪽 '무형자산의취득' 줄: 원본의 금액 '(41,905,040)'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+    "5쪽 'ㅣ 사엄결합으로인한현금유출' 줄: 원본의 금액 '(645,696,425)'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+    "5쪽 '중단영업으로인한현금흐롬(주석 15) ㅣ' 줄: 원본의 금액 '(68.956.000)'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+    "6쪽: 열 머리글(당기·전기)을 찾지 못해 금액의 기간을 정하지 못했다",
+    "소계와 그 아래 항목을 구분하지 못해 소계 검산을 하지 못했다"
+   ],
+   "sums_checked": 0,
+   "sums_uncertain": 0
+  }
+ ],
+ "problems": [
+  "2쪽: 글자 높이가 약 10픽셀로 작아 OCR 증거가 약하다 (한 쪽씩 가까이 찍거나 스캔 해상도를 높이면 확인되는 칸이 늘어난다)",
+  "AI 호출 5번, 증거: OCR"
+ ],
+ "source_sha256": "446a124f192a4337fa5cce6601313b2ef7fa882a37e738dfb7ad6b7933fa53e7"
+}

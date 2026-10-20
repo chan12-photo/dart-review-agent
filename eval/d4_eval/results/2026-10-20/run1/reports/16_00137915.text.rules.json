@@ -1,0 +1,2904 @@
+{
+ "source": "16_엠엑스로보틱스.pdf",
+ "reader": "rules",
+ "cells": 234,
+ "needs_review": 0,
+ "statements": [
+  {
+   "title": "연결재무상태표",
+   "kind": "재무상태표",
+   "page": 9,
+   "unit": "원",
+   "columns": [
+    {
+     "header": "제 54(당) 기",
+     "year": 2025,
+     "end": "2025-12-31"
+    },
+    {
+     "header": "제 53(전) 기",
+     "year": 2024,
+     "end": "2024-12-31"
+    }
+   ],
+   "rows": [
+    {
+     "label": "유동자산",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 85902302918,
+       "printed": "85,902,302,918",
+       "page": 9,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      },
+      {
+       "column": 1,
+       "value": 79519899131,
+       "printed": "79,519,899,131",
+       "page": 9,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "현금및현금성자산",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 8532644267,
+       "printed": "8,532,644,267",
+       "page": 9,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      },
+      {
+       "column": 1,
+       "value": 4103046860,
+       "printed": "4,103,046,860",
+       "page": 9,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "매출채권",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 25048152594,
+       "printed": "25,048,152,594",
+       "page": 9,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      },
+      {
+       "column": 1,
+       "value": 26374433316,
+       "printed": "26,374,433,316",
+       "page": 9,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "계약자산",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 42057523718,
+       "printed": "42,057,523,718",
+       "page": 9,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      },
+      {
+       "column": 1,
+       "value": 39455997971,
+       "printed": "39,455,997,971",
+       "page": 9,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "기타수취채권",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 149298004,
+       "printed": "149,298,004",
+       "page": 9,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      },
+      {
+       "column": 1,
+       "value": 1796134987,
+       "printed": "1,796,134,987",
+       "page": 9,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "기타금융자산",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 4843042728,
+       "printed": "4,843,042,728",
+       "page": 9,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      },
+      {
+       "column": 1,
+       "value": null,
+       "printed": "-",
+       "page": 9,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "당기법인세자산",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 1019444743,
+       "printed": "1,019,444,743",
+       "page": 9,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      },
+      {
+       "column": 1,
+       "value": 131485503,
+       "printed": "131,485,503",
+       "page": 9,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "재고자산",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 1387350594,
+       "printed": "1,387,350,594",
+       "page": 9,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      },
+      {
+       "column": 1,
+       "value": 3342464924,
+       "printed": "3,342,464,924",
+       "page": 9,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "기타자산",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 2864846270,
+       "printed": "2,864,846,270",
+       "page": 9,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      },
+      {
+       "column": 1,
+       "value": 4316335570,
+       "printed": "4,316,335,570",
+       "page": 9,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "비유동자산",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 30722940532,
+       "printed": "30,722,940,532",
+       "page": 9,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      },
+      {
+       "column": 1,
+       "value": 30062161374,
+       "printed": "30,062,161,374",
+       "page": 9,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "기타수취채권",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 3568857173,
+       "printed": "3,568,857,173",
+       "page": 9,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      },
+      {
+       "column": 1,
+       "value": 3006410978,
+       "printed": "3,006,410,978",
+       "page": 9,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "당기손익-공정가치금융자산",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 191781210,
+       "printed": "191,781,210",
+       "page": 9,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      },
+      {
+       "column": 1,
+       "value": 154281210,
+       "printed": "154,281,210",
+       "page": 9,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "기타금융자산",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 4784742,
+       "printed": "4,784,742",
+       "page": 9,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      },
+      {
+       "column": 1,
+       "value": 10024384,
+       "printed": "10,024,384",
+       "page": 9,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "유형자산",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 23923686815,
+       "printed": "23,923,686,815",
+       "page": 9,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      },
+      {
+       "column": 1,
+       "value": 25034300695,
+       "printed": "25,034,300,695",
+       "page": 9,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "무형자산",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 1397471043,
+       "printed": "1,397,471,043",
+       "page": 9,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      },
+      {
+       "column": 1,
+       "value": 1408848317,
+       "printed": "1,408,848,317",
+       "page": 9,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "이연법인세자산",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 1636359549,
+       "printed": "1,636,359,549",
+       "page": 9,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      },
+      {
+       "column": 1,
+       "value": 448295790,
+       "printed": "448,295,790",
+       "page": 9,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "자 산 총 계",
+     "account": "total_assets",
+     "values": [
+      {
+       "column": 0,
+       "value": 116625243450,
+       "printed": "116,625,243,450",
+       "page": 9,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      },
+      {
+       "column": 1,
+       "value": 109582060505,
+       "printed": "109,582,060,505",
+       "page": 9,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "유동부채",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 56246576495,
+       "printed": "56,246,576,495",
+       "page": 9,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      },
+      {
+       "column": 1,
+       "value": 40615815637,
+       "printed": "40,615,815,637",
+       "page": 9,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "매입채무",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 7765277228,
+       "printed": "7,765,277,228",
+       "page": 9,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      },
+      {
+       "column": 1,
+       "value": 18275777897,
+       "printed": "18,275,777,897",
+       "page": 9,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "계약부채",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 11697464774,
+       "printed": "11,697,464,774",
+       "page": 9,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      },
+      {
+       "column": 1,
+       "value": 11537500105,
+       "printed": "11,537,500,105",
+       "page": 9,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "기타지급채무",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 4107273504,
+       "printed": "4,107,273,504",
+       "page": 9,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      },
+      {
+       "column": 1,
+       "value": 7506161374,
+       "printed": "7,506,161,374",
+       "page": 9,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "유동성충당부채",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 331126331,
+       "printed": "331,126,331",
+       "page": 9,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      },
+      {
+       "column": 1,
+       "value": 456381030,
+       "printed": "456,381,030",
+       "page": 9,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "리스부채",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 2014025494,
+       "printed": "2,014,025,494",
+       "page": 9,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      },
+      {
+       "column": 1,
+       "value": 1467915812,
+       "printed": "1,467,915,812",
+       "page": 9,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "당기법인세부채",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": null,
+       "printed": "-",
+       "page": 9,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      },
+      {
+       "column": 1,
+       "value": 178770720,
+       "printed": "178,770,720",
+       "page": 9,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "기타부채",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 1054129680,
+       "printed": "1,054,129,680",
+       "page": 9,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      },
+      {
+       "column": 1,
+       "value": 1193308699,
+       "printed": "1,193,308,699",
+       "page": 9,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "단기차입금",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 29277279484,
+       "printed": "29,277,279,484",
+       "page": 9,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      },
+      {
+       "column": 1,
+       "value": null,
+       "printed": "-",
+       "page": 9,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "비유동부채",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 7417370406,
+       "printed": "7,417,370,406",
+       "page": 9,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      },
+      {
+       "column": 1,
+       "value": 9103071817,
+       "printed": "9,103,071,817",
+       "page": 9,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "장기리스부채",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 4694284062,
+       "printed": "4,694,284,062",
+       "page": 9,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      },
+      {
+       "column": 1,
+       "value": 5583704145,
+       "printed": "5,583,704,145",
+       "page": 9,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "순확정급여부채",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 2322441018,
+       "printed": "2,322,441,018",
+       "page": 9,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      },
+      {
+       "column": 1,
+       "value": 3195843119,
+       "printed": "3,195,843,119",
+       "page": 9,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "기타부채",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 400645326,
+       "printed": "400,645,326",
+       "page": 9,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      },
+      {
+       "column": 1,
+       "value": 323524553,
+       "printed": "323,524,553",
+       "page": 9,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "부 채 총 계",
+     "account": "total_liabilities",
+     "values": [
+      {
+       "column": 0,
+       "value": 63663946901,
+       "printed": "63,663,946,901",
+       "page": 9,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      },
+      {
+       "column": 1,
+       "value": 49718887454,
+       "printed": "49,718,887,454",
+       "page": 9,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "지배기업소유주에 귀속되는 자본",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 52961294934,
+       "printed": "52,961,294,934",
+       "page": 10,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      },
+      {
+       "column": 1,
+       "value": 59863171466,
+       "printed": "59,863,171,466",
+       "page": 10,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "자본금",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 10016973000,
+       "printed": "10,016,973,000",
+       "page": 10,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      },
+      {
+       "column": 1,
+       "value": 10016973000,
+       "printed": "10,016,973,000",
+       "page": 10,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "자본잉여금",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 39213669772,
+       "printed": "39,213,669,772",
+       "page": 10,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      },
+      {
+       "column": 1,
+       "value": 39603445048,
+       "printed": "39,603,445,048",
+       "page": 10,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "기타자본구성요소",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": -1969013494,
+       "printed": "(1,969,013,494)",
+       "page": 10,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      },
+      {
+       "column": 1,
+       "value": -2358788770,
+       "printed": "(2,358,788,770)",
+       "page": 10,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "기타포괄손익누계액",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": -99271740,
+       "printed": "(99,271,740)",
+       "page": 10,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      },
+      {
+       "column": 1,
+       "value": 163233216,
+       "printed": "163,233,216",
+       "page": 10,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "이익잉여금",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 5798937396,
+       "printed": "5,798,937,396",
+       "page": 10,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      },
+      {
+       "column": 1,
+       "value": 12438308972,
+       "printed": "12,438,308,972",
+       "page": 10,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "비지배지분",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 1615,
+       "printed": "1,615",
+       "page": 10,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      },
+      {
+       "column": 1,
+       "value": 1585,
+       "printed": "1,585",
+       "page": 10,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "자 본 총 계",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 52961296549,
+       "printed": "52,961,296,549",
+       "page": 10,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      },
+      {
+       "column": 1,
+       "value": 59863173051,
+       "printed": "59,863,173,051",
+       "page": 10,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "부 채 와 자 본 총 계",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 116625243450,
+       "printed": "116,625,243,450",
+       "page": 10,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      },
+      {
+       "column": 1,
+       "value": 109582060505,
+       "printed": "109,582,060,505",
+       "page": 10,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      }
+     ]
+    }
+   ],
+   "problems": [
+    "소계와 그 아래 항목을 구분하지 못해 소계 검산을 하지 못했다"
+   ],
+   "sums_checked": 8,
+   "sums_uncertain": 0
+  },
+  {
+   "title": "연결포괄손익계산서",
+   "kind": "포괄손익계산서",
+   "page": 11,
+   "unit": "원",
+   "columns": [
+    {
+     "header": "제 54(당) 기",
+     "year": 2025,
+     "end": "2025-12-31"
+    },
+    {
+     "header": "제 53(전) 기",
+     "year": 2024,
+     "end": "2024-12-31"
+    }
+   ],
+   "rows": [
+    {
+     "label": "매출액",
+     "account": "revenue",
+     "values": [
+      {
+       "column": 0,
+       "value": 149093596003,
+       "printed": "149,093,596,003",
+       "page": 11,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      },
+      {
+       "column": 1,
+       "value": 163228400060,
+       "printed": "163,228,400,060",
+       "page": 11,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "매출원가",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": -139864239794,
+       "printed": "(139,864,239,794)",
+       "page": 11,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      },
+      {
+       "column": 1,
+       "value": -147052469262,
+       "printed": "(147,052,469,262)",
+       "page": 11,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "매출총이익",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 9229356209,
+       "printed": "9,229,356,209",
+       "page": 11,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      },
+      {
+       "column": 1,
+       "value": 16175930798,
+       "printed": "16,175,930,798",
+       "page": 11,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "판매관리비",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": -17180076190,
+       "printed": "(17,180,076,190)",
+       "page": 11,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      },
+      {
+       "column": 1,
+       "value": -9119657601,
+       "printed": "(9,119,657,601)",
+       "page": 11,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "영업이익(손실)",
+     "account": "operating_income",
+     "values": [
+      {
+       "column": 0,
+       "value": -7950719981,
+       "printed": "(7,950,719,981)",
+       "page": 11,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      },
+      {
+       "column": 1,
+       "value": 7056273197,
+       "printed": "7,056,273,197",
+       "page": 11,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "기타수익",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 1851958787,
+       "printed": "1,851,958,787",
+       "page": 11,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      },
+      {
+       "column": 1,
+       "value": 5909044530,
+       "printed": "5,909,044,530",
+       "page": 11,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "기타비용",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": -2760452628,
+       "printed": "(2,760,452,628)",
+       "page": 11,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      },
+      {
+       "column": 1,
+       "value": -1005916991,
+       "printed": "(1,005,916,991)",
+       "page": 11,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "금융수익",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 454008563,
+       "printed": "454,008,563",
+       "page": 11,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      },
+      {
+       "column": 1,
+       "value": 874512847,
+       "printed": "874,512,847",
+       "page": 11,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "금융비용",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": -1706080336,
+       "printed": "(1,706,080,336)",
+       "page": 11,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      },
+      {
+       "column": 1,
+       "value": -701775327,
+       "printed": "(701,775,327)",
+       "page": 11,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "법인세차감전순이익(손실)",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": -10111285595,
+       "printed": "(10,111,285,595)",
+       "page": 11,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      },
+      {
+       "column": 1,
+       "value": 12132138256,
+       "printed": "12,132,138,256",
+       "page": 11,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "법인세비용(수익)",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": -1940581298,
+       "printed": "(1,940,581,298)",
+       "page": 11,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      },
+      {
+       "column": 1,
+       "value": 716876384,
+       "printed": "716,876,384",
+       "page": 11,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "연결당기순이익(손실)",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": -8170704297,
+       "printed": "(8,170,704,297)",
+       "page": 11,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      },
+      {
+       "column": 1,
+       "value": 11415261872,
+       "printed": "11,415,261,872",
+       "page": 11,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "지배기업 소유주지분",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": -8170704546,
+       "printed": "(8,170,704,546)",
+       "page": 11,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      },
+      {
+       "column": 1,
+       "value": 11415260572,
+       "printed": "11,415,260,572",
+       "page": 11,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "비지배지분",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 249,
+       "printed": "249",
+       "page": 11,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      },
+      {
+       "column": 1,
+       "value": 1300,
+       "printed": "1,300",
+       "page": 11,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "연결기타포괄손익",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 1268827795,
+       "printed": "1,268,827,795",
+       "page": 11,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      },
+      {
+       "column": 1,
+       "value": -845372306,
+       "printed": "(845,372,306)",
+       "page": 11,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "순확정급여의 재측정요소",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 1531332970,
+       "printed": "1,531,332,970",
+       "page": 11,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      },
+      {
+       "column": 1,
+       "value": -953450433,
+       "printed": "(953,450,433)",
+       "page": 11,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "해외사업환산손익",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": -262505175,
+       "printed": "(262,505,175)",
+       "page": 11,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      },
+      {
+       "column": 1,
+       "value": 108078127,
+       "printed": "108,078,127",
+       "page": 11,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "연결총포괄손익",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": -6901876502,
+       "printed": "(6,901,876,502)",
+       "page": 11,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      },
+      {
+       "column": 1,
+       "value": 10569889566,
+       "printed": "10,569,889,566",
+       "page": 11,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "지배기업 소유주지분",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": -6901876532,
+       "printed": "(6,901,876,532)",
+       "page": 11,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      },
+      {
+       "column": 1,
+       "value": 10569888175,
+       "printed": "10,569,888,175",
+       "page": 11,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "비지배지분",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 30,
+       "printed": "30",
+       "page": 11,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      },
+      {
+       "column": 1,
+       "value": 1391,
+       "printed": "1,391",
+       "page": 11,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "보통주기본주당이익(손실)",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": -415,
+       "printed": "(415)",
+       "page": 11,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      },
+      {
+       "column": 1,
+       "value": 584,
+       "printed": "584",
+       "page": 11,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "보통주희석주당이익(손실)",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": -415,
+       "printed": "(415)",
+       "page": 11,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      },
+      {
+       "column": 1,
+       "value": 584,
+       "printed": "584",
+       "page": 11,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      }
+     ]
+    }
+   ],
+   "problems": [],
+   "sums_checked": null,
+   "sums_uncertain": 0
+  },
+  {
+   "title": "연결자본변동표",
+   "kind": "자본변동표",
+   "page": 12,
+   "unit": "원",
+   "columns": [],
+   "rows": [],
+   "problems": [
+    "자본변동표는 행과 열이 모두 항목인 표라 이 도구가 아직 읽지 않는다 (v0.2 범위 밖, 원본을 직접 확인)"
+   ],
+   "sums_checked": null,
+   "sums_uncertain": 0
+  },
+  {
+   "title": "연결현금흐름표",
+   "kind": "현금흐름표",
+   "page": 13,
+   "unit": "원",
+   "columns": [
+    {
+     "header": "제 54(당) 기",
+     "year": 2025,
+     "end": "2025-12-31"
+    },
+    {
+     "header": "제 53(전) 기",
+     "year": 2024,
+     "end": "2024-12-31"
+    }
+   ],
+   "rows": [
+    {
+     "label": "영업활동현금흐름",
+     "account": "operating_cash_flow",
+     "values": [
+      {
+       "column": 0,
+       "value": -16016917965,
+       "printed": "(16,016,917,965)",
+       "page": 13,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      },
+      {
+       "column": 1,
+       "value": -2108977406,
+       "printed": "(2,108,977,406)",
+       "page": 13,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "연결당기순이익(손실)",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": -8170704297,
+       "printed": "(8,170,704,297)",
+       "page": 13,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      },
+      {
+       "column": 1,
+       "value": 11415261872,
+       "printed": "11,415,261,872",
+       "page": 13,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "조정항목",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 11737979427,
+       "printed": "11,737,979,427",
+       "page": 13,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      },
+      {
+       "column": 1,
+       "value": 1833138969,
+       "printed": "1,833,138,969",
+       "page": 13,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "퇴직급여",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 2306240021,
+       "printed": "2,306,240,021",
+       "page": 13,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      },
+      {
+       "column": 1,
+       "value": 1614626838,
+       "printed": "1,614,626,838",
+       "page": 13,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "기타장기종업원급여",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 91120773,
+       "printed": "91,120,773",
+       "page": 13,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      },
+      {
+       "column": 1,
+       "value": 143974176,
+       "printed": "143,974,176",
+       "page": 13,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "감가상각비",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 3826253597,
+       "printed": "3,826,253,597",
+       "page": 13,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      },
+      {
+       "column": 1,
+       "value": 2687885147,
+       "printed": "2,687,885,147",
+       "page": 13,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "무형자산상각비",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 75794737,
+       "printed": "75,794,737",
+       "page": 13,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      },
+      {
+       "column": 1,
+       "value": 71601982,
+       "printed": "71,601,982",
+       "page": 13,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "대손상각비",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 4692518578,
+       "printed": "4,692,518,578",
+       "page": 13,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      },
+      {
+       "column": 1,
+       "value": 590789826,
+       "printed": "590,789,826",
+       "page": 13,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "기타의대손상각비",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 100000000,
+       "printed": "100,000,000",
+       "page": 13,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      },
+      {
+       "column": 1,
+       "value": null,
+       "printed": "-",
+       "page": 13,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "공사손실충당부채환입액",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": -125254699,
+       "printed": "(125,254,699)",
+       "page": 13,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      },
+      {
+       "column": 1,
+       "value": -1547928119,
+       "printed": "(1,547,928,119)",
+       "page": 13,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "이자비용",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 1377008223,
+       "printed": "1,377,008,223",
+       "page": 13,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      },
+      {
+       "column": 1,
+       "value": 509180032,
+       "printed": "509,180,032",
+       "page": 13,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "외화환산손실",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 1318243068,
+       "printed": "1,318,243,068",
+       "page": 13,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      },
+      {
+       "column": 1,
+       "value": 144868754,
+       "printed": "144,868,754",
+       "page": 13,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "유형자산처분손실",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": null,
+       "printed": "-",
+       "page": 13,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      },
+      {
+       "column": 1,
+       "value": 9000,
+       "printed": "9,000",
+       "page": 13,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "유형자산손상차손",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 293816049,
+       "printed": "293,816,049",
+       "page": 13,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      },
+      {
+       "column": 1,
+       "value": null,
+       "printed": "-",
+       "page": 13,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "무형자산처분손실",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 21000000,
+       "printed": "21,000,000",
+       "page": 13,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      },
+      {
+       "column": 1,
+       "value": null,
+       "printed": "-",
+       "page": 13,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "주식보상비용",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": null,
+       "printed": "-",
+       "page": 13,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      },
+      {
+       "column": 1,
+       "value": 626235640,
+       "printed": "626,235,640",
+       "page": 13,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "법인세비용(수익)",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": -1940581298,
+       "printed": "(1,940,581,298)",
+       "page": 13,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      },
+      {
+       "column": 1,
+       "value": 716876384,
+       "printed": "716,876,384",
+       "page": 13,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "이자수익",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": -149744933,
+       "printed": "(149,744,933)",
+       "page": 13,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      },
+      {
+       "column": 1,
+       "value": -171619149,
+       "printed": "(171,619,149)",
+       "page": 13,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "배당금수익",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": -4470000,
+       "printed": "(4,470,000)",
+       "page": 13,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      },
+      {
+       "column": 1,
+       "value": null,
+       "printed": "-",
+       "page": 13,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "외화환산이익",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": -129050125,
+       "printed": "(129,050,125)",
+       "page": 13,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      },
+      {
+       "column": 1,
+       "value": -3457452024,
+       "printed": "(3,457,452,024)",
+       "page": 13,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "유형자산처분이익",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": -14254564,
+       "printed": "(14,254,564)",
+       "page": 13,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      },
+      {
+       "column": 1,
+       "value": -95909518,
+       "printed": "(95,909,518)",
+       "page": 13,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "무형자산처분이익",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": -660000,
+       "printed": "(660,000)",
+       "page": 13,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      },
+      {
+       "column": 1,
+       "value": null,
+       "printed": "-",
+       "page": 13,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "순운전자본의 변동",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": -17531885581,
+       "printed": "(17,531,885,581)",
+       "page": 13,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      },
+      {
+       "column": 1,
+       "value": -14494276214,
+       "printed": "(14,494,276,214)",
+       "page": 13,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "매출채권의 변동",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 613978327,
+       "printed": "613,978,327",
+       "page": 13,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      },
+      {
+       "column": 1,
+       "value": -13157293132,
+       "printed": "(13,157,293,132)",
+       "page": 13,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "계약자산의 변동",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": -7589096860,
+       "printed": "(7,589,096,860)",
+       "page": 13,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      },
+      {
+       "column": 1,
+       "value": -5780527420,
+       "printed": "(5,780,527,420)",
+       "page": 13,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "재고자산의 변동",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 1955114330,
+       "printed": "1,955,114,330",
+       "page": 13,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      },
+      {
+       "column": 1,
+       "value": -1735605509,
+       "printed": "(1,735,605,509)",
+       "page": 13,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "기타유동자산의 변동",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 2610851428,
+       "printed": "2,610,851,428",
+       "page": 13,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      },
+      {
+       "column": 1,
+       "value": -1969176450,
+       "printed": "(1,969,176,450)",
+       "page": 13,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "매입채무의 변동",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": -10494641949,
+       "printed": "(10,494,641,949)",
+       "page": 13,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      },
+      {
+       "column": 1,
+       "value": 5790369326,
+       "printed": "5,790,369,326",
+       "page": 13,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "계약부채의 변동",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 159964669,
+       "printed": "159,964,669",
+       "page": 13,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      },
+      {
+       "column": 1,
+       "value": -107923963,
+       "printed": "(107,923,963)",
+       "page": 13,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "기타지급채무의 변동",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": -3557660801,
+       "printed": "(3,557,660,801)",
+       "page": 13,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      },
+      {
+       "column": 1,
+       "value": 3987513528,
+       "printed": "3,987,513,528",
+       "page": 13,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "유동성충당부채의 변동",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": null,
+       "printed": "-",
+       "page": 13,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      },
+      {
+       "column": 1,
+       "value": -469922191,
+       "printed": "(469,922,191)",
+       "page": 13,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "기타장기종업원급여부채의 지급",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": -14000000,
+       "printed": "(14,000,000)",
+       "page": 13,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      },
+      {
+       "column": 1,
+       "value": -12500000,
+       "printed": "(12,500,000)",
+       "page": 13,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "퇴직금의 지급",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": -1077451249,
+       "printed": "(1,077,451,249)",
+       "page": 13,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      },
+      {
+       "column": 1,
+       "value": -1205741491,
+       "printed": "(1,205,741,491)",
+       "page": 13,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "사외적립자산의 변동",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": -138943476,
+       "printed": "(138,943,476)",
+       "page": 13,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      },
+      {
+       "column": 1,
+       "value": 166531088,
+       "printed": "166,531,088",
+       "page": 13,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "이자의 수취",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 42938779,
+       "printed": "42,938,779",
+       "page": 14,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      },
+      {
+       "column": 1,
+       "value": 122558418,
+       "printed": "122,558,418",
+       "page": 14,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "이자의 지급",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": -1353589445,
+       "printed": "(1,353,589,445)",
+       "page": 14,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      },
+      {
+       "column": 1,
+       "value": -483621448,
+       "printed": "(483,621,448)",
+       "page": 14,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "배당금의 수취",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 4470000,
+       "printed": "4,470,000",
+       "page": 14,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      },
+      {
+       "column": 1,
+       "value": null,
+       "printed": "-",
+       "page": 14,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "법인세의 납부",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": -746126848,
+       "printed": "(746,126,848)",
+       "page": 14,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      },
+      {
+       "column": 1,
+       "value": -502039003,
+       "printed": "(502,039,003)",
+       "page": 14,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "투자활동현금흐름",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": -6958335671,
+       "printed": "(6,958,335,671)",
+       "page": 14,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      },
+      {
+       "column": 1,
+       "value": -5789764729,
+       "printed": "(5,789,764,729)",
+       "page": 14,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "단기금융상품의 증가",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": -4843042728,
+       "printed": "(4,843,042,728)",
+       "page": 14,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      },
+      {
+       "column": 1,
+       "value": null,
+       "printed": "-",
+       "page": 14,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "유형자산의 처분",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 14257564,
+       "printed": "14,257,564",
+       "page": 14,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      },
+      {
+       "column": 1,
+       "value": 98328181,
+       "printed": "98,328,181",
+       "page": 14,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "임차보증금의 감소",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 91447320,
+       "printed": "91,447,320",
+       "page": 14,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      },
+      {
+       "column": 1,
+       "value": 846423162,
+       "printed": "846,423,162",
+       "page": 14,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "임차보증금의 증가",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": -518005705,
+       "printed": "(518,005,705)",
+       "page": 14,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      },
+      {
+       "column": 1,
+       "value": -2564633750,
+       "printed": "(2,564,633,750)",
+       "page": 14,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "유형자산의 취득",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": -1580734659,
+       "printed": "(1,580,734,659)",
+       "page": 14,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      },
+      {
+       "column": 1,
+       "value": -4124180754,
+       "printed": "(4,124,180,754)",
+       "page": 14,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "무형자산의 취득",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": -754757463,
+       "printed": "(754,757,463)",
+       "page": 14,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      },
+      {
+       "column": 1,
+       "value": -39000000,
+       "printed": "(39,000,000)",
+       "page": 14,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "무형자산의 처분",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 670000000,
+       "printed": "670,000,000",
+       "page": 14,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      },
+      {
+       "column": 1,
+       "value": null,
+       "printed": "-",
+       "page": 14,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "장기대여금의 증가",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": null,
+       "printed": "-",
+       "page": 14,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      },
+      {
+       "column": 1,
+       "value": -6701568,
+       "printed": "(6,701,568)",
+       "page": 14,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "당기손익공정가치금융자산의 취득",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": -37500000,
+       "printed": "(37,500,000)",
+       "page": 14,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      },
+      {
+       "column": 1,
+       "value": null,
+       "printed": "-",
+       "page": 14,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "재무활동현금흐름",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 27504804415,
+       "printed": "27,504,804,415",
+       "page": 14,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      },
+      {
+       "column": 1,
+       "value": -742189932,
+       "printed": "(742,189,932)",
+       "page": 14,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "단기차입금의 순증감",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 29277279484,
+       "printed": "29,277,279,484",
+       "page": 14,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      },
+      {
+       "column": 1,
+       "value": null,
+       "printed": "-",
+       "page": 14,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "리스부채의 감소",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": -1772475069,
+       "printed": "(1,772,475,069)",
+       "page": 14,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      },
+      {
+       "column": 1,
+       "value": -742189932,
+       "printed": "(742,189,932)",
+       "page": 14,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "현금및현금성자산의 증감",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 4529550779,
+       "printed": "4,529,550,779",
+       "page": 14,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      },
+      {
+       "column": 1,
+       "value": -8640932067,
+       "printed": "(8,640,932,067)",
+       "page": 14,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "현금및현금성자산의 환율변동효과",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": -99953372,
+       "printed": "(99,953,372)",
+       "page": 14,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      },
+      {
+       "column": 1,
+       "value": 30640008,
+       "printed": "30,640,008",
+       "page": 14,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "기초 현금및현금성자산",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 4103046860,
+       "printed": "4,103,046,860",
+       "page": 14,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      },
+      {
+       "column": 1,
+       "value": 12713338919,
+       "printed": "12,713,338,919",
+       "page": 14,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "기말 현금및현금성자산",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 8532644267,
+       "printed": "8,532,644,267",
+       "page": 14,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      },
+      {
+       "column": 1,
+       "value": 4103046860,
+       "printed": "4,103,046,860",
+       "page": 14,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": ""
+      }
+     ]
+    }
+   ],
+   "problems": [
+    "소계와 그 아래 항목을 구분하지 못해 소계 검산을 하지 못했다"
+   ],
+   "sums_checked": 0,
+   "sums_uncertain": 0
+  }
+ ],
+ "problems": [],
+ "source_sha256": "e10cace0d5ecc99cf4ce95e2ff6ebfd7ae52cd57cf2965d13c79193a80c19bc7"
+}

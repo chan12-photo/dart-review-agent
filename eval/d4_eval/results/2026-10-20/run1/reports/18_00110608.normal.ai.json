@@ -1,0 +1,689 @@
+{
+ "source": "18_00110608.normal.pdf",
+ "reader": "ai",
+ "cells": 37,
+ "needs_review": 37,
+ "statements": [
+  {
+   "title": "연결재무상태표",
+   "kind": "재무상태표",
+   "page": 1,
+   "unit": "원",
+   "columns": [],
+   "rows": [
+    {
+     "label": "유동담보인식금융자산",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 17032172088,
+       "printed": "17,032,172,088",
+       "page": 1,
+       "status": "확인 필요",
+       "reasons": [
+        "원본에서 같은 숫자를 찾지 못했다 (AI가 잘못 읽었을 수 있다)"
+       ],
+       "evidence": ""
+      },
+      {
+       "column": 1,
+       "value": 6087841572,
+       "printed": "6,087,841,572",
+       "page": 1,
+       "status": "확인 필요",
+       "reasons": [
+        "열 머리글이 없어 기간을 AI가 읽은 순서로 정했다"
+       ],
+       "evidence": "OCR"
+      }
+     ]
+    },
+    {
+     "label": "매출채권및기타유동채권",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 56462213868,
+       "printed": "56,462,213,868",
+       "page": 1,
+       "status": "확인 필요",
+       "reasons": [
+        "원본에서 같은 숫자를 찾지 못했다 (AI가 잘못 읽었을 수 있다)"
+       ],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "기타유동자산",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 9712055749,
+       "printed": "9,712,055,749",
+       "page": 1,
+       "status": "확인 필요",
+       "reasons": [
+        "원본에서 같은 숫자를 찾지 못했다 (AI가 잘못 읽었을 수 있다)"
+       ],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "재고자산",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 83948095639,
+       "printed": "83,948,095,639",
+       "page": 1,
+       "status": "확인 필요",
+       "reasons": [
+        "원본에서 같은 숫자를 찾지 못했다 (AI가 잘못 읽었을 수 있다)"
+       ],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "비유동자산",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 207704413249,
+       "printed": "207,704,413,249",
+       "page": 1,
+       "status": "확인 필요",
+       "reasons": [
+        "원본에서 같은 숫자를 찾지 못했다 (AI가 잘못 읽었을 수 있다)"
+       ],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "최초인식시점또는그이후에지정된비유동담보인식금융자산",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 19179555634,
+       "printed": "19,179,555,634",
+       "page": 1,
+       "status": "확인 필요",
+       "reasons": [
+        "열 머리글이 없어 기간을 AI가 읽은 순서로 정했다"
+       ],
+       "evidence": "OCR"
+      },
+      {
+       "column": 1,
+       "value": 25751315304,
+       "printed": "25,751,315,304",
+       "page": 1,
+       "status": "확인 필요",
+       "reasons": [
+        "열 머리글이 없어 기간을 AI가 읽은 순서로 정했다"
+       ],
+       "evidence": "OCR"
+      }
+     ]
+    },
+    {
+     "label": "기타포괄손익-공정가치측정비유동금융자산",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 6062013416,
+       "printed": "6,062,013,416",
+       "page": 1,
+       "status": "확인 필요",
+       "reasons": [
+        "원본에서 같은 숫자를 찾지 못했다 (AI가 잘못 읽었을 수 있다)"
+       ],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "장기매출채권및기타비유동채권",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 215433911,
+       "printed": "215,433,911",
+       "page": 1,
+       "status": "확인 필요",
+       "reasons": [
+        "원본에서 같은 숫자를 찾지 못했다 (AI가 잘못 읽었을 수 있다)"
+       ],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "관계기업에대한투자자산",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 3429120000,
+       "printed": "3,429,120,000",
+       "page": 1,
+       "status": "확인 필요",
+       "reasons": [
+        "원본에서 같은 숫자를 찾지 못했다 (AI가 잘못 읽었을 수 있다)"
+       ],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "유형자산",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 120357080086,
+       "printed": "120,357,080,086",
+       "page": 1,
+       "status": "확인 필요",
+       "reasons": [
+        "원본에서 같은 숫자를 찾지 못했다 (AI가 잘못 읽었을 수 있다)"
+       ],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "투자부동산",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 41492263936,
+       "printed": "41,492,263,936",
+       "page": 1,
+       "status": "확인 필요",
+       "reasons": [
+        "원본에서 같은 숫자를 찾지 못했다 (AI가 잘못 읽었을 수 있다)"
+       ],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "사용권자산",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 11688444631,
+       "printed": "11,688,444,631",
+       "page": 1,
+       "status": "확인 필요",
+       "reasons": [
+        "원본에서 같은 숫자를 찾지 못했다 (AI가 잘못 읽었을 수 있다)"
+       ],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "기타비유동금융자산",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 5236112795,
+       "printed": "5,236,112,795",
+       "page": 1,
+       "status": "확인 필요",
+       "reasons": [
+        "원본에서 같은 숫자를 찾지 못했다 (AI가 잘못 읽었을 수 있다)"
+       ],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "이연법인세자산",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 44388840,
+       "printed": "44,388,840",
+       "page": 1,
+       "status": "확인 필요",
+       "reasons": [
+        "원본에서 같은 숫자를 찾지 못했다 (AI가 잘못 읽었을 수 있다)"
+       ],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "자산총계",
+     "account": "total_assets",
+     "values": [
+      {
+       "column": 0,
+       "value": 391592277418,
+       "printed": "391,592,277,418",
+       "page": 1,
+       "status": "확인 필요",
+       "reasons": [
+        "원본에서 같은 숫자를 찾지 못했다 (AI가 잘못 읽었을 수 있다)"
+       ],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "유동부채",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 131819483762,
+       "printed": "131,819,483,762",
+       "page": 1,
+       "status": "확인 필요",
+       "reasons": [
+        "원본에서 같은 숫자를 찾지 못했다 (AI가 잘못 읽었을 수 있다)"
+       ],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "매입채무및기타유동채무",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 33595661298,
+       "printed": "33,595,661,298",
+       "page": 1,
+       "status": "확인 필요",
+       "reasons": [
+        "원본에서 같은 숫자를 찾지 못했다 (AI가 잘못 읽었을 수 있다)"
+       ],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "유동계약부채",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 2088686141,
+       "printed": "2,088,686,141",
+       "page": 1,
+       "status": "확인 필요",
+       "reasons": [
+        "원본에서 같은 숫자를 찾지 못했다 (AI가 잘못 읽었을 수 있다)"
+       ],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "유동차입금",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 83961719495,
+       "printed": "83,961,719,495",
+       "page": 1,
+       "status": "확인 필요",
+       "reasons": [
+        "원본에서 같은 숫자를 찾지 못했다 (AI가 잘못 읽었을 수 있다)"
+       ],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "유동리스부채",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 122195948,
+       "printed": "122,195,948",
+       "page": 1,
+       "status": "확인 필요",
+       "reasons": [
+        "원본에서 같은 숫자를 찾지 못했다 (AI가 잘못 읽었을 수 있다)"
+       ],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "미지급법인세",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 5335658953,
+       "printed": "5,335,658,953",
+       "page": 1,
+       "status": "확인 필요",
+       "reasons": [
+        "원본에서 같은 숫자를 찾지 못했다 (AI가 잘못 읽었을 수 있다)"
+       ],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "기타유동금융부채",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 98783377,
+       "printed": "98,783,377",
+       "page": 1,
+       "status": "확인 필요",
+       "reasons": [
+        "원본에서 같은 숫자를 찾지 못했다 (AI가 잘못 읽었을 수 있다)"
+       ],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "기타유동부채",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 6616778550,
+       "printed": "6,616,778,550",
+       "page": 1,
+       "status": "확인 필요",
+       "reasons": [
+        "원본에서 같은 숫자를 찾지 못했다 (AI가 잘못 읽었을 수 있다)"
+       ],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "비유동부채",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 12429807862,
+       "printed": "12,429,807,862",
+       "page": 1,
+       "status": "확인 필요",
+       "reasons": [
+        "원본에서 같은 숫자를 찾지 못했다 (AI가 잘못 읽었을 수 있다)"
+       ],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "장기차입금",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 11465222917,
+       "printed": "11,465,222,917",
+       "page": 1,
+       "status": "확인 필요",
+       "reasons": [
+        "원본에서 같은 숫자를 찾지 못했다 (AI가 잘못 읽었을 수 있다)"
+       ],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "기타비유동금융부채",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 282636579,
+       "printed": "282,636,579",
+       "page": 1,
+       "status": "확인 필요",
+       "reasons": [
+        "원본에서 같은 숫자를 찾지 못했다 (AI가 잘못 읽었을 수 있다)"
+       ],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "비유동리스부채",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 392920356,
+       "printed": "392,920,356",
+       "page": 1,
+       "status": "확인 필요",
+       "reasons": [
+        "원본에서 같은 숫자를 찾지 못했다 (AI가 잘못 읽었을 수 있다)"
+       ],
+       "evidence": ""
+      }
+     ]
+    }
+   ],
+   "problems": [
+    "1쪽: 열 머리글(당기·전기)을 찾지 못해 이 쪽의 금액은 기간을 정하지 못했다",
+    "1쪽 '0 | 뻐 | 0' 줄: 원본의 금액 '004'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+    "2쪽: 열 머리글(당기·전기)을 찾지 못해 금액의 기간을 정하지 못했다",
+    "합계 줄을 찾지 못해 재무상태표 항등식(자산총계 = 부채총계 + 자본총계 등)을 검산하지 못했다",
+    "소계와 그 아래 항목을 구분하지 못해 소계 검산을 하지 못했다"
+   ],
+   "sums_checked": 0,
+   "sums_uncertain": 0
+  },
+  {
+   "title": "연결손익계산서",
+   "kind": "손익계산서",
+   "page": 3,
+   "unit": "원",
+   "columns": [],
+   "rows": [
+    {
+     "label": "기타수익",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 3352295792,
+       "printed": "3,352,295,792",
+       "page": 3,
+       "status": "확인 필요",
+       "reasons": [
+        "원본에서 같은 숫자를 찾지 못했다 (AI가 잘못 읽었을 수 있다)"
+       ],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "기타비용",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 6036376814,
+       "printed": "6,036,376,814",
+       "page": 3,
+       "status": "확인 필요",
+       "reasons": [
+        "원본에서 같은 숫자를 찾지 못했다 (AI가 잘못 읽었을 수 있다)"
+       ],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "금융수익",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 9032519882,
+       "printed": "9,032,519,882",
+       "page": 3,
+       "status": "확인 필요",
+       "reasons": [
+        "원본에서 같은 숫자를 찾지 못했다 (AI가 잘못 읽었을 수 있다)"
+       ],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "금융비용",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 7721332372,
+       "printed": "7,721,332,372",
+       "page": 3,
+       "status": "확인 필요",
+       "reasons": [
+        "원본에서 같은 숫자를 찾지 못했다 (AI가 잘못 읽었을 수 있다)"
+       ],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "지분법이익",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 1456830844,
+       "printed": "1,456,830,844",
+       "page": 3,
+       "status": "확인 필요",
+       "reasons": [
+        "원본에서 같은 숫자를 찾지 못했다 (AI가 잘못 읽었을 수 있다)"
+       ],
+       "evidence": ""
+      }
+     ]
+    }
+   ],
+   "problems": [
+    "3쪽: 열 머리글(당기·전기)을 찾지 못해 이 쪽의 금액은 기간을 정하지 못했다",
+    "3쪽: 원본의 금액 '299'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+    "3쪽: 원본의 금액 '000'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+    "3쪽: 원본의 금액 '380'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)"
+   ],
+   "sums_checked": null,
+   "sums_uncertain": 0
+  },
+  {
+   "title": "연결포괄손익계산서",
+   "kind": "포괄손익계산서",
+   "page": 4,
+   "unit": "원",
+   "columns": [],
+   "rows": [
+    {
+     "label": "대한지분(세후기타포괄손익)",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": -23695684,
+       "printed": "(23,695,684)",
+       "page": 4,
+       "status": "확인 필요",
+       "reasons": [
+        "열 머리글이 없어 기간을 AI가 읽은 순서로 정했다"
+       ],
+       "evidence": "OCR"
+      },
+      {
+       "column": 1,
+       "value": -23742881,
+       "printed": "(23,742,881)",
+       "page": 4,
+       "status": "확인 필요",
+       "reasons": [
+        "열 머리글이 없어 기간을 AI가 읽은 순서로 정했다"
+       ],
+       "evidence": "OCR"
+      }
+     ]
+    }
+   ],
+   "problems": [
+    "4쪽: 열 머리글(당기·전기)을 찾지 못해 이 쪽의 금액은 기간을 정하지 못했다"
+   ],
+   "sums_checked": null,
+   "sums_uncertain": 0
+  },
+  {
+   "title": "연결현금흐름표",
+   "kind": "현금흐름표",
+   "page": 5,
+   "unit": "원",
+   "columns": [],
+   "rows": [
+    {
+     "label": "영업활동현금흐름",
+     "account": "operating_cash_flow",
+     "values": [
+      {
+       "column": 0,
+       "value": 19763489423,
+       "printed": "19,763,489,423",
+       "page": 5,
+       "status": "확인 필요",
+       "reasons": [
+        "원본에서 같은 숫자를 찾지 못했다 (AI가 잘못 읽었을 수 있다)"
+       ],
+       "evidence": ""
+      }
+     ]
+    }
+   ],
+   "problems": [
+    "5쪽: 열 머리글(당기·전기)을 찾지 못해 이 쪽의 금액은 기간을 정하지 못했다",
+    "5쪽: 원본의 금액 '001'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+    "소계와 그 아래 항목을 구분하지 못해 소계 검산을 하지 못했다"
+   ],
+   "sums_checked": 0,
+   "sums_uncertain": 0
+  }
+ ],
+ "problems": [
+  "2쪽: 글자 높이가 약 6픽셀로 작아 OCR 증거가 약하다 (한 쪽씩 가까이 찍거나 스캔 해상도를 높이면 확인되는 칸이 늘어난다)",
+  "AI 호출 5번, 증거: OCR"
+ ],
+ "source_sha256": "85eeb6078aa2e16c49ffcb477c505ef08e1417789df7ff91dab988dd29534d66"
+}

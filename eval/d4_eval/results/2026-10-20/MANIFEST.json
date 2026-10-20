@@ -1,5 +1,5 @@
 {
- "note": "D4 step ⑧-⑨ records (contract 7판, docs/D4_RUN_PROCEDURE.ko.md ⑨-5). Copied from ~/D4_official on 2026-10-20. Files marked 'sanitized' had the local home directory replaced by '~' and nothing else; their original SHA-256 is kept. Reports, scores, and verdict files are byte-identical (verdicts name the reports by SHA-256).",
+ "note": "D4 step ⑧-⑨ records (contract 7판, docs/D4_RUN_PROCEDURE.ko.md ⑨-5). Copied from ~/D4_official on 2026-10-20. Files marked 'sanitized' had the local home directory replaced by '~' and nothing else; their original SHA-256 is kept. Reports, scores, and verdict files are byte-identical (verdicts name the reports by SHA-256). The official result is official.final2.json; official.final.json is the result before the one verdict change, kept with its verdict file under judgments_history/.",
  "files": {
   "run1/reports/05_00117212.blur.ai.json": {
    "sha256": "4679af4fce2d2febb9035fd7d2d46e426e21c07fe0937943f969c03f11931fa6"
@@ -513,7 +513,7 @@
    "sha256": "b5c584125bbee958c3559c5403c6a2c2311a6a21034390ec1c651fa379a32d9c"
   },
   "judgments/run1/07_01258710.normal.ai.extras.json": {
-   "sha256": "b84ec9588445dbb69250e4a9d19e025b4a9c26e281415a20833eaef5d96e2eb3"
+   "sha256": "0ef8a3966a70196bb9eafd5fb33dee0c7e30c9c5e1ce928417a7f0f5a34beb66"
   },
   "judgments/run1/11_00138224.text.ai.extras.json": {
    "sha256": "1beb6cb46032ffd339e691721b45fd8f9534d90ad8189530a53f2b56b65a8a6a"
@@ -553,7 +553,16 @@
   "official.final.json": {
    "original_sha256": "ae8e8377890b68f7c18f5e1ddfe5c0e3fa4cf1a3410aae27744fcf81b87f6ea4",
    "sanitized": true,
-   "sha256": "ea228a92a67f772f65858accfea239d8894298cabcd263e56441ccdf83613bdc"
+   "sha256": "ea228a92a67f772f65858accfea239d8894298cabcd263e56441ccdf83613bdc",
+   "superseded_by": "official.final2.json (2026-10-20: the 27 verdicts of 07_01258710.normal.ai changed from ok to wrong after the Codex results review; contract 6)"
+  },
+  "judgments_history/run1/07_01258710.normal.ai.extras.v1.json": {
+   "sha256": "b84ec9588445dbb69250e4a9d19e025b4a9c26e281415a20833eaef5d96e2eb3"
+  },
+  "official.final2.json": {
+   "original_sha256": "670ea109095e26f321bf1544c6297cb5252324e3a91e39fcc2f81631c009c767",
+   "sanitized": true,
+   "sha256": "51973f28e646faa1f080f173967ecbbacccba726c8be1fd82057971f3b982211"
   }
  },
  "not_committed": {

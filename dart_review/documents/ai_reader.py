@@ -315,8 +315,8 @@ def read_document(path: Path, model: VisionModel, pages: Sequence[int] | None = 
     state = _State()
     for part in page_parts(path, pages):
         lines = without_page_furniture(group_lines(part.words))
-        starts = [index for index in range(len(lines)) if is_statement_start(lines, index, state.closed)]
-        if starts or part.source == "PDF 글자":
+        path_kind, starts, hint = reading_path(part.source, lines, state.closed)
+        if path_kind == "page":
             # a page may hold the end of one statement and the start of others (손익계산서 and 포괄손익계산서 on
             # one page): each title starts its own part of the page; reading only the first title once put the
             # second statement's rows under the first
@@ -330,7 +330,7 @@ def read_document(path: Path, model: VisionModel, pages: Sequence[int] | None = 
                 end = starts[position + 1] if position + 1 < len(starts) else len(lines)
                 _read_with_page_structure(part, lines[start:end], lines[start], model, state)
         else:
-            _read_with_model_structure(part, model, state)
+            _read_with_model_structure(part, model, state, hint)
     for s_index, statement in enumerate(state.statements):
         own = [check for check in state.checks if check.statement == s_index]
         if statement.every_cell:
@@ -348,6 +348,23 @@ def read_document(path: Path, model: VisionModel, pages: Sequence[int] | None = 
         by_cell = {(check.row, check.column): check for check in own}
         check_sums(statement, by_cell)
     return Reading(state.statements, state.checks, state.problems, state.calls)
+
+
+def reading_path(source: str, lines: Sequence[Line], closed: bool) -> tuple[str, list[int], str | None]:
+    """How a page part is read: ("page", the lines where statements start, None) when the page's own lines give
+    the structure (a text layer, or OCR that read a title exactly), else ("model", [], a title hint).
+
+    On OCR, only an exactly read title chooses the page's lines: a title OCR misread ("연 결 손 의 계산서") means
+    the page's OCR lines are poor, and the model reading the structure finds far more rows there (D4 scans: 15
+    rows against 3 when the misread title chose the OCR lines). Such a title is passed as a hint instead: it names
+    the statement when the model cannot, with every cell marked."""
+    starts = [index for index in range(len(lines)) if is_statement_start(lines, index, closed)]
+    if source == "PDF 글자":
+        return "page", starts, None
+    exact = [index for index in starts if title_of(lines[index].text)[1]]
+    if exact:
+        return "page", exact, None
+    return "model", [], lines[starts[0]].text if starts else None
 
 
 @dataclass
@@ -455,7 +472,7 @@ def _read_with_page_structure(part: Part, lines: Sequence[Line], title_line: Lin
         state.closed = True
 
 
-def _read_with_model_structure(part: Part, model: VisionModel, state: _State) -> None:
+def _read_with_model_structure(part: Part, model: VisionModel, state: _State, hint: str | None = None) -> None:
     """A photo or poor scan whose OCR gives no usable lines: the model reads the title, unit, and headers too,
     and the table in overlapping bands; OCR words found anywhere in the band are the evidence."""
     height = part.image.height
@@ -468,8 +485,9 @@ def _read_with_model_structure(part: Part, model: VisionModel, state: _State) ->
                               "(한 쪽씩 가까이 찍거나 스캔 해상도를 높이면 확인되는 칸이 늘어난다)")
     title = re.sub(r"\s+", "", meta.title)
     unit = next((name for name in sorted(UNITS, key=len, reverse=True) if name in meta.unit.replace(" ", "")), None)
-    if title_of(title) is not None:
-        statement = _new_statement(state, title, part.page, unit)
+    if title_of(title) is not None or hint is not None:
+        # the model's title, else the title OCR read only approximately (its statement is marked)
+        statement = _new_statement(state, title if title_of(title) is not None else hint, part.page, unit)
         if unit and unit not in ocr_text:
             state.unverified_units.add(len(state.statements) - 1)
     elif _END.match(title):

@@ -117,6 +117,20 @@ class StartTests(unittest.TestCase):
         self.assertEqual(len(find_statements(BALANCE + continued)), 1)
 
 
+class ReadingPathTests(unittest.TestCase):
+    """Which reading an AI-reader page part gets: its own lines, or the model reading the structure too."""
+
+    def test_an_ocr_title_read_only_approximately_leaves_the_page_to_the_model_with_a_hint(self):
+        from dart_review.documents.ai_reader import reading_path
+        misread = page(3, (50, [(250, "연 결 손 의 계산서")]), (64, [(200, "제 66 기 2025년 1월 1일 부터 2025년 12월 31일 까지")]))
+        # D4 scans: a misread title once sent the page to its poor OCR lines (15 rows read before, 3 after)
+        self.assertEqual(reading_path("OCR", misread, False), ("model", [], "연 결 손 의 계산서"))
+        exact = page(3, (50, [(250, "연결손익계산서")]), (64, [(200, "제 66 기 2025년 1월 1일 부터 2025년 12월 31일 까지")]))
+        self.assertEqual(reading_path("OCR", exact, False), ("page", [0], None))
+        self.assertEqual(reading_path("PDF 글자", misread, False), ("page", [0], None))
+        self.assertEqual(reading_path("OCR", BALANCE[3:], False), ("model", [], None))
+
+
 class PeriodHeadingTests(unittest.TestCase):
     def test_one_period_per_heading(self):
         for header in ("제 57 (당) 기", "제 56 (전) 기", "제 56 기", "당기", "전기말", "2025.12.31", "2025년", "제 55 (전전) 기"):

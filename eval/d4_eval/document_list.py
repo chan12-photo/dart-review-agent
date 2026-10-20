@@ -53,6 +53,9 @@ PROFILES = {
            "product_commit": None},
     "d5": {"documents": "eval/d5_eval/documents.json", "places": "eval/d5_eval/duplicate_places.json",
            "freeze": "eval/freeze_d5.json", "register": "eval/register_d5.json", "tag": "d5-registered",
+           # F, the commit of the freeze record, is tagged and the tag pushed at ④ before any candidate PDF is opened:
+           # R alone cannot show that the N it registers is the N frozen at F (Codex D5 third review 1)
+           "frozen_tag": "d5-frozen",
            "tool_paths": [*D4_TOOLS, "eval/d4_eval/run_d4.py", "eval/d4_eval/position_check.py",
                           "eval/d4_eval/official_d4.py", "eval/d4_eval/document_list.py"],
            # the closed list of D5 contract 3: 5cdb4e1 and 180e621, the later holding the earlier

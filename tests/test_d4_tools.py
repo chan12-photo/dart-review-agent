@@ -885,7 +885,14 @@ class ProfileTests(unittest.TestCase):
         self.enterContext(mock.patch.dict(PROFILES["d5"], {"product_commit": self.P}))
         self.record = freeze_record(self.root, "HEAD", "HEAD", self.ENV, "d5", 2)
         (self.root / "eval/freeze_d5.json").write_text(json.dumps(self.record), encoding="utf-8")
-        self.commit()  # F
+        self.commit()  # F, tagged and the tag pushed at ④ (Codex D5 third review 1)
+        self.F = self.head()
+        import shutil
+        self.remote = str(Path(self.folder.name + "-remote"))
+        self.git("init", "-q", "--bare", self.remote)
+        self.addCleanup(shutil.rmtree, self.remote)
+        self.git("tag", "-a", "d5-frozen", "-m", "F", self.F)
+        self.git("push", "-q", self.remote, "refs/tags/d5-frozen")
         self.documents = {"expected_documents": 2, "documents": []}
         self.paths = ["eval/d5_eval/documents.json", "eval/d5_eval/duplicate_places.json"]
         for n in (1, 2):
@@ -902,7 +909,7 @@ class ProfileTests(unittest.TestCase):
         self.write("eval/d5_eval/documents.json", self.documents)
         self.write("eval/d5_eval/duplicate_places.json", {"documents": {}})
         self.commit()
-        self.registration = register_record(self.root, "eval/freeze_d5.json", self.paths, "d5")
+        self.registration = register_record(self.root, "eval/freeze_d5.json", self.paths, "d5", self.remote)
         self.write("eval/register_d5.json", self.registration)
         self.commit()  # R
         self.R = self.head()
@@ -951,24 +958,21 @@ class ProfileTests(unittest.TestCase):
                          ["the registration is d5's, with its tag and freeze record"])
         changed = {**self.record, "profile": {**self.record["profile"], "tool_paths": self.tools[:5]}}
         self.assertIn("the freeze record holds the d5 profile", self.failed(record=changed))
-        import shutil
-        remote = Path(self.folder.name + "-remote")
-        self.git("init", "-q", "--bare", str(remote))
-        self.addCleanup(shutil.rmtree, remote)
-        self.git("push", "-q", str(remote), "refs/tags/d5-registered")
-        self.assertEqual(self.failed(remote=str(remote)), [])
+        self.assertEqual(self.failed(remote=self.remote), ["the pushed tag d5-registered on " + self.remote + " names HEAD"])
+        self.git("push", "-q", self.remote, "refs/tags/d5-registered")
+        self.assertEqual(self.failed(remote=self.remote), [])
 
     def test_the_registration_holds_the_whole_list_at_the_frozen_n(self):
         with self.assertRaisesRegex(ValueError, "not registered: eval/d5_eval/gold/2.gold.json"):
             register_record(self.root, "eval/freeze_d5.json",
-                            [p for p in self.paths if p != "eval/d5_eval/gold/2.gold.json"], "d5")
+                            [p for p in self.paths if p != "eval/d5_eval/gold/2.gold.json"], "d5", self.remote)
         with self.assertRaisesRegex(ValueError, "registers its freeze record"):
-            register_record(self.root, "eval/d5_eval/duplicate_places.json", self.paths, "d5")
+            register_record(self.root, "eval/d5_eval/duplicate_places.json", self.paths, "d5", self.remote)
         # Codex D5 re-check 1: one of the decided documents, its list saying 1
         self.write("eval/d5_eval/documents.json", {"expected_documents": 1, "documents": self.documents["documents"][:1]})
         self.commit()
         with self.assertRaisesRegex(ValueError, "the profile 2"):
-            register_record(self.root, "eval/freeze_d5.json", self.paths, "d5")
+            register_record(self.root, "eval/freeze_d5.json", self.paths, "d5", self.remote)
 
     def test_a_link_is_never_registered(self):
         import os
@@ -978,7 +982,53 @@ class ProfileTests(unittest.TestCase):
         os.symlink(outside, self.root / "eval/d5_eval/gold/link.gold.json")
         self.commit()
         with self.assertRaisesRegex(ValueError, "link.gold.json is not a file inside the repository"):
-            register_record(self.root, "eval/freeze_d5.json", [*self.paths, "eval/d5_eval/gold/link.gold.json"], "d5")
+            register_record(self.root, "eval/freeze_d5.json", [*self.paths, "eval/d5_eval/gold/link.gold.json"], "d5",
+                            self.remote)
+
+    def test_n_changed_between_f_and_r_is_refused(self):
+        # Codex D5 third review 1: N = 2 frozen at F, then N and the list both made 1 before R
+        import json
+        self.write("eval/freeze_d5.json", {**self.record, "profile": {**self.record["profile"], "expected_documents": 1}})
+        self.write("eval/d5_eval/documents.json", {"expected_documents": 1, "documents": self.documents["documents"][:1]})
+        self.commit()
+        with self.assertRaisesRegex(ValueError, "not the record frozen at F"):
+            register_record(self.root, "eval/freeze_d5.json", self.paths, "d5", self.remote)
+        # a registration made by hand from the changed record: the check finds it is not F's
+        changed = json.loads((self.root / "eval/freeze_d5.json").read_text(encoding="utf-8"))
+        forged = {**self.registration, "freeze_object": self.object_at("HEAD", "eval/freeze_d5.json"),
+                  "objects": {**self.registration["objects"],
+                              "eval/freeze_d5.json": self.object_at("HEAD", "eval/freeze_d5.json")}}
+        self.assertIn("F (d5-frozen) is the registration's, its freeze record the one at HEAD",
+                      self.failed(record=changed, registration=forged, registered=self.head()))
+
+    def test_f_must_be_tagged_and_pushed(self):
+        self.git("push", "-q", self.remote, ":refs/tags/d5-frozen")
+        with self.assertRaisesRegex(ValueError, "does not name"):
+            register_record(self.root, "eval/freeze_d5.json", self.paths, "d5", self.remote)
+        with self.assertRaisesRegex(ValueError, "does not name"):
+            register_record(self.root, "eval/freeze_d5.json", self.paths, "d5", None)
+        self.assertIn(f"the pushed tag d5-frozen on {self.remote} names F", self.failed(remote=self.remote))
+        self.git("tag", "-d", "d5-frozen")
+        with self.assertRaisesRegex(ValueError, "no tag d5-frozen"):
+            register_record(self.root, "eval/freeze_d5.json", self.paths, "d5", self.remote)
+        self.assertIn("F (d5-frozen) is the registration's, its freeze record the one at HEAD", self.failed())
+
+    def test_a_registration_record_linked_out_of_the_repository_fails_the_check(self):
+        # Codex D5 third review 2: R's own record was a link to a file outside, changed after R
+        import os
+        outside = Path(self.folder.name + "-register.json")
+        outside.write_text((self.root / "eval/register_d5.json").read_text(encoding="utf-8"), encoding="utf-8")
+        self.addCleanup(outside.unlink)
+        (self.root / "eval/register_d5.json").unlink()
+        os.symlink(outside, self.root / "eval/register_d5.json")
+        self.commit()
+        self.assertIn("eval/register_d5.json is a regular file at HEAD, reached without a link",
+                      self.failed(registered=self.head()))
+
+    def object_at(self, commit, path):
+        import subprocess
+        return subprocess.run(["git", "rev-parse", f"{commit}:{path}"], cwd=self.root, capture_output=True,
+                              text=True).stdout.strip()
 
 
 if __name__ == "__main__":

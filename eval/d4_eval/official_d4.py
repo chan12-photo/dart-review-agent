@@ -251,8 +251,9 @@ def official(run: Path, judgments: Path, documents: dict, registered: dict, read
     return {"run_folder": run.name, "judgment_files_not_read": unused,
             "run": {key: record.get(key) for key in ("commit", "started_at", "finished_at", "preflight", "readers",
                                                      "calls", "succeeded", "failed")},
-            "documents_sha256": _sha256(DOCUMENTS), "places_sha256": _sha256(PLACES), "expected_documents": count,
-            "product_reader": "ai",
+            "documents_sha256": _sha256(DOCUMENTS), "places_sha256": _sha256(PLACES),
+            # N from outside the list; D4's records keep their own form (Codex D5 third review 3)
+            **({} if d4_legacy else {"expected_documents": count}), "product_reader": "ai",
             "readers": result, "calls": entries}
 
 

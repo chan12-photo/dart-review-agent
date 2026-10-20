@@ -1,6 +1,8 @@
-# D5 문서 → 엑셀 정확도 평가 계약 (초안 2판, 2026-10-20)
+# D5 문서 → 엑셀 정확도 평가 계약 (초안 3판, 2026-10-20)
 
-- 상태: **초안 2판.** Codex 1차 검토(치명 1, 중요 5, 사소 1)를 반영했다([결과](reviews/D5_contract_codex_result.ko.md), [응답](reviews/D5_contract_codex_response.ko.md)).
+- 상태: **초안 3판.**
+  - 2판: Codex 1차 검토(치명 1, 중요 5, 사소 1)를 반영했다([결과](reviews/D5_contract_codex_result.ko.md), [응답](reviews/D5_contract_codex_response.ko.md)).
+  - 3판: Codex 재검토(치명 1, 중요 2, 사소 1)를 반영했다([결과](reviews/D5_contract_recheck_codex_result.ko.md), [응답](reviews/D5_contract_recheck_codex_response.ko.md)).
 - 아직 정하지 않은 것: **D5를 할지는 사용자 결정(9절) 전이다.** 계획은 [`EVAL_PLAN_D5.ko.md`](EVAL_PLAN_D5.ko.md)에 있다.
 - **이 계약은 D4 계약 7판([`EVAL_CONTRACT_D4.ko.md`](EVAL_CONTRACT_D4.ko.md))을 따른다.** 다른 점은 이 문서에 적는다. 파일과 명령은 2절의 표가 정한다. "D4"를 "D5"로 바꿔 읽는 식의 포괄 치환은 하지 않는다.
 - 목적: D4가 찾은 결함을 고친 제품이 **처음 보는 문서**에서 무엇을 내는지 잰다. 볼 것은 표시 없이 틀린 값·계정명, 가리키지 않은 빠진 칸이다. 기준은 D4와 같다(텍스트 PDF S1 = L1 = S2 = 0, 합성 스캔 S1 = 0).
@@ -19,27 +21,37 @@
 | 무엇 | 경로 |
 |---|---|
 | 공유 도구 (T로 고정) | `eval/d4_gold.py`, `eval/d4_score.py`, `eval/d4_candidates.py`, `eval/d4_preflight.py`, `eval/d4_scan.py`, `eval/d4_eval/run_d4.py`, `eval/d4_eval/position_check.py`, `eval/d4_eval/official_d4.py`, `eval/d4_eval/document_list.py` |
-| 고정 기록 | `eval/freeze_d5.json` (`d4_preflight.py freeze --tool-paths` 위 9개) |
+| 평가 프로필 | `eval/d4_eval/document_list.py`의 `PROFILES["d5"]`: 아래 경로들, 태그 `d5-registered`, 공유 도구 9개, P `180e621` |
+| 고정 기록 | `eval/freeze_d5.json` (`d4_preflight.py freeze --profile d5 --documents-count N`; 프로필과 N을 담는다) |
 | 제외 목록 | `eval/d5_excluded.json` = D4 제외 9곳 + D4 포함 10곳의 고유번호 |
 | 후보 기록 | `eval/d5_candidates/` (5절) |
-| 문서 목록 | `eval/d5_eval/documents.json` (`expected_documents` 필수, 9절 1번의 수) |
+| 문서 목록 | `eval/d5_eval/documents.json` (`expected_documents` 필수, 고정 기록의 N과 같아야 함) |
 | 정답·매핑표 | `eval/d5_eval/gold/` |
 | 스캔 대응표 | `eval/d5_eval/scans/` |
 | 위치 검사 등록 자리 | `eval/d5_eval/duplicate_places.json` |
-| 등록 기록 | `eval/register_d5.json` (`register --tag d5-registered`) |
+| 등록 기록 | `eval/register_d5.json` (`register --profile d5`; 프로필 이름과 태그를 담는다) |
 | 절차서 | `docs/D5_RUN_PROCEDURE.ko.md` |
 | 결과 | `eval/d5_eval/results/<날짜>/` |
 
-- **절차서는 ⑥ 전에 쓴다.** 등록 전 Codex 검토를 받고, 같은 이름으로 등록한다. 절차서에는 정확한 명령을 담는다.
-  - ⑦: `register --paths …`의 등록 파일 목록 전부와 `--tag d5-registered`
-  - ⑧: `check --registered d5-registered --tag d5-registered --remote origin`, `run_d4.py --documents eval/d5_eval/documents.json`
-  - ⑨: `position_check.py … --documents …`, `official_d4.py --documents … --places eval/d5_eval/duplicate_places.json`
-- 실행기·위치 검사·공식 집계는 문서 목록을 `document_list.check_document_list`로 먼저 검사한다(Codex D5 1번).
-  - 문서 수가 `expected_documents`와 같아야 한다.
+- **명령 (④·⑦·⑧은 정해져 있다):**
+  - ④: `python eval/d4_preflight.py freeze --profile d5 --documents-count N --product 180e621 --tools T --out eval/freeze_d5.json`
+    - N은 ③에서 사용자가 정한 회사 수다. 문서 목록이 생기기 전에 고정 기록에 들어간다.
+    - P가 프로필의 `180e621`이 아니면 고정하지 않는다. T의 도구는 프로필의 9개다(명령에서 고를 수 없다).
+  - ⑦: `python eval/d4_preflight.py register --profile d5 --freeze eval/freeze_d5.json --paths <등록 파일 전부> --out eval/register_d5.json`
+    - 등록 파일에는 문서 목록, 위치 검사 등록 자리, 목록이 가리키는 정답·매핑표·대응표 전부가 들어가야 한다. 빠지면 등록하지 않는다.
+    - 문서 목록은 고정 기록의 N으로 검사한다.
+  - ⑧: `python eval/d4_preflight.py check --profile d5 --freeze eval/freeze_d5.json --register eval/register_d5.json --registered d5-registered --remote origin --log <실행 폴더>.preflight.json`, 그다음 `run_d4.py --documents eval/d5_eval/documents.json --preflight <같은 로그>`
+    - 점검은 고정 기록의 프로필, 등록 기록의 프로필·태그·고정 기록 경로, `--registered`가 태그인지 확인한다.
+    - 실행기는 점검 로그의 프로필이 d5인지 확인한다(프로필이 없는 로그는 D4의 것이다).
+  - ⑨의 정확한 명령(`position_check.py … --documents eval/d5_eval/documents.json`, `official_d4.py --documents … --places eval/d5_eval/duplicate_places.json`)은 절차서에 적는다.
+  - 절차서는 ⑥ 전에 쓴다. 등록 전 Codex 검토를 받고, 같은 이름으로 등록한다.
+- 실행기·위치 검사·공식 집계는 문서 목록을 먼저 검사한다(Codex D5 1번, 재검토 1·2번).
+  - **문서 수 N은 목록 밖에서 온다.** D4 자기 목록이면 10이다. D5 목록이면 프로필 자리(`eval/d5_eval/documents.json`)에 있어야 하고, N은 고정 기록의 프로필에서 읽는다. 다른 자리의 목록은 거부한다.
+  - 목록의 `expected_documents`와 문서 수가 N과 같아야 한다.
   - 순번·고유번호·key·PDF와 스캔의 해시가 겹치지 않아야 한다.
   - 스캔 세 조건이 모두 있어야 한다.
-  - 실행기에서는 정답·매핑표·대응표가 저장소 안의 경로여야 한다.
-  - 공식 집계는 묶음마다 호출이 정확히 N개(텍스트)·3N개(스캔)일 때만 판정한다. 일부 표본으로는 `met`이 나오지 않는다.
+  - 정답·매핑표·대응표는 저장소 안의 상대 경로여야 하고, 가는 길에 심볼릭 링크가 없어야 한다. 문서 목록·고정 기록·등록 파일도 마찬가지다.
+  - 공식 집계는 프로필의 위치 검사 등록 자리만 받는다. 묶음마다 호출이 정확히 N개(텍스트)·3N개(스캔)일 때만 판정한다. 일부 표본으로는 `met`이 나오지 않는다.
 
 ## 3. 대상
 
@@ -51,7 +63,7 @@
     - 결과
     - 고른 버전과 버리거나 멈춘 측정과 그 이유. 예: after1의 AI 방식은 코드 변경으로 멈췄다.
   - 기록 위치는 `eval/documents_2026-10-20_after-d4/REPORT.ko.md`다.
-- **평가 도구 T:** 2절 표의 9개 파일을 ④에서 고정한다(`freeze --tool-paths`). D4 도구와 다른 점은 4절에 적는다.
+- **평가 도구 T:** 2절 표의 9개 파일을 ④에서 고정한다(`freeze --profile d5`; 목록은 프로필에 정해져 있다). D4 도구와 다른 점은 4절에 적는다.
 - **모델·프롬프트·OCR·기계:** D4 2절과 같다. ④에서 다시 기록한다. 다르면 이 계약의 개정으로 다루고 재검토를 받는다(기록만으로 넘어가지 않는다).
 
 ## 4. 평가 도구의 변경 (④ 전, Codex 검토 대상)
@@ -62,12 +74,15 @@ D4에서 새 문서가 드러낸 도구 결함 두 건과, D5에 필요한 경�
    - 점 날짜 기간 줄을 기간 줄로 본다. 줄 전체가 기간 줄일 때만이다("제 62 기 2025.12.31 현재", "제 62 기 2025.01.01 부터 2025.12.31 까지").
    - 날짜가 든 설명문이나 행은 재무제표 시작도 아니고 버리지도 않는다(Codex D5 4번).
    - "2025년 12월 31일 현재" 형태의 규칙은 D4 그대로다.
+   - 받지 않는 점 날짜 변형(같은 줄에 단위가 붙은 줄, 당기·전기 날짜가 한 줄에 있는 줄, 물결표 범위 "2025.01.01 ~ 2025.12.31")은 재무제표를 못 찾은 것(`statement_not_found`)으로 사람에게 넘어간다. 이 항목은 무시할 수 없고 재무제표 추가·같은 재무제표·채점 불가 중 하나로 정한다(Codex 재검토 확인). 넓혀 받는 것은 이 계약의 범위가 아니다.
 2. **계정명 비교 (`label_key`):** 끝에 붙은 콜론을 빼고, 가운뎃점 ㆍ·・‧를 한 글자(ㆍ)로 본다. 정답 생성기와 채점기가 같은 방식으로 비교한다.
 3. **경로와 관문:**
    - 실행기·위치 검사·공식 집계에 `--documents`·`--places`를 추가했다. 기본값은 D4다.
    - 문서 목록 검사(2절)를 추가했다.
-   - 사전 점검에 `--tag`를, 고정에 `--tool-paths`를 추가했다. 기본값은 D4다.
-- **확인 결과** (2026-10-20, 커밋은 `d5-tools` 브랜치의 최종 커밋을 응답 문서에 적는다; D4 기록으로):
+   - 고정·등록·사전 점검에 `--profile`을 추가했다(기본값 D4, D4의 동작과 기록 형식은 그대로다). D5 프로필이 경로·도구·P·태그를 정한다.
+- **확인 결과** (2026-10-20, D4 기록으로):
+  - 1번(정답 생성기)은 코드 `09c0e4430f771ad35a9ccb57cb400516861f3a50`에서 확인했고, Codex 재검토가 같은 커밋에서 다시 확인했다. 그 뒤 정답 생성기와 채점기는 바뀌지 않았다.
+  - 2번의 다시 집계는 재검토 수정 커밋 `0050149504c76fdf094d2c99e419c3492908cf9b`의 도구로도 다시 했다. 결과는 아래와 같다.
   - 1번:
     - D4 문서 10개의 정답을 고친 생성기로 다시 만들었다(같은 PDF, 같은 OpenDART 캐시 `cache/d4`). DSR 말고 9개는 저장된 정답 파일과 **바이트 단위로 같다.**
     - DSR은 4개 재무제표를 맞는 쪽 범위와 단위로 찾았다. 만든 칸 211개는 D4에서 사람이 옮겨 적은 212칸과 같다. 비교 기준은 채점기의 계정명 정규화(`label_key`), 기간, 인쇄값이다. 원래 계정명 글자로는 6칸이 사람이 넣은 띄어쓰기만 다르다.

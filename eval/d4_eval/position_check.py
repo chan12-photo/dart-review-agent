@@ -288,23 +288,27 @@ def main(argv: list[str] | None = None) -> int:
     make.add_argument("--out", type=Path, required=True)
     same = commands.add_parser("verify")
     same.add_argument("--pdf-dir", type=Path, required=True)
-    same.add_argument("--registered", type=Path, default=ROOT / "eval" / "d4_eval" / "duplicate_places.json")
+    same.add_argument("--registered", type=Path, help="the registered places (default: the list's evaluation's)")
     test = commands.add_parser("check")
     test.add_argument("--key", required=True)
     test.add_argument("--report", type=Path, required=True)
     test.add_argument("--page-map", type=Path)
     test.add_argument("--verdicts", type=Path)
-    test.add_argument("--registered", type=Path, default=ROOT / "eval" / "d4_eval" / "duplicate_places.json")
+    test.add_argument("--registered", type=Path, help="the registered places (default: the list's evaluation's)")
     test.add_argument("--out", type=Path, required=True)
     for sub in (make, same, test):
         sub.add_argument("--documents", type=Path, default=DOCUMENTS, help="the document list (default: D4's)")
     args = parser.parse_args(argv)
     documents = json.loads(args.documents.read_text(encoding="utf-8"))
-    from document_list import check_document_list, is_d4_list
+    from document_list import PROFILES, check_document_list, registered_count
     try:
-        check_document_list(documents, d4_legacy=is_d4_list(args.documents, ROOT), repo_paths=False)
+        # N from outside the list, paths inside the repository (Codex D5 re-check 1-2)
+        profile, count = registered_count(args.documents, ROOT)
+        check_document_list(documents, count, d4_legacy=profile == "d4", root=ROOT)
     except ValueError as exc:
         parser.error(str(exc))
+    if args.command != "build" and args.registered is None:
+        args.registered = ROOT / PROFILES[profile]["places"]
     if args.command == "build":
         if args.out.exists():
             parser.error(f"{args.out} exists")

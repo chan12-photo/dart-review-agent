@@ -6,6 +6,16 @@
     python eval/d4_preflight.py check --freeze eval/freeze_d4.json --register eval/register_d4.json \
         --registered d4-registered --remote origin --log <run>/preflight.json             # step ⑧
 
+Another evaluation names its profile (eval/d4_eval/document_list.py PROFILES), which fixes its records' places, its
+tools, its P, and its tag; N is decided by the person at ③ and frozen at ④ (D5 contract 2, Codex D5 re-check 1-3):
+
+    python eval/d4_preflight.py freeze --profile d5 --documents-count N --product 180e621 --tools T \
+        --out eval/freeze_d5.json
+    python eval/d4_preflight.py register --profile d5 --freeze eval/freeze_d5.json --paths <files> \
+        --out eval/register_d5.json
+    python eval/d4_preflight.py check --profile d5 --freeze eval/freeze_d5.json --register eval/register_d5.json \
+        --registered d5-registered --remote origin --log <run>.preflight.json
+
 The freeze record names the product commit P and the tools commit T, the git object of every frozen path at
 its commit (the product: dart_review/ and pyproject.toml; the tools: TOOL_PATHS), the Python version, every
 installed package with its version, the model's digest, and the Ollama, Tesseract, and macOS versions.
@@ -29,15 +39,20 @@ from __future__ import annotations
 import argparse
 from datetime import datetime, timezone
 import json
+import os
 from pathlib import Path
 import platform
 import subprocess
 import sys
 
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / "eval" / "d4_eval"))
+from document_list import (D4_TOOLS, PROFILES, check_document_list, frozen_count, inside,  # noqa: E402
+                           profile_record)
+
 PRODUCT_PATHS = ("dart_review", "pyproject.toml")
 # the gold builder, the scorer, the candidate rules, this check, and the synthetic scan maker with its conditions
-TOOL_PATHS = ("eval/d4_gold.py", "eval/d4_score.py", "eval/d4_candidates.py", "eval/d4_preflight.py", "eval/d4_scan.py")
+TOOL_PATHS = D4_TOOLS
 MODEL = "qwen3-vl:8b"
 ENVIRONMENT = ("python", "packages", "model", "ollama", "tesseract", "macos")
 
@@ -77,24 +92,58 @@ def environment() -> dict:
             "macos": platform.mac_ver()[0] or None}
 
 
-def freeze_record(root: Path, product: str, tools: str, env: dict, tool_paths: tuple[str, ...] = TOOL_PATHS) -> dict:
-    """``tool_paths``: the evaluation tools frozen as T (D4: TOOL_PATHS; D5 adds the runner, the position check,
-    and the official aggregation, Codex D5 review 2). The check compares every path the record names."""
+def freeze_record(root: Path, product: str, tools: str, env: dict, profile: str = "d4",
+                  expected_documents: int | None = None) -> dict:
+    """``profile``: the evaluation (D4, the default, as it was frozen: TOOL_PATHS and no profile in the record). Any
+    other profile freezes its own tools and its own P only, and records itself with N, the number of documents the
+    person decided on at ③ (Codex D5 re-check 1 and 3). The check compares every path the record names."""
     product, tools = _git(root, "rev-parse", product), _git(root, "rev-parse", tools)
+    extra = {}
+    tool_paths = TOOL_PATHS
+    if profile != "d4":
+        extra = {"profile": profile_record(profile, expected_documents)}
+        tool_paths = tuple(extra["profile"]["tool_paths"])
+        if product != extra["profile"]["product_commit"]:
+            raise ValueError(f"P {product[:7]} is not {profile}'s product commit "
+                             f"{extra['profile']['product_commit'][:7]} (D5 contract 3: a closed list)")
+    elif expected_documents is not None:
+        raise ValueError("D4's number of documents is its list's 10: no --documents-count")
     objects = {"product": {path: _object(root, product, path) for path in PRODUCT_PATHS},
                "tools": {path: _object(root, tools, path) for path in tool_paths}}
     absent = [path for group in objects.values() for path, obj in group.items() if obj is None]
     if absent:
         raise ValueError(f"not at their commit: {', '.join(absent)}")
     return {"product_commit": product, "tools_commit": tools, "objects": objects, "environment": env,
-            "frozen_at": datetime.now(timezone.utc).isoformat(timespec="seconds")}
+            "frozen_at": datetime.now(timezone.utc).isoformat(timespec="seconds"), **extra}
 
 
-def register_record(root: Path, freeze_path: str, paths: list[str]) -> dict:
+def register_record(root: Path, freeze_path: str, paths: list[str], profile: str = "d4") -> dict:
     """Step ⑦: the git objects of the registered files at HEAD (committed, in a clean tree), the freeze record's
-    among them. A mapping file must be confirmed: a draft mapping cannot be registered."""
+    among them. A mapping file must be confirmed: a draft mapping cannot be registered. Every file is a regular
+    file inside the repository, reached without a link (Codex D5 re-check 2). A profile other than D4's registers
+    its own freeze record, its document list (checked against the frozen N), its places, and every gold, mapping,
+    and scan map the list names, and records its name and tag (Codex D5 re-check 3)."""
     if _git(root, "status", "--porcelain", "--untracked-files=all"):
         raise ValueError("the tree is not clean: register committed files only")
+    for path in [freeze_path, *paths]:
+        if not inside(root, path) or not (root / path).is_file():
+            raise ValueError(f"{path} is not a file inside the repository (or is reached through a link)")
+    extra = {}
+    if profile != "d4":
+        wanted = PROFILES[profile]
+        if freeze_path != wanted["freeze"]:
+            raise ValueError(f"{profile} registers its freeze record {wanted['freeze']}, not {freeze_path}")
+        count = frozen_count(json.loads((root / freeze_path).read_text(encoding="utf-8")), profile)
+        documents = json.loads((root / wanted["documents"]).read_text(encoding="utf-8")) \
+            if (root / wanted["documents"]).is_file() else {}
+        check_document_list(documents, count, root=root)
+        named = {wanted["documents"], wanted["places"]}
+        for item in documents["documents"]:
+            named |= {item["gold"], item["mapping"], *(scan["map"] for scan in item["scans"].values())}
+        missing = sorted(named - set(paths))
+        if missing:
+            raise ValueError(f"not registered: {', '.join(missing)}")
+        extra = {"profile": profile, "tag": wanted["tag"]}
     objects = {}
     for path in [freeze_path, *paths]:
         obj = _object(root, "HEAD", path)
@@ -113,19 +162,38 @@ def register_record(root: Path, freeze_path: str, paths: list[str]) -> dict:
     freeze = json.loads((root / freeze_path).read_text(encoding="utf-8"))
     return {"freeze": freeze_path, "product_commit": freeze["product_commit"], "tools_commit": freeze["tools_commit"],
             "objects": objects, "based_on": _git(root, "rev-parse", "HEAD"),
-            "registered_at": datetime.now(timezone.utc).isoformat(timespec="seconds")}
+            "registered_at": datetime.now(timezone.utc).isoformat(timespec="seconds"), **extra}
 
 
-TAG = "d4-registered"
+TAG = PROFILES["d4"]["tag"]
 
 
 def check(root: Path, record: dict, env: dict, imported_from: Path | None = None, registration: dict | None = None,
-          registered: str | None = None, remote: str | None = None, tag: str = TAG) -> dict:
-    """``tag``: the registration tag looked up on ``remote`` (D4: d4-registered; D5: d5-registered, Codex D5 review 3)."""
+          registered: str | None = None, remote: str | None = None, profile: str = "d4") -> dict:
+    """``profile``: the evaluation; its tag is looked up on ``remote`` (D4: d4-registered). A profile other than
+    D4's also needs the freeze record to hold that profile, the registration to name it, its tag, and its freeze
+    record, and R to be named by its tag (Codex D5 re-check 3)."""
     checks = []
+    tag = PROFILES[profile]["tag"]
 
     def add(name: str, ok: bool, detail: object) -> None:
         checks.append({"check": name, "ok": bool(ok), "detail": detail})
+
+    if profile != "d4":
+        try:
+            count, why = frozen_count(record, profile), None
+        except ValueError as exc:
+            count, why = None, str(exc)
+        add(f"the freeze record holds the {profile} profile", count is not None, why or {"expected_documents": count})
+        wanted = PROFILES[profile]
+        named = (registration or {}).get("profile"), (registration or {}).get("tag"), (registration or {}).get("freeze")
+        add(f"the registration is {profile}'s, with its tag and freeze record", named == (profile, tag, wanted["freeze"]),
+            list(named))
+        listed = set((registration or {}).get("objects") or {})
+        add(f"the registration holds {profile}'s list, places, and freeze record",
+            {wanted["documents"], wanted["places"], wanted["freeze"]} <= listed,
+            sorted({wanted["documents"], wanted["places"], wanted["freeze"]} - listed))
+        add(f"R is named by the tag {tag}", registered == tag, registered)
 
     head = _git(root, "rev-parse", "HEAD")
     try:
@@ -174,8 +242,9 @@ def check(root: Path, record: dict, env: dict, imported_from: Path | None = None
                    "only_now": sorted(set(env.get(key) or []) - set(frozen.get(key) or []))}
                   if key == "packages" else {"frozen": frozen.get(key), "now": env.get(key)})
         add(f"{key} as frozen", same, detail)
-    return {"head": head, "checked_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
-            "ok": all(c["ok"] for c in checks), "checks": checks}
+    result = {"head": head, "checked_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+              "ok": all(c["ok"] for c in checks), "checks": checks}
+    return result if profile == "d4" else {"profile": profile, **result}
 
 
 def main() -> int:
@@ -185,29 +254,42 @@ def main() -> int:
     freeze.add_argument("--product", required=True)
     freeze.add_argument("--tools", required=True)
     freeze.add_argument("--out", type=Path, required=True)
-    freeze.add_argument("--tool-paths", nargs="+", default=list(TOOL_PATHS),
-                        help="the evaluation tools frozen as T (default: D4's five)")
+    freeze.add_argument("--documents-count", type=int, help="N, decided at ③ (not for D4)")
     reg = commands.add_parser("register")
     reg.add_argument("--freeze", required=True, help="the freeze record's path in the repository")
     reg.add_argument("--paths", nargs="+", required=True, help="the files registered (committed)")
     reg.add_argument("--out", type=Path, required=True)
-    reg.add_argument("--tag", default=TAG, help=f"the tag R is to get (default: {TAG})")
     run = commands.add_parser("check")
     run.add_argument("--freeze", type=Path, required=True)
     run.add_argument("--register", type=Path, required=True, help="the registration record committed in R")
     run.add_argument("--registered", required=True, help=f"R: a commit, or the tag {TAG}")
     run.add_argument("--remote", required=True, help=f"the remote whose pushed tag {TAG} must name HEAD")
     run.add_argument("--log", type=Path, required=True)
-    run.add_argument("--tag", default=TAG, help=f"the registration tag pushed to --remote (default: {TAG})")
+    for sub in (freeze, reg, run):
+        sub.add_argument("--profile", choices=sorted(PROFILES), default="d4",
+                         help="the evaluation (default: d4); its paths, tools, P, and tag are fixed in document_list.py")
     args = parser.parse_args()
+    if args.profile != "d4":
+        # a profile's records are at its own places (Codex D5 re-check 3)
+        wanted = PROFILES[args.profile]
+        places = {"freeze": (args.out if args.command == "freeze" else args.freeze, wanted["freeze"])}
+        if args.command == "register":
+            places["register"] = (args.out, wanted["register"])
+        if args.command == "check":
+            places["register"] = (args.register, wanted["register"])
+        for what, (given, own) in places.items():
+            if Path(os.path.normpath(Path(given).absolute())) != Path(os.path.normpath((ROOT / own).absolute())):
+                parser.error(f"--profile {args.profile}: the {what} record is {own}, not {given}")
+        if args.command == "check" and args.registered != wanted["tag"]:
+            parser.error(f"--profile {args.profile}: --registered is the tag {wanted['tag']}")
     if args.command == "register":
-        record = register_record(ROOT, args.freeze, args.paths)
+        record = register_record(ROOT, args.freeze, args.paths, args.profile)
         args.out.write_text(json.dumps(record, ensure_ascii=False, indent=1), encoding="utf-8")
         print(f"registered {len(record['objects'])} files at {record['based_on'][:7]}; commit {args.out} as R, "
-              f"tag it {args.tag}, and push the tag before the run")
+              f"tag it {PROFILES[args.profile]['tag']}, and push the tag before the run")
         return 0
     if args.command == "freeze":
-        record = freeze_record(ROOT, args.product, args.tools, environment(), tuple(args.tool_paths))
+        record = freeze_record(ROOT, args.product, args.tools, environment(), args.profile, args.documents_count)
         args.out.write_text(json.dumps(record, ensure_ascii=False, indent=1), encoding="utf-8")
         missing = [k for k, v in record["environment"].items() if v is None or v == {MODEL: None}]
         print(f"frozen P {record['product_commit'][:7]}, T {record['tools_commit'][:7]}"
@@ -215,7 +297,7 @@ def main() -> int:
         return 0
     import dart_review
     result = check(ROOT, json.loads(args.freeze.read_text(encoding="utf-8")), environment(), Path(dart_review.__file__),
-                   json.loads(args.register.read_text(encoding="utf-8")), args.registered, args.remote, args.tag)
+                   json.loads(args.register.read_text(encoding="utf-8")), args.registered, args.remote, args.profile)
     args.log.parent.mkdir(parents=True, exist_ok=True)
     args.log.write_text(json.dumps(result, ensure_ascii=False, indent=1), encoding="utf-8")
     for item in result["checks"]:

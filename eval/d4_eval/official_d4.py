@@ -52,7 +52,7 @@ sys.path[:0] = [str(ROOT), str(ROOT / "eval"), str(ROOT / "eval" / "d4_eval")]
 
 from eval.d4_score import score  # noqa: E402
 import position_check  # noqa: E402
-from document_list import check_document_list, is_d4_list  # noqa: E402
+from document_list import PROFILES, _same_place, check_document_list, inside, registered_count  # noqa: E402
 
 DOCUMENTS = ROOT / "eval" / "d4_eval" / "documents.json"
 READERS = ("rules", "ai")  # the registered order (eval/d4_eval/run_d4.py)
@@ -216,9 +216,11 @@ def bundle(entries: list[dict], criteria: tuple[str, ...], expected_calls: int |
 
 
 def official(run: Path, judgments: Path, documents: dict, registered: dict, readers: list[str] | None = None,
-             d4_legacy: bool = False) -> dict:
-    # the whole registered sample, each document once: never a verdict on part of it (Codex D5 review 1)
-    count = check_document_list(documents, d4_legacy=d4_legacy, repo_paths=False)
+             expected: int | None = None, d4_legacy: bool = False, root: Path | None = ROOT) -> dict:
+    """``expected``: N from outside the list (``registered_count``). ``root``: the repository every gold, mapping,
+    and map path of the list is inside (a test gives its own folder, or None for absolute fixture paths)."""
+    # the whole registered sample, each document once: never a verdict on part of it (Codex D5 review 1, re-check 1)
+    count = check_document_list(documents, expected, d4_legacy=d4_legacy, root=root)
     record = json.loads((run / "run.json").read_text(encoding="utf-8"))
     if not isinstance(record, dict):
         raise ValueError(f"{run / 'run.json'} is not a run record")
@@ -249,7 +251,8 @@ def official(run: Path, judgments: Path, documents: dict, registered: dict, read
     return {"run_folder": run.name, "judgment_files_not_read": unused,
             "run": {key: record.get(key) for key in ("commit", "started_at", "finished_at", "preflight", "readers",
                                                      "calls", "succeeded", "failed")},
-            "documents_sha256": _sha256(DOCUMENTS), "places_sha256": _sha256(PLACES), "product_reader": "ai",
+            "documents_sha256": _sha256(DOCUMENTS), "places_sha256": _sha256(PLACES), "expected_documents": count,
+            "product_reader": "ai",
             "readers": result, "calls": entries}
 
 
@@ -268,9 +271,13 @@ def main(argv: list[str] | None = None) -> int:
     if args.out and args.out.exists():
         parser.error(f"{args.out} exists")
     try:
+        profile, count = registered_count(DOCUMENTS, ROOT)
+        own = PROFILES[profile]["places"]
+        if not _same_place(PLACES, ROOT / own) or not inside(ROOT, own):
+            raise ValueError(f"the places of the {profile} list are {PROFILES[profile]['places']}, not {PLACES}")
         result = official(args.run, args.judgments, json.loads(DOCUMENTS.read_text(encoding="utf-8")),
-                          json.loads(PLACES.read_text(encoding="utf-8")), args.readers,
-                          d4_legacy=is_d4_list(DOCUMENTS, ROOT))
+                          json.loads(PLACES.read_text(encoding="utf-8")), args.readers, count,
+                          d4_legacy=profile == "d4")
     except ValueError as exc:
         parser.error(str(exc))
     if args.out:

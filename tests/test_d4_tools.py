@@ -802,37 +802,6 @@ class PreflightTests(unittest.TestCase):
     def test_the_registered_checkout_passes(self):
         self.assertEqual(self.failed(imported_from=self.root / "dart_review/__init__.py"), [])
 
-    def test_a_registration_tag_of_its_own(self):
-        # Codex D5 review 3: the remote lookup was fixed to d4-registered, so a D5 check could not pass
-        import shutil
-        remote = Path(self.folder.name + "-remote5")
-        self.git("init", "-q", "--bare", str(remote))
-        self.git("tag", "-a", "d5-registered", "-m", "R", self.R)
-        self.git("push", "-q", str(remote), "refs/tags/d5-registered")
-        try:
-            result = check(self.root, self.record, self.ENV, None, self.registration, "d5-registered", str(remote),
-                           tag="d5-registered")
-            self.assertEqual([c["check"] for c in result["checks"] if not c["ok"]], [])
-            self.assertIn(f"the pushed tag d5-registered on {remote} names HEAD", [c["check"] for c in result["checks"]])
-            default = check(self.root, self.record, self.ENV, None, self.registration, "d5-registered", str(remote))
-            self.assertEqual([c["check"] for c in default["checks"] if not c["ok"]],
-                             [f"the pushed tag d4-registered on {remote} names HEAD"])
-        finally:
-            shutil.rmtree(remote)
-
-    def test_more_tools_frozen(self):
-        # Codex D5 review 2: the runner, the position check, and the aggregation were not part of T
-        extra = "eval/d4_eval/run_d4.py"
-        (self.root / extra).parent.mkdir(parents=True, exist_ok=True)
-        (self.root / extra).write_text("# runner\n", encoding="utf-8")
-        self.commit()
-        record = freeze_record(self.root, "HEAD", "HEAD", self.ENV, TOOL_PATHS + (extra,))
-        self.assertIn(extra, record["objects"]["tools"])
-        (self.root / extra).write_text("# runner changed after the freeze\n", encoding="utf-8")
-        self.commit()
-        result = check(self.root, record, self.ENV, None, None, self.head(), None)
-        self.assertIn(f"tools {extra} at HEAD is the frozen object", [c["check"] for c in result["checks"] if not c["ok"]])
-
     def test_a_change_only_in_the_working_tree_fails(self):
         (self.root / "eval/d4_score.py").write_text("# changed after the freeze\n", encoding="utf-8")
         self.assertEqual(self.failed(), ["clean working tree and index (git status --porcelain)"])
@@ -863,7 +832,7 @@ class PreflightTests(unittest.TestCase):
 
     def test_only_committed_files_and_confirmed_mappings_are_registered(self):
         import json
-        with self.assertRaisesRegex(ValueError, "not committed"):
+        with self.assertRaisesRegex(ValueError, "eval/none.json is not a file"):
             register_record(self.root, "eval/freeze_d4.json", ["eval/none.json"])
         (self.root / "eval/b.mapping.json").write_text(json.dumps({**self.MAPPING, "status": "draft"}), encoding="utf-8")
         with self.assertRaisesRegex(ValueError, "not clean"):
@@ -891,6 +860,125 @@ class PreflightTests(unittest.TestCase):
         self.commit()
         with self.assertRaisesRegex(ValueError, "eval/d4_scan.py"):
             freeze_record(self.root, "HEAD", "HEAD", self.ENV)
+
+
+class ProfileTests(unittest.TestCase):
+    """D5's profile (Codex D5 re-check 1-3): N decided outside the list, the nine tools and P frozen as the code's
+    profile names them, its records at their own places, its tag, and no file reached through a link."""
+
+    ENV = PreflightTests.ENV
+    MAPPING = PreflightTests.MAPPING
+
+    def setUp(self):
+        import json
+        from eval.d4_preflight import PROFILES  # the module d4_preflight reads, patched below
+        self.folder = tempfile.TemporaryDirectory()
+        self.addCleanup(self.folder.cleanup)
+        self.root = Path(self.folder.name)
+        self.tools = PROFILES["d5"]["tool_paths"]
+        for path in ["dart_review/__init__.py", "pyproject.toml", *self.tools]:
+            (self.root / path).parent.mkdir(parents=True, exist_ok=True)
+            (self.root / path).write_text(f"# {path}\n", encoding="utf-8")
+        self.git("init", "-q")
+        self.commit()  # P and T
+        self.P = self.head()
+        self.enterContext(mock.patch.dict(PROFILES["d5"], {"product_commit": self.P}))
+        self.record = freeze_record(self.root, "HEAD", "HEAD", self.ENV, "d5", 2)
+        (self.root / "eval/freeze_d5.json").write_text(json.dumps(self.record), encoding="utf-8")
+        self.commit()  # F
+        self.documents = {"expected_documents": 2, "documents": []}
+        self.paths = ["eval/d5_eval/documents.json", "eval/d5_eval/duplicate_places.json"]
+        for n in (1, 2):
+            scans = {c: {"pdf": f"{n}.{c}.pdf", "sha256": f"s{n}{c}", "map": f"eval/d5_eval/scans/{n}.{c}.map.json"}
+                     for c in ("normal", "tilt", "blur")}
+            item = {"key": f"{n}", "rank": 19 + n, "corp_code": f"c{n}", "pdf": f"{n}.pdf", "sha256": f"t{n}",
+                    "gold": f"eval/d5_eval/gold/{n}.gold.json", "mapping": f"eval/d5_eval/gold/{n}.mapping.json",
+                    "scans": scans}
+            self.documents["documents"].append(item)
+            for path in (item["gold"], item["mapping"], *(scan["map"] for scan in scans.values())):
+                (self.root / path).parent.mkdir(parents=True, exist_ok=True)
+                (self.root / path).write_text(json.dumps(self.MAPPING if "mapping" in path else {}), encoding="utf-8")
+                self.paths.append(path)
+        self.write("eval/d5_eval/documents.json", self.documents)
+        self.write("eval/d5_eval/duplicate_places.json", {"documents": {}})
+        self.commit()
+        self.registration = register_record(self.root, "eval/freeze_d5.json", self.paths, "d5")
+        self.write("eval/register_d5.json", self.registration)
+        self.commit()  # R
+        self.R = self.head()
+        self.git("tag", "-a", "d5-registered", "-m", "R", self.R)
+
+    git, head, commit = PreflightTests.git, PreflightTests.head, PreflightTests.commit
+
+    def write(self, path, data):
+        import json
+        (self.root / path).write_text(json.dumps(data), encoding="utf-8")
+
+    def failed(self, record=None, registration=None, registered="d5-registered", remote=None):
+        result = check(self.root, record or self.record, self.ENV, None, registration or self.registration, registered,
+                       remote, "d5")
+        self.assertEqual(result["profile"], "d5")
+        return [c["check"] for c in result["checks"] if not c["ok"]]
+
+    def test_the_profile_is_frozen_with_its_nine_tools_and_n(self):
+        self.assertEqual(sorted(self.record["objects"]["tools"]), sorted(self.tools))
+        self.assertEqual(len(self.tools), 9)
+        self.assertEqual((self.record["profile"]["expected_documents"], self.record["profile"]["tag"]), (2, "d5-registered"))
+        self.assertEqual((self.registration["profile"], self.registration["tag"]), ("d5", "d5-registered"))
+        self.assertEqual(self.failed(), [])
+
+    def test_another_p_or_no_n_cannot_be_frozen(self):
+        self.write("dart_review/__init__.py", "changed")
+        self.commit()
+        with self.assertRaisesRegex(ValueError, "product commit"):
+            freeze_record(self.root, "HEAD", "HEAD", self.ENV, "d5", 2)
+        for count in (None, 0, True, "10"):
+            with self.subTest(count=count), self.assertRaises(ValueError):
+                freeze_record(self.root, self.P, "HEAD", self.ENV, "d5", count)
+        with self.assertRaises(ValueError):
+            freeze_record(self.root, self.P, "HEAD", self.ENV, "d4", 10)
+
+    def test_a_tool_changed_after_the_freeze_fails(self):
+        (self.root / "eval/d4_eval/run_d4.py").write_text("# runner changed after the freeze\n", encoding="utf-8")
+        self.commit()
+        self.assertIn("tools eval/d4_eval/run_d4.py at HEAD is the frozen object",
+                      self.failed(registered=self.head()))
+
+    def test_r_is_named_by_its_tag_and_the_registration_is_the_profile_s(self):
+        self.assertEqual(self.failed(registered=self.R), ["R is named by the tag d5-registered"])
+        d4_like = {k: v for k, v in self.registration.items() if k not in ("profile", "tag")}
+        self.assertEqual(self.failed(registration=d4_like),
+                         ["the registration is d5's, with its tag and freeze record"])
+        changed = {**self.record, "profile": {**self.record["profile"], "tool_paths": self.tools[:5]}}
+        self.assertIn("the freeze record holds the d5 profile", self.failed(record=changed))
+        import shutil
+        remote = Path(self.folder.name + "-remote")
+        self.git("init", "-q", "--bare", str(remote))
+        self.addCleanup(shutil.rmtree, remote)
+        self.git("push", "-q", str(remote), "refs/tags/d5-registered")
+        self.assertEqual(self.failed(remote=str(remote)), [])
+
+    def test_the_registration_holds_the_whole_list_at_the_frozen_n(self):
+        with self.assertRaisesRegex(ValueError, "not registered: eval/d5_eval/gold/2.gold.json"):
+            register_record(self.root, "eval/freeze_d5.json",
+                            [p for p in self.paths if p != "eval/d5_eval/gold/2.gold.json"], "d5")
+        with self.assertRaisesRegex(ValueError, "registers its freeze record"):
+            register_record(self.root, "eval/d5_eval/duplicate_places.json", self.paths, "d5")
+        # Codex D5 re-check 1: one of the decided documents, its list saying 1
+        self.write("eval/d5_eval/documents.json", {"expected_documents": 1, "documents": self.documents["documents"][:1]})
+        self.commit()
+        with self.assertRaisesRegex(ValueError, "the profile 2"):
+            register_record(self.root, "eval/freeze_d5.json", self.paths, "d5")
+
+    def test_a_link_is_never_registered(self):
+        import os
+        outside = Path(self.folder.name + "-outside.json")
+        outside.write_text("{}", encoding="utf-8")
+        self.addCleanup(outside.unlink)
+        os.symlink(outside, self.root / "eval/d5_eval/gold/link.gold.json")
+        self.commit()
+        with self.assertRaisesRegex(ValueError, "link.gold.json is not a file inside the repository"):
+            register_record(self.root, "eval/freeze_d5.json", [*self.paths, "eval/d5_eval/gold/link.gold.json"], "d5")
 
 
 if __name__ == "__main__":

@@ -88,7 +88,7 @@ class Fixture(unittest.TestCase):
         return sha(path.read_bytes())
 
     def result(self):
-        return official_d4.official(self.run, self.judgments, self.documents, self.registered)
+        return official_d4.official(self.run, self.judgments, self.documents, self.registered, expected=1, root=None)
 
 
 class OfficialTests(Fixture):
@@ -230,11 +230,11 @@ class RunGateTests(Fixture):
         # rules from this folder; the AI reader ran again elsewhere after a model server failure
         self.write_run(readers=("rules", "ai"), exits={"a.text.ai": 1})
         (self.run / "reports" / "a.text.rules.json").write_bytes((self.run / "reports" / "a.text.ai.json").read_bytes())
-        result = official_d4.official(self.run, self.judgments, self.documents, self.registered, ["rules"])
+        result = official_d4.official(self.run, self.judgments, self.documents, self.registered, ["rules"], expected=1, root=None)
         self.assertEqual(list(result["readers"]), ["rules"])
         self.assertEqual(result["readers"]["rules"]["3.1"]["verdict"], "met")
         with self.assertRaises(ValueError):
-            official_d4.official(self.run, self.judgments, self.documents, self.registered, ["other"])
+            official_d4.official(self.run, self.judgments, self.documents, self.registered, ["other"], expected=1, root=None)
 
     def test_judgment_files_of_another_shape_are_refused(self):
         # Codex eighth review 2: an empty list, string, or false is not "no verdicts"
@@ -281,7 +281,7 @@ class RunGateTests(Fixture):
         self.assertEqual(self.verdict(), "met")
 
     def test_a_reader_named_twice_is_counted_once(self):
-        result = official_d4.official(self.run, self.judgments, self.documents, self.registered, ["ai", "ai"])
+        result = official_d4.official(self.run, self.judgments, self.documents, self.registered, ["ai", "ai"], expected=1, root=None)
         self.assertEqual(result["readers"]["ai"]["3.1"]["calls"], 1)
         self.assertEqual(len(result["calls"]), 4)
 

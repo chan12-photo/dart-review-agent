@@ -95,6 +95,7 @@ def preflight_passed(path: Path | None, head: str) -> dict:
 
 
 def main(argv: list[str] | None = None) -> int:
+    global DOCUMENTS
     parser = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     parser.add_argument("--pdf-dir", type=Path, required=True)
     parser.add_argument("--scan-dir", type=Path, required=True)
@@ -103,7 +104,10 @@ def main(argv: list[str] | None = None) -> int:
                         help="only for re-running one reader in a new folder after a model server failure")
     parser.add_argument("--preflight", type=Path, help="the passed log of eval/d4_preflight.py check (not with --dry-run)")
     parser.add_argument("--dry-run", action="store_true")
+    parser.add_argument("--documents", type=Path, default=DOCUMENTS,
+                        help="the registered document list (default: D4's; D5 passes its own)")
     args = parser.parse_args(argv)
+    DOCUMENTS = args.documents
     if args.readers != [r for r in READERS if r in args.readers]:
         parser.error(f"--readers {' '.join(args.readers)}: each reader once, rules before ai (contract ⑧)")
     if args.out.exists():

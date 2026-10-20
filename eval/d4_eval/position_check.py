@@ -296,8 +296,10 @@ def main(argv: list[str] | None = None) -> int:
     test.add_argument("--verdicts", type=Path)
     test.add_argument("--registered", type=Path, default=ROOT / "eval" / "d4_eval" / "duplicate_places.json")
     test.add_argument("--out", type=Path, required=True)
+    for sub in (make, same, test):
+        sub.add_argument("--documents", type=Path, default=DOCUMENTS, help="the document list (default: D4's)")
     args = parser.parse_args(argv)
-    documents = json.loads(DOCUMENTS.read_text(encoding="utf-8"))
+    documents = json.loads(args.documents.read_text(encoding="utf-8"))
     if args.command == "build":
         if args.out.exists():
             parser.error(f"{args.out} exists")

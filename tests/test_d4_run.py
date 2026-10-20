@@ -186,6 +186,13 @@ class RunTests(Inputs):
             gate = official_d4.run_gate(self.dir / "run", self.run_json(), names)
         self.assertEqual(set(gate.values()), {None})
 
+    def test_a_document_list_given_on_the_command_line(self):
+        # D5 runs the same runner on its own document list (D5 contract draft 3)
+        other = self.dir / "d5_documents.json"
+        other.write_text(json.dumps(self.documents) + "\n", encoding="utf-8")
+        self.assertEqual(self.run_main("--documents", str(other), "--preflight", str(self.preflight)), 0)
+        self.assertEqual(self.run_json()["documents_sha256"], run_d4._sha256(other))
+
     def test_a_dry_run_needs_no_preflight_and_writes_nothing(self):
         self.assertEqual(self.run_main("--dry-run"), 0)
         self.assertFalse((self.dir / "run").exists())

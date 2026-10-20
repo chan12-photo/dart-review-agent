@@ -47,7 +47,10 @@ TITLE = re.compile(r"^(?:\d{1,2}\.|[ⅠⅡⅢⅣⅤ]+\.)?(연결|별도)?(재무
                    r"이익잉여금처분계산서|결손금처리계산서)$")
 KIND = {"재무상태표": "BS", "대차대조표": "BS", "포괄손익계산서": "CIS", "손익계산서": "IS", "현금흐름표": "CF",
         "자본변동표": "SCE", "이익잉여금처분계산서": "RE", "결손금처리계산서": "RE"}
-DATED = re.compile(r"\d{4}\s*년\s*\d{1,2}\s*월\s*\d{1,2}\s*일\s*(부터|현재|까지)")
+# a dated period line; dotted as DSR prints it ("2025.12.31 현재"), which D4 did not find (its four statements were
+# written by a person, D4 contract 10)
+DATED = re.compile(r"\d{4}\s*년\s*\d{1,2}\s*월\s*\d{1,2}\s*일\s*(부터|현재|까지)"
+                   r"|\d{4}\s*\.\s*\d{1,2}\s*\.\s*\d{1,2}\s*\.?\s*(부터|현재|까지)")
 UNIT = re.compile(r"단위\s*[:：]?\s*(백만\s*원|천\s*원|억\s*원|원)")
 UNITS = {"원": 1, "천원": 1_000, "백만원": 1_000_000, "억원": 100_000_000}
 NOTES = re.compile(r"^(\(?연결\)?)?(재무제표에대한)?주석$")
@@ -305,10 +308,14 @@ STATEMENT_KEYS = ("id", "kind", "title", "consolidated", "page", "end_page", "un
 
 
 def label_key(label: str) -> str:
-    """A label as the scorer compares it: without spaces, a leading item marker, and a trailing note reference."""
+    """A label as the scorer compares it: without spaces, a leading item marker, a trailing note reference, and a
+    trailing colon; the middle dots ㆍ · ・ ‧ as one. The gold keeps a row's words with letters, so a printed
+    "…항목 :" was "…항목" in the gold and "…항목:" in a workbook that copied the line; and the dots differ only by
+    the character code. D4 counted 10 such right values as wrong labels (D4 result 5)."""
     label = re.sub(r"\(\s*주\s*석?\s*[\d,\s]+\)\s*$", "", label or "")
     label = re.sub(r"^\s*(?:[ⅠⅡⅢⅣⅤⅥⅦⅧⅨⅩ]+\.?|[IVXlI|]{1,4}\.|\d{1,2}[.)]|\(\d{1,2}\)|[가-하]\.|[①-⑳])\s*", "", label)
-    return re.sub(r"\s+", "", label)
+    label = re.sub(r"[·・‧]", "ㆍ", re.sub(r"\s+", "", label))
+    return re.sub(r"[:：]+$", "", label)
 
 
 def _place(cell: dict) -> tuple:

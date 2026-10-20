@@ -246,13 +246,17 @@ def official(run: Path, judgments: Path, documents: dict, registered: dict, read
 
 
 def main(argv: list[str] | None = None) -> int:
+    global DOCUMENTS, PLACES
     parser = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     parser.add_argument("--run", type=Path, required=True, help="a run folder of eval/d4_eval/run_d4.py")
     parser.add_argument("--judgments", type=Path, required=True, help="the folder of the person's verdict files")
     parser.add_argument("--readers", nargs="+", choices=("rules", "ai"),
                         help="only these readers of the folder (after a reader ran again in a new folder)")
     parser.add_argument("--out", type=Path)
+    parser.add_argument("--documents", type=Path, default=DOCUMENTS, help="the registered document list (default: D4's)")
+    parser.add_argument("--places", type=Path, default=PLACES, help="the registered places (default: D4's)")
     args = parser.parse_args(argv)
+    DOCUMENTS, PLACES = args.documents, args.places
     if args.out and args.out.exists():
         parser.error(f"{args.out} exists")
     try:

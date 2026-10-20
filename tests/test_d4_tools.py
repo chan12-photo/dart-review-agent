@@ -531,6 +531,44 @@ def words_line(words, y, height=1000, page=1):
             "compact": "".join(w["text"] for w in words), "top": y, "bottom": y + 8}
 
 
+class D5ToolChangeTests(unittest.TestCase):
+    """The two tool defects D4 found on new documents, fixed for D5 (D5 contract draft 3)."""
+
+    def test_dotted_period_lines_start_a_statement(self):
+        from eval.d4_gold import statements_of
+        # DSR prints "연결 재무상태표" and "제 62 기 2025.12.31 현재": D4's builder found none of its statements
+        lines = [words_line([("연결", 200, 220), ("재무상태표", 222, 270)], 54),
+                 words_line([("제", 150, 155), ("62", 157, 165), ("기", 167, 172), ("2025.12.31", 175, 230), ("현재", 232, 250)], 69),
+                 words_line([("(단위", 400, 420), (":", 421, 423), ("원)", 424, 435)], 90),
+                 line("유동자산", "183,887,864,169", "157,101,448,500", 120)]
+        blocks = statements_of(lines)
+        self.assertEqual([(b["id"], b["unit_text"], len(b["lines"])) for b in blocks], [("연결재무상태표@1", "원", 3)])
+        flow = [words_line([("연결", 200, 220), ("현금흐름표", 222, 270)], 54),
+                words_line([("제", 150, 155), ("62", 157, 165), ("기", 167, 172), ("2025.01.01", 175, 230), ("부터", 232, 250),
+                            ("2025.12.31", 252, 300), ("까지", 302, 320)], 69)]
+        self.assertEqual([b["kind"] for b in statements_of(flow)], ["CF"])
+
+    def test_a_dotted_period_line_is_not_a_row(self):
+        from eval.d4_gold import _line_kind
+        period = words_line([("제", 150, 155), ("62", 157, 165), ("기", 167, 172), ("2025.12.31", 175, 230), ("현재", 232, 250)], 69)
+        self.assertEqual(_line_kind(period), "drop")
+
+    def test_labels_compare_without_a_trailing_colon_and_with_one_middle_dot(self):
+        from eval.d4_gold import label_key
+        # D4: 10 right values counted as wrong labels (현대모비스 "…항목 :", 와이솔 "자산·부채" for "자산ㆍ부채")
+        self.assertEqual(label_key("후속적으로 당기손익으로 재분류되지 않는 항목 :"), label_key("후속적으로 당기손익으로 재분류되지 않는 항목"))
+        self.assertEqual(label_key("영업활동으로인한자산·부채의변동"), label_key("영업활동으로 인한 자산ㆍ부채의 변동"))
+        self.assertEqual(label_key("자산・부채"), "자산ㆍ부채")
+        self.assertNotEqual(label_key("당기순손익으로 재분류"), label_key("당기손익으로 재분류"))  # a different word stays different
+        self.assertEqual(label_key("Ⅰ. 유동자산 (주석 5)"), "유동자산")
+
+    def test_a_score_counts_the_colon_and_dot_labels_right(self):
+        g = gold(cell("후속적으로 당기손익으로 재분류되지 않는 항목", 0, "(166,845)", -166845), cell("자산ㆍ부채의 변동", 0, "1,942", 1942))
+        r = report([("후속적으로 당기손익으로 재분류되지 않는 항목 :", 0, -166845, False), ("자산·부채의 변동", 0, 1942, False)])
+        totals = score(g, r)["totals"]
+        self.assertEqual((totals["correct"], totals["L1"]), (2, 0))
+
+
 @unittest.skipUnless(HAS_PDF, "pip install -e '.[docs]'")
 class GoldBuilderPdfTests(unittest.TestCase):
     def test_the_cells_of_a_sample_pdf(self):

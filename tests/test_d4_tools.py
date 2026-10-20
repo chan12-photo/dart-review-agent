@@ -553,6 +553,37 @@ class D5ToolChangeTests(unittest.TestCase):
         period = words_line([("제", 150, 155), ("62", 157, 165), ("기", 167, 172), ("2025.12.31", 175, 230), ("현재", 232, 250)], 69)
         self.assertEqual(_line_kind(period), "drop")
 
+    def test_a_sentence_or_a_row_with_a_dotted_date_is_not_a_period_line(self):
+        # Codex D5 review 4: "2025.12.31 현재" inside a sentence started a statement, inside a row dropped it
+        from eval.d4_gold import _line_kind, dated, statements_of
+        for text in ("제 62 기 2025.12.31 현재", "제 62 (당) 기 2025.01.01 부터 2025.12.31 까지", "2025.12.31 현재",
+                     "제 61 기말 : 2024.12.31 현재", "(2025.12.31 현재)", "제 62 기 2025년 12월 31일 현재"):
+            with self.subTest(text=text):
+                self.assertTrue(dated(text))
+        for text in ("2025.12.31 현재 보증금 47", "2025.12.31 현재 계약조건을 검토했다", "만기 2025.12.31 까지 차입금"):
+            with self.subTest(text=text):
+                self.assertFalse(dated(text))
+        row = words_line([("2025.12.31", 10, 60), ("현재", 62, 80), ("보증금", 82, 110), ("47", 310, 320)], 300)
+        self.assertNotEqual(_line_kind(row), "drop")
+        sentence = [words_line([("연결재무상태표", 200, 270)], 54),
+                    words_line([("2025.12.31", 100, 150), ("현재", 152, 170), ("계약조건을", 172, 220), ("검토했다", 222, 260)], 69)]
+        self.assertEqual(statements_of(sentence), [])
+
+    def test_an_untitled_table_is_never_a_gold_statement_and_points_at_nothing(self):
+        # D5 contract draft 6 (Codex D5 review): its cells are marked cells outside the gold, the gold's cells are
+        # missing and not pointed at (S2 on a text PDF), whatever the table's problem text says
+        from dart_review.documents.statement import UNTITLED_REASON, UNTITLED_TITLE
+        g = gold(cell("유동자산", 0, "183,887", 183887), cell("자산총계", 0, "391,592", 391592))
+        r = {"source_sha256": "src", "problems": [], "statements": [
+            {"title": UNTITLED_TITLE, "page": 1, "problems": [UNTITLED_REASON, "1쪽 '유동자산' 줄: 원본의 금액 '9'를 AI가 읽지 않았다"],
+             "rows": [{"label": label, "values": [{"column": 0, "value": value, "printed": f"{value:,}", "page": 1,
+                                                   "status": "확인 필요"}]}
+                      for label, value in (("유동자산", 183887), ("자산총계", 391592))]}]}
+        totals = score(g, r)["totals"]
+        self.assertEqual((totals["correct"], totals["S1"], totals["S2"], totals["not_in_gold"], totals["unjudged_extras"]),
+                         (0, 0, 2, 2, 0))
+        self.assertEqual(totals["product_statements_not_in_gold"], [UNTITLED_TITLE])
+
     def test_labels_compare_without_a_trailing_colon_and_with_one_middle_dot(self):
         from eval.d4_gold import label_key
         # D4: 10 right values counted as wrong labels (현대모비스 "…항목 :", 와이솔 "자산·부채" for "자산ㆍ부채")
@@ -770,6 +801,37 @@ class PreflightTests(unittest.TestCase):
 
     def test_the_registered_checkout_passes(self):
         self.assertEqual(self.failed(imported_from=self.root / "dart_review/__init__.py"), [])
+
+    def test_a_registration_tag_of_its_own(self):
+        # Codex D5 review 3: the remote lookup was fixed to d4-registered, so a D5 check could not pass
+        import shutil
+        remote = Path(self.folder.name + "-remote5")
+        self.git("init", "-q", "--bare", str(remote))
+        self.git("tag", "-a", "d5-registered", "-m", "R", self.R)
+        self.git("push", "-q", str(remote), "refs/tags/d5-registered")
+        try:
+            result = check(self.root, self.record, self.ENV, None, self.registration, "d5-registered", str(remote),
+                           tag="d5-registered")
+            self.assertEqual([c["check"] for c in result["checks"] if not c["ok"]], [])
+            self.assertIn(f"the pushed tag d5-registered on {remote} names HEAD", [c["check"] for c in result["checks"]])
+            default = check(self.root, self.record, self.ENV, None, self.registration, "d5-registered", str(remote))
+            self.assertEqual([c["check"] for c in default["checks"] if not c["ok"]],
+                             [f"the pushed tag d4-registered on {remote} names HEAD"])
+        finally:
+            shutil.rmtree(remote)
+
+    def test_more_tools_frozen(self):
+        # Codex D5 review 2: the runner, the position check, and the aggregation were not part of T
+        extra = "eval/d4_eval/run_d4.py"
+        (self.root / extra).parent.mkdir(parents=True, exist_ok=True)
+        (self.root / extra).write_text("# runner\n", encoding="utf-8")
+        self.commit()
+        record = freeze_record(self.root, "HEAD", "HEAD", self.ENV, TOOL_PATHS + (extra,))
+        self.assertIn(extra, record["objects"]["tools"])
+        (self.root / extra).write_text("# runner changed after the freeze\n", encoding="utf-8")
+        self.commit()
+        result = check(self.root, record, self.ENV, None, None, self.head(), None)
+        self.assertIn(f"tools {extra} at HEAD is the frozen object", [c["check"] for c in result["checks"] if not c["ok"]])
 
     def test_a_change_only_in_the_working_tree_fails(self):
         (self.root / "eval/d4_score.py").write_text("# changed after the freeze\n", encoding="utf-8")

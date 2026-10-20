@@ -23,7 +23,7 @@ class Inputs(unittest.TestCase):
         self.addCleanup(temp.cleanup)
         self.dir = Path(temp.name)
         (self.dir / "scans").mkdir()
-        self.documents = {"documents": []}
+        self.documents = {"expected_documents": 2, "documents": []}
         for key in ("01_a", "02_b"):
             pdf = self.dir / f"{key}.pdf"
             pdf.write_bytes(f"pdf {key}".encode())
@@ -33,7 +33,7 @@ class Inputs(unittest.TestCase):
                 scan.write_bytes(f"scan {key} {condition}".encode())
                 scans[condition] = {"pdf": scan.name, "sha256": hashlib.sha256(scan.read_bytes()).hexdigest(),
                                     "map": f"maps/{key}.{condition}.map.json"}
-            self.documents["documents"].append({"key": key, "pdf": pdf.name, "sha256": hashlib.sha256(pdf.read_bytes()).hexdigest(),
+            self.documents["documents"].append({"key": key, "rank": int(key[:2]), "corp_code": f"0000000{key[1]}", "pdf": pdf.name, "sha256": hashlib.sha256(pdf.read_bytes()).hexdigest(),
                                                 "gold": f"g/{key}.gold.json", "mapping": f"g/{key}.mapping.json", "scans": scans})
 
     def plan(self, readers=run_d4.READERS):

@@ -272,8 +272,10 @@ class BuildTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temp:
             for name, data in (("a.gold.json", gold), ("a.mapping.json", {"status": "draft", "decisions": {}})):
                 (Path(temp) / name).write_text(json.dumps(data, ensure_ascii=False), encoding="utf-8")
-            documents = {"documents": [{"key": "a", "pdf": "a.pdf", "sha256": "src", "gold": f"{temp}/a.gold.json",
-                                        "mapping": f"{temp}/a.mapping.json"}]}
+            scans = {c: {"pdf": f"a.{c}.pdf", "sha256": f"scan-{c}", "map": f"maps/a.{c}.map.json"} for c in ("normal", "tilt", "blur")}
+            documents = {"expected_documents": 1, "documents": [{"key": "a", "rank": 1, "corp_code": "00000001", "pdf": "a.pdf",
+                                                                  "sha256": "src", "gold": f"{temp}/a.gold.json",
+                                                                  "mapping": f"{temp}/a.mapping.json", "scans": scans}]}
             with mock.patch("d4_gold.lines_of", return_value=lines):
                 built = pc.build(documents, Path(temp))
             rows = built["documents"]["a"]["places"][0]["rows"]

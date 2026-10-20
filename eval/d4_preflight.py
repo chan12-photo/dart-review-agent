@@ -77,10 +77,12 @@ def environment() -> dict:
             "macos": platform.mac_ver()[0] or None}
 
 
-def freeze_record(root: Path, product: str, tools: str, env: dict) -> dict:
+def freeze_record(root: Path, product: str, tools: str, env: dict, tool_paths: tuple[str, ...] = TOOL_PATHS) -> dict:
+    """``tool_paths``: the evaluation tools frozen as T (D4: TOOL_PATHS; D5 adds the runner, the position check,
+    and the official aggregation, Codex D5 review 2). The check compares every path the record names."""
     product, tools = _git(root, "rev-parse", product), _git(root, "rev-parse", tools)
     objects = {"product": {path: _object(root, product, path) for path in PRODUCT_PATHS},
-               "tools": {path: _object(root, tools, path) for path in TOOL_PATHS}}
+               "tools": {path: _object(root, tools, path) for path in tool_paths}}
     absent = [path for group in objects.values() for path, obj in group.items() if obj is None]
     if absent:
         raise ValueError(f"not at their commit: {', '.join(absent)}")
@@ -118,7 +120,8 @@ TAG = "d4-registered"
 
 
 def check(root: Path, record: dict, env: dict, imported_from: Path | None = None, registration: dict | None = None,
-          registered: str | None = None, remote: str | None = None) -> dict:
+          registered: str | None = None, remote: str | None = None, tag: str = TAG) -> dict:
+    """``tag``: the registration tag looked up on ``remote`` (D4: d4-registered; D5: d5-registered, Codex D5 review 3)."""
     checks = []
 
     def add(name: str, ok: bool, detail: object) -> None:
@@ -146,12 +149,12 @@ def check(root: Path, record: dict, env: dict, imported_from: Path | None = None
         add(f"{name} is an ancestor of HEAD", ancestor, record[name])
     if remote is not None:
         try:
-            listed = _git(root, "ls-remote", remote, f"refs/tags/{TAG}", f"refs/tags/{TAG}^{{}}")
+            listed = _git(root, "ls-remote", remote, f"refs/tags/{tag}", f"refs/tags/{tag}^{{}}")
         except subprocess.CalledProcessError as exc:
             listed = f"error: {exc.stderr.strip() if exc.stderr else exc}"
         named = [line.split()[0] for line in listed.splitlines() if line.strip() and not line.startswith("error")]
         # an annotated tag lists the tag object and, peeled (^{}), the commit: the commit is the last line
-        add(f"the pushed tag {TAG} on {remote} names HEAD", bool(named) and named[-1] == head, listed.splitlines()[:2])
+        add(f"the pushed tag {tag} on {remote} names HEAD", bool(named) and named[-1] == head, listed.splitlines()[:2])
 
     status = _git(root, "status", "--porcelain", "--untracked-files=all")
     add("clean working tree and index (git status --porcelain)", not status, status.splitlines()[:20])
@@ -182,25 +185,29 @@ def main() -> int:
     freeze.add_argument("--product", required=True)
     freeze.add_argument("--tools", required=True)
     freeze.add_argument("--out", type=Path, required=True)
+    freeze.add_argument("--tool-paths", nargs="+", default=list(TOOL_PATHS),
+                        help="the evaluation tools frozen as T (default: D4's five)")
     reg = commands.add_parser("register")
     reg.add_argument("--freeze", required=True, help="the freeze record's path in the repository")
     reg.add_argument("--paths", nargs="+", required=True, help="the files registered (committed)")
     reg.add_argument("--out", type=Path, required=True)
+    reg.add_argument("--tag", default=TAG, help=f"the tag R is to get (default: {TAG})")
     run = commands.add_parser("check")
     run.add_argument("--freeze", type=Path, required=True)
     run.add_argument("--register", type=Path, required=True, help="the registration record committed in R")
     run.add_argument("--registered", required=True, help=f"R: a commit, or the tag {TAG}")
     run.add_argument("--remote", required=True, help=f"the remote whose pushed tag {TAG} must name HEAD")
     run.add_argument("--log", type=Path, required=True)
+    run.add_argument("--tag", default=TAG, help=f"the registration tag pushed to --remote (default: {TAG})")
     args = parser.parse_args()
     if args.command == "register":
         record = register_record(ROOT, args.freeze, args.paths)
         args.out.write_text(json.dumps(record, ensure_ascii=False, indent=1), encoding="utf-8")
         print(f"registered {len(record['objects'])} files at {record['based_on'][:7]}; commit {args.out} as R, "
-              f"tag it {TAG}, and push the tag before the run")
+              f"tag it {args.tag}, and push the tag before the run")
         return 0
     if args.command == "freeze":
-        record = freeze_record(ROOT, args.product, args.tools, environment())
+        record = freeze_record(ROOT, args.product, args.tools, environment(), tuple(args.tool_paths))
         args.out.write_text(json.dumps(record, ensure_ascii=False, indent=1), encoding="utf-8")
         missing = [k for k, v in record["environment"].items() if v is None or v == {MODEL: None}]
         print(f"frozen P {record['product_commit'][:7]}, T {record['tools_commit'][:7]}"
@@ -208,7 +215,7 @@ def main() -> int:
         return 0
     import dart_review
     result = check(ROOT, json.loads(args.freeze.read_text(encoding="utf-8")), environment(), Path(dart_review.__file__),
-                   json.loads(args.register.read_text(encoding="utf-8")), args.registered, args.remote)
+                   json.loads(args.register.read_text(encoding="utf-8")), args.registered, args.remote, args.tag)
     args.log.parent.mkdir(parents=True, exist_ok=True)
     args.log.write_text(json.dumps(result, ensure_ascii=False, indent=1), encoding="utf-8")
     for item in result["checks"]:

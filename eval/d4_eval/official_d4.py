@@ -52,6 +52,7 @@ sys.path[:0] = [str(ROOT), str(ROOT / "eval"), str(ROOT / "eval" / "d4_eval")]
 
 from eval.d4_score import score  # noqa: E402
 import position_check  # noqa: E402
+from document_list import check_document_list, is_d4_list  # noqa: E402
 
 DOCUMENTS = ROOT / "eval" / "d4_eval" / "documents.json"
 READERS = ("rules", "ai")  # the registered order (eval/d4_eval/run_d4.py)
@@ -196,11 +197,15 @@ def call(document: dict, variant: str, reader: str, run: Path, judgments: Path, 
     return entry
 
 
-def bundle(entries: list[dict], criteria: tuple[str, ...]) -> dict:
+def bundle(entries: list[dict], criteria: tuple[str, ...], expected_calls: int | None = None) -> dict:
     sums = {key: sum(e.get(key) or 0 for e in entries) for key in SUMS}
     waiting = [{"name": e["name"], "why": e["why"]} for e in entries if not e["official_ready"]]
     if not entries:
         waiting = [{"name": None, "why": "no call in the bundle"}]
+    if expected_calls is None or len(entries) != expected_calls or len({e["name"] for e in entries}) != len(entries):
+        # a bundle is judged on all of its registered calls, each once (Codex D5 review 1)
+        waiting = waiting + [{"name": None, "why": f"the bundle has {len(entries)} calls, not the {expected_calls} of the "
+                                                   "registered documents"}]
     result = {"calls": len(entries), "documents": len({e["key"] for e in entries}), "sums": sums,
               "A1_flagged_share": round(sums["flagged"] / sums["product_cells"], 4) if sums["product_cells"] else None,
               "A2_covered_share": round(sums["correct"] / sums["gold_cells"], 4) if sums["gold_cells"] else None,
@@ -210,7 +215,10 @@ def bundle(entries: list[dict], criteria: tuple[str, ...]) -> dict:
     return result | {"verdict": "met" if all(sums[key] == 0 for key in criteria) else "not met", "provisional": False}
 
 
-def official(run: Path, judgments: Path, documents: dict, registered: dict, readers: list[str] | None = None) -> dict:
+def official(run: Path, judgments: Path, documents: dict, registered: dict, readers: list[str] | None = None,
+             d4_legacy: bool = False) -> dict:
+    # the whole registered sample, each document once: never a verdict on part of it (Codex D5 review 1)
+    count = check_document_list(documents, d4_legacy=d4_legacy, repo_paths=False)
     record = json.loads((run / "run.json").read_text(encoding="utf-8"))
     if not isinstance(record, dict):
         raise ValueError(f"{run / 'run.json'} is not a run record")
@@ -232,7 +240,7 @@ def official(run: Path, judgments: Path, documents: dict, registered: dict, read
     result = {}
     for reader in chosen:
         mine = [e for e in entries if e["reader"] == reader]
-        result[reader] = {name: bundle([e for e in mine if e["variant"] in variants], CRITERIA[name])
+        result[reader] = {name: bundle([e for e in mine if e["variant"] in variants], CRITERIA[name], count * len(variants))
                           for name, variants in BUNDLES.items()}
     # the files of the judgments folder this aggregation did not read: a misspelt name, or the verdicts of a reader
     # not taken here (a file that is not read never counts; its call waits for its verdicts)
@@ -261,7 +269,8 @@ def main(argv: list[str] | None = None) -> int:
         parser.error(f"{args.out} exists")
     try:
         result = official(args.run, args.judgments, json.loads(DOCUMENTS.read_text(encoding="utf-8")),
-                          json.loads(PLACES.read_text(encoding="utf-8")), args.readers)
+                          json.loads(PLACES.read_text(encoding="utf-8")), args.readers,
+                          d4_legacy=is_d4_list(DOCUMENTS, ROOT))
     except ValueError as exc:
         parser.error(str(exc))
     if args.out:

@@ -300,6 +300,11 @@ def main(argv: list[str] | None = None) -> int:
         sub.add_argument("--documents", type=Path, default=DOCUMENTS, help="the document list (default: D4's)")
     args = parser.parse_args(argv)
     documents = json.loads(args.documents.read_text(encoding="utf-8"))
+    from document_list import check_document_list, is_d4_list
+    try:
+        check_document_list(documents, d4_legacy=is_d4_list(args.documents, ROOT), repo_paths=False)
+    except ValueError as exc:
+        parser.error(str(exc))
     if args.command == "build":
         if args.out.exists():
             parser.error(f"{args.out} exists")

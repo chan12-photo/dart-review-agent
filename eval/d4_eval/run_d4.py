@@ -35,6 +35,9 @@ import subprocess
 import sys
 import time
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from document_list import check_document_list, is_d4_list  # noqa: E402
+
 ROOT = Path(__file__).resolve().parents[2]
 DOCUMENTS = ROOT / "eval" / "d4_eval" / "documents.json"
 READERS = ("rules", "ai")
@@ -116,6 +119,7 @@ def main(argv: list[str] | None = None) -> int:
         parser.error(f"{args.out} is inside the checkout: the run folder goes outside it")
     documents = json.loads(DOCUMENTS.read_text(encoding="utf-8"))
     try:
+        check_document_list(documents, d4_legacy=is_d4_list(DOCUMENTS, ROOT))
         calls = plan(documents, args.pdf_dir.expanduser(), args.scan_dir.expanduser(), args.out, tuple(args.readers))
     except ValueError as exc:
         print(f"inputs do not match the registered documents: {exc}")

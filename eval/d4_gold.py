@@ -47,10 +47,19 @@ TITLE = re.compile(r"^(?:\d{1,2}\.|[ⅠⅡⅢⅣⅤ]+\.)?(연결|별도)?(재무
                    r"이익잉여금처분계산서|결손금처리계산서)$")
 KIND = {"재무상태표": "BS", "대차대조표": "BS", "포괄손익계산서": "CIS", "손익계산서": "IS", "현금흐름표": "CF",
         "자본변동표": "SCE", "이익잉여금처분계산서": "RE", "결손금처리계산서": "RE"}
-# a dated period line; dotted as DSR prints it ("2025.12.31 현재"), which D4 did not find (its four statements were
-# written by a person, D4 contract 10)
-DATED = re.compile(r"\d{4}\s*년\s*\d{1,2}\s*월\s*\d{1,2}\s*일\s*(부터|현재|까지)"
-                   r"|\d{4}\s*\.\s*\d{1,2}\s*\.\s*\d{1,2}\s*\.?\s*(부터|현재|까지)")
+DATED = re.compile(r"\d{4}\s*년\s*\d{1,2}\s*월\s*\d{1,2}\s*일\s*(부터|현재|까지)")
+# a period line with dotted dates, as DSR prints it ("제 62 기 2025.12.31 현재", "제 62 기 2025.01.01 부터 2025.12.31
+# 까지"), which D4 did not find (its four statements were written by a person, D4 contract 10). The whole line must
+# be the period line: a sentence or a row holding a dotted date is neither a statement start nor dropped (Codex D5
+# review 4)
+_DOT = r"\d{4}\s*\.\s*\d{1,2}\s*\.\s*\d{1,2}\s*\.?"
+DOTTED_PERIOD = re.compile(rf"^\s*(?:제\s*\d+\s*(?:\(\s*[당전]+\s*\)\s*)?기\s*(?:말|초)?\s*[:：]?\s*)?\(?\s*{_DOT}\s*"
+                           rf"(?:현재|까지|부터\s*{_DOT}\s*까지)\s*\)?\s*$")
+
+
+def dated(text: str) -> bool:
+    """A dated period line: "…년 …월 …일 현재/부터/까지" anywhere in it (as D4), or a whole dotted period line."""
+    return bool(DATED.search(text) or DOTTED_PERIOD.match(text))
 UNIT = re.compile(r"단위\s*[:：]?\s*(백만\s*원|천\s*원|억\s*원|원)")
 UNITS = {"원": 1, "천원": 1_000, "백만원": 1_000_000, "억원": 100_000_000}
 NOTES = re.compile(r"^(\(?연결\)?)?(재무제표에대한)?주석$")
@@ -95,7 +104,7 @@ def statements_of(lines: list[dict]) -> list[dict]:
     for index, line in enumerate(lines):
         title = TITLE.match(line["compact"])
         following = [other["text"] for other in lines[index + 1:index + 5] if other["page"] == line["page"]]
-        if title and any(DATED.search(text) for text in following):
+        if title and any(dated(text) for text in following):
             unit_text = next((m.group(1).replace(" ", "") for text in following + [l["text"] for l in lines[index + 5:index + 8]]
                               if (m := UNIT.search(text))), None)
             name = (title.group(1) or "") + title.group(2)
@@ -134,7 +143,7 @@ def _line_kind(line: dict) -> str:
     if any(GROUPED.match(w["text"]) for w in line["words"]):
         return "row"
     text = line["text"]
-    if FOOTER.search(text) or DATED.search(text) or _is_heading(text) and re.search(r"[가-힣]", text):
+    if FOOTER.search(text) or dated(text) or _is_heading(text) and re.search(r"[가-힣]", text):
         return "drop"
     if line["top"] > 0.92 * line["words"][0]["page_height"]:
         return "drop" if PAGE_NUMBER.match(text.strip()) else "uncertain"

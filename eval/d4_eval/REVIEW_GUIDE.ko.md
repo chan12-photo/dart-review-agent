@@ -1,6 +1,6 @@
 # D4 ⑥ 정답 매핑표 검토 안내 (사용자 확인용)
 
-- 작성: 2026-10-16, Claude 1차 (`status: draft`)
+- 작성: 2026-10-16, Claude 1차 (`status: draft`). **2026-10-20 사용자 확인 → `confirmed`** (결정은 그대로)
 - 대상: `eval/d4_eval/gold/<순번>_<고유번호>.gold.json`(정답 생성기 출력)과 `.mapping.json`(사람이 정할 항목의 결정) 10쌍
 - 만든 방법: [`draft_mappings.py`](draft_mappings.py). 결정마다 근거(note)에 쪽, 인쇄된 줄, OpenDART 값과의 계산을 적었다. 모든 초안이 채점기와 같은 기계 검사(`apply_mapping`)를 통과했고, 판정 불가 문서는 없다.
 - **사용자가 할 일:** 아래 1~5를 읽고, 동의하면 "확인"이라고 알려 준다. 고칠 것이 있으면 항목 번호와 함께 알려 준다. 확인을 받으면 Claude가 `status`를 `confirmed`로 바꾸고 확인한 사람과 시각을 적는다(계약 4.2). 확정 전의 점수는 공식이 아니다.
@@ -82,8 +82,8 @@
 2. ~~Codex 7차 재검토~~ (2026-10-20 끝남, "등록 보류" → 6건 모두 고침): [결과](../../docs/reviews/D4_registration_recheck_codex_result.ko.md), [응답](../../docs/reviews/D4_registration_recheck_codex_response.ko.md)
 3. ~~Codex 8차~~ (2026-10-20 끝남, "잠시 보류" → 2건 고침): [결과](../../docs/reviews/D4_registration_eighth_codex_result.ko.md), [응답](../../docs/reviews/D4_registration_eighth_codex_response.ko.md)
    - ~~Codex 9차~~ (2026-10-20 끝남, 3건 고침): [결과](../../docs/reviews/D4_registration_ninth_codex_result.ko.md), [응답](../../docs/reviews/D4_registration_ninth_codex_response.ko.md). Claude는 10차 없이 다음 단계로 가기를 권한다
-4. **매핑표 확인:** 이 안내서와 Codex 결과를 보고 "확인"이라고 알려 준다. Claude가 10개 매핑표를 `confirmed`로 바꾸고 ⑦ 관문(`position_check.py verify`)을 돌린다.
-5. **등록 커밋과 push 승인 (⑦):** 등록 커밋 R과 그 앞의 커밋들, 태그 `d4-registered`를 GitHub에 push한다. 절차: [`docs/D4_RUN_PROCEDURE.ko.md`](../../docs/D4_RUN_PROCEDURE.ko.md).
+4. ~~매핑표 확인~~ (2026-10-20 끝남): 사용자 "확인, 이대로 확정" → 10개 `confirmed`, ⑦ 관문 `verify` 66곳 같음
+5. **등록 커밋과 push (⑦, 2026-10-20 사용자 승인):** 등록 커밋 R과 그 앞의 커밋들, 태그 `d4-registered`를 GitHub에 push한다. 절차: [`docs/D4_RUN_PROCEDURE.ko.md`](../../docs/D4_RUN_PROCEDURE.ko.md).
 6. **실행 승인 (⑧):** 규칙 방식 40회와 AI 방식 40회. AI 방식은 하루 이상 걸릴 수 있다.
 7. **실행 뒤 판정 확인 (⑨):** 정답에 없는 칸(4.5)과 위치 검사에서 사람이 정할 곳(4.6)을 Claude가 1차로 판정하면 확인한다.
 

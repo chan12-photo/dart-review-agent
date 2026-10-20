@@ -1,9 +1,9 @@
 {
- "status": "draft",
+ "status": "confirmed",
  "drafted_by": "Claude 1차",
- "confirmed_by": null,
- "confirmed_at": null,
- "basis": "PDF 글자 층(pdfplumber)의 인쇄 줄과 OpenDART 캐시(cache/d4, fnlttSinglAcntAll, 2025, 11011, CFS)의 값을 항목마다 대조했다. 합·차는 원 단위 정수로 계산해 맞는 것만 적었다. 사용자 확인 전이다.",
+ "confirmed_by": "사용자 (chan12-photo)",
+ "confirmed_at": "2026-10-20T05:37:41+00:00",
+ "basis": "PDF 글자 층(pdfplumber)의 인쇄 줄과 OpenDART 캐시(cache/d4, fnlttSinglAcntAll, 2025, 11011, CFS)의 값을 항목마다 대조했다. 합·차는 원 단위 정수로 계산해 맞는 것만 적었다. 2026-10-20 사용자가 검토 안내(REVIEW_GUIDE.ko.md 1~5)와 검토 자료(항목마다 PDF 인쇄 그림과 정답 값, 결정 전부)를 받고 '확인, 이대로 확정'이라고 답했다. 결정은 Claude 1차 그대로다.",
  "decisions": {
   "n1": {
    "decision": "add",

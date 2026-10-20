@@ -1,0 +1,100 @@
+{
+ "key": "05_00117212",
+ "report_sha256": "cda9c4d343afff843908cdc206cdcb708b9198a81b310adec5ab04e7c37df58e",
+ "totals": {
+  "places": 10,
+  "in_order": 0,
+  "position_wrong": 0,
+  "S1_position": 0,
+  "needs_verdict": 0,
+  "position_ready": true
+ },
+ "places": [
+  {
+   "id": "연결재무상태표@10|충당부채|0",
+   "pages": [
+    10,
+    11
+   ],
+   "printed_rows": 2,
+   "status": "statement_not_found"
+  },
+  {
+   "id": "연결재무상태표@10|충당부채|1",
+   "pages": [
+    10,
+    11
+   ],
+   "printed_rows": 2,
+   "status": "statement_not_found"
+  },
+  {
+   "id": "연결재무상태표@10|파생상품평가부채|0",
+   "pages": [
+    10,
+    11
+   ],
+   "printed_rows": 2,
+   "status": "statement_not_found"
+  },
+  {
+   "id": "연결재무상태표@10|파생상품평가부채|1",
+   "pages": [
+    10,
+    11
+   ],
+   "printed_rows": 2,
+   "status": "statement_not_found"
+  },
+  {
+   "id": "연결재무상태표@10|파생상품평가자산|0",
+   "pages": [
+    10
+   ],
+   "printed_rows": 2,
+   "status": "statement_not_found"
+  },
+  {
+   "id": "연결재무상태표@10|파생상품평가자산|1",
+   "pages": [
+    10
+   ],
+   "printed_rows": 2,
+   "status": "statement_not_found"
+  },
+  {
+   "id": "연결재무상태표@10|확정계약부채|0",
+   "pages": [
+    10,
+    11
+   ],
+   "printed_rows": 2,
+   "status": "statement_not_found"
+  },
+  {
+   "id": "연결재무상태표@10|확정계약부채|1",
+   "pages": [
+    10,
+    11
+   ],
+   "printed_rows": 2,
+   "status": "statement_not_found"
+  },
+  {
+   "id": "연결재무상태표@10|확정계약자산|0",
+   "pages": [
+    10
+   ],
+   "printed_rows": 2,
+   "status": "statement_not_found"
+  },
+  {
+   "id": "연결재무상태표@10|확정계약자산|1",
+   "pages": [
+    10
+   ],
+   "printed_rows": 2,
+   "status": "statement_not_found"
+  }
+ ]
+}

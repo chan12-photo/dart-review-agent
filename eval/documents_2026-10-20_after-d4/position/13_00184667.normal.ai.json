@@ -1,0 +1,94 @@
+{
+ "key": "13_00184667",
+ "report_sha256": "870fa58b1ce961243d8a3cf8572945ac87324edc696969879fdc5b705895d2a0",
+ "totals": {
+  "places": 8,
+  "in_order": 0,
+  "position_wrong": 0,
+  "S1_position": 0,
+  "needs_verdict": 0,
+  "position_ready": true
+ },
+ "places": [
+  {
+   "id": "연결포괄손익계산서@10|비지배지분|0",
+   "pages": [
+    10
+   ],
+   "printed_rows": 2,
+   "product_rows": 0,
+   "scorer_wrong_unmarked": 0,
+   "status": "not_pairable_no_swap"
+  },
+  {
+   "id": "연결포괄손익계산서@10|비지배지분|1",
+   "pages": [
+    10
+   ],
+   "printed_rows": 2,
+   "product_rows": 0,
+   "scorer_wrong_unmarked": 0,
+   "status": "not_pairable_no_swap"
+  },
+  {
+   "id": "연결포괄손익계산서@10|지배기업소유주지분|0",
+   "pages": [
+    10
+   ],
+   "printed_rows": 2,
+   "product_rows": 0,
+   "scorer_wrong_unmarked": 0,
+   "status": "not_pairable_no_swap"
+  },
+  {
+   "id": "연결포괄손익계산서@10|지배기업소유주지분|1",
+   "pages": [
+    10
+   ],
+   "printed_rows": 2,
+   "product_rows": 0,
+   "scorer_wrong_unmarked": 0,
+   "status": "not_pairable_no_swap"
+  },
+  {
+   "id": "연결포괄손익계산서@10|지분법자본변동|0",
+   "pages": [
+    10
+   ],
+   "printed_rows": 2,
+   "product_rows": 0,
+   "scorer_wrong_unmarked": 0,
+   "status": "not_pairable_no_swap"
+  },
+  {
+   "id": "연결포괄손익계산서@10|지분법자본변동|1",
+   "pages": [
+    10
+   ],
+   "printed_rows": 2,
+   "product_rows": 0,
+   "scorer_wrong_unmarked": 0,
+   "status": "not_pairable_no_swap"
+  },
+  {
+   "id": "연결포괄손익계산서@10|합계|0",
+   "pages": [
+    10
+   ],
+   "printed_rows": 2,
+   "product_rows": 0,
+   "scorer_wrong_unmarked": 0,
+   "status": "not_pairable_no_swap"
+  },
+  {
+   "id": "연결포괄손익계산서@10|합계|1",
+   "pages": [
+    10
+   ],
+   "printed_rows": 2,
+   "product_rows": 0,
+   "scorer_wrong_unmarked": 0,
+   "status": "not_pairable_no_swap"
+  }
+ ]
+}

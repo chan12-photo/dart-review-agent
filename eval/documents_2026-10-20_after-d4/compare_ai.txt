@@ -1,0 +1,50 @@
+05_00117212.text.ai        correct  279/ 302 S1 0 L1 0 S2    0 marked   86/ 280 unmarked-extras   0
+05_00117212.normal.ai      correct   83/ 302 S1 0 L1 0 S2  212 marked   60/  90 unmarked-extras   0
+05_00117212.tilt.ai        correct  129/ 302 S1 0 L1 0 S2  168 marked  102/ 136 unmarked-extras   0
+05_00117212.blur.ai        correct    0/ 302 S1 0 L1 0 S2  302 marked    0/   0 unmarked-extras   0
+06_00148920.text.ai        correct  223/ 223 S1 0 L1 0 S2    0 marked   53/ 224 unmarked-extras   0
+06_00148920.normal.ai      correct    9/ 223 S1 0 L1 0 S2  214 marked    9/   9 unmarked-extras   0
+06_00148920.tilt.ai        correct    3/ 223 S1 0 L1 0 S2  220 marked    3/   3 unmarked-extras   0
+06_00148920.blur.ai        correct   78/ 223 S1 0 L1 0 S2  142 marked   68/  84 unmarked-extras   0
+07_01258710.text.ai        correct  167/ 167 S1 0 L1 0 S2    0 marked    0/ 167 unmarked-extras   0
+07_01258710.normal.ai      correct   64/ 167 S1 0 L1 0 S2   96 marked   72/  72 unmarked-extras   0  CHANGED correct 30->64, S2 135->96, flagged 45->72, extras_unmarked 27->0
+     statements before: [('연결재무상태표', 1, 50), ('연결현금흐름표', 4, 3)]
+     statements after:  [('연결재무상태표', 1, 30), ('연결포괄손익계산서', 3, 20), ('연결현금흐름표', 4, 3)]
+07_01258710.tilt.ai        correct    7/ 167 S1 0 L1 0 S2  160 marked    7/   7 unmarked-extras   0
+07_01258710.blur.ai        correct   53/ 167 S1 0 L1 0 S2  114 marked   27/  55 unmarked-extras   0
+11_00138224.text.ai        correct  225/ 229 S1 0 L1 0 S2    0 marked    2/ 270 unmarked-extras  43  CHANGED correct 223->225, L1 4->0
+11_00138224.normal.ai      correct   12/ 229 S1 0 L1 0 S2  217 marked   12/  12 unmarked-extras   0
+11_00138224.tilt.ai        correct   67/ 229 S1 0 L1 0 S2  155 marked   50/  76 unmarked-extras   0
+11_00138224.blur.ai        correct   92/ 229 S1 0 L1 0 S2  130 marked   39/ 102 unmarked-extras   0
+13_00184667.text.ai        correct  277/ 277 S1 0 L1 0 S2    0 marked    0/ 277 unmarked-extras   0
+13_00184667.normal.ai      correct   42/ 277 S1 0 L1 0 S2  215 marked   32/  45 unmarked-extras   0
+13_00184667.tilt.ai        correct    5/ 277 S1 0 L1 0 S2  271 marked    6/   6 unmarked-extras   0
+13_00184667.blur.ai        correct   34/ 277 S1 0 L1 0 S2  236 marked   40/  41 unmarked-extras   0
+15_00479705.text.ai        correct  204/ 205 S1 0 L1 0 S2    0 marked    0/ 204 unmarked-extras   0
+15_00479705.normal.ai      correct   55/ 205 S1 0 L1 0 S2  142 marked   14/  59 unmarked-extras   0
+15_00479705.tilt.ai        correct    0/ 205 S1 0 L1 0 S2  205 marked    0/   0 unmarked-extras   0
+15_00479705.blur.ai        correct   19/ 205 S1 0 L1 0 S2  182 marked   25/  25 unmarked-extras   0
+16_00137915.text.ai        correct  215/ 217 S1 0 L1 0 S2    0 marked    0/ 215 unmarked-extras   0
+16_00137915.normal.ai      correct    5/ 217 S1 0 L1 0 S2  211 marked    6/   6 unmarked-extras   0
+16_00137915.tilt.ai        correct   15/ 217 S1 0 L1 0 S2  202 marked   15/  15 unmarked-extras   0
+16_00137915.blur.ai        correct   12/ 217 S1 0 L1 0 S2  204 marked   13/  13 unmarked-extras   0
+17_00759294.text.ai        correct  199/ 199 S1 0 L1 0 S2    0 marked    0/ 199 unmarked-extras   0
+17_00759294.normal.ai      correct   15/ 199 S1 0 L1 0 S2  184 marked   15/  15 unmarked-extras   0
+17_00759294.tilt.ai        correct    0/ 199 S1 0 L1 0 S2  199 marked    0/   0 unmarked-extras   0
+17_00759294.blur.ai        correct   73/ 199 S1 0 L1 2 S2  122 marked   45/  79 unmarked-extras   0
+18_00110608.text.ai        correct  201/ 201 S1 0 L1 0 S2    0 marked    1/ 201 unmarked-extras   0  CHANGED flagged 22->1, cells 234->201, extras_unmarked 12->0
+     statements before: [('연결재무상태표', 7, 41), ('연결손익계산서', 9, 16), ('연결포괄손익계산서', 10, 26), ('연결현금흐름표', 12, 39)]
+     statements after:  [('연결재무상태표', 7, 41), ('연결손익계산서', 9, 16), ('연결포괄손익계산서', 10, 9), ('연결자본변동표', 11, 0), ('연결현금흐름표', 12, 39)]
+18_00110608.normal.ai      correct   31/ 201 S1 0 L1 0 S2  164 marked   37/  37 unmarked-extras   0
+18_00110608.tilt.ai        correct    9/ 201 S1 0 L1 0 S2  188 marked   11/  11 unmarked-extras   0
+18_00110608.blur.ai        correct   40/ 201 S1 0 L1 0 S2  150 marked   49/  51 unmarked-extras   0  CHANGED correct 36->40, S2 154->150, flagged 45->49, cells 47->51
+     statements before: [('연결재무상태표', 1, 29), ('연결손익계산서', 3, 0), ('연결포괄손익계산서', 4, 9), ('연결현금흐름표', 5, 0)]
+     statements after:  [('연결재무상태표', 1, 29), ('연결손익계산서', 3, 4), ('연결포괄손익계산서', 4, 9), ('연결현금흐름표', 5, 0)]
+19_00164788.text.ai        correct  204/ 210 S1 0 L1 4 S2    0 marked    0/ 208 unmarked-extras   0
+19_00164788.normal.ai      correct   10/ 210 S1 0 L1 0 S2  200 marked   10/  10 unmarked-extras   0
+19_00164788.tilt.ai        correct   23/ 210 S1 0 L1 0 S2  183 marked   27/  27 unmarked-extras   0
+19_00164788.blur.ai        correct   65/ 210 S1 0 L1 0 S2  128 marked   64/  85 unmarked-extras   0
+text.ai before {'correct': 2192, 'gold': 2230, 'S1': 0, 'L1': 8, 'S2': 0, 'flagged': 163, 'cells': 2278, 'extras_unmarked': 55} 
+         after  {'correct': 2194, 'gold': 2230, 'S1': 0, 'L1': 4, 'S2': 0, 'flagged': 142, 'cells': 2245, 'extras_unmarked': 43}
+scan.ai before {'correct': 1012, 'gold': 6690, 'S1': 0, 'L1': 2, 'S2': 5559, 'flagged': 827, 'cells': 1167, 'extras_unmarked': 27} 
+         after  {'correct': 1050, 'gold': 6690, 'S1': 0, 'L1': 2, 'S2': 5516, 'flagged': 858, 'cells': 1171, 'extras_unmarked': 0}

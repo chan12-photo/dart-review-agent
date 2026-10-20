@@ -1,0 +1,134 @@
+{
+ "key": "15_00479705",
+ "report_sha256": "c66aecbb40fe5146e0e3ab3b08206988648697d7c6033df47761662aa699b28d",
+ "totals": {
+  "places": 12,
+  "in_order": 0,
+  "position_wrong": 0,
+  "S1_position": 0,
+  "needs_verdict": 0,
+  "position_ready": true
+ },
+ "places": [
+  {
+   "id": "연결재무상태표@8|리스부채|0",
+   "pages": [
+    8
+   ],
+   "printed_rows": 2,
+   "product_rows": 0,
+   "scorer_wrong_unmarked": 0,
+   "status": "not_pairable_no_swap"
+  },
+  {
+   "id": "연결재무상태표@8|리스부채|1",
+   "pages": [
+    8
+   ],
+   "printed_rows": 2,
+   "product_rows": 0,
+   "scorer_wrong_unmarked": 0,
+   "status": "not_pairable_no_swap"
+  },
+  {
+   "id": "연결재무상태표@8|충당부채|0",
+   "pages": [
+    8
+   ],
+   "printed_rows": 2,
+   "product_rows": 0,
+   "scorer_wrong_unmarked": 0,
+   "status": "not_pairable_no_swap"
+  },
+  {
+   "id": "연결재무상태표@8|충당부채|1",
+   "pages": [
+    8
+   ],
+   "printed_rows": 2,
+   "product_rows": 0,
+   "scorer_wrong_unmarked": 0,
+   "status": "not_pairable_no_swap"
+  },
+  {
+   "id": "연결포괄손익계산서@10|계속영업|0",
+   "pages": [
+    10
+   ],
+   "printed_rows": 2,
+   "product_rows": 0,
+   "scorer_wrong_unmarked": 0,
+   "status": "not_pairable_no_swap"
+  },
+  {
+   "id": "연결포괄손익계산서@10|계속영업|1",
+   "pages": [
+    10
+   ],
+   "printed_rows": 2,
+   "product_rows": 0,
+   "scorer_wrong_unmarked": 0,
+   "status": "not_pairable_no_swap"
+  },
+  {
+   "id": "연결포괄손익계산서@10|중단영업|0",
+   "pages": [
+    10
+   ],
+   "printed_rows": 2,
+   "product_rows": 0,
+   "scorer_wrong_unmarked": 0,
+   "status": "not_pairable_no_swap"
+  },
+  {
+   "id": "연결포괄손익계산서@10|중단영업|1",
+   "pages": [
+    10
+   ],
+   "printed_rows": 2,
+   "product_rows": 0,
+   "scorer_wrong_unmarked": 0,
+   "status": "not_pairable_no_swap"
+  },
+  {
+   "id": "연결포괄손익계산서@10|지배기업의소유주지분|0",
+   "pages": [
+    10
+   ],
+   "printed_rows": 2,
+   "product_rows": 0,
+   "scorer_wrong_unmarked": 0,
+   "status": "not_pairable_no_swap"
+  },
+  {
+   "id": "연결포괄손익계산서@10|지배기업의소유주지분|1",
+   "pages": [
+    10
+   ],
+   "printed_rows": 2,
+   "product_rows": 0,
+   "scorer_wrong_unmarked": 0,
+   "status": "not_pairable_no_swap"
+  },
+  {
+   "id": "연결현금흐름표@13|중단영업으로인한현금흐름|0",
+   "pages": [
+    13
+   ],
+   "printed_rows": 3,
+   "product_rows": 0,
+   "scorer_wrong_unmarked": 0,
+   "status": "not_pairable_no_swap"
+  },
+  {
+   "id": "연결현금흐름표@13|중단영업으로인한현금흐름|1",
+   "pages": [
+    13
+   ],
+   "printed_rows": 3,
+   "product_rows": 0,
+   "scorer_wrong_unmarked": 0,
+   "status": "not_pairable_no_swap"
+  }
+ ]
+}

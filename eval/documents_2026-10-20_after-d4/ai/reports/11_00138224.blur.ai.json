@@ -1,0 +1,1434 @@
+{
+ "source": "11_00138224.blur.pdf",
+ "reader": "ai",
+ "cells": 102,
+ "needs_review": 39,
+ "statements": [
+  {
+   "title": "연결재무상태표",
+   "kind": "재무상태표",
+   "page": 1,
+   "unit": "원",
+   "columns": [],
+   "rows": [],
+   "problems": [
+    "1쪽: 열 머리글(당기·전기)을 찾지 못해 이 쪽의 금액은 기간을 정하지 못했다",
+    "2쪽: 열 머리글(당기·전기)을 찾지 못해 금액의 기간을 정하지 못했다",
+    "합계 줄을 찾지 못해 재무상태표 항등식(자산총계 = 부채총계 + 자본총계 등)을 검산하지 못했다",
+    "소계와 그 아래 항목을 구분하지 못해 소계 검산을 하지 못했다"
+   ],
+   "sums_checked": 0,
+   "sums_uncertain": 0
+  },
+  {
+   "title": "연결손익계산서",
+   "kind": "손익계산서",
+   "page": 3,
+   "unit": "원",
+   "columns": [],
+   "rows": [
+    {
+     "label": "기타비용",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 48555670981,
+       "printed": "48,555,670,981",
+       "page": 3,
+       "status": "확인 필요",
+       "reasons": [
+        "AI가 읽은 계정명 '기타비용'과 숫자를 찾은 원본 줄의 계정명 '기타수익| 28.32 | _52.402,003.550] __29,900,995.502관계기업투자이익(손실) | 10.393 | (160.120.776)| 211,175,244!'이 다르다 (숫자를 다른 줄에 붙였을 수 있다)",
+        "원본에서 같은 숫자를 찾지 못했다 (AI가 잘못 읽었을 수 있다)"
+       ],
+       "evidence": ""
+      },
+      {
+       "column": 1,
+       "value": 47174976506,
+       "printed": "47,174,976,506",
+       "page": 3,
+       "status": "확인 필요",
+       "reasons": [
+        "AI가 읽은 계정명 '기타비용'과 숫자를 찾은 원본 줄의 계정명 '기타수익| 28.32 | _52.402,003.550] __29,900,995.502관계기업투자이익(손실) | 10.393 | (160.120.776)| 211,175,244!'이 다르다 (숫자를 다른 줄에 붙였을 수 있다)",
+        "열 머리글이 없어 기간을 AI가 읽은 순서로 정했다"
+       ],
+       "evidence": "OCR"
+      }
+     ]
+    },
+    {
+     "label": "관계기업투자이익(손실)",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": -160120776,
+       "printed": "(160,120,776)",
+       "page": 3,
+       "status": "확인 필요",
+       "reasons": [
+        "원본에서 같은 숫자를 찾지 못했다 (AI가 잘못 읽었을 수 있다)"
+       ],
+       "evidence": ""
+      }
+     ]
+    }
+   ],
+   "problems": [
+    "3쪽: 열 머리글(당기·전기)을 찾지 못해 이 쪽의 금액은 기간을 정하지 못했다"
+   ],
+   "sums_checked": null,
+   "sums_uncertain": 0
+  },
+  {
+   "title": "연결포괄손익계산서",
+   "kind": "포괄손익계산서",
+   "page": 4,
+   "unit": "원",
+   "columns": [],
+   "rows": [
+    {
+     "label": "확정급여제도의재측정요소",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": -1838570621,
+       "printed": "(1,838,570,621)",
+       "page": 4,
+       "status": "확인 필요",
+       "reasons": [
+        "원본에서 같은 숫자를 찾지 못했다 (AI가 잘못 읽었을 수 있다)"
+       ],
+       "evidence": ""
+      },
+      {
+       "column": 1,
+       "value": 728298184,
+       "printed": "728,298,184",
+       "page": 4,
+       "status": "확인 필요",
+       "reasons": [
+        "열 머리글이 없어 기간을 AI가 읽은 순서로 정했다"
+       ],
+       "evidence": "OCR"
+      }
+     ]
+    },
+    {
+     "label": "기타포괄손익-공정가치측정",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 94695376,
+       "printed": "94,695,376",
+       "page": 4,
+       "status": "확인 필요",
+       "reasons": [
+        "원본에서 같은 숫자를 찾지 못했다 (AI가 잘못 읽었을 수 있다)"
+       ],
+       "evidence": ""
+      }
+     ]
+    },
+    {
+     "label": "당기손익으로재분류될수있는항목",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": -391248,
+       "printed": "(391,248)",
+       "page": 4,
+       "status": "확인 필요",
+       "reasons": [
+        "AI가 읽은 계정명 '당기손익으로재분류될수있는항목'과 숫자를 찾은 원본 줄의 계정명 '(베주기라포장손어)'이 다르다 (숫자를 다른 줄에 붙였을 수 있다)",
+        "열 머리글이 없어 기간을 AI가 읽은 순서로 정했다"
+       ],
+       "evidence": "OCR"
+      },
+      {
+       "column": 1,
+       "value": -615367623,
+       "printed": "(615,367,623)",
+       "page": 4,
+       "status": "확인 필요",
+       "reasons": [
+        "AI가 읽은 계정명 '당기손익으로재분류될수있는항목'과 숫자를 찾은 원본 줄의 계정명 '(베주기라포장손어)'이 다르다 (숫자를 다른 줄에 붙였을 수 있다)",
+        "열 머리글이 없어 기간을 AI가 읽은 순서로 정했다"
+       ],
+       "evidence": "OCR"
+      }
+     ]
+    },
+    {
+     "label": "당기총포괄이익(손실)",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": -17344369182,
+       "printed": "(17,344,369,182)",
+       "page": 4,
+       "status": "확인 필요",
+       "reasons": [
+        "원본에서 같은 숫자를 찾지 못했다 (AI가 잘못 읽었을 수 있다)"
+       ],
+       "evidence": ""
+      },
+      {
+       "column": 1,
+       "value": -41612036122,
+       "printed": "(41,612,036,122)",
+       "page": 4,
+       "status": "확인 필요",
+       "reasons": [
+        "열 머리글이 없어 기간을 AI가 읽은 순서로 정했다"
+       ],
+       "evidence": "OCR"
+      }
+     ]
+    }
+   ],
+   "problems": [
+    "4쪽: 열 머리글(당기·전기)을 찾지 못해 이 쪽의 금액은 기간을 정하지 못했다",
+    "4쪽: 원본의 금액 '(391,248)'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+    "4쪽: 원본의 금액 '(615,367,623)'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)"
+   ],
+   "sums_checked": null,
+   "sums_uncertain": 0
+  },
+  {
+   "title": "연결현금흐름표",
+   "kind": "현금흐름표",
+   "page": 5,
+   "unit": "원",
+   "columns": [
+    {
+     "header": "당기",
+     "year": null,
+     "end": null
+    },
+    {
+     "header": "전기",
+     "year": null,
+     "end": null
+    }
+   ],
+   "rows": [
+    {
+     "label": "연어환도현금흐름",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 247146974186,
+       "printed": "247,146,974,186",
+       "page": 5,
+       "status": "확인 필요",
+       "reasons": [
+        "AI가 읽은 계정명 '연어환도현금흐름'과 같은 줄에서 OCR이 읽은 계정명 '영업활동현금흐름'이 다르다"
+       ],
+       "evidence": "OCR (숫자만, 계정명 미확인)"
+      },
+      {
+       "column": 1,
+       "value": 414770017810,
+       "printed": "414,770,017,810",
+       "page": 5,
+       "status": "확인 필요",
+       "reasons": [
+        "AI가 읽은 계정명 '연어환도현금흐름'과 같은 줄에서 OCR이 읽은 계정명 '영업활동현금흐름'이 다르다"
+       ],
+       "evidence": "OCR (숫자만, 계정명 미확인)"
+      }
+     ]
+    },
+    {
+     "label": "당기순이익(손실)",
+     "account": "net_income",
+     "values": [
+      {
+       "column": 0,
+       "value": -15600102689,
+       "printed": "(15,600,102,689)",
+       "page": 5,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": "OCR"
+      },
+      {
+       "column": 1,
+       "value": -41724966683,
+       "printed": "(41,724,966,683)",
+       "page": 5,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": "OCR"
+      }
+     ]
+    },
+    {
+     "label": "비현금항목의조정",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 391664978354,
+       "printed": "391,664,978,354",
+       "page": 5,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": "OCR"
+      },
+      {
+       "column": 1,
+       "value": 538319894721,
+       "printed": "538,319,894,721",
+       "page": 5,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": "OCR"
+      }
+     ]
+    },
+    {
+     "label": "운전자본의조정",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": -101972804683,
+       "printed": "(101,972,804,683)",
+       "page": 5,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": "OCR"
+      },
+      {
+       "column": 1,
+       "value": 7703623184,
+       "printed": "7,703,623,184",
+       "page": 5,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": "OCR"
+      }
+     ]
+    },
+    {
+     "label": "이자수취",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 1073376450,
+       "printed": "1,073,376,450",
+       "page": 5,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": "OCR"
+      },
+      {
+       "column": 1,
+       "value": 2347220957,
+       "printed": "2,347,220,957",
+       "page": 5,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": "OCR"
+      }
+     ]
+    },
+    {
+     "label": "배당금수취",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 222369749,
+       "printed": "222,369,749",
+       "page": 5,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": "OCR"
+      },
+      {
+       "column": 1,
+       "value": 982756592,
+       "printed": "982,756,592",
+       "page": 5,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": "OCR"
+      }
+     ]
+    },
+    {
+     "label": "법인세납부",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": -28240842995,
+       "printed": "(28,240,842,995)",
+       "page": 5,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": "OCR"
+      },
+      {
+       "column": 1,
+       "value": -92858510961,
+       "printed": "(92,858,510,961)",
+       "page": 5,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": "OCR"
+      }
+     ]
+    },
+    {
+     "label": "투자활동현금흐름",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 12209973955,
+       "printed": "12,209,973,955",
+       "page": 5,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": "OCR"
+      },
+      {
+       "column": 1,
+       "value": -134871154467,
+       "printed": "(134,871,154,467)",
+       "page": 5,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": "OCR"
+      }
+     ]
+    },
+    {
+     "label": "단기금융상품의감소",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 10000889337,
+       "printed": "10,000,889,337",
+       "page": 5,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": "OCR"
+      },
+      {
+       "column": 1,
+       "value": 339553065264,
+       "printed": "339,553,065,264",
+       "page": 5,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": "OCR"
+      }
+     ]
+    },
+    {
+     "label": "단기금융상품의증가",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": -9717517980,
+       "printed": "(9,717,517,980)",
+       "page": 5,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": "OCR"
+      },
+      {
+       "column": 1,
+       "value": -295949420488,
+       "printed": "(295,949,420,488)",
+       "page": 5,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": "OCR"
+      }
+     ]
+    },
+    {
+     "label": "장기금융상품의증가",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": -810000000,
+       "printed": "(810,000,000)",
+       "page": 5,
+       "status": "확인 필요",
+       "reasons": [
+        "이 줄에서 금액 1개를 읽었는데 기간 열은 2개라 기간 배정이 불확실하다"
+       ],
+       "evidence": "OCR"
+      }
+     ]
+    },
+    {
+     "label": "단기대여금의회수",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 700000000,
+       "printed": "700,000,000",
+       "page": 5,
+       "status": "확인 필요",
+       "reasons": [
+        "같은 숫자가 띠 안 여러 줄에 있어 어느 줄인지 확정하지 못했다",
+        "이 줄에서 금액 1개를 읽었는데 기간 열은 2개라 기간 배정이 불확실하다",
+        "겹친 두 띠에서 다른 숫자로 읽었다 (700,000,000, (700,000,000))"
+       ],
+       "evidence": "OCR"
+      }
+     ]
+    },
+    {
+     "label": "장기대여금의증가",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": -90565890,
+       "printed": "(90,565,890)",
+       "page": 5,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": "OCR"
+      },
+      {
+       "column": 1,
+       "value": -90565890,
+       "printed": "(90,565,890)",
+       "page": 5,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": "OCR"
+      }
+     ]
+    },
+    {
+     "label": "단기보증금의회수",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 116800000,
+       "printed": "116,800,000",
+       "page": 5,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": "OCR"
+      },
+      {
+       "column": 1,
+       "value": 264316780,
+       "printed": "264,316,780",
+       "page": 5,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": "OCR"
+      }
+     ]
+    },
+    {
+     "label": "단기보증금의증가",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": -58550000,
+       "printed": "(58,550,000)",
+       "page": 5,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": "OCR"
+      },
+      {
+       "column": 1,
+       "value": -10000000,
+       "printed": "(10,000,000)",
+       "page": 5,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": "OCR"
+      }
+     ]
+    },
+    {
+     "label": "장기보증금의회수",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 282936380,
+       "printed": "282,936,380",
+       "page": 5,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": "OCR"
+      },
+      {
+       "column": 1,
+       "value": 1224842000,
+       "printed": "1,224,842,000",
+       "page": 5,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": "OCR"
+      }
+     ]
+    },
+    {
+     "label": "장기보증금의증가",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": -4616458250,
+       "printed": "(4,616,458,250)",
+       "page": 5,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": "OCR"
+      },
+      {
+       "column": 1,
+       "value": -2415921410,
+       "printed": "(2,415,921,410)",
+       "page": 5,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": "OCR"
+      }
+     ]
+    },
+    {
+     "label": "용선행사로인한현금유입",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 37103332192,
+       "printed": "37,103,332,192",
+       "page": 5,
+       "status": "확인 필요",
+       "reasons": [
+        "계정명 표기가 OCR과 조금 다르다 (AI '용선행사로인한현금유입', OCR '옵선행사로인한현금유입', 오타일 수 있다)"
+       ],
+       "evidence": "OCR (숫자만, 계정명 미확인)"
+      },
+      {
+       "column": 1,
+       "value": 18000904212,
+       "printed": "18,000,904,212",
+       "page": 5,
+       "status": "확인 필요",
+       "reasons": [
+        "계정명 표기가 OCR과 조금 다르다 (AI '용선행사로인한현금유입', OCR '옵선행사로인한현금유입', 오타일 수 있다)"
+       ],
+       "evidence": "OCR (숫자만, 계정명 미확인)"
+      }
+     ]
+    },
+    {
+     "label": "유형자산의취득",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": -140097375432,
+       "printed": "(140,097,375,432)",
+       "page": 5,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": "OCR"
+      },
+      {
+       "column": 1,
+       "value": -209803966647,
+       "printed": "(209,803,966,647)",
+       "page": 5,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": "OCR"
+      }
+     ]
+    },
+    {
+     "label": "유형자산의처분",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 17573232677,
+       "printed": "17,573,232,677",
+       "page": 5,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": "OCR"
+      },
+      {
+       "column": 1,
+       "value": 2624049184,
+       "printed": "2,624,049,184",
+       "page": 5,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": "OCR"
+      }
+     ]
+    },
+    {
+     "label": "국고보조금수취",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 7752161040,
+       "printed": "7,752,161,040",
+       "page": 5,
+       "status": "확인 필요",
+       "reasons": [
+        "이 줄에서 금액 1개를 읽었는데 기간 열은 2개라 기간 배정이 불확실하다"
+       ],
+       "evidence": "OCR"
+      }
+     ]
+    },
+    {
+     "label": "투자부동산의처분",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 2401068262,
+       "printed": "2,401,068,262",
+       "page": 5,
+       "status": "확인 필요",
+       "reasons": [
+        "이 줄에서 금액 1개를 읽었는데 기간 열은 2개라 기간 배정이 불확실하다"
+       ],
+       "evidence": "OCR"
+      }
+     ]
+    },
+    {
+     "label": "무형자산의취득",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": -293992080,
+       "printed": "(293,992,080)",
+       "page": 5,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": "OCR"
+      },
+      {
+       "column": 1,
+       "value": -1518566693,
+       "printed": "(1,518,566,693)",
+       "page": 5,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": "OCR"
+      }
+     ]
+    },
+    {
+     "label": "무형자산의처분",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 482485234,
+       "printed": "482,485,234",
+       "page": 5,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": "OCR"
+      },
+      {
+       "column": 1,
+       "value": 665353636,
+       "printed": "665,353,636",
+       "page": 5,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": "OCR"
+      }
+     ]
+    },
+    {
+     "label": "종속기업의처분",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 95390243674,
+       "printed": "95,390,243,674",
+       "page": 5,
+       "status": "확인 필요",
+       "reasons": [
+        "이 줄에서 금액 1개를 읽었는데 기간 열은 2개라 기간 배정이 불확실하다"
+       ],
+       "evidence": "OCR"
+      }
+     ]
+    },
+    {
+     "label": "리스채권등의회수",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 630658564,
+       "printed": "630,658,564",
+       "page": 5,
+       "status": "확인 필요",
+       "reasons": [
+        "계정명 표기가 OCR과 조금 다르다 (AI '리스채권등의회수', OCR '리스재권등의회수', 오타일 수 있다)"
+       ],
+       "evidence": "OCR (숫자만, 계정명 미확인)"
+      },
+      {
+       "column": 1,
+       "value": 12584755585,
+       "printed": "12,584,755,585",
+       "page": 5,
+       "status": "확인 필요",
+       "reasons": [
+        "계정명 표기가 OCR과 조금 다르다 (AI '리스채권등의회수', OCR '리스재권등의회수', 오타일 수 있다)"
+       ],
+       "evidence": "OCR (숫자만, 계정명 미확인)"
+      }
+     ]
+    },
+    {
+     "label": "관계회사배당금",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 672000000,
+       "printed": "672,000,000",
+       "page": 5,
+       "status": "확인 필요",
+       "reasons": [
+        "이 줄에서 금액 1개를 읽었는데 기간 열은 2개라 기간 배정이 불확실하다"
+       ],
+       "evidence": "OCR"
+      }
+     ]
+    },
+    {
+     "label": "연결범위변동으로인한순현금유출",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": -4511373773,
+       "printed": "(4,511,373,773)",
+       "page": 5,
+       "status": "확인 필요",
+       "reasons": [
+        "이 줄에서 금액 1개를 읽었는데 기간 열은 2개라 기간 배정이 불확실하다"
+       ],
+       "evidence": "OCR"
+      }
+     ]
+    },
+    {
+     "label": "재무활동현금흐름",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": -338067905794,
+       "printed": "(338,067,905,794)",
+       "page": 5,
+       "status": "확인 필요",
+       "reasons": [
+        "AI가 읽은 계정명 '재무활동현금흐름'과 같은 줄에서 OCR이 읽은 계정명 'II1.재우활동현금호통'이 다르다"
+       ],
+       "evidence": "OCR (숫자만, 계정명 미확인)"
+      },
+      {
+       "column": 1,
+       "value": -364848654162,
+       "printed": "(364,848,654,162)",
+       "page": 5,
+       "status": "확인 필요",
+       "reasons": [
+        "AI가 읽은 계정명 '재무활동현금흐름'과 같은 줄에서 OCR이 읽은 계정명 'II1.재우활동현금호통'이 다르다"
+       ],
+       "evidence": "OCR (숫자만, 계정명 미확인)"
+      }
+     ]
+    },
+    {
+     "label": "단기차입금의차입",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 1501571282293,
+       "printed": "1,501,571,282,293",
+       "page": 5,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": "OCR"
+      },
+      {
+       "column": 1,
+       "value": 1221273500240,
+       "printed": "1,221,273,500,240",
+       "page": 5,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": "OCR"
+      }
+     ]
+    },
+    {
+     "label": "단기차입금의상환",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": -1428922240326,
+       "printed": "(1,428,922,240,326)",
+       "page": 5,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": "OCR"
+      },
+      {
+       "column": 1,
+       "value": -1162315765062,
+       "printed": "(1,162,315,765,062)",
+       "page": 5,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": "OCR"
+      }
+     ]
+    },
+    {
+     "label": "유동성장기부채의상환",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": -170764208579,
+       "printed": "(170,764,208,579)",
+       "page": 5,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": "OCR"
+      },
+      {
+       "column": 1,
+       "value": -57281019686,
+       "printed": "(57,281,019,686)",
+       "page": 5,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": "OCR"
+      }
+     ]
+    },
+    {
+     "label": "유동성사채의상환",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": -234100000000,
+       "printed": "(234,100,000,000)",
+       "page": 5,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": "OCR"
+      },
+      {
+       "column": 1,
+       "value": -200000000000,
+       "printed": "(200,000,000,000)",
+       "page": 5,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": "OCR"
+      }
+     ]
+    },
+    {
+     "label": "단기사채의발행",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 199480582442,
+       "printed": "199,480,582,442",
+       "page": 5,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": "OCR"
+      },
+      {
+       "column": 1,
+       "value": 149829880560,
+       "printed": "149,829,880,560",
+       "page": 5,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": "OCR"
+      }
+     ]
+    },
+    {
+     "label": "단기사채의상환",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": -180000000000,
+       "printed": "(180,000,000,000)",
+       "page": 5,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": "OCR"
+      },
+      {
+       "column": 1,
+       "value": -25000000000,
+       "printed": "(25,000,000,000)",
+       "page": 5,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": "OCR"
+      }
+     ]
+    },
+    {
+     "label": "사채의발행",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 154164250000,
+       "printed": "154,164,250,000",
+       "page": 5,
+       "status": "확인 필요",
+       "reasons": [
+        "AI가 읽은 계정명 '사채의발행'과 같은 줄에서 OCR이 읽은 계정명 '사재의말행'이 다르다"
+       ],
+       "evidence": "OCR (숫자만, 계정명 미확인)"
+      },
+      {
+       "column": 1,
+       "value": 271005976800,
+       "printed": "271,005,976,800",
+       "page": 5,
+       "status": "확인 필요",
+       "reasons": [
+        "AI가 읽은 계정명 '사채의발행'과 같은 줄에서 OCR이 읽은 계정명 '사재의말행'이 다르다"
+       ],
+       "evidence": "OCR (숫자만, 계정명 미확인)"
+      }
+     ]
+    },
+    {
+     "label": "장기차입금의차입",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 1756170263341,
+       "printed": "1,756,170,263,341",
+       "page": 6,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": "OCR"
+      },
+      {
+       "column": 1,
+       "value": 194500574720,
+       "printed": "194,500,574,720",
+       "page": 6,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": "OCR"
+      }
+     ]
+    },
+    {
+     "label": "장기차입금의상환",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": -3237687736345,
+       "printed": "(3,237,687,736,345)",
+       "page": 6,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": "OCR"
+      },
+      {
+       "column": 1,
+       "value": -22097158322,
+       "printed": "(22,097,158,322)",
+       "page": 6,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": "OCR"
+      }
+     ]
+    },
+    {
+     "label": "리스부채등의상환",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": -68458826664,
+       "printed": "(68,458,826,664)",
+       "page": 6,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": "OCR"
+      },
+      {
+       "column": 1,
+       "value": -83639781992,
+       "printed": "(83,639,781,992)",
+       "page": 6,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": "OCR"
+      }
+     ]
+    },
+    {
+     "label": "유상증자",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 1540999986760,
+       "printed": "1,540,999,986,760",
+       "page": 6,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": "OCR"
+      },
+      {
+       "column": 1,
+       "value": 285164113266,
+       "printed": "285,164,113,266",
+       "page": 6,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": "OCR"
+      }
+     ]
+    },
+    {
+     "label": "유상감자",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": -25613232536,
+       "printed": "(25,613,232,536)",
+       "page": 6,
+       "status": "확인 필요",
+       "reasons": [
+        "이 줄에서 금액 1개를 읽었는데 기간 열은 2개라 기간 배정이 불확실하다",
+        "소계 '유상감자'와 그 아래 항목의 합이 맞지 않는다 (어느 칸이 틀렸는지는 모른다)"
+       ],
+       "evidence": "OCR"
+      }
+     ]
+    },
+    {
+     "label": "이자지급",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": -129566955886,
+       "printed": "(129,566,955,886)",
+       "page": 6,
+       "status": "확인 필요",
+       "reasons": [
+        "소계 '유상감자'와 그 아래 항목의 합이 맞지 않는다 (어느 칸이 틀렸는지는 모른다)"
+       ],
+       "evidence": "OCR"
+      },
+      {
+       "column": 1,
+       "value": -185921071437,
+       "printed": "(185,921,071,437)",
+       "page": 6,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": "OCR"
+      }
+     ]
+    },
+    {
+     "label": "배당금지급",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": -41717981720,
+       "printed": "(41,717,981,720)",
+       "page": 6,
+       "status": "확인 필요",
+       "reasons": [
+        "소계 '유상감자'와 그 아래 항목의 합이 맞지 않는다 (어느 칸이 틀렸는지는 모른다)"
+       ],
+       "evidence": "OCR"
+      },
+      {
+       "column": 1,
+       "value": -5386693280,
+       "printed": "(5,386,693,280)",
+       "page": 6,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": "OCR"
+      }
+     ]
+    },
+    {
+     "label": "비지배지분의취득",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": -704756119877,
+       "printed": "(704,756,119,877)",
+       "page": 6,
+       "status": "확인 필요",
+       "reasons": [
+        "이 줄에서 금액 1개를 읽었는데 기간 열은 2개라 기간 배정이 불확실하다"
+       ],
+       "evidence": "OCR (숫자만, 계정명 미확인)"
+      }
+     ]
+    },
+    {
+     "label": "비지배지분배당금",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": -7054561990,
+       "printed": "(7,054,561,990)",
+       "page": 6,
+       "status": "확인 필요",
+       "reasons": [
+        "이 줄에서 금액 1개를 읽었는데 기간 열은 2개라 기간 배정이 불확실하다",
+        "소계 '비지배지분배당금'와 그 아래 항목의 합이 맞지 않는다 (어느 칸이 틀렸는지는 모른다)"
+       ],
+       "evidence": "OCR"
+      }
+     ]
+    },
+    {
+     "label": "파생상품의정산",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 759622459,
+       "printed": "759,622,459",
+       "page": 6,
+       "status": "확인 필요",
+       "reasons": [
+        "소계 '비지배지분배당금'와 그 아래 항목의 합이 맞지 않는다 (어느 칸이 틀렸는지는 모른다)"
+       ],
+       "evidence": "OCR"
+      },
+      {
+       "column": 1,
+       "value": -7562247316,
+       "printed": "(7,562,247,316)",
+       "page": 6,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": "OCR"
+      }
+     ]
+    },
+    {
+     "label": "기타",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 4056431,
+       "printed": "4,056,431",
+       "page": 6,
+       "status": "확인 필요",
+       "reasons": [
+        "소계 '비지배지분배당금'와 그 아래 항목의 합이 맞지 않는다 (어느 칸이 틀렸는지는 모른다)"
+       ],
+       "evidence": "OCR"
+      },
+      {
+       "column": 1,
+       "value": 4951750,
+       "printed": "4,951,750",
+       "page": 6,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": "OCR"
+      }
+     ]
+    },
+    {
+     "label": "현금및현금성자산의증가(감소)",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": -78710957653,
+       "printed": "(78,710,957,653)",
+       "page": 6,
+       "status": "확인 필요",
+       "reasons": [
+        "AI가 읽은 계정명 '현금및현금성자산의증가(감소)'과 같은 줄에서 OCR이 읽은 계정명 'N.현금및현금성자산의증가(감소)'이 다르다",
+        "소계 '비지배지분배당금'와 그 아래 항목의 합이 맞지 않는다 (어느 칸이 틀렸는지는 모른다)"
+       ],
+       "evidence": "OCR (숫자만, 계정명 미확인)"
+      },
+      {
+       "column": 1,
+       "value": -84949790819,
+       "printed": "(84,949,790,819)",
+       "page": 6,
+       "status": "확인 필요",
+       "reasons": [
+        "AI가 읽은 계정명 '현금및현금성자산의증가(감소)'과 같은 줄에서 OCR이 읽은 계정명 'N.현금및현금성자산의증가(감소)'이 다르다"
+       ],
+       "evidence": "OCR (숫자만, 계정명 미확인)"
+      }
+     ]
+    },
+    {
+     "label": "기초현금및현금성자산",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 92655696897,
+       "printed": "92,655,696,897",
+       "page": 6,
+       "status": "확인 필요",
+       "reasons": [
+        "소계 '비지배지분배당금'와 그 아래 항목의 합이 맞지 않는다 (어느 칸이 틀렸는지는 모른다)"
+       ],
+       "evidence": "OCR"
+      },
+      {
+       "column": 1,
+       "value": 177605430536,
+       "printed": "177,605,430,536",
+       "page": 6,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": "OCR"
+      }
+     ]
+    },
+    {
+     "label": "현금및현금성자산에대한환율변동효과",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": -1298,
+       "printed": "(1,298)",
+       "page": 6,
+       "status": "확인 필요",
+       "reasons": [
+        "소계 '비지배지분배당금'와 그 아래 항목의 합이 맞지 않는다 (어느 칸이 틀렸는지는 모른다)"
+       ],
+       "evidence": "OCR"
+      },
+      {
+       "column": 1,
+       "value": 57180,
+       "printed": "57,180",
+       "page": 6,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": "OCR"
+      }
+     ]
+    },
+    {
+     "label": "기말현금및현금성자산",
+     "account": null,
+     "values": [
+      {
+       "column": 0,
+       "value": 13944737946,
+       "printed": "13,944,737,946",
+       "page": 6,
+       "status": "확인 필요",
+       "reasons": [
+        "소계 '비지배지분배당금'와 그 아래 항목의 합이 맞지 않는다 (어느 칸이 틀렸는지는 모른다)"
+       ],
+       "evidence": "OCR"
+      },
+      {
+       "column": 1,
+       "value": 92655696897,
+       "printed": "92,655,696,897",
+       "page": 6,
+       "status": "검사 통과",
+       "reasons": [],
+       "evidence": "OCR"
+      }
+     ]
+    }
+   ],
+   "problems": [
+    "5쪽 '단기대여금의증가' 줄: OCR이 읽은 금액 '(700.000.000)'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+    "계정명을 원본(OCR)으로 확인하지 못한 행 7개: 숫자는 OCR로 확인했지만 계정명은 AI가 읽은 그대로다 (원본과 대조 필요)"
+   ],
+   "sums_checked": 2,
+   "sums_uncertain": 0
+  }
+ ],
+ "problems": [
+  "2쪽: 글자 높이가 약 10픽셀로 작아 OCR 증거가 약하다 (한 쪽씩 가까이 찍거나 스캔 해상도를 높이면 확인되는 칸이 늘어난다)",
+  "5쪽: 글자 높이가 약 11픽셀로 작아 OCR 증거가 약하다 (한 쪽씩 가까이 찍거나 스캔 해상도를 높이면 확인되는 칸이 늘어난다)",
+  "6쪽: 글자 높이가 약 11픽셀로 작아 OCR 증거가 약하다 (한 쪽씩 가까이 찍거나 스캔 해상도를 높이면 확인되는 칸이 늘어난다)",
+  "AI 호출 19번, 증거: OCR, OCR (숫자만, 계정명 미확인)"
+ ],
+ "source_sha256": "ee2f4da44a560342848ba3895092a7fc106306aba49012008c5d7c9064301e9d"
+}

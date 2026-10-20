@@ -1,0 +1,94 @@
+{
+ "key": "06_00148920",
+ "report_sha256": "b0d6b38721e8f9b7e340c3634888de29616c61b1f9d4df60082f9a23ffe8d80d",
+ "totals": {
+  "places": 8,
+  "in_order": 0,
+  "position_wrong": 0,
+  "S1_position": 0,
+  "needs_verdict": 0,
+  "position_ready": true
+ },
+ "places": [
+  {
+   "id": "연결재무상태표@9|기타금융자산|0",
+   "pages": [
+    9
+   ],
+   "printed_rows": 2,
+   "product_rows": 0,
+   "scorer_wrong_unmarked": 0,
+   "status": "not_pairable_no_swap"
+  },
+  {
+   "id": "연결재무상태표@9|기타금융자산|1",
+   "pages": [
+    9
+   ],
+   "printed_rows": 2,
+   "product_rows": 0,
+   "scorer_wrong_unmarked": 0,
+   "status": "not_pairable_no_swap"
+  },
+  {
+   "id": "연결재무상태표@9|기타수취채권|0",
+   "pages": [
+    9
+   ],
+   "printed_rows": 2,
+   "product_rows": 0,
+   "scorer_wrong_unmarked": 0,
+   "status": "not_pairable_no_swap"
+  },
+  {
+   "id": "연결재무상태표@9|기타수취채권|1",
+   "pages": [
+    9
+   ],
+   "printed_rows": 2,
+   "product_rows": 0,
+   "scorer_wrong_unmarked": 0,
+   "status": "not_pairable_no_swap"
+  },
+  {
+   "id": "연결재무상태표@9|기타지급채무|0",
+   "pages": [
+    9
+   ],
+   "printed_rows": 2,
+   "product_rows": 0,
+   "scorer_wrong_unmarked": 0,
+   "status": "not_pairable_no_swap"
+  },
+  {
+   "id": "연결재무상태표@9|기타지급채무|1",
+   "pages": [
+    9
+   ],
+   "printed_rows": 2,
+   "product_rows": 0,
+   "scorer_wrong_unmarked": 0,
+   "status": "not_pairable_no_swap"
+  },
+  {
+   "id": "연결재무상태표@9|당기손익-공정가치금융자산|0",
+   "pages": [
+    9
+   ],
+   "printed_rows": 2,
+   "product_rows": 0,
+   "scorer_wrong_unmarked": 0,
+   "status": "not_pairable_no_swap"
+  },
+  {
+   "id": "연결재무상태표@9|당기손익-공정가치금융자산|1",
+   "pages": [
+    9
+   ],
+   "printed_rows": 2,
+   "product_rows": 0,
+   "scorer_wrong_unmarked": 0,
+   "status": "not_pairable_no_swap"
+  }
+ ]
+}

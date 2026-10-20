@@ -1,0 +1,82 @@
+05_00117212.text.rules     correct  302/ 302 S1 0 L1 0 S2    0 marked  108/ 302 unmarked-extras   0
+05_00117212.normal.rules   correct    0/ 302 S1 0 L1 0 S2  302 marked   53/  53 unmarked-extras   0  CHANGED flagged 36->53, cells 36->53
+     statements before: [('연결재무상태표', 1, 7), ('연결포괄손익계산서', 4, 3), ('연결현금흐름표', 5, 25)]
+     statements after:  [('연결재무상태표', 1, 17), ('연결손익계산서', 3, 4), ('연결포괄손익계산서', 4, 3), ('연결현금흐름표', 5, 25)]
+05_00117212.tilt.rules     correct    0/ 302 S1 0 L1 0 S2  301 marked   45/  45 unmarked-extras   0  CHANGED S2 302->301, flagged 44->45, cells 44->45
+     statements before: [('연결재무상태표', 1, 11), ('연결손익계산서', 3, 14), ('연결현금흐름표', 5, 15)]
+     statements after:  [('연결재무상태표', 1, 11), ('연결손익계산서', 3, 8), ('연결포괄손익계산서', 4, 7), ('연결현금흐름표', 5, 15)]
+05_00117212.blur.rules     correct    0/ 302 S1 0 L1 0 S2  302 marked   24/  24 unmarked-extras   0  CHANGED flagged 23->24, cells 23->24
+     statements before: [('연결포괄손익계산서', 4, 17)]
+     statements after:  [('연결포괄손익계산서', 4, 1), ('제목 미확인 표', 5, 16)]
+06_00148920.text.rules     correct  223/ 223 S1 0 L1 0 S2    0 marked   52/ 223 unmarked-extras   0
+06_00148920.normal.rules   correct    0/ 223 S1 0 L1 0 S2  223 marked   17/  17 unmarked-extras   0  CHANGED flagged 16->17, cells 16->17
+     statements before: [('연결재무상태표', 1, 10), ('연결현금흐름표', 4, 3)]
+     statements after:  [('연결재무상태표', 1, 9), ('연결포괄손익계산서', 3, 1), ('연결현금흐름표', 4, 3)]
+06_00148920.tilt.rules     correct    0/ 223 S1 0 L1 0 S2  223 marked   18/  18 unmarked-extras   0
+     statements before: [('연결재무상태표', 1, 8), ('연결현금흐름표', 4, 7)]
+     statements after:  [('연결재무상태표', 1, 8), ('연결포괄손익계산서', 3, 0), ('연결현금흐름표', 4, 7)]
+06_00148920.blur.rules     correct    0/ 223 S1 0 L1 0 S2  223 marked   25/  25 unmarked-extras   0
+07_01258710.text.rules     correct  167/ 167 S1 0 L1 0 S2    0 marked    0/ 167 unmarked-extras   0
+07_01258710.normal.rules   correct    0/ 167 S1 0 L1 0 S2  167 marked   23/  23 unmarked-extras   0
+     statements before: [('연결재무상태표', 1, 14), ('연결현금흐름표', 4, 7)]
+     statements after:  [('연결재무상태표', 1, 12), ('연결포괄손익계산서', 3, 2), ('연결현금흐름표', 4, 7)]
+07_01258710.tilt.rules     correct    0/ 167 S1 0 L1 0 S2  167 marked   17/  17 unmarked-extras   0
+07_01258710.blur.rules     correct    0/ 167 S1 0 L1 0 S2  167 marked   13/  13 unmarked-extras   0
+11_00138224.text.rules     correct  229/ 229 S1 0 L1 0 S2    0 marked    0/ 272 unmarked-extras  43
+11_00138224.normal.rules   correct    2/ 229 S1 0 L1 0 S2  222 marked   13/  13 unmarked-extras   0
+     statements before: [('연결재무상태표', 1, 0), ('연결포괄손익계산서', 4, 7), ('연결현금흐름표', 5, 2)]
+     statements after:  [('연결재무상태표', 1, 0), ('연결손익계산서', 3, 0), ('연결포괄손익계산서', 4, 7), ('연결현금흐름표', 5, 2)]
+11_00138224.tilt.rules     correct    2/ 229 S1 0 L1 0 S2  223 marked   20/  20 unmarked-extras   0  CHANGED flagged 19->20, cells 19->20
+     statements before: [('연결재무상태표', 1, 5), ('연결포괄손익계산서', 4, 5), ('연결현금흐름표', 5, 4)]
+     statements after:  [('연결재무상태표', 1, 5), ('연결손익계산서', 3, 1), ('연결포괄손익계산서', 4, 5), ('연결현금흐름표', 5, 4)]
+11_00138224.blur.rules     correct    0/ 229 S1 0 L1 0 S2  226 marked   39/  39 unmarked-extras   0  CHANGED flagged 43->39, cells 43->39
+     statements before: [('연결재무상태표', 1, 10), ('연결손익계산서', 3, 7), ('연결포괄손익계산서', 4, 21)]
+     statements after:  [('연결재무상태표', 1, 10), ('연결손익계산서', 3, 7), ('연결포괄손익계산서', 4, 3), ('제목 미확인 표', 5, 15)]
+13_00184667.text.rules     correct  277/ 277 S1 0 L1 0 S2    0 marked    0/ 277 unmarked-extras   0
+13_00184667.normal.rules   correct    0/ 277 S1 0 L1 0 S2  277 marked   14/  14 unmarked-extras   0
+     statements before: [('연결재무상태표', 1, 4), ('연결현금흐름표', 4, 8)]
+     statements after:  [('연결재무상태표', 1, 2), ('연결포괄손익계산서', 3, 2), ('연결현금흐름표', 4, 8)]
+13_00184667.tilt.rules     correct    0/ 277 S1 0 L1 0 S2  277 marked   17/  17 unmarked-extras   0
+13_00184667.blur.rules     correct    0/ 277 S1 0 L1 0 S2  277 marked   33/  33 unmarked-extras   0
+15_00479705.text.rules     correct  205/ 205 S1 0 L1 0 S2    0 marked    0/ 205 unmarked-extras   0
+15_00479705.normal.rules   correct    0/ 205 S1 0 L1 0 S2  202 marked    7/   7 unmarked-extras   0  CHANGED L1 2->0, S2 203->202, flagged 5->7
+     statements before: [('연결재무상태표', 1, 6), ('연결현금흐름표', 5, 2)]
+     statements after:  [('연결재무상태표', 1, 5), ('연결포괄손익계산서', 3, 1), ('연결현금흐름표', 5, 2)]
+15_00479705.tilt.rules     correct    0/ 205 S1 0 L1 0 S2  205 marked   11/  11 unmarked-extras   0
+     statements before: [('연결재무상태표', 1, 11), ('연결현금흐름표', 5, 0)]
+     statements after:  [('연결재무상태표', 1, 11), ('연결포괄손익계산서', 3, 0), ('연결현금흐름표', 5, 0)]
+15_00479705.blur.rules     correct    0/ 205 S1 0 L1 0 S2  203 marked   14/  14 unmarked-extras   0  CHANGED flagged 15->14, cells 15->14
+     statements before: [('연결재무상태표', 1, 9), ('연결현금흐름표', 5, 5)]
+     statements after:  [('연결재무상태표', 1, 1), ('연결포괄손익계산서', 3, 9), ('연결현금흐름표', 5, 5)]
+16_00137915.text.rules     correct  217/ 217 S1 0 L1 0 S2    0 marked    0/ 217 unmarked-extras   0
+16_00137915.normal.rules   correct    0/ 217 S1 0 L1 0 S2  217 marked    6/   6 unmarked-extras   0  CHANGED flagged 3->6, cells 3->6
+     statements before: [('연결재무상태표', 1, 3), ('연결현금흐름표', 4, 3)]
+     statements after:  [('연결재무상태표', 1, 3), ('연결포괄손익계산서', 3, 3), ('연결현금흐름표', 4, 3)]
+16_00137915.tilt.rules     correct    0/ 217 S1 0 L1 0 S2  217 marked    8/   8 unmarked-extras   0
+     statements before: [('연결재무상태표', 1, 5), ('연결현금흐름표', 4, 3)]
+     statements after:  [('연결재무상태표', 1, 4), ('연결포괄손익계산서', 3, 1), ('연결현금흐름표', 4, 3)]
+16_00137915.blur.rules     correct    0/ 217 S1 0 L1 0 S2  210 marked   29/  29 unmarked-extras   0  CHANGED flagged 27->29, extras_unmarked 2->0
+17_00759294.text.rules     correct  199/ 199 S1 0 L1 0 S2    0 marked    0/ 199 unmarked-extras   0
+17_00759294.normal.rules   correct    0/ 199 S1 0 L1 0 S2  199 marked    7/   7 unmarked-extras   0
+17_00759294.tilt.rules     correct    0/ 199 S1 0 L1 0 S2  199 marked   10/  10 unmarked-extras   0
+17_00759294.blur.rules     correct    0/ 199 S1 0 L1 0 S2  198 marked   27/  27 unmarked-extras   0
+18_00110608.text.rules     correct  200/ 201 S1 0 L1 0 S2    1 marked    0/ 200 unmarked-extras   0  CHANGED flagged 24->0, cells 224->200
+     statements before: [('연결재무상태표', 7, 42), ('연결손익계산서', 9, 16), ('연결포괄손익계산서', 10, 23), ('연결현금흐름표', 12, 39)]
+     statements after:  [('연결재무상태표', 7, 42), ('연결손익계산서', 9, 16), ('연결포괄손익계산서', 10, 9), ('연결자본변동표', 11, 0), ('연결현금흐름표', 12, 39)]
+18_00110608.normal.rules   correct    0/ 201 S1 0 L1 0 S2  194 marked   16/  16 unmarked-extras   0  CHANGED flagged 15->16, extras_unmarked 1->0
+18_00110608.tilt.rules     correct    0/ 201 S1 0 L1 0 S2  198 marked   23/  23 unmarked-extras   0
+18_00110608.blur.rules     correct    0/ 201 S1 0 L1 0 S2  201 marked   14/  14 unmarked-extras   0  CHANGED flagged 0->14, cells 0->14
+     statements before: []
+     statements after:  [('연결손익계산서', 3, 3), ('제목 미확인 표', 4, 2), ('연결현금흐름표', 5, 5)]
+19_00164788.text.rules     correct  206/ 210 S1 0 L1 4 S2    0 marked    0/ 210 unmarked-extras   0
+19_00164788.normal.rules   correct    0/ 210 S1 0 L1 0 S2  210 marked   27/  27 unmarked-extras   0  CHANGED flagged 26->27, cells 26->27
+     statements before: [('연결재무상태표', 1, 10), ('연결손익계산서', 3, 6), ('연결현금흐름표', 5, 6)]
+     statements after:  [('연결재무상태표', 1, 10), ('연결손익계산서', 3, 6), ('연결포괄손익계산서', 4, 1), ('연결현금흐름표', 5, 6)]
+19_00164788.tilt.rules     correct    0/ 210 S1 0 L1 0 S2  208 marked   20/  20 unmarked-extras   0  CHANGED S2 210->208, flagged 11->20, cells 11->20
+     statements before: [('연결재무상태표', 1, 5), ('연결현금흐름표', 5, 6)]
+     statements after:  [('연결재무상태표', 1, 6), ('연결손익계산서', 3, 7), ('연결현금흐름표', 5, 6)]
+19_00164788.blur.rules     correct    0/ 210 S1 0 L1 0 S2  210 marked   22/  22 unmarked-extras   0
+text.rules before {'correct': 2225, 'gold': 2230, 'S1': 0, 'L1': 4, 'S2': 1, 'flagged': 184, 'cells': 2296, 'extras_unmarked': 43} 
+            after  {'correct': 2225, 'gold': 2230, 'S1': 0, 'L1': 4, 'S2': 1, 'flagged': 160, 'cells': 2272, 'extras_unmarked': 43}
+scan.rules before {'correct': 4, 'gold': 6690, 'S1': 0, 'L1': 2, 'S2': 6652, 'flagged': 564, 'cells': 569, 'extras_unmarked': 3} 
+            after  {'correct': 4, 'gold': 6690, 'S1': 0, 'L1': 0, 'S2': 6648, 'flagged': 612, 'cells': 612, 'extras_unmarked': 0}

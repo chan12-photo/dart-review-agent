@@ -1,0 +1,34 @@
+{
+ "key": "19_00164788",
+ "report_sha256": "1ec8f9398b2f836aff9e704a466b159801ef75f93bed70d83dd11f2cf4e4aab8",
+ "totals": {
+  "places": 2,
+  "in_order": 0,
+  "position_wrong": 0,
+  "S1_position": 0,
+  "needs_verdict": 0,
+  "position_ready": true
+ },
+ "places": [
+  {
+   "id": "연결포괄손익계산서@12|지분법자본변동|0",
+   "pages": [
+    12
+   ],
+   "printed_rows": 2,
+   "product_rows": 0,
+   "scorer_wrong_unmarked": 0,
+   "status": "not_pairable_no_swap"
+  },
+  {
+   "id": "연결포괄손익계산서@12|지분법자본변동|1",
+   "pages": [
+    12
+   ],
+   "printed_rows": 2,
+   "product_rows": 0,
+   "scorer_wrong_unmarked": 0,
+   "status": "not_pairable_no_swap"
+  }
+ ]
+}

@@ -1,0 +1,13 @@
+{
+ "key": "11_00138224",
+ "report_sha256": "5202df0e86867f18450684ace5b199e0d12507ad8154094e4b075c50853b90f3",
+ "totals": {
+  "places": 0,
+  "in_order": 0,
+  "position_wrong": 0,
+  "S1_position": 0,
+  "needs_verdict": 0,
+  "position_ready": true
+ },
+ "places": []
+}

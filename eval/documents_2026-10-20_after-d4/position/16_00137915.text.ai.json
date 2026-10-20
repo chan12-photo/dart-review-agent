@@ -1,0 +1,144 @@
+{
+ "key": "16_00137915",
+ "report_sha256": "cfe0ae3e5abfcd87fa941810cf313b2b5c8d7c6d58e29f41ccc7b4fbc118b29e",
+ "totals": {
+  "places": 10,
+  "in_order": 10,
+  "position_wrong": 0,
+  "S1_position": 0,
+  "needs_verdict": 0,
+  "position_ready": true
+ },
+ "places": [
+  {
+   "id": "연결재무상태표@9|기타금융자산|0",
+   "pages": [
+    9
+   ],
+   "printed_rows": 2,
+   "product_rows": 2,
+   "scorer_wrong_unmarked": 0,
+   "status": "in_order",
+   "wrong_rows": [],
+   "wrong_unmarked": 0,
+   "added": 0
+  },
+  {
+   "id": "연결재무상태표@9|기타금융자산|1",
+   "pages": [
+    9
+   ],
+   "printed_rows": 2,
+   "product_rows": 2,
+   "scorer_wrong_unmarked": 0,
+   "status": "in_order",
+   "wrong_rows": [],
+   "wrong_unmarked": 0,
+   "added": 0
+  },
+  {
+   "id": "연결재무상태표@9|기타부채|0",
+   "pages": [
+    9
+   ],
+   "printed_rows": 2,
+   "product_rows": 2,
+   "scorer_wrong_unmarked": 0,
+   "status": "in_order",
+   "wrong_rows": [],
+   "wrong_unmarked": 0,
+   "added": 0
+  },
+  {
+   "id": "연결재무상태표@9|기타부채|1",
+   "pages": [
+    9
+   ],
+   "printed_rows": 2,
+   "product_rows": 2,
+   "scorer_wrong_unmarked": 0,
+   "status": "in_order",
+   "wrong_rows": [],
+   "wrong_unmarked": 0,
+   "added": 0
+  },
+  {
+   "id": "연결재무상태표@9|기타수취채권|0",
+   "pages": [
+    9
+   ],
+   "printed_rows": 2,
+   "product_rows": 2,
+   "scorer_wrong_unmarked": 0,
+   "status": "in_order",
+   "wrong_rows": [],
+   "wrong_unmarked": 0,
+   "added": 0
+  },
+  {
+   "id": "연결재무상태표@9|기타수취채권|1",
+   "pages": [
+    9
+   ],
+   "printed_rows": 2,
+   "product_rows": 2,
+   "scorer_wrong_unmarked": 0,
+   "status": "in_order",
+   "wrong_rows": [],
+   "wrong_unmarked": 0,
+   "added": 0
+  },
+  {
+   "id": "연결포괄손익계산서@11|비지배지분|0",
+   "pages": [
+    11
+   ],
+   "printed_rows": 2,
+   "product_rows": 2,
+   "scorer_wrong_unmarked": 0,
+   "status": "in_order",
+   "wrong_rows": [],
+   "wrong_unmarked": 0,
+   "added": 0
+  },
+  {
+   "id": "연결포괄손익계산서@11|비지배지분|1",
+   "pages": [
+    11
+   ],
+   "printed_rows": 2,
+   "product_rows": 2,
+   "scorer_wrong_unmarked": 0,
+   "status": "in_order",
+   "wrong_rows": [],
+   "wrong_unmarked": 0,
+   "added": 0
+  },
+  {
+   "id": "연결포괄손익계산서@11|지배기업소유주지분|0",
+   "pages": [
+    11
+   ],
+   "printed_rows": 2,
+   "product_rows": 2,
+   "scorer_wrong_unmarked": 0,
+   "status": "in_order",
+   "wrong_rows": [],
+   "wrong_unmarked": 0,
+   "added": 0
+  },
+  {
+   "id": "연결포괄손익계산서@11|지배기업소유주지분|1",
+   "pages": [
+    11
+   ],
+   "printed_rows": 2,
+   "product_rows": 2,
+   "scorer_wrong_unmarked": 0,
+   "status": "in_order",
+   "wrong_rows": [],
+   "wrong_unmarked": 0,
+   "added": 0
+  }
+ ]
+}

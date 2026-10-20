@@ -1,0 +1,170 @@
+{
+ "key": "15_00479705",
+ "report_sha256": "86da0d63cff247505f986eb0894a0de3627635f0382b2d6ced9ad4258d7954db",
+ "totals": {
+  "places": 12,
+  "in_order": 4,
+  "position_wrong": 0,
+  "S1_position": 0,
+  "needs_verdict": 2,
+  "position_ready": false
+ },
+ "places": [
+  {
+   "id": "연결재무상태표@8|리스부채|0",
+   "pages": [
+    8
+   ],
+   "printed_rows": 2,
+   "product_rows": 0,
+   "scorer_wrong_unmarked": 0,
+   "status": "not_pairable_no_swap"
+  },
+  {
+   "id": "연결재무상태표@8|리스부채|1",
+   "pages": [
+    8
+   ],
+   "printed_rows": 2,
+   "product_rows": 0,
+   "scorer_wrong_unmarked": 0,
+   "status": "not_pairable_no_swap"
+  },
+  {
+   "id": "연결재무상태표@8|충당부채|0",
+   "pages": [
+    8
+   ],
+   "printed_rows": 2,
+   "product_rows": 0,
+   "scorer_wrong_unmarked": 0,
+   "status": "not_pairable_no_swap"
+  },
+  {
+   "id": "연결재무상태표@8|충당부채|1",
+   "pages": [
+    8
+   ],
+   "printed_rows": 2,
+   "product_rows": 0,
+   "scorer_wrong_unmarked": 0,
+   "status": "not_pairable_no_swap"
+  },
+  {
+   "id": "연결포괄손익계산서@10|계속영업|0",
+   "pages": [
+    10
+   ],
+   "printed_rows": 2,
+   "product_rows": 2,
+   "scorer_wrong_unmarked": 0,
+   "status": "in_order",
+   "wrong_rows": [],
+   "wrong_unmarked": 0,
+   "added": 0
+  },
+  {
+   "id": "연결포괄손익계산서@10|계속영업|1",
+   "pages": [
+    10
+   ],
+   "printed_rows": 2,
+   "product_rows": 2,
+   "scorer_wrong_unmarked": 0,
+   "status": "in_order",
+   "wrong_rows": [],
+   "wrong_unmarked": 0,
+   "added": 0
+  },
+  {
+   "id": "연결포괄손익계산서@10|중단영업|0",
+   "pages": [
+    10
+   ],
+   "printed_rows": 2,
+   "product_rows": 2,
+   "scorer_wrong_unmarked": 0,
+   "status": "in_order",
+   "wrong_rows": [],
+   "wrong_unmarked": 0,
+   "added": 0
+  },
+  {
+   "id": "연결포괄손익계산서@10|중단영업|1",
+   "pages": [
+    10
+   ],
+   "printed_rows": 2,
+   "product_rows": 2,
+   "scorer_wrong_unmarked": 0,
+   "status": "in_order",
+   "wrong_rows": [],
+   "wrong_unmarked": 0,
+   "added": 0
+  },
+  {
+   "id": "연결포괄손익계산서@10|지배기업의소유주지분|0",
+   "pages": [
+    10
+   ],
+   "printed_rows": 2,
+   "product_rows": 1,
+   "scorer_wrong_unmarked": 0,
+   "status": "needs_verdict",
+   "printed": [
+    -4578590606,
+    -4561556747
+   ],
+   "rows": [
+    {
+     "row": 15,
+     "value": -4578590606,
+     "flagged": false,
+     "scorer": "correct"
+    }
+   ]
+  },
+  {
+   "id": "연결포괄손익계산서@10|지배기업의소유주지분|1",
+   "pages": [
+    10
+   ],
+   "printed_rows": 2,
+   "product_rows": 1,
+   "scorer_wrong_unmarked": 0,
+   "status": "needs_verdict",
+   "printed": [
+    -3871174346,
+    -4983591078
+   ],
+   "rows": [
+    {
+     "row": 15,
+     "value": -3871174346,
+     "flagged": false,
+     "scorer": "correct"
+    }
+   ]
+  },
+  {
+   "id": "연결현금흐름표@13|중단영업으로인한현금흐름|0",
+   "pages": [
+    13
+   ],
+   "printed_rows": 3,
+   "product_rows": 0,
+   "scorer_wrong_unmarked": 0,
+   "status": "not_pairable_no_swap"
+  },
+  {
+   "id": "연결현금흐름표@13|중단영업으로인한현금흐름|1",
+   "pages": [
+    13
+   ],
+   "printed_rows": 3,
+   "product_rows": 0,
+   "scorer_wrong_unmarked": 0,
+   "status": "not_pairable_no_swap"
+  }
+ ]
+}

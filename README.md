@@ -175,13 +175,25 @@ The design was chosen on 13 development questions plus 13 paraphrases ([report](
 - The 3-5 questions are mechanical. Its human review covered all failures and a sample of 60 passed answers.
 - Next is fixing the defects 3-5 found. A fixed version is to be measured on new questions, not on ones whose results have been seen.
 
-## Status and next tasks (2026-10-10)
+## Status and next tasks (2026-10-20)
 
-The comparison feature is closed at v0.1.2. In progress: **v0.2 documents to verified spreadsheets** (not yet evaluated):
+The comparison feature is closed at v0.1.2. In progress: **v0.2 documents to verified spreadsheets**. Its pre-registered evaluation D4 is done, and **the criteria were not met**:
 
 - Statements in text PDFs, scans, or phone photos to Excel. By default a local vision model (Ollama `qwen3-vl:8b`) reads the tables, and every number it reads is checked against the page itself (the PDF's text, or Tesseract and macOS Vision OCR). A number not found on the page is marked "확인 필요"; numbers on the page that the model skipped are reported. Nothing is corrected.
 - `python -m dart_review extract file.pdf` (`--reader rules` for positions and rules only), or `python -m dart_review serve` for a local API and upload page (127.0.0.1, no accounts). Needs `pip install -e '.[docs,server]'`, Tesseract, and Ollama.
-- A development measurement on six real documents against OpenDART is in [eval/documents_2026-10-10_after-codex](eval/documents_2026-10-10_after-codex/REPORT.ko.md) (after an independent review by Codex; the first record is [eval/documents_2026-10-10](eval/documents_2026-10-10/REPORT.ko.md)). It is not an evaluation: those documents were used to find and fix defects. On the photo PDF, three label typos of the same account were first not marked; now they are, at the cost of more cells to review (39%). The evaluation contract ([D4](docs/EVAL_CONTRACT_D4.ko.md), version 6, after five Codex reviews, with its trust boundary stated) awaits a sixth review limited to defects that block the run; the latest development record is [eval/documents_2026-10-11_after-fourth](eval/documents_2026-10-11_after-fourth/REPORT.ko.md).
+- A development measurement on six real documents against OpenDART is in [eval/documents_2026-10-10_after-codex](eval/documents_2026-10-10_after-codex/REPORT.ko.md) (after an independent review by Codex; the first record is [eval/documents_2026-10-10](eval/documents_2026-10-10/REPORT.ko.md)). It is not an evaluation: those documents were used to find and fix defects. On the photo PDF, three label typos of the same account were first not marked; now they are, at the cost of more cells to review (39%). The latest development record is [eval/documents_2026-10-11_after-fourth](eval/documents_2026-10-11_after-fourth/REPORT.ko.md).
+- **D4 accuracy evaluation (pre-registered, 2026-10-20):**
+  - Inputs: the 2025 consolidated audit reports of 10 listed companies not seen before (2,230 gold cells), plus 30 synthetic scans made from them.
+  - Criteria: no unmarked wrong value, no unmarked wrong label, and no unflagged missing cell; for scans, no unmarked wrong value.
+  - [Contract](docs/EVAL_CONTRACT_D4.ko.md) draft 7, 11 Codex reviews, registration tag `d4-registered`.
+  - **The product (AI reader) meets neither the text-PDF nor the scan criterion.** [Result report, Korean](eval/d4_eval/results/2026-10-20/REPORT.ko.md)
+    - Text PDFs: 2,192 of 2,230 cells right; 11 unmarked wrong values and 8 unmarked wrong labels.
+    - Scans: only 15% of cells filled; 27 unmarked wrong values.
+  - Every wrong value is **rows of another statement mixed into one sheet without a mark**: DSR's statement of changes in equity went into the income statement sheet (11 cells), and 이노메트리's income statement went into the balance sheet (27 cells).
+  - Of the 8 wrong labels, 4 are real (the AI inserted a character), and 4 are a notation mismatch between the evaluation's own tools; without those, no verdict changes.
+  - The rules reader does not meet the criteria either.
+  - Ten companies are cases, not an error-rate estimate.
+  - Next is a product fix against the mixing; a fixed version is to be measured on new documents.
 
 Deferred tasks, and when they would be picked up:
 

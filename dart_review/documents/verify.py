@@ -13,7 +13,7 @@ from dataclasses import dataclass, field
 import re
 from typing import Iterable
 
-from .statement import PERIOD_MARK, Amount, Statement
+from .statement import Amount, Statement
 
 OCR_CONFIDENCE = 85.0  # Tesseract's 0-100 score; below this a cell is checked by a person
 _GROUPED = re.compile(r"^\d{1,3}(,\d{3})+$")
@@ -58,6 +58,21 @@ def uses_separators(amounts: Iterable[Amount]) -> bool:
     return bool(long) and sum("," in digits for digits in long) / len(long) >= 0.8
 
 
+_ORDINALS = re.compile(r"제\s*(\d+)")
+_ROLES = re.compile(r"(전\s*전|당|전)\s*\)?\s*기")
+_YEARS = re.compile(r"(?<!\d)((?:19|20)\d{2})\s*[년.]")
+
+
+def one_period(header: str) -> bool:
+    """A column heading that names one period: one 기수, one of 당기·전기·전전기, one plausible year, at least one
+    of them. OCR of a scan once ran several columns' headings into one ("제 54( 당 기 ] 체 53( 전 기 …") and a
+    noise number ("46290.") passed as a year, so values under unknown periods went through unmarked (D4)."""
+    ordinals = set(_ORDINALS.findall(header))
+    roles = {re.sub(r"\s+", "", role) for role in _ROLES.findall(header)}
+    years = set(_YEARS.findall(header))
+    return bool(ordinals or roles or years) and len(ordinals) <= 1 and len(roles) <= 1 and len(years) <= 1
+
+
 def check(statements: list[Statement]) -> list[CellCheck]:
     everything = [amount for statement in statements for row in statement.rows for amount in row.amounts.values()]
     grouped = uses_separators(everything)
@@ -77,8 +92,10 @@ def check(statements: list[Statement]) -> list[CellCheck]:
                     result.flag(f"OCR 확신도가 낮다 ({confidence:.0f})")
                 if statement.unit is None:
                     result.flag("금액 단위를 알 수 없다")
-                if c_index < len(statement.columns) and not PERIOD_MARK.search(statement.columns[c_index].header or ""):
+                if c_index < len(statement.columns) and not one_period(statement.columns[c_index].header or ""):
                     result.flag("이 열의 기간 머리글(제 N 기, 당기·전기, 연도)을 확인하지 못했다")
+                if statement.every_cell:
+                    result.flag(statement.every_cell)
                 if c_index < len(statement.columns) and statement.columns[c_index].uncertain:
                     result.flag("작은 숫자만 있는 열이라 주석 번호인지 금액인지 확인하지 못했다")
                 if row.unplaced:

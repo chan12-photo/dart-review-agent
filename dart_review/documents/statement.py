@@ -10,6 +10,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from decimal import Decimal
+from difflib import SequenceMatcher
 import re
 from typing import Sequence
 
@@ -24,7 +25,9 @@ _TITLE = re.compile(r"^(?:\d{1,2}\.|[ⅠⅡⅢⅣⅤ]+\.)?(연결|별도)?(" + "
 _UNIT = re.compile(r"단위\s*[:：]?\s*(백만원|천원|억원|원)")
 _ORDINAL = re.compile(r"제\s*(\d+)\s*(?:\(\s*(당|전|전전)\s*\))?\s*기")
 _PERIOD_LINE = re.compile(r"제\s*(\d+)\s*(?:\([^)]*\))?\s*기.*?(\d{4})\s*년\s*(\d{1,2})\s*월\s*(\d{1,2})\s*일\s*(?:현재|까지)")
-_DATED = re.compile(r"\d{4}\s*년\s*\d{1,2}\s*월\s*\d{1,2}\s*일\s*(?:부터|현재|까지)")
+# a dated period line: "2025년 12월 31일 현재", or dotted as DSR prints it, "2025.01.01 부터 2025.12.31 까지"
+_DATED = re.compile(r"\d{4}\s*년\s*\d{1,2}\s*월\s*\d{1,2}\s*일\s*(?:부터|현재|까지)"
+                    r"|\d{4}\s*\.\s*\d{1,2}\s*\.\s*\d{1,2}\s*\.?\s*(?:부터|현재|까지)")
 _YEAR = re.compile(r"(\d{4})\s*(?:년|\.)")
 # an item index before a label; OCR reads a Roman numeral "Ⅰ." as "|." or "I." too
 _INDEX = re.compile(r"^\s*(?:[ⅠⅡⅢⅣⅤⅥⅦⅧⅨⅩ]+\s*\.?|[|IVXlivx]{1,4}\s*\.|\d{1,2}[.)]|\(\d{1,2}\)|[가-하]\.|[①-⑳])\s*")
@@ -73,6 +76,9 @@ class Statement:
     problems: list[str] = field(default_factory=list)
     sums_checked: int | None = None  # balance identities and subtotals checked (per period column), when run
     sums_uncertain: int = 0  # subtotals not checked because their levels could not be told from the table
+    # a reason to mark every cell of the statement: its title was inferred from a misread one, or no title was
+    # found where a new statement starts (UNTITLED). Its rows are never added to another statement
+    every_cell: str | None = None
 
 
 def parse_amount(printed: str, unit: int | None) -> int | None:
@@ -125,14 +131,59 @@ def account_of(label: str) -> str | None:
     return None
 
 
+UNTITLED = "UNKNOWN"  # the kind of a statement whose title could not be read (see untitled_start)
+UNTITLED_TITLE = "제목 미확인 표"
+_FULL_TITLES = [prefix + name for prefix in ("", "연결", "별도") for name in TITLES]
+
+
 def title_parts(compact: str) -> tuple[str, bool, str]:
     """(kind, consolidated, title without its item number) of a title line with spaces removed."""
     match = _TITLE.match(compact)
     return TITLES[match.group(2)], match.group(1) == "연결", (match.group(1) or "") + match.group(2)
 
 
+def title_of(text: str) -> tuple[str, bool] | None:
+    """The statement title a line names, and whether it names it exactly. OCR misreads a title by a letter
+    ("연결포괄손의계산서" on a scan of 이노메트리, D4): such a line is taken as the one title it is clearly
+    closest to, as not exact, so its statement is marked instead of read as part of the previous one."""
+    compact = re.sub(r"\s+", "", text)
+    if _TITLE.match(compact):
+        return compact, True
+    compact = re.sub(r"^(?:\d{1,2}\.|[ⅠⅡⅢⅣⅤ]+\.)", "", compact)
+    if not 5 <= len(compact) <= 14 or len(re.findall(r"[가-힣]", compact)) < len(compact) - 2:
+        return None
+    scored = sorted(((SequenceMatcher(None, compact, title).ratio(), title) for title in _FULL_TITLES
+                     if abs(len(title) - len(compact)) <= 2), reverse=True)
+    if scored and scored[0][0] >= 0.85 and (len(scored) == 1 or scored[0][0] - scored[1][0] >= 0.05):
+        return scored[0][1], False
+    return None
+
+
 def is_title(line: Line) -> bool:
-    return bool(_TITLE.match(re.sub(r"\s+", "", line.text)))
+    return title_of(line.text) is not None
+
+
+def inferred_title_reason(text: str, title: str) -> str:
+    return (f"재무제표 제목을 원본에서 정확히 읽지 못했다 ('{re.sub(chr(32) + '+', ' ', text.strip())}'): 가장 가까운 "
+            f"'{title}'(으)로 보았다 (모든 칸 확인 필요)")
+
+
+UNTITLED_REASON = ("이 쪽 위에 기간 줄이 있어 새 재무제표가 시작된 것으로 보이는데 제목을 읽지 못했다 "
+                   "(앞 재무제표에 잇지 않고 따로 두었다, 모든 칸 확인 필요)")
+
+
+def untitled_start(lines: Sequence[Line]) -> bool:
+    """A page part that continues no titled statement but starts like one: a dated period line ("…현재",
+    "…부터 …까지") above its first amount. Read as the previous statement's next page, such a part once put a
+    자본변동표 (DSR) and a 포괄손익계산서 (이노메트리 scan) into the statement before them (D4)."""
+    for line in lines:
+        if any(cell.is_amount and len(re.sub(r"\D", "", cell.text)) >= 4 for cell in line.cells):
+            return False
+        if _END.match(re.sub(r"\s+", "", line.text)):
+            return False  # the notes heading ("주석") with its own period lines: the statements have ended
+        if _DATED.search(line.text):
+            return True
+    return False
 
 
 def is_statement_start(lines: Sequence[Line], index: int, in_notes: bool = False) -> bool:
@@ -140,12 +191,18 @@ def is_statement_start(lines: Sequence[Line], index: int, in_notes: bool = False
     page. Inside the notes, where tables have unit lines too, only a dated period line counts: a notes heading
     "37. 현금흐름표" was once read as a 141-row statement."""
     line = lines[index]
-    if not is_title(line):
+    title = title_of(line.text)
+    if title is None:
         return False
+    if in_notes and not title[1]:
+        return False  # inside the notes only an exact title starts a statement
     following = [other.text for other in lines[index + 1:index + 6] if other.page == line.page]
     if any(_DATED.search(text) for text in following):
         return True
-    return not in_notes and any(_UNIT.search(text.replace(" ", "")) for text in following)
+    if not title[1]:
+        return False  # a title read only approximately needs a dated period line below it
+    # the unit line may be split ("DSR주식회사와 그 종속기업 (단위 :" / "원)"): the following lines read as one
+    return not in_notes and bool(_UNIT.search("".join(text.replace(" ", "") for text in following)))
 
 
 def is_notes_start(line: Line, earlier_on_page: Sequence[Line]) -> bool:
@@ -196,36 +253,51 @@ def find_statements(lines: Sequence[Line]) -> list[Statement]:
     """Each statement title starts a block that ends at the next title or at the notes heading; the block's rows
     are read in turn. A 자본변동표 is listed with a problem and no rows (its table is a matrix)."""
     lines = without_page_furniture(lines)
-    boundaries = []  # (index, is a title)
+    boundaries = []  # (index, "title" | "notes" | "untitled")
     in_notes = False
     for index, line in enumerate(lines):
         if is_statement_start(lines, index, in_notes):
-            boundaries.append((index, True))
+            boundaries.append((index, "title"))
             in_notes = False
-        else:
-            earlier = [other for other in lines[max(0, index - 80):index] if other.page == line.page]
-            if is_notes_start(line, earlier):
-                boundaries.append((index, False))
-                in_notes = True
+            continue
+        earlier = [other for other in lines[max(0, index - 80):index] if other.page == line.page]
+        if is_notes_start(line, earlier):
+            boundaries.append((index, "notes"))
+            in_notes = True
+        elif (not in_notes and boundaries and boundaries[-1][1] != "notes" and not earlier
+              and lines[boundaries[-1][0]].page != line.page):
+            # the first line of a page inside the statements: a page starting like a statement without a title
+            page = [other for other in lines[index:index + 80] if other.page == line.page]
+            if untitled_start(page):
+                boundaries.append((index, "untitled"))
     statements = []
-    for position, (start, title) in enumerate(boundaries):
-        if not title:
+    for position, (start, kind) in enumerate(boundaries):
+        if kind == "notes":
             continue
         end = boundaries[position + 1][0] if position + 1 < len(boundaries) else len(lines)
-        statement = read_statement(lines[start], lines[start + 1:end], lines[max(0, start - 3):end])
+        if kind == "untitled":
+            statement = read_statement(lines[start], lines[start:end], lines[start:end], untitled=True)
+        else:
+            statement = read_statement(lines[start], lines[start + 1:end], lines[max(0, start - 3):end])
         statements.append(statement)
     return statements
 
 
-def read_statement(title_line: Line, body: Sequence[Line], context: Sequence[Line]) -> Statement:
-    compact = re.sub(r"\s+", "", title_line.text)
-    kind, consolidated, title = title_parts(compact)
+def read_statement(title_line: Line, body: Sequence[Line], context: Sequence[Line], untitled: bool = False) -> Statement:
+    every_cell = None
+    if untitled:  # ``title_line`` is the part's first line, not a title
+        kind, consolidated, title, every_cell = UNTITLED, False, UNTITLED_TITLE, UNTITLED_REASON
+    else:
+        compact, exact = title_of(title_line.text)
+        kind, consolidated, title = title_parts(compact)
+        if not exact:
+            every_cell = inferred_title_reason(title_line.text, title)
     unit_text = unit_of(body, before=[line for line in context if line.page == title_line.page and line.top < title_line.top])
     unit = UNITS.get(unit_text) if unit_text else None
-    problems = [] if unit else ["단위 줄을 찾지 못해 금액 단위를 알 수 없다"]
+    problems = ([every_cell] if every_cell else []) + ([] if unit else ["단위 줄을 찾지 못해 금액 단위를 알 수 없다"])
     if kind == "SCE":
         return Statement(kind, consolidated, title, title_line.page, unit, unit_text, [], [],
-                         problems + [SCE_SKIPPED])
+                         problems + [SCE_SKIPPED], every_cell=every_cell)
     height = sorted(cell.bottom - cell.top for line in body for cell in line.cells)
     tolerance = 2.0 * (height[len(height) // 2] if height else 10.0)
     columns = number_columns(body, tolerance)
@@ -305,7 +377,8 @@ def read_statement(title_line: Line, body: Sequence[Line], context: Sequence[Lin
         shown = ", ".join(orphans[:12]) + (f" 외 {len(orphans) - 12}개" if len(orphans) > 12 else "")
         problems.append(f"표에 넣지 못한 금액 {len(orphans)}개 ({shown}): 줄이나 열을 복원하지 못한 행이 있을 수 있다 "
                         "(원본과 대조 필요)")
-    return Statement(kind, consolidated, title, title_line.page, unit, unit_text, periods, rows, problems)
+    return Statement(kind, consolidated, title, title_line.page, unit, unit_text, periods, rows, problems,
+                     every_cell=every_cell)
 
 
 _NOTE_REFERENCE = re.compile(r"\d{1,2}(\s*,\s*\d{1,2})*")

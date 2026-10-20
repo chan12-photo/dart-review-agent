@@ -26,8 +26,10 @@ from statistics import median
 from typing import Iterator, Sequence
 
 from .statement import (
-    _END, _ORDINAL, _PERIOD_LINE, _TITLE, SCE_SKIPPED, TITLES, UNITS, Amount, PeriodColumn, Row, Statement,
-    account_of, clean_label, is_notes_start, is_statement_start, title_parts, without_section_column, without_page_furniture, parse_amount, row_unit, unit_of,
+    _DATED, _END, _ORDINAL, _PERIOD_LINE, SCE_SKIPPED, TITLES, UNITS, UNTITLED, UNTITLED_REASON, UNTITLED_TITLE, Amount,
+    PeriodColumn, Row, Statement, _wrapped_label, account_of, clean_label, inferred_title_reason, is_notes_start,
+    is_statement_start, title_of, title_parts, untitled_start, without_section_column, without_page_furniture,
+    parse_amount, row_unit, unit_of,
 )
 from .table import Cell, Line, group_lines
 from .verify import CHECKED, REVIEW, CellCheck, check_sums, separator_problem
@@ -319,7 +321,11 @@ def read_document(path: Path, model: VisionModel, pages: Sequence[int] | None = 
             # one page): each title starts its own part of the page; reading only the first title once put the
             # second statement's rows under the first
             if not starts or starts[0] > 0:
-                _read_with_page_structure(part, lines[:starts[0]] if starts else lines, None, model, state)
+                head = lines[:starts[0]] if starts else lines
+                if state.current is not None and state.current.page != part.page and untitled_start(head):
+                    # a page that starts like a statement but whose title was not read: kept apart (D4)
+                    _untitled_statement(state, part.page, unit_of(head))
+                _read_with_page_structure(part, head, None, model, state)
             for position, start in enumerate(starts):
                 end = starts[position + 1] if position + 1 < len(starts) else len(lines)
                 _read_with_page_structure(part, lines[start:end], lines[start], model, state)
@@ -327,6 +333,9 @@ def read_document(path: Path, model: VisionModel, pages: Sequence[int] | None = 
             _read_with_model_structure(part, model, state)
     for s_index, statement in enumerate(state.statements):
         own = [check for check in state.checks if check.statement == s_index]
+        if statement.every_cell:
+            for check in own:
+                check.flag(statement.every_cell)
         if s_index in state.unverified_units:
             for check in own:
                 check.flag(f"단위를 원본에서 확인하지 못했다 (AI가 읽은 단위: {statement.unit_text})")
@@ -377,12 +386,24 @@ class _State:
 
 
 def _new_statement(state: _State, title: str, page: int, unit_text: str | None) -> Statement:
-    compact = re.sub(r"\s+", "", title)
-    kind, consolidated, title = title_parts(compact)
-    statement = Statement(kind, consolidated, title, page, UNITS.get(unit_text) if unit_text else None,
+    compact, exact = title_of(title)
+    kind, consolidated, name = title_parts(compact)
+    statement = Statement(kind, consolidated, name, page, UNITS.get(unit_text) if unit_text else None,
                           unit_text, [], [], [] if unit_text else ["단위 줄을 찾지 못해 금액 단위를 알 수 없다"])
+    if not exact:
+        statement.every_cell = inferred_title_reason(title, name)
+        statement.problems.insert(0, statement.every_cell)
     if kind == "SCE":
         statement.problems.append(SCE_SKIPPED)
+    state.statements.append(statement)
+    state.header, state.closed = None, False
+    return statement
+
+
+def _untitled_statement(state: _State, page: int, unit_text: str | None) -> Statement:
+    statement = Statement(UNTITLED, False, UNTITLED_TITLE, page, UNITS.get(unit_text) if unit_text else None, unit_text,
+                          [], [], [UNTITLED_REASON] + ([] if unit_text else ["단위 줄을 찾지 못해 금액 단위를 알 수 없다"]),
+                          every_cell=UNTITLED_REASON)
     state.statements.append(statement)
     state.header, state.closed = None, False
     return statement
@@ -423,7 +444,7 @@ def _read_with_page_structure(part: Part, lines: Sequence[Line], title_line: Lin
         crop = part.image.crop((int(part.x_range[0]), int(band_top), int(part.x_range[1]), int(band_bottom)))
         answer = state.ask(model, crop, BAND_PROMPT, split=True)
         for item in parse_band(answer or ""):
-            _add_row(statement, state.checks, s_index, item, band_lines, state.header, part, claimed, edges)
+            _add_row(statement, state.checks, s_index, item, band_lines, state.header, part, claimed, edges, lines)
     for line in body:
         for cell in line.cells:
             if _is_amount_like(cell, state.header, line, edges, report=True) and id(cell) not in claimed:
@@ -446,13 +467,18 @@ def _read_with_model_structure(part: Part, model: VisionModel, state: _State) ->
         state.problems.append(f"{part.page}쪽: 글자 높이가 약 {median(digit_heights) / RENDER_SCALE:.0f}픽셀로 작아 OCR 증거가 약하다 "
                               "(한 쪽씩 가까이 찍거나 스캔 해상도를 높이면 확인되는 칸이 늘어난다)")
     title = re.sub(r"\s+", "", meta.title)
-    if _TITLE.match(title):
-        unit = next((name for name in sorted(UNITS, key=len, reverse=True) if name in meta.unit.replace(" ", "")), None)
+    unit = next((name for name in sorted(UNITS, key=len, reverse=True) if name in meta.unit.replace(" ", "")), None)
+    if title_of(title) is not None:
         statement = _new_statement(state, title, part.page, unit)
         if unit and unit not in ocr_text:
             state.unverified_units.add(len(state.statements) - 1)
     elif _END.match(title):
         state.closed = True
+    elif state.current is not None and any(_DATED.search(line) for line in meta.periods):
+        # dated period lines but no title the model could name: a new statement, not the previous one's next page
+        _untitled_statement(state, part.page, unit)
+        if unit and unit not in ocr_text:
+            state.unverified_units.add(len(state.statements) - 1)
     statement = state.current
     if statement is None or statement.kind == "SCE":
         return
@@ -705,7 +731,8 @@ def _report_unread_tokens(statement: Statement, part: Part, claimed: dict[int, i
 
 
 def _add_row(statement: Statement, checks: list[CellCheck], s_index: int, item: BandLine, band_lines: Sequence[Line],
-             header: Header | None, part: Part, claimed: set[int], edges: dict[int, list[float]] | None = None) -> None:
+             header: Header | None, part: Part, claimed: set[int], edges: dict[int, list[float]] | None = None,
+             page_lines: Sequence[Line] = ()) -> None:
     label = clean_label(item.label, ocr=True)
     if not label:
         return
@@ -714,6 +741,14 @@ def _add_row(statement: Statement, checks: list[CellCheck], s_index: int, item: 
     if evidence_line is not None:
         words = without_section_column([c for c in evidence_line.cells if re.search(r"[가-힣]", c.text) and not c.is_amount])
         source_label = clean_label(" ".join(c.text for c in words), ocr=True)
+        if not source_label and any(line is evidence_line for line in page_lines):
+            # a label printed over two lines with the amounts between them ("당기손익으로 재분류되지 않는항목" /
+            # amounts / "(세후기타포괄손익)"): the page's label is the lines touching the amount line, as the rules
+            # reader joins them. Taking the model's label there once let "당기순손익…" through unmarked (D4)
+            wrapped = [c for c in _wrapped_label(page_lines, evidence_line) if not c.is_amount]
+            source_label = clean_label("".join(c.text for c in wrapped), ocr=True)
+        if part.source == "PDF 글자" and not source_label:
+            label_problem = "원본 글자에서 이 줄의 계정명을 찾지 못해 AI가 읽은 계정명이다 (원본과 대조 필요)"
         if part.source == "PDF 글자" and source_label:
             # the text layer is exact: the row takes the page's own label, as its amounts take the page's digits
             # and their period the page's column position, so the output is right even when the model's label

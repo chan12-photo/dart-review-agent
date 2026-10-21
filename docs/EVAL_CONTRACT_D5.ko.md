@@ -1,12 +1,13 @@
-# D5 문서 → 엑셀 정확도 평가 계약 (초안 5판, 2026-10-21)
+# D5 문서 → 엑셀 정확도 평가 계약 (5판 확정, 2026-10-21)
 
-- 상태: **초안 5판.**
+- 상태: **5판 확정.** ③ 사용자 결정(2026-10-21, 9절)으로 확정했다. 이 뒤의 변경은 개정이며 같은 범위의 Codex 재검토를 받는다.
   - 2판: Codex 1차 검토(치명 1, 중요 5, 사소 1)를 반영했다([결과](reviews/D5_contract_codex_result.ko.md), [응답](reviews/D5_contract_codex_response.ko.md)).
   - 3판: Codex 재검토(치명 1, 중요 2, 사소 1)를 반영했다([결과](reviews/D5_contract_recheck_codex_result.ko.md), [응답](reviews/D5_contract_recheck_codex_response.ko.md)).
   - 4판: Codex 3차 검토(치명 1, 중요 1, 사소 2)를 반영했다([결과](reviews/D5_contract_recheck2_codex_result.ko.md), [응답](reviews/D5_contract_recheck2_codex_response.ko.md)).
   - 5판: Codex 4차 확인(중요 1)을 반영했다([결과](reviews/D5_contract_recheck3_codex_result.ko.md), [응답](reviews/D5_contract_recheck3_codex_response.ko.md)).
   - Codex 5차 확인(2026-10-21): 4차 지적이 닫혔고, 고칠 것과 계약에 적을 것이 없다([결과](reviews/D5_contract_recheck4_codex_result.ko.md)). 확인한 도구 코드는 `e71ec90dff176fc4427ac2c6d4a0633b2149984f`다.
-- 아직 정하지 않은 것: **D5를 할지는 사용자 결정(9절) 전이다.** 계획은 [`EVAL_PLAN_D5.ko.md`](EVAL_PLAN_D5.ko.md)에 있다.
+- **D5 평가를 한다(사용자 결정 2026-10-21, 회사 10곳).** 계획은 [`EVAL_PLAN_D5.ko.md`](EVAL_PLAN_D5.ko.md)에 있다.
+- 이름: 기존 단계표의 D5는 API 서버다. 이 평가는 파일·태그·프로필 이름을 그대로 두고 "D5 평가"라고 부른다(사용자 결정 2026-10-21).
 - **이 계약은 D4 계약 7판([`EVAL_CONTRACT_D4.ko.md`](EVAL_CONTRACT_D4.ko.md))을 따른다.** 다른 점은 이 문서에 적는다. 파일과 명령은 2절의 표가 정한다. "D4"를 "D5"로 바꿔 읽는 식의 포괄 치환은 하지 않는다.
 - 목적: D4가 찾은 결함을 고친 제품이 **처음 보는 문서**에서 무엇을 내는지 잰다. 볼 것은 표시 없이 틀린 값·계정명, 가리키지 않은 빠진 칸이다. 기준은 D4와 같다(텍스트 PDF S1 = L1 = S2 = 0, 합성 스캔 S1 = 0).
 - 하지 않는 것:
@@ -160,6 +161,14 @@ D4에서 새 문서가 드러낸 도구 결함 두 건과, D5에 필요한 경�
 3. 포함된 회사의 OpenDART 재무제표 조회 승인
 4. 감사보고서 PDF 받기 승인(첨부 이름은 사용자가 기록)
 5. 합성 스캔 3조건 그대로, 반복 실행 없음(제안: D4와 같음)
+
+**결정 (2026-10-21, 사용자):**
+1. 한다. 회사 수는 **10곳**이다. ④ 고정 기록의 `expected_documents`가 된다.
+2. 20~30번은 D4 때 받은 기록을 **재사용**한다(5절의 복사 규칙). 31번부터는 새로 받는다(조회할 때 승인).
+3. 포함된 회사의 OpenDART 재무제표 조회는 ⑤에서 회사가 정해진 뒤 그때 승인받는다.
+4. 감사보고서 PDF 받기도 ⑤에서 파일 이름·출처·크기를 알린 뒤 그때 승인받는다(첨부 이름은 사용자가 기록).
+5. 합성 스캔은 **D4와 같은** 세 조건이고 반복 실행은 없다.
+- 함께 승인한 것: ④ 고정, F 커밋, `d5-frozen` 태그 push.
 
 ## 10. 한계 (D4 9절에 더함)
 

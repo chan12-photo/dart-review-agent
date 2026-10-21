@@ -269,20 +269,35 @@ class BuildTests(unittest.TestCase):
         gold = {"source": {"file": "a.pdf", "sha256": "src", "pages": 20}, "statements": [STATEMENT], "cells": cells, "needs_mapping": []}
         lines = [self.line(10, 100, "확정계약자산", "9", "204", "77"), self.line(10, 200, "확정계약자산", "54", "20"),
                  self.line(11, 50, "확정계약자산", "7", "8")]
-        with tempfile.TemporaryDirectory() as temp:
+        with tempfile.TemporaryDirectory() as temp, mock.patch.object(pc, "ROOT", Path(temp)):
+            # a repository of its own: D5's list at its place, its freeze record with N = 1 (Codex D5 re-check 1-2)
+            from document_list import profile_record
             for name, data in (("a.gold.json", gold), ("a.mapping.json", {"status": "draft", "decisions": {}})):
                 (Path(temp) / name).write_text(json.dumps(data, ensure_ascii=False), encoding="utf-8")
-            documents = {"documents": [{"key": "a", "pdf": "a.pdf", "sha256": "src", "gold": f"{temp}/a.gold.json",
-                                        "mapping": f"{temp}/a.mapping.json"}]}
+            scans = {c: {"pdf": f"a.{c}.pdf", "sha256": f"scan-{c}", "map": f"maps/a.{c}.map.json"} for c in ("normal", "tilt", "blur")}
+            documents = {"expected_documents": 1, "documents": [{"key": "a", "rank": 1, "corp_code": "00000001", "pdf": "a.pdf",
+                                                                  "sha256": "src", "gold": "a.gold.json",
+                                                                  "mapping": "a.mapping.json", "scans": scans}]}
             with mock.patch("d4_gold.lines_of", return_value=lines):
                 built = pc.build(documents, Path(temp))
             rows = built["documents"]["a"]["places"][0]["rows"]
             self.assertEqual([(r["page"], r["printed"]) for r in rows], [(10, "204"), (10, "54"), (11, "7")])
-            (Path(temp) / "documents.json").write_text(json.dumps(documents, ensure_ascii=False), encoding="utf-8")
-            with mock.patch("d4_gold.lines_of", return_value=lines), mock.patch.object(pc, "DOCUMENTS", Path(temp) / "documents.json"):
+            listed = Path(temp) / "eval" / "d5_eval" / "documents.json"
+            listed.parent.mkdir(parents=True)
+            listed.write_text(json.dumps(documents, ensure_ascii=False), encoding="utf-8")
+            (Path(temp) / "eval" / "freeze_d5.json").write_text(json.dumps({"profile": profile_record("d5", 1)}),
+                                                                 encoding="utf-8")
+            with mock.patch("d4_gold.lines_of", return_value=lines), mock.patch.object(pc, "DOCUMENTS", listed):
                 self.assertEqual(pc.main(["verify", "--pdf-dir", temp, "--registered", self.save(temp, built)]), 0)
                 other = {**built, "documents": {"a": {**built["documents"]["a"], "places": []}}}
                 self.assertEqual(pc.main(["verify", "--pdf-dir", temp, "--registered", self.save(temp, other)]), 1)
+                # without --registered: the places of the list's evaluation
+                (listed.parent / "duplicate_places.json").write_text(json.dumps(built), encoding="utf-8")
+                self.assertEqual(pc.main(["verify", "--pdf-dir", temp]), 0)
+                # a list at no evaluation's place has no N from outside it
+                (Path(temp) / "documents.json").write_text(json.dumps(documents, ensure_ascii=False), encoding="utf-8")
+                with self.assertRaises(SystemExit):
+                    pc.main(["verify", "--pdf-dir", temp, "--documents", str(Path(temp) / "documents.json")])
             lines[1] = self.line(10, 200, "확정계약자산", "55", "20")
             with mock.patch("d4_gold.lines_of", return_value=lines):
                 with self.assertRaises(ValueError):

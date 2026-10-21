@@ -531,6 +531,75 @@ def words_line(words, y, height=1000, page=1):
             "compact": "".join(w["text"] for w in words), "top": y, "bottom": y + 8}
 
 
+class D5ToolChangeTests(unittest.TestCase):
+    """The two tool defects D4 found on new documents, fixed for D5 (D5 contract draft 3)."""
+
+    def test_dotted_period_lines_start_a_statement(self):
+        from eval.d4_gold import statements_of
+        # DSR prints "연결 재무상태표" and "제 62 기 2025.12.31 현재": D4's builder found none of its statements
+        lines = [words_line([("연결", 200, 220), ("재무상태표", 222, 270)], 54),
+                 words_line([("제", 150, 155), ("62", 157, 165), ("기", 167, 172), ("2025.12.31", 175, 230), ("현재", 232, 250)], 69),
+                 words_line([("(단위", 400, 420), (":", 421, 423), ("원)", 424, 435)], 90),
+                 line("유동자산", "183,887,864,169", "157,101,448,500", 120)]
+        blocks = statements_of(lines)
+        self.assertEqual([(b["id"], b["unit_text"], len(b["lines"])) for b in blocks], [("연결재무상태표@1", "원", 3)])
+        flow = [words_line([("연결", 200, 220), ("현금흐름표", 222, 270)], 54),
+                words_line([("제", 150, 155), ("62", 157, 165), ("기", 167, 172), ("2025.01.01", 175, 230), ("부터", 232, 250),
+                            ("2025.12.31", 252, 300), ("까지", 302, 320)], 69)]
+        self.assertEqual([b["kind"] for b in statements_of(flow)], ["CF"])
+
+    def test_a_dotted_period_line_is_not_a_row(self):
+        from eval.d4_gold import _line_kind
+        period = words_line([("제", 150, 155), ("62", 157, 165), ("기", 167, 172), ("2025.12.31", 175, 230), ("현재", 232, 250)], 69)
+        self.assertEqual(_line_kind(period), "drop")
+
+    def test_a_sentence_or_a_row_with_a_dotted_date_is_not_a_period_line(self):
+        # Codex D5 review 4: "2025.12.31 현재" inside a sentence started a statement, inside a row dropped it
+        from eval.d4_gold import _line_kind, dated, statements_of
+        for text in ("제 62 기 2025.12.31 현재", "제 62 (당) 기 2025.01.01 부터 2025.12.31 까지", "2025.12.31 현재",
+                     "제 61 기말 : 2024.12.31 현재", "(2025.12.31 현재)", "제 62 기 2025년 12월 31일 현재"):
+            with self.subTest(text=text):
+                self.assertTrue(dated(text))
+        for text in ("2025.12.31 현재 보증금 47", "2025.12.31 현재 계약조건을 검토했다", "만기 2025.12.31 까지 차입금"):
+            with self.subTest(text=text):
+                self.assertFalse(dated(text))
+        row = words_line([("2025.12.31", 10, 60), ("현재", 62, 80), ("보증금", 82, 110), ("47", 310, 320)], 300)
+        self.assertNotEqual(_line_kind(row), "drop")
+        sentence = [words_line([("연결재무상태표", 200, 270)], 54),
+                    words_line([("2025.12.31", 100, 150), ("현재", 152, 170), ("계약조건을", 172, 220), ("검토했다", 222, 260)], 69)]
+        self.assertEqual(statements_of(sentence), [])
+
+    def test_an_untitled_table_is_never_a_gold_statement_and_points_at_nothing(self):
+        # D5 contract draft 6 (Codex D5 review): its cells are marked cells outside the gold, the gold's cells are
+        # missing and not pointed at (S2 on a text PDF), whatever the table's problem text says
+        from dart_review.documents.statement import UNTITLED_REASON, UNTITLED_TITLE
+        g = gold(cell("유동자산", 0, "183,887", 183887), cell("자산총계", 0, "391,592", 391592))
+        r = {"source_sha256": "src", "problems": [], "statements": [
+            {"title": UNTITLED_TITLE, "page": 1, "problems": [UNTITLED_REASON, "1쪽 '유동자산' 줄: 원본의 금액 '9'를 AI가 읽지 않았다"],
+             "rows": [{"label": label, "values": [{"column": 0, "value": value, "printed": f"{value:,}", "page": 1,
+                                                   "status": "확인 필요"}]}
+                      for label, value in (("유동자산", 183887), ("자산총계", 391592))]}]}
+        totals = score(g, r)["totals"]
+        self.assertEqual((totals["correct"], totals["S1"], totals["S2"], totals["not_in_gold"], totals["unjudged_extras"]),
+                         (0, 0, 2, 2, 0))
+        self.assertEqual(totals["product_statements_not_in_gold"], [UNTITLED_TITLE])
+
+    def test_labels_compare_without_a_trailing_colon_and_with_one_middle_dot(self):
+        from eval.d4_gold import label_key
+        # D4: 10 right values counted as wrong labels (현대모비스 "…항목 :", 와이솔 "자산·부채" for "자산ㆍ부채")
+        self.assertEqual(label_key("후속적으로 당기손익으로 재분류되지 않는 항목 :"), label_key("후속적으로 당기손익으로 재분류되지 않는 항목"))
+        self.assertEqual(label_key("영업활동으로인한자산·부채의변동"), label_key("영업활동으로 인한 자산ㆍ부채의 변동"))
+        self.assertEqual(label_key("자산・부채"), "자산ㆍ부채")
+        self.assertNotEqual(label_key("당기순손익으로 재분류"), label_key("당기손익으로 재분류"))  # a different word stays different
+        self.assertEqual(label_key("Ⅰ. 유동자산 (주석 5)"), "유동자산")
+
+    def test_a_score_counts_the_colon_and_dot_labels_right(self):
+        g = gold(cell("후속적으로 당기손익으로 재분류되지 않는 항목", 0, "(166,845)", -166845), cell("자산ㆍ부채의 변동", 0, "1,942", 1942))
+        r = report([("후속적으로 당기손익으로 재분류되지 않는 항목 :", 0, -166845, False), ("자산·부채의 변동", 0, 1942, False)])
+        totals = score(g, r)["totals"]
+        self.assertEqual((totals["correct"], totals["L1"]), (2, 0))
+
+
 @unittest.skipUnless(HAS_PDF, "pip install -e '.[docs]'")
 class GoldBuilderPdfTests(unittest.TestCase):
     def test_the_cells_of_a_sample_pdf(self):
@@ -763,7 +832,7 @@ class PreflightTests(unittest.TestCase):
 
     def test_only_committed_files_and_confirmed_mappings_are_registered(self):
         import json
-        with self.assertRaisesRegex(ValueError, "not committed"):
+        with self.assertRaisesRegex(ValueError, "eval/none.json is not a file"):
             register_record(self.root, "eval/freeze_d4.json", ["eval/none.json"])
         (self.root / "eval/b.mapping.json").write_text(json.dumps({**self.MAPPING, "status": "draft"}), encoding="utf-8")
         with self.assertRaisesRegex(ValueError, "not clean"):
@@ -791,6 +860,204 @@ class PreflightTests(unittest.TestCase):
         self.commit()
         with self.assertRaisesRegex(ValueError, "eval/d4_scan.py"):
             freeze_record(self.root, "HEAD", "HEAD", self.ENV)
+
+
+class ProfileTests(unittest.TestCase):
+    """D5's profile (Codex D5 re-check 1-3): N decided outside the list, the nine tools and P frozen as the code's
+    profile names them, its records at their own places, its tag, and no file reached through a link."""
+
+    ENV = PreflightTests.ENV
+    MAPPING = PreflightTests.MAPPING
+
+    def setUp(self):
+        import json
+        from eval.d4_preflight import PROFILES  # the module d4_preflight reads, patched below
+        self.folder = tempfile.TemporaryDirectory()
+        self.addCleanup(self.folder.cleanup)
+        self.root = Path(self.folder.name)
+        self.tools = PROFILES["d5"]["tool_paths"]
+        for path in ["dart_review/__init__.py", "pyproject.toml", *self.tools]:
+            (self.root / path).parent.mkdir(parents=True, exist_ok=True)
+            (self.root / path).write_text(f"# {path}\n", encoding="utf-8")
+        self.git("init", "-q")
+        self.commit()  # P and T
+        self.P = self.head()
+        self.enterContext(mock.patch.dict(PROFILES["d5"], {"product_commit": self.P}))
+        self.record = freeze_record(self.root, "HEAD", "HEAD", self.ENV, "d5", 2)
+        (self.root / "eval/freeze_d5.json").write_text(json.dumps(self.record), encoding="utf-8")
+        self.commit()  # F, tagged and the tag pushed at ④ (Codex D5 third review 1)
+        self.F = self.head()
+        import shutil
+        self.remote = str(Path(self.folder.name + "-remote"))
+        self.git("init", "-q", "--bare", self.remote)
+        self.addCleanup(shutil.rmtree, self.remote)
+        self.git("tag", "-a", "d5-frozen", "-m", "F", self.F)
+        self.git("push", "-q", self.remote, "refs/tags/d5-frozen")
+        self.documents = {"expected_documents": 2, "documents": []}
+        self.paths = ["eval/d5_eval/documents.json", "eval/d5_eval/duplicate_places.json"]
+        for n in (1, 2):
+            scans = {c: {"pdf": f"{n}.{c}.pdf", "sha256": f"s{n}{c}", "map": f"eval/d5_eval/scans/{n}.{c}.map.json"}
+                     for c in ("normal", "tilt", "blur")}
+            item = {"key": f"{n}", "rank": 19 + n, "corp_code": f"c{n}", "pdf": f"{n}.pdf", "sha256": f"t{n}",
+                    "gold": f"eval/d5_eval/gold/{n}.gold.json", "mapping": f"eval/d5_eval/gold/{n}.mapping.json",
+                    "scans": scans}
+            self.documents["documents"].append(item)
+            for path in (item["gold"], item["mapping"], *(scan["map"] for scan in scans.values())):
+                (self.root / path).parent.mkdir(parents=True, exist_ok=True)
+                (self.root / path).write_text(json.dumps(self.MAPPING if "mapping" in path else {}), encoding="utf-8")
+                self.paths.append(path)
+        self.write("eval/d5_eval/documents.json", self.documents)
+        self.write("eval/d5_eval/duplicate_places.json", {"documents": {}})
+        self.commit()
+        self.registration = register_record(self.root, "eval/freeze_d5.json", self.paths, "d5", self.remote)
+        self.write("eval/register_d5.json", self.registration)
+        self.commit()  # R
+        self.R = self.head()
+        self.git("tag", "-a", "d5-registered", "-m", "R", self.R)
+
+    git, head, commit = PreflightTests.git, PreflightTests.head, PreflightTests.commit
+
+    def write(self, path, data):
+        import json
+        (self.root / path).write_text(json.dumps(data), encoding="utf-8")
+
+    def failed(self, record=None, registration=None, registered="d5-registered", remote=None):
+        result = check(self.root, record or self.record, self.ENV, None, registration or self.registration, registered,
+                       remote, "d5")
+        self.assertEqual(result["profile"], "d5")
+        return [c["check"] for c in result["checks"] if not c["ok"]]
+
+    def test_the_profile_is_frozen_with_its_nine_tools_and_n(self):
+        self.assertEqual(sorted(self.record["objects"]["tools"]), sorted(self.tools))
+        self.assertEqual(len(self.tools), 9)
+        self.assertEqual((self.record["profile"]["expected_documents"], self.record["profile"]["tag"]), (2, "d5-registered"))
+        self.assertEqual((self.registration["profile"], self.registration["tag"]), ("d5", "d5-registered"))
+        self.assertEqual(self.failed(), [])
+
+    def test_another_p_or_no_n_cannot_be_frozen(self):
+        self.write("dart_review/__init__.py", "changed")
+        self.commit()
+        with self.assertRaisesRegex(ValueError, "product commit"):
+            freeze_record(self.root, "HEAD", "HEAD", self.ENV, "d5", 2)
+        for count in (None, 0, True, "10"):
+            with self.subTest(count=count), self.assertRaises(ValueError):
+                freeze_record(self.root, self.P, "HEAD", self.ENV, "d5", count)
+        with self.assertRaises(ValueError):
+            freeze_record(self.root, self.P, "HEAD", self.ENV, "d4", 10)
+
+    def test_a_tool_changed_after_the_freeze_fails(self):
+        (self.root / "eval/d4_eval/run_d4.py").write_text("# runner changed after the freeze\n", encoding="utf-8")
+        self.commit()
+        self.assertIn("tools eval/d4_eval/run_d4.py at HEAD is the frozen object",
+                      self.failed(registered=self.head()))
+
+    def test_r_is_named_by_its_tag_and_the_registration_is_the_profile_s(self):
+        self.assertEqual(self.failed(registered=self.R), ["R is named by the tag d5-registered"])
+        d4_like = {k: v for k, v in self.registration.items() if k not in ("profile", "tag")}
+        self.assertEqual(self.failed(registration=d4_like),
+                         ["the registration is d5's, with its tag and freeze record"])
+        changed = {**self.record, "profile": {**self.record["profile"], "tool_paths": self.tools[:5]}}
+        self.assertIn("the freeze record holds the d5 profile", self.failed(record=changed))
+        self.assertEqual(self.failed(remote=self.remote), ["the pushed tag d5-registered on " + self.remote + " names HEAD"])
+        self.git("push", "-q", self.remote, "refs/tags/d5-registered")
+        self.assertEqual(self.failed(remote=self.remote), [])
+
+    def test_the_registration_holds_the_whole_list_at_the_frozen_n(self):
+        with self.assertRaisesRegex(ValueError, "not registered: eval/d5_eval/gold/2.gold.json"):
+            register_record(self.root, "eval/freeze_d5.json",
+                            [p for p in self.paths if p != "eval/d5_eval/gold/2.gold.json"], "d5", self.remote)
+        with self.assertRaisesRegex(ValueError, "registers its freeze record"):
+            register_record(self.root, "eval/d5_eval/duplicate_places.json", self.paths, "d5", self.remote)
+        # Codex D5 re-check 1: one of the decided documents, its list saying 1
+        self.write("eval/d5_eval/documents.json", {"expected_documents": 1, "documents": self.documents["documents"][:1]})
+        self.commit()
+        with self.assertRaisesRegex(ValueError, "the profile 2"):
+            register_record(self.root, "eval/freeze_d5.json", self.paths, "d5", self.remote)
+
+    def test_a_link_is_never_registered(self):
+        import os
+        outside = Path(self.folder.name + "-outside.json")
+        outside.write_text("{}", encoding="utf-8")
+        self.addCleanup(outside.unlink)
+        os.symlink(outside, self.root / "eval/d5_eval/gold/link.gold.json")
+        self.commit()
+        with self.assertRaisesRegex(ValueError, "link.gold.json is not a file inside the repository"):
+            register_record(self.root, "eval/freeze_d5.json", [*self.paths, "eval/d5_eval/gold/link.gold.json"], "d5",
+                            self.remote)
+
+    def test_n_changed_between_f_and_r_is_refused(self):
+        # Codex D5 third review 1: N = 2 frozen at F, then N and the list both made 1 before R
+        import json
+        self.write("eval/freeze_d5.json", {**self.record, "profile": {**self.record["profile"], "expected_documents": 1}})
+        self.write("eval/d5_eval/documents.json", {"expected_documents": 1, "documents": self.documents["documents"][:1]})
+        self.commit()
+        with self.assertRaisesRegex(ValueError, "not the record frozen at F"):
+            register_record(self.root, "eval/freeze_d5.json", self.paths, "d5", self.remote)
+        # a registration made by hand from the changed record: the check finds it is not F's
+        changed = json.loads((self.root / "eval/freeze_d5.json").read_text(encoding="utf-8"))
+        forged = {**self.registration, "freeze_object": self.object_at("HEAD", "eval/freeze_d5.json"),
+                  "objects": {**self.registration["objects"],
+                              "eval/freeze_d5.json": self.object_at("HEAD", "eval/freeze_d5.json")}}
+        self.assertIn("F (d5-frozen) is the registration's, its freeze record the one at HEAD",
+                      self.failed(record=changed, registration=forged, registered=self.head()))
+
+    def test_a_registration_beside_f_merged_in_afterwards_is_refused(self):
+        # Codex D5 fourth review 1: the files registered on a line SIDE that does not grow from F (the same freeze
+        # record object there), then R made as a merge of SIDE and F, so that F is an ancestor of R
+        import json
+        import subprocess
+        run = lambda *a: subprocess.run(["git", "-c", "user.name=t", "-c", "user.email=t@example.com", *a], cwd=self.root,
+                                        check=True, capture_output=True, text=True).stdout.strip()
+        side_tree = run("rev-parse", f"{self.R}^^{{tree}}")  # the registered files, before the record
+        side = run("commit-tree", side_tree, "-p", self.P, "-m", "side")
+        self.assertNotEqual(subprocess.run(["git", "merge-base", "--is-ancestor", self.F, side], cwd=self.root).returncode, 0)
+        run("checkout", "-q", side)
+        with self.assertRaisesRegex(ValueError, "is not an ancestor of HEAD"):
+            register_record(self.root, "eval/freeze_d5.json", self.paths, "d5", self.remote)
+        forged = {**self.registration, "based_on": side}
+        self.write("eval/register_d5.json", forged)
+        run("add", "-A")
+        merged = run("commit-tree", run("write-tree"), "-p", side, "-p", self.F, "-m", "R")
+        run("checkout", "-q", "-f", merged)
+        failed = self.failed(registration=forged, registered=self.head())
+        self.assertIn("R's only parent is the registered commit, and R adds only the registration record", failed)
+        self.assertIn("F (d5-frozen) is an ancestor of the registered commit", failed)
+
+    def test_r_is_exactly_the_registration_commit(self):
+        # a file changed after the registration, in R itself or in a later commit, fails the check
+        self.write("eval/d5_eval/duplicate_places.json", {"documents": {"changed": True}})
+        self.commit()
+        failed = self.failed(registered=self.head())
+        self.assertIn("R's only parent is the registered commit, and R adds only the registration record", failed)
+
+    def test_f_must_be_tagged_and_pushed(self):
+        self.git("push", "-q", self.remote, ":refs/tags/d5-frozen")
+        with self.assertRaisesRegex(ValueError, "does not name"):
+            register_record(self.root, "eval/freeze_d5.json", self.paths, "d5", self.remote)
+        with self.assertRaisesRegex(ValueError, "does not name"):
+            register_record(self.root, "eval/freeze_d5.json", self.paths, "d5", None)
+        self.assertIn(f"the pushed tag d5-frozen on {self.remote} names F", self.failed(remote=self.remote))
+        self.git("tag", "-d", "d5-frozen")
+        with self.assertRaisesRegex(ValueError, "no tag d5-frozen"):
+            register_record(self.root, "eval/freeze_d5.json", self.paths, "d5", self.remote)
+        self.assertIn("F (d5-frozen) is the registration's, its freeze record the one at HEAD", self.failed())
+
+    def test_a_registration_record_linked_out_of_the_repository_fails_the_check(self):
+        # Codex D5 third review 2: R's own record was a link to a file outside, changed after R
+        import os
+        outside = Path(self.folder.name + "-register.json")
+        outside.write_text((self.root / "eval/register_d5.json").read_text(encoding="utf-8"), encoding="utf-8")
+        self.addCleanup(outside.unlink)
+        (self.root / "eval/register_d5.json").unlink()
+        os.symlink(outside, self.root / "eval/register_d5.json")
+        self.commit()
+        self.assertIn("eval/register_d5.json is a regular file at HEAD, reached without a link",
+                      self.failed(registered=self.head()))
+
+    def object_at(self, commit, path):
+        import subprocess
+        return subprocess.run(["git", "rev-parse", f"{commit}:{path}"], cwd=self.root, capture_output=True,
+                              text=True).stdout.strip()
 
 
 if __name__ == "__main__":

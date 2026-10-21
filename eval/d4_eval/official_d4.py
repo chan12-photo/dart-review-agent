@@ -52,6 +52,7 @@ sys.path[:0] = [str(ROOT), str(ROOT / "eval"), str(ROOT / "eval" / "d4_eval")]
 
 from eval.d4_score import score  # noqa: E402
 import position_check  # noqa: E402
+from document_list import PROFILES, _same_place, check_document_list, inside, registered_count  # noqa: E402
 
 DOCUMENTS = ROOT / "eval" / "d4_eval" / "documents.json"
 READERS = ("rules", "ai")  # the registered order (eval/d4_eval/run_d4.py)
@@ -196,11 +197,15 @@ def call(document: dict, variant: str, reader: str, run: Path, judgments: Path, 
     return entry
 
 
-def bundle(entries: list[dict], criteria: tuple[str, ...]) -> dict:
+def bundle(entries: list[dict], criteria: tuple[str, ...], expected_calls: int | None = None) -> dict:
     sums = {key: sum(e.get(key) or 0 for e in entries) for key in SUMS}
     waiting = [{"name": e["name"], "why": e["why"]} for e in entries if not e["official_ready"]]
     if not entries:
         waiting = [{"name": None, "why": "no call in the bundle"}]
+    if expected_calls is None or len(entries) != expected_calls or len({e["name"] for e in entries}) != len(entries):
+        # a bundle is judged on all of its registered calls, each once (Codex D5 review 1)
+        waiting = waiting + [{"name": None, "why": f"the bundle has {len(entries)} calls, not the {expected_calls} of the "
+                                                   "registered documents"}]
     result = {"calls": len(entries), "documents": len({e["key"] for e in entries}), "sums": sums,
               "A1_flagged_share": round(sums["flagged"] / sums["product_cells"], 4) if sums["product_cells"] else None,
               "A2_covered_share": round(sums["correct"] / sums["gold_cells"], 4) if sums["gold_cells"] else None,
@@ -210,7 +215,12 @@ def bundle(entries: list[dict], criteria: tuple[str, ...]) -> dict:
     return result | {"verdict": "met" if all(sums[key] == 0 for key in criteria) else "not met", "provisional": False}
 
 
-def official(run: Path, judgments: Path, documents: dict, registered: dict, readers: list[str] | None = None) -> dict:
+def official(run: Path, judgments: Path, documents: dict, registered: dict, readers: list[str] | None = None,
+             expected: int | None = None, d4_legacy: bool = False, root: Path | None = ROOT) -> dict:
+    """``expected``: N from outside the list (``registered_count``). ``root``: the repository every gold, mapping,
+    and map path of the list is inside (a test gives its own folder, or None for absolute fixture paths)."""
+    # the whole registered sample, each document once: never a verdict on part of it (Codex D5 review 1, re-check 1)
+    count = check_document_list(documents, expected, d4_legacy=d4_legacy, root=root)
     record = json.loads((run / "run.json").read_text(encoding="utf-8"))
     if not isinstance(record, dict):
         raise ValueError(f"{run / 'run.json'} is not a run record")
@@ -232,7 +242,7 @@ def official(run: Path, judgments: Path, documents: dict, registered: dict, read
     result = {}
     for reader in chosen:
         mine = [e for e in entries if e["reader"] == reader]
-        result[reader] = {name: bundle([e for e in mine if e["variant"] in variants], CRITERIA[name])
+        result[reader] = {name: bundle([e for e in mine if e["variant"] in variants], CRITERIA[name], count * len(variants))
                           for name, variants in BUNDLES.items()}
     # the files of the judgments folder this aggregation did not read: a misspelt name, or the verdicts of a reader
     # not taken here (a file that is not read never counts; its call waits for its verdicts)
@@ -241,23 +251,34 @@ def official(run: Path, judgments: Path, documents: dict, registered: dict, read
     return {"run_folder": run.name, "judgment_files_not_read": unused,
             "run": {key: record.get(key) for key in ("commit", "started_at", "finished_at", "preflight", "readers",
                                                      "calls", "succeeded", "failed")},
-            "documents_sha256": _sha256(DOCUMENTS), "places_sha256": _sha256(PLACES), "product_reader": "ai",
+            "documents_sha256": _sha256(DOCUMENTS), "places_sha256": _sha256(PLACES),
+            # N from outside the list; D4's records keep their own form (Codex D5 third review 3)
+            **({} if d4_legacy else {"expected_documents": count}), "product_reader": "ai",
             "readers": result, "calls": entries}
 
 
 def main(argv: list[str] | None = None) -> int:
+    global DOCUMENTS, PLACES
     parser = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     parser.add_argument("--run", type=Path, required=True, help="a run folder of eval/d4_eval/run_d4.py")
     parser.add_argument("--judgments", type=Path, required=True, help="the folder of the person's verdict files")
     parser.add_argument("--readers", nargs="+", choices=("rules", "ai"),
                         help="only these readers of the folder (after a reader ran again in a new folder)")
     parser.add_argument("--out", type=Path)
+    parser.add_argument("--documents", type=Path, default=DOCUMENTS, help="the registered document list (default: D4's)")
+    parser.add_argument("--places", type=Path, default=PLACES, help="the registered places (default: D4's)")
     args = parser.parse_args(argv)
+    DOCUMENTS, PLACES = args.documents, args.places
     if args.out and args.out.exists():
         parser.error(f"{args.out} exists")
     try:
+        profile, count = registered_count(DOCUMENTS, ROOT)
+        own = PROFILES[profile]["places"]
+        if not _same_place(PLACES, ROOT / own) or not inside(ROOT, own):
+            raise ValueError(f"the places of the {profile} list are {PROFILES[profile]['places']}, not {PLACES}")
         result = official(args.run, args.judgments, json.loads(DOCUMENTS.read_text(encoding="utf-8")),
-                          json.loads(PLACES.read_text(encoding="utf-8")), args.readers)
+                          json.loads(PLACES.read_text(encoding="utf-8")), args.readers, count,
+                          d4_legacy=profile == "d4")
     except ValueError as exc:
         parser.error(str(exc))
     if args.out:

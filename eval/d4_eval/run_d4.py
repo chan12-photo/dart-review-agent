@@ -35,6 +35,9 @@ import subprocess
 import sys
 import time
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from document_list import check_document_list, registered_count  # noqa: E402
+
 ROOT = Path(__file__).resolve().parents[2]
 DOCUMENTS = ROOT / "eval" / "d4_eval" / "documents.json"
 READERS = ("rules", "ai")
@@ -78,8 +81,9 @@ def _inside_checkout(path: Path) -> bool:
     return path.expanduser().resolve().is_relative_to(ROOT.resolve())
 
 
-def preflight_passed(path: Path | None, head: str) -> dict:
-    """The preflight log's path, SHA-256, and time, when it is outside the checkout and every check passed at HEAD."""
+def preflight_passed(path: Path | None, head: str, profile: str = "d4") -> dict:
+    """The preflight log's path, SHA-256, and time, when it is outside the checkout and every check passed at HEAD
+    for this evaluation (a log without a profile is D4's)."""
     if path is None:
         raise ValueError("--preflight (the log of eval/d4_preflight.py check) is required for a run")
     if not path.exists():
@@ -91,10 +95,13 @@ def preflight_passed(path: Path | None, head: str) -> dict:
         raise ValueError(f"{path}: the preflight did not pass")
     if log.get("head") != head:
         raise ValueError(f"{path}: the preflight checked {log.get('head')}, not HEAD {head}")
+    if log.get("profile", "d4") != profile:
+        raise ValueError(f"{path}: the preflight checked the {log.get('profile', 'd4')} profile, not {profile}")
     return {"log": str(path), "sha256": _sha256(path), "checked_at": log.get("checked_at")}
 
 
 def main(argv: list[str] | None = None) -> int:
+    global DOCUMENTS
     parser = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     parser.add_argument("--pdf-dir", type=Path, required=True)
     parser.add_argument("--scan-dir", type=Path, required=True)
@@ -103,7 +110,10 @@ def main(argv: list[str] | None = None) -> int:
                         help="only for re-running one reader in a new folder after a model server failure")
     parser.add_argument("--preflight", type=Path, help="the passed log of eval/d4_preflight.py check (not with --dry-run)")
     parser.add_argument("--dry-run", action="store_true")
+    parser.add_argument("--documents", type=Path, default=DOCUMENTS,
+                        help="the registered document list (default: D4's; D5 passes its own)")
     args = parser.parse_args(argv)
+    DOCUMENTS = args.documents
     if args.readers != [r for r in READERS if r in args.readers]:
         parser.error(f"--readers {' '.join(args.readers)}: each reader once, rules before ai (contract ⑧)")
     if args.out.exists():
@@ -112,6 +122,9 @@ def main(argv: list[str] | None = None) -> int:
         parser.error(f"{args.out} is inside the checkout: the run folder goes outside it")
     documents = json.loads(DOCUMENTS.read_text(encoding="utf-8"))
     try:
+        # N from outside the list: D4's 10, or the frozen profile's (Codex D5 re-check 1); paths inside the checkout
+        profile, count = registered_count(DOCUMENTS, ROOT)
+        check_document_list(documents, count, d4_legacy=profile == "d4", root=ROOT)
         calls = plan(documents, args.pdf_dir.expanduser(), args.scan_dir.expanduser(), args.out, tuple(args.readers))
     except ValueError as exc:
         print(f"inputs do not match the registered documents: {exc}")
@@ -123,7 +136,7 @@ def main(argv: list[str] | None = None) -> int:
         return 0
     head = _git("rev-parse", "HEAD")
     try:
-        preflight = preflight_passed(args.preflight, head)
+        preflight = preflight_passed(args.preflight, head, profile)
     except ValueError as exc:
         print(f"not run: {exc}")
         return 2

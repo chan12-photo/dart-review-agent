@@ -45,8 +45,10 @@ class Fixture(unittest.TestCase):
                         "scan": f"a.{condition}.pdf"}
             (self.dir / f"{condition}.map.json").write_text(json.dumps(page_map), encoding="utf-8")
             scans[condition] = {"pdf": f"a.{condition}.pdf", "sha256": f"scan-{condition}", "map": str(self.dir / f"{condition}.map.json")}
-        self.document = {"key": "a", "company": "가", "sha256": "src", "gold": str(self.dir / "a.gold.json"),
+        self.document = {"key": "a", "rank": 1, "corp_code": "00000001", "pdf": "a.pdf", "company": "가", "sha256": "src",
+                         "gold": str(self.dir / "a.gold.json"),
                          "mapping": str(self.dir / "a.mapping.json"), "scans": scans}
+        self.documents = {"expected_documents": 1, "documents": [self.document]}
         applied = apply_mapping(gold, mapping)
         places = [{"id": pc.place_id(*k), "statement_id": k[0], "key": k[1], "period": k[2],
                    "rows": [{"page": c["page"], "top": n, "label": c["label"], "printed": c["printed"], "value": c["value"]}
@@ -86,7 +88,7 @@ class Fixture(unittest.TestCase):
         return sha(path.read_bytes())
 
     def result(self):
-        return official_d4.official(self.run, self.judgments, {"documents": [self.document]}, self.registered)
+        return official_d4.official(self.run, self.judgments, self.documents, self.registered, expected=1, root=None)
 
 
 class OfficialTests(Fixture):
@@ -228,11 +230,11 @@ class RunGateTests(Fixture):
         # rules from this folder; the AI reader ran again elsewhere after a model server failure
         self.write_run(readers=("rules", "ai"), exits={"a.text.ai": 1})
         (self.run / "reports" / "a.text.rules.json").write_bytes((self.run / "reports" / "a.text.ai.json").read_bytes())
-        result = official_d4.official(self.run, self.judgments, {"documents": [self.document]}, self.registered, ["rules"])
+        result = official_d4.official(self.run, self.judgments, self.documents, self.registered, ["rules"], expected=1, root=None)
         self.assertEqual(list(result["readers"]), ["rules"])
         self.assertEqual(result["readers"]["rules"]["3.1"]["verdict"], "met")
         with self.assertRaises(ValueError):
-            official_d4.official(self.run, self.judgments, {"documents": [self.document]}, self.registered, ["other"])
+            official_d4.official(self.run, self.judgments, self.documents, self.registered, ["other"], expected=1, root=None)
 
     def test_judgment_files_of_another_shape_are_refused(self):
         # Codex eighth review 2: an empty list, string, or false is not "no verdicts"
@@ -279,7 +281,7 @@ class RunGateTests(Fixture):
         self.assertEqual(self.verdict(), "met")
 
     def test_a_reader_named_twice_is_counted_once(self):
-        result = official_d4.official(self.run, self.judgments, {"documents": [self.document]}, self.registered, ["ai", "ai"])
+        result = official_d4.official(self.run, self.judgments, self.documents, self.registered, ["ai", "ai"], expected=1, root=None)
         self.assertEqual(result["readers"]["ai"]["3.1"]["calls"], 1)
         self.assertEqual(len(result["calls"]), 4)
 

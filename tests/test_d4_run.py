@@ -23,7 +23,7 @@ class Inputs(unittest.TestCase):
         self.addCleanup(temp.cleanup)
         self.dir = Path(temp.name)
         (self.dir / "scans").mkdir()
-        self.documents = {"documents": []}
+        self.documents = {"expected_documents": 2, "documents": []}
         for key in ("01_a", "02_b"):
             pdf = self.dir / f"{key}.pdf"
             pdf.write_bytes(f"pdf {key}".encode())
@@ -33,7 +33,7 @@ class Inputs(unittest.TestCase):
                 scan.write_bytes(f"scan {key} {condition}".encode())
                 scans[condition] = {"pdf": scan.name, "sha256": hashlib.sha256(scan.read_bytes()).hexdigest(),
                                     "map": f"maps/{key}.{condition}.map.json"}
-            self.documents["documents"].append({"key": key, "pdf": pdf.name, "sha256": hashlib.sha256(pdf.read_bytes()).hexdigest(),
+            self.documents["documents"].append({"key": key, "rank": int(key[:2]), "corp_code": f"0000000{key[1]}", "pdf": pdf.name, "sha256": hashlib.sha256(pdf.read_bytes()).hexdigest(),
                                                 "gold": f"g/{key}.gold.json", "mapping": f"g/{key}.mapping.json", "scans": scans})
 
     def plan(self, readers=run_d4.READERS):
@@ -90,8 +90,14 @@ class RunTests(Inputs):
 
     def setUp(self):
         super().setUp()
-        documents = self.dir / "documents.json"
+        # a repository of its own holding D5's list at its place and the freeze record with N = 2 (Codex D5 re-check 1)
+        from document_list import profile_record
+        self.repo = self.dir / "repo"
+        documents = self.repo / "eval" / "d5_eval" / "documents.json"
+        documents.parent.mkdir(parents=True)
         documents.write_text(json.dumps(self.documents), encoding="utf-8")
+        (self.repo / "eval" / "freeze_d5.json").write_text(json.dumps({"profile": profile_record("d5", 2)}), encoding="utf-8")
+        self.enterContext(mock.patch.object(run_d4, "ROOT", self.repo))
         self.enterContext(mock.patch.object(run_d4, "DOCUMENTS", documents))
         self.status = ""
         self.enterContext(mock.patch.object(run_d4, "_git", side_effect=lambda *a: "abc" if a[0] == "rev-parse" else self.status))
@@ -106,9 +112,9 @@ class RunTests(Inputs):
             return subprocess.CompletedProcess(command, self.exits.get(name, 0), "{}\n", "")
         self.enterContext(mock.patch.object(run_d4.subprocess, "run", side_effect=fake))
 
-    def write_preflight(self, head="abc", ok=True):
-        self.preflight.write_text(json.dumps({"head": head, "ok": ok, "checked_at": "t",
-                                              "checks": [{"check": "clean", "ok": ok}]}), encoding="utf-8")
+    def write_preflight(self, head="abc", ok=True, profile="d5"):
+        log = {"head": head, "ok": ok, "checked_at": "t", "checks": [{"check": "clean", "ok": ok}]}
+        self.preflight.write_text(json.dumps(log if profile is None else {"profile": profile, **log}), encoding="utf-8")
 
     def run_main(self, *extra):
         argv = ["--pdf-dir", str(self.dir), "--scan-dir", str(self.dir / "scans"), "--out", str(self.dir / "run"), *extra]
@@ -153,10 +159,10 @@ class RunTests(Inputs):
     def test_logs_and_run_folders_inside_the_checkout_are_refused(self):
         with self.assertRaises(ValueError):
             run_d4.preflight_passed(ROOT / "eval" / "freeze_d4.json", "abc")
-        with self.assertRaises(SystemExit):
+        with self.assertRaises(SystemExit):  # the checkout as the runner sees it
             run_d4.main(["--pdf-dir", str(self.dir), "--scan-dir", str(self.dir / "scans"),
-                         "--out", str(ROOT / "d4_run_never_created"), "--dry-run"])
-        self.assertFalse((ROOT / "d4_run_never_created").exists())
+                         "--out", str(run_d4.ROOT / "d4_run_never_created"), "--dry-run"])
+        self.assertFalse((run_d4.ROOT / "d4_run_never_created").exists())
 
     def test_readers_once_each_in_the_registered_order(self):
         for readers in (["ai", "ai"], ["ai", "rules"], ["rules", "rules", "ai"]):
@@ -185,6 +191,28 @@ class RunTests(Inputs):
         with mock.patch.object(official_d4, "DOCUMENTS", run_d4.DOCUMENTS):
             gate = official_d4.run_gate(self.dir / "run", self.run_json(), names)
         self.assertEqual(set(gate.values()), {None})
+
+    def test_a_document_list_given_on_the_command_line(self):
+        # D5 runs the same runner on its own document list at its own place (D5 contract 2)
+        self.assertEqual(self.run_main("--documents", str(run_d4.DOCUMENTS), "--preflight", str(self.preflight)), 0)
+        self.assertEqual(self.run_json()["documents_sha256"], run_d4._sha256(run_d4.DOCUMENTS))
+
+    def test_a_list_of_no_evaluation_or_a_part_of_one_is_refused(self):
+        # Codex D5 re-check 1: N is the freeze record's, not the list's own
+        other = self.dir / "d5_documents.json"
+        other.write_text(json.dumps(self.documents), encoding="utf-8")
+        self.assertEqual(self.run_main("--documents", str(other), "--dry-run"), 2)
+        part = {"expected_documents": 1, "documents": self.documents["documents"][:1]}
+        run_d4.DOCUMENTS.write_text(json.dumps(part), encoding="utf-8")
+        self.assertEqual(self.run_main("--dry-run"), 2)
+        self.assertEqual(self.called, [])
+
+    def test_the_preflight_of_another_evaluation_is_refused(self):
+        for profile in (None, "d4"):  # a log without a profile is D4's
+            with self.subTest(profile=profile):
+                self.write_preflight(profile=profile)
+                self.assertEqual(self.run_main("--preflight", str(self.preflight)), 2)
+        self.assertEqual(self.called, [])
 
     def test_a_dry_run_needs_no_preflight_and_writes_nothing(self):
         self.assertEqual(self.run_main("--dry-run"), 0)

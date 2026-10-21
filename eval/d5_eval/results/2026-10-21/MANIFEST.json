@@ -919,7 +919,7 @@
    "sha256": "45f01aa6915d6f31b7560f61e3c167d4fe1589096aeab64369d7f55d1aded13f"
   },
   "REPORT.ko.md": {
-   "sha256": "ed8e712ed354a16333cff80f7f45807c475c282e64e23aab64dacee01c73fbf7"
+   "sha256": "7d00adb9674cc5f227d559a03b071c77ece323757c3220029189e84ebc79a7b0"
   }
  },
  "not_committed": [
@@ -929,7 +929,7 @@
     "run1/reports/34_01412725.tilt.rules.json": "bd7b213e7c60bd267f8c4aaf1a520d101d91cfa052a7b004b0712495d58b9bae",
     "run2/reports/34_01412725.tilt.rules.json": "bd7b213e7c60bd267f8c4aaf1a520d101d91cfa052a7b004b0712495d58b9bae"
    },
-   "why": "the public safety scan (scripts/check_public_safety.py) matched a Korean mobile number pattern in OCR noise of a column header (a ten-digit run in a tilted scan's text); it is not a phone number, but the files are kept out of the repository rather than changing the scan or the reports (a verdict names a report by its SHA-256). The originals stay in ~/D5_official/run1 and run2 with these SHA-256; neither call has a verdict file."
+   "why": "the public safety scan (scripts/check_public_safety.py) matched a Korean mobile number pattern in OCR noise of a column header (a ten-digit run in a tilted scan's text); it is not a phone number, but the files are kept out of the repository rather than changing the scan or the reports (a verdict names a report by its SHA-256). The originals stay in ~/D5_official/run1 and run2 with these SHA-256; neither call has a verdict file. This is an exception to step 9.4 of the procedure (the whole run folder kept): from this repository alone the rules scan bundle (3.3) re-aggregates as 'not official' for want of the run2 report; official.final.json is reproduced only with the original named by the SHA-256 above. The AI (product) verdicts do not depend on these files (Codex results review 1)."
   }
  ]
 }

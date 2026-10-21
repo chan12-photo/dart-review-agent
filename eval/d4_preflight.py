@@ -178,6 +178,10 @@ def register_record(root: Path, freeze_path: str, paths: list[str], profile: str
             raise ValueError(f"no tag {wanted['frozen_tag']}: F is tagged and pushed at ④")
         if remote is None or pushed_tag(root, remote, wanted["frozen_tag"])[0] != frozen:
             raise ValueError(f"the tag {wanted['frozen_tag']} on {remote} does not name {frozen[:7]}")
+        # registered on a line of history that grew from F, not beside it (Codex D5 fourth review 1)
+        if subprocess.run(["git", "merge-base", "--is-ancestor", frozen, "HEAD"], cwd=root,
+                          capture_output=True).returncode != 0:
+            raise ValueError(f"F {frozen[:7]} ({wanted['frozen_tag']}) is not an ancestor of HEAD: register after F")
         at_f, now = _object(root, frozen, freeze_path), _object(root, "HEAD", freeze_path)
         if at_f is None or at_f != now:
             raise ValueError(f"{freeze_path} at HEAD is not the record frozen at F {frozen[:7]} ({wanted['frozen_tag']})")
@@ -247,6 +251,28 @@ def check(root: Path, record: dict, env: dict, imported_from: Path | None = None
             add(f"the pushed tag {frozen_tag} on {remote} names F", frozen is not None and named == frozen, listed)
         for place in (wanted["freeze"], wanted["register"]):
             add(f"{place} is a regular file at HEAD, reached without a link", regular_at_head(root, place), place)
+        # R is the registration commit itself: one parent, the commit registered (based_on), which grew from F, and
+        # only the registration record added; a merge or a side line cannot bring F in afterwards (Codex D5 fourth
+        # review 1)
+        based_on = (registration or {}).get("based_on")
+        try:
+            parents = _git(root, "rev-list", "--parents", "-n", "1", "HEAD").split()[1:]
+        except subprocess.CalledProcessError:
+            parents = []
+        try:
+            changed = _git(root, "diff", "--name-only", based_on, "HEAD").splitlines() if based_on else None
+        except subprocess.CalledProcessError:
+            changed = None
+        add("R's only parent is the registered commit, and R adds only the registration record",
+            bool(based_on) and parents == [based_on] and changed == [wanted["register"]],
+            {"based_on": based_on, "parents": parents, "changed": changed})
+        grew = bool(based_on) and frozen is not None and subprocess.run(
+            ["git", "merge-base", "--is-ancestor", frozen, based_on], cwd=root, capture_output=True).returncode == 0
+        add(f"F ({frozen_tag}) is an ancestor of the registered commit", grew, {"F": frozen, "based_on": based_on})
+        if based_on:
+            differ = sorted(path for path, obj in ((registration or {}).get("objects") or {}).items()
+                            if _object(root, based_on, path) != obj)
+            add("the registered files at the registered commit are the recorded objects", not differ, differ)
 
     head = _git(root, "rev-parse", "HEAD")
     try:

@@ -1001,6 +1001,35 @@ class ProfileTests(unittest.TestCase):
         self.assertIn("F (d5-frozen) is the registration's, its freeze record the one at HEAD",
                       self.failed(record=changed, registration=forged, registered=self.head()))
 
+    def test_a_registration_beside_f_merged_in_afterwards_is_refused(self):
+        # Codex D5 fourth review 1: the files registered on a line SIDE that does not grow from F (the same freeze
+        # record object there), then R made as a merge of SIDE and F, so that F is an ancestor of R
+        import json
+        import subprocess
+        run = lambda *a: subprocess.run(["git", "-c", "user.name=t", "-c", "user.email=t@example.com", *a], cwd=self.root,
+                                        check=True, capture_output=True, text=True).stdout.strip()
+        side_tree = run("rev-parse", f"{self.R}^^{{tree}}")  # the registered files, before the record
+        side = run("commit-tree", side_tree, "-p", self.P, "-m", "side")
+        self.assertNotEqual(subprocess.run(["git", "merge-base", "--is-ancestor", self.F, side], cwd=self.root).returncode, 0)
+        run("checkout", "-q", side)
+        with self.assertRaisesRegex(ValueError, "is not an ancestor of HEAD"):
+            register_record(self.root, "eval/freeze_d5.json", self.paths, "d5", self.remote)
+        forged = {**self.registration, "based_on": side}
+        self.write("eval/register_d5.json", forged)
+        run("add", "-A")
+        merged = run("commit-tree", run("write-tree"), "-p", side, "-p", self.F, "-m", "R")
+        run("checkout", "-q", "-f", merged)
+        failed = self.failed(registration=forged, registered=self.head())
+        self.assertIn("R's only parent is the registered commit, and R adds only the registration record", failed)
+        self.assertIn("F (d5-frozen) is an ancestor of the registered commit", failed)
+
+    def test_r_is_exactly_the_registration_commit(self):
+        # a file changed after the registration, in R itself or in a later commit, fails the check
+        self.write("eval/d5_eval/duplicate_places.json", {"documents": {"changed": True}})
+        self.commit()
+        failed = self.failed(registered=self.head())
+        self.assertIn("R's only parent is the registered commit, and R adds only the registration record", failed)
+
     def test_f_must_be_tagged_and_pushed(self):
         self.git("push", "-q", self.remote, ":refs/tags/d5-frozen")
         with self.assertRaisesRegex(ValueError, "does not name"):

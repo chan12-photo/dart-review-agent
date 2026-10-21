@@ -32,7 +32,7 @@ import sys
 ROOT = Path(__file__).resolve().parents[2]
 sys.path[:0] = [str(ROOT), str(ROOT / "eval")]
 
-from d4_gold import apply_mapping, label_key, lines_of  # noqa: E402
+from d4_gold import GROUPED, SMALL, apply_mapping, label_key, lines_of  # noqa: E402
 
 GOLD = ROOT / "eval" / "d5_eval" / "gold"
 PERIOD = {0: "당기", 1: "전기"}
@@ -81,10 +81,12 @@ def _amount_forms(value: int) -> list[str]:
 
 
 def _printed_on(line: dict, form: str) -> bool:
-    """``form`` is one of the line's printed amounts: a word of its own, without parentheses or a sign. The words,
-    not the line without spaces: two amounts side by side ("1,210 707") joined into "1,210707" hid both of them
-    (Codex D5 pre-registration review 1)."""
-    return any(re.sub(r"^[(\-−]+|[)]+$", "", word["text"]) == form for word in line["words"])
+    """``form`` is one of the line's printed amounts: a word the gold builder reads as an amount (its own ``GROUPED``
+    and ``SMALL``: parentheses, "-", "−", or "△" for a negative), compared without those marks. The words, not the
+    line without spaces: two amounts side by side ("1,210 707") joined into "1,210707" hid both of them (Codex D5
+    pre-registration review 1); and the marks of the builder, not a list of its own: "△1,210" was missed (re-check 1)."""
+    return any((GROUPED.fullmatch(w["text"]) or SMALL.fullmatch(w["text"])) and re.sub(r"[()\-−△]", "", w["text"]) == form
+               for w in line["words"])
 
 
 def _sum_note(cells: list[dict], value: int) -> str:

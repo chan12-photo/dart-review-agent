@@ -177,7 +177,7 @@ The design was chosen on 13 development questions plus 13 paraphrases ([report](
 
 ## Status and next tasks (2026-10-21)
 
-The comparison feature is closed at v0.1.2. In progress: **v0.2 documents to verified spreadsheets**. Its pre-registered evaluation D4 is done, and **the criteria were not met**:
+The comparison feature is closed at v0.1.2. In progress: **v0.2 documents to verified spreadsheets**. Its pre-registered evaluation D4 is done, and so is D5, which measured the fixed version on new documents. **Neither met the criteria**:
 
 - Statements in text PDFs, scans, or phone photos to Excel. By default a local vision model (Ollama `qwen3-vl:8b`) reads the tables, and every number it reads is checked against the page itself (the PDF's text, or Tesseract and macOS Vision OCR). A number not found on the page is marked "확인 필요"; numbers on the page that the model skipped are reported. Nothing is corrected.
 - `python -m dart_review extract file.pdf` (`--reader rules` for positions and rules only), or `python -m dart_review serve` for a local API and upload page (127.0.0.1, no accounts). Needs `pip install -e '.[docs,server]'`, Tesseract, and Ollama.
@@ -193,10 +193,16 @@ The comparison feature is closed at v0.1.2. In progress: **v0.2 documents to ver
   - Of the 8 wrong labels, 4 are real (the AI inserted a character), and 4 are a notation mismatch between the evaluation's own tools; without those, no verdict changes.
   - The rules reader does not meet the criteria either.
   - Ten companies are cases, not an error-rate estimate.
-- **After D4 (2026-10-21):**
-  - The product fix against the mixing is done.
-  - Measured again on the same D4 documents, the causes of D4's wrong values are gone, and the five development documents give the same results. These documents have been seen, so this is not an evaluation ([development measurement](eval/documents_2026-10-20_after-d4/REPORT.ko.md), in Korean).
-  - The fixed version is to be measured on documents of companies it has not seen (the D5 evaluation). Its contract is a draft reviewed five times by Codex; whether to run it is not yet decided. [Roadmap](docs/ROADMAP.ko.md)
+- **Product fix after D4:** the mixing was fixed. Measured again on the same D4 documents, D4's causes are gone; those documents have been seen, so this is not an evaluation ([development measurement](eval/documents_2026-10-20_after-d4/REPORT.ko.md), in Korean).
+- **D5 evaluation (pre-registered, 2026-10-21): the fixed product on 10 companies it had not seen**
+  - Inputs: the next 10 listed companies of D4's population order (2,270 gold cells) and 30 synthetic scans. Same criteria as D4.
+  - [Contract](docs/EVAL_CONTRACT_D5.ko.md) edition 6, five Codex reviews of the contract and three before registration, freeze tag `d5-frozen`, registration tag `d5-registered`.
+  - **The product (AI reader) meets neither the text-PDF nor the scan criterion.** [Result report, Korean](eval/d5_eval/results/2026-10-21/REPORT.ko.md)
+    - Text PDFs: 2,256 of 2,270 cells right, and **no** unmarked wrong value (D4: 11). But 4 cells of subtotal rows whose label is printed above and below the amounts were missed without a flag. The 2 wrong labels are a notation difference (a formula "(Ⅰ+Ⅱ+Ⅲ)" appended); without them the verdict is the same.
+    - Scans: only 22% of gold cells (1,482 of 6,810) filled correctly; 15 unmarked wrong values (D4: 27), all from one company's four-column (detail and total) cash flow statement, where prior-year amounts went into the current-year column. The text PDF of the same document was read without error.
+  - D4's cause (statements mixed) did not recur; new documents showed other defects. Ten companies are cases, not an error-rate estimate.
+  - The first run was cut by a computer restart while paused; it was set aside and the whole run done again at the same registration.
+  - Next: wrapped subtotal rows and four-column cash flow statements in scans; a fixed version is again to be measured on new documents. [Roadmap](docs/ROADMAP.ko.md)
 
 Deferred tasks, and when they would be picked up:
 

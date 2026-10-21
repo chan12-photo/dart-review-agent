@@ -1,0 +1,1001 @@
+{
+ "profile": "d5",
+ "head": "630b351473a7461a93a0d11aca8b2351e556e890",
+ "checked_at": "2026-10-21T10:19:35+00:00",
+ "ok": true,
+ "checks": [
+  {
+   "check": "the freeze record holds the d5 profile",
+   "ok": true,
+   "detail": {
+    "expected_documents": 10
+   }
+  },
+  {
+   "check": "the registration is d5's, with its tag and freeze record",
+   "ok": true,
+   "detail": [
+    "d5",
+    "d5-registered",
+    "eval/freeze_d5.json"
+   ]
+  },
+  {
+   "check": "the registration holds d5's list, places, and freeze record",
+   "ok": true,
+   "detail": []
+  },
+  {
+   "check": "R is named by the tag d5-registered",
+   "ok": true,
+   "detail": "d5-registered"
+  },
+  {
+   "check": "F (d5-frozen) is the registration's, its freeze record the one at HEAD",
+   "ok": true,
+   "detail": {
+    "tag": "7293deca0a995b75eebbe10535c3227aa1df2eac",
+    "registration": [
+     "7293deca0a995b75eebbe10535c3227aa1df2eac",
+     "3851f6c5ad790752effcf178e8ac932b7fd36fee"
+    ],
+    "at_f": "3851f6c5ad790752effcf178e8ac932b7fd36fee"
+   }
+  },
+  {
+   "check": "F (d5-frozen) is an ancestor of HEAD",
+   "ok": true,
+   "detail": "7293deca0a995b75eebbe10535c3227aa1df2eac"
+  },
+  {
+   "check": "the pushed tag d5-frozen on origin names F",
+   "ok": true,
+   "detail": [
+    "f08434bf6b3057fdbd9cbe6e13b3e255acaa328f\trefs/tags/d5-frozen",
+    "7293deca0a995b75eebbe10535c3227aa1df2eac\trefs/tags/d5-frozen^{}"
+   ]
+  },
+  {
+   "check": "eval/freeze_d5.json is a regular file at HEAD, reached without a link",
+   "ok": true,
+   "detail": "eval/freeze_d5.json"
+  },
+  {
+   "check": "eval/register_d5.json is a regular file at HEAD, reached without a link",
+   "ok": true,
+   "detail": "eval/register_d5.json"
+  },
+  {
+   "check": "R's only parent is the registered commit, and R adds only the registration record",
+   "ok": true,
+   "detail": {
+    "based_on": "3f71b3a9254d9fa6952bb4dc0e332fba81937453",
+    "parents": [
+     "3f71b3a9254d9fa6952bb4dc0e332fba81937453"
+    ],
+    "changed": [
+     "eval/register_d5.json"
+    ]
+   }
+  },
+  {
+   "check": "F (d5-frozen) is an ancestor of the registered commit",
+   "ok": true,
+   "detail": {
+    "F": "7293deca0a995b75eebbe10535c3227aa1df2eac",
+    "based_on": "3f71b3a9254d9fa6952bb4dc0e332fba81937453"
+   }
+  },
+  {
+   "check": "the registered files at the registered commit are the recorded objects",
+   "ok": true,
+   "detail": []
+  },
+  {
+   "check": "HEAD is the registered commit R",
+   "ok": true,
+   "detail": {
+    "head": "630b351473a7461a93a0d11aca8b2351e556e890",
+    "registered": "630b351473a7461a93a0d11aca8b2351e556e890"
+   }
+  },
+  {
+   "check": "registered eval/freeze_d5.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "3851f6c5ad790752effcf178e8ac932b7fd36fee",
+    "head": "3851f6c5ad790752effcf178e8ac932b7fd36fee"
+   }
+  },
+  {
+   "check": "registered docs/D5_RUN_PROCEDURE.ko.md at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "7b4a060db5fbfb0f58a4d538c1a6bebf1bff6799",
+    "head": "7b4a060db5fbfb0f58a4d538c1a6bebf1bff6799"
+   }
+  },
+  {
+   "check": "registered docs/EVAL_CONTRACT_D5.ko.md at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "92aa9a979e8f3f0beeeecf9503ca0bcc83375403",
+    "head": "92aa9a979e8f3f0beeeecf9503ca0bcc83375403"
+   }
+  },
+  {
+   "check": "registered eval/d4_download.py at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "1265f88f1d0d94caa187f67daab2e798f1e2c61a",
+    "head": "1265f88f1d0d94caa187f67daab2e798f1e2c61a"
+   }
+  },
+  {
+   "check": "registered eval/d4_eval/document_list.py at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "201be9ae06b5f253e4d3ca8a6599c9c28de8dbe8",
+    "head": "201be9ae06b5f253e4d3ca8a6599c9c28de8dbe8"
+   }
+  },
+  {
+   "check": "registered eval/d4_eval/official_d4.py at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "aa9ab81b2847fe06a41078e06eebc53313dc31f7",
+    "head": "aa9ab81b2847fe06a41078e06eebc53313dc31f7"
+   }
+  },
+  {
+   "check": "registered eval/d4_eval/position_check.py at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "e376926f6abe2de2a1ea512b04d334007dcbd3f3",
+    "head": "e376926f6abe2de2a1ea512b04d334007dcbd3f3"
+   }
+  },
+  {
+   "check": "registered eval/d4_eval/run_d4.py at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "474e040ced17a1fce775bca54a99f04994756461",
+    "head": "474e040ced17a1fce775bca54a99f04994756461"
+   }
+  },
+  {
+   "check": "registered eval/d4_population.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "ff60c8fd0b4e7e07b5ba54ee3890f192c3eab63c",
+    "head": "ff60c8fd0b4e7e07b5ba54ee3890f192c3eab63c"
+   }
+  },
+  {
+   "check": "registered eval/d4_population.py at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "49bd88d1b66cacada7bb853f6ffe7732ba4293e6",
+    "head": "49bd88d1b66cacada7bb853f6ffe7732ba4293e6"
+   }
+  },
+  {
+   "check": "registered eval/d5_candidates/00020_01867758.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "777393c67902b90e7e119b0c7d2e5932bbe31d6b",
+    "head": "777393c67902b90e7e119b0c7d2e5932bbe31d6b"
+   }
+  },
+  {
+   "check": "registered eval/d5_candidates/00021_00161408.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "68501f9ba27d059bf45711e9c8de51255872ec00",
+    "head": "68501f9ba27d059bf45711e9c8de51255872ec00"
+   }
+  },
+  {
+   "check": "registered eval/d5_candidates/00022_01105621.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "a210e547a41534263fd7b3907181711782924c9f",
+    "head": "a210e547a41534263fd7b3907181711782924c9f"
+   }
+  },
+  {
+   "check": "registered eval/d5_candidates/00023_00148896.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "33adc9336356c5d09381c6b5a250d039265694d8",
+    "head": "33adc9336356c5d09381c6b5a250d039265694d8"
+   }
+  },
+  {
+   "check": "registered eval/d5_candidates/00024_00306719.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "d544a899183855a29d35c384f055ab5d527529a5",
+    "head": "d544a899183855a29d35c384f055ab5d527529a5"
+   }
+  },
+  {
+   "check": "registered eval/d5_candidates/00025_00229818.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "43d03ef15a4002c869ddab828d79f9f7723dd57c",
+    "head": "43d03ef15a4002c869ddab828d79f9f7723dd57c"
+   }
+  },
+  {
+   "check": "registered eval/d5_candidates/00026_01101041.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "e081ceade83dfd0943a5beb2fcaeddcf78e575ee",
+    "head": "e081ceade83dfd0943a5beb2fcaeddcf78e575ee"
+   }
+  },
+  {
+   "check": "registered eval/d5_candidates/00027_00525679.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "cb0d1c7c513246e05960c934866bcc3f0c24167a",
+    "head": "cb0d1c7c513246e05960c934866bcc3f0c24167a"
+   }
+  },
+  {
+   "check": "registered eval/d5_candidates/00028_01160363.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "614a49437c74b5c60b24234be1b67926a05038bd",
+    "head": "614a49437c74b5c60b24234be1b67926a05038bd"
+   }
+  },
+  {
+   "check": "registered eval/d5_candidates/00029_00110963.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "c6de50b9a3974501e06cba4c3ba4672dd162c4b7",
+    "head": "c6de50b9a3974501e06cba4c3ba4672dd162c4b7"
+   }
+  },
+  {
+   "check": "registered eval/d5_candidates/00030_00161046.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "352b5f67f5539ac277abd41771d204e64a4520ea",
+    "head": "352b5f67f5539ac277abd41771d204e64a4520ea"
+   }
+  },
+  {
+   "check": "registered eval/d5_candidates/00031_00106881.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "a6fd1c69a72e5fd4f1bc72885bc2d9715427a26e",
+    "head": "a6fd1c69a72e5fd4f1bc72885bc2d9715427a26e"
+   }
+  },
+  {
+   "check": "registered eval/d5_candidates/00032_01199985.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "854d6deaa9ce2561e401dc1c5288872e76122bed",
+    "head": "854d6deaa9ce2561e401dc1c5288872e76122bed"
+   }
+  },
+  {
+   "check": "registered eval/d5_candidates/00033_01586455.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "b61351cbfbad11b892d4074899eb430b9f6c070e",
+    "head": "b61351cbfbad11b892d4074899eb430b9f6c070e"
+   }
+  },
+  {
+   "check": "registered eval/d5_candidates/00034_01412725.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "270b492a46c36921efdfc82b7ce2ee22e5b8a0aa",
+    "head": "270b492a46c36921efdfc82b7ce2ee22e5b8a0aa"
+   }
+  },
+  {
+   "check": "registered eval/d5_candidates/00035_01458161.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "ecdc03a1ef77d0ebf74acde3dca59b2e580be132",
+    "head": "ecdc03a1ef77d0ebf74acde3dca59b2e580be132"
+   }
+  },
+  {
+   "check": "registered eval/d5_candidates/00036_01672114.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "b948027250442a63f2e2d68606bc4757d6656e00",
+    "head": "b948027250442a63f2e2d68606bc4757d6656e00"
+   }
+  },
+  {
+   "check": "registered eval/d5_candidates/00037_00686147.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "ee45d01e08f1c3759c9406fd8b98a3383ec9c2a2",
+    "head": "ee45d01e08f1c3759c9406fd8b98a3383ec9c2a2"
+   }
+  },
+  {
+   "check": "registered eval/d5_candidates/00038_00297095.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "7219ce7af59ef7e58a521e05152fcb1422f3e387",
+    "head": "7219ce7af59ef7e58a521e05152fcb1422f3e387"
+   }
+  },
+  {
+   "check": "registered eval/d5_candidates/00039_00269339.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "ff9b52e084b363a45ec7643eff2fbf8261e00193",
+    "head": "ff9b52e084b363a45ec7643eff2fbf8261e00193"
+   }
+  },
+  {
+   "check": "registered eval/d5_candidates/00040_00442048.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "42e40443b3c0652711b26e78a44cc459b62e757b",
+    "head": "42e40443b3c0652711b26e78a44cc459b62e757b"
+   }
+  },
+  {
+   "check": "registered eval/d5_candidates/NOTES.ko.md at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "2631a86d1d9cf6fb5681bcb41431916de3f74dd2",
+    "head": "2631a86d1d9cf6fb5681bcb41431916de3f74dd2"
+   }
+  },
+  {
+   "check": "registered eval/d5_candidates/checks.jsonl at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "7572f3fa1e5684d59db544b8b389b94baf9d4d54",
+    "head": "7572f3fa1e5684d59db544b8b389b94baf9d4d54"
+   }
+  },
+  {
+   "check": "registered eval/d5_candidates/downloads.jsonl at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "8db3ff29d7fdab9e59ed4d4efad5c2eb08a5bd18",
+    "head": "8db3ff29d7fdab9e59ed4d4efad5c2eb08a5bd18"
+   }
+  },
+  {
+   "check": "registered eval/d5_eval/REVIEW_GUIDE.ko.md at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "9c2dbf4d87ac5b74edab0e6e83fd271bf48669d9",
+    "head": "9c2dbf4d87ac5b74edab0e6e83fd271bf48669d9"
+   }
+  },
+  {
+   "check": "registered eval/d5_eval/build_places.py at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "87708fb1ca6bf86e742e99521a73b367af86cbac",
+    "head": "87708fb1ca6bf86e742e99521a73b367af86cbac"
+   }
+  },
+  {
+   "check": "registered eval/d5_eval/documents.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "19044dcd07276d78fb3592be739edbecdd6ee29e",
+    "head": "19044dcd07276d78fb3592be739edbecdd6ee29e"
+   }
+  },
+  {
+   "check": "registered eval/d5_eval/draft_mappings.py at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "ebb288e5020c87604386f35c941eeb47c8729e6b",
+    "head": "ebb288e5020c87604386f35c941eeb47c8729e6b"
+   }
+  },
+  {
+   "check": "registered eval/d5_eval/duplicate_places.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "c8c7374fb909beb4de5112592e3f4b220d857a46",
+    "head": "c8c7374fb909beb4de5112592e3f4b220d857a46"
+   }
+  },
+  {
+   "check": "registered eval/d5_eval/gold/20_01867758.gold.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "19d6110ea171f78fb70ae9847dc5a0178ef863e6",
+    "head": "19d6110ea171f78fb70ae9847dc5a0178ef863e6"
+   }
+  },
+  {
+   "check": "registered eval/d5_eval/gold/20_01867758.mapping.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "a937a52e3c654e94f952e129c05d408536909ffd",
+    "head": "a937a52e3c654e94f952e129c05d408536909ffd"
+   }
+  },
+  {
+   "check": "registered eval/d5_eval/gold/22_01105621.gold.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "55c59451a50b6c47a17662ee6c57127146dac02f",
+    "head": "55c59451a50b6c47a17662ee6c57127146dac02f"
+   }
+  },
+  {
+   "check": "registered eval/d5_eval/gold/22_01105621.mapping.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "cfe3709625897727de6c59c7c24090c64168492a",
+    "head": "cfe3709625897727de6c59c7c24090c64168492a"
+   }
+  },
+  {
+   "check": "registered eval/d5_eval/gold/24_00306719.gold.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "14a92f04a61bcb34994334c4f380fa8c134fb982",
+    "head": "14a92f04a61bcb34994334c4f380fa8c134fb982"
+   }
+  },
+  {
+   "check": "registered eval/d5_eval/gold/24_00306719.mapping.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "4590a324086ca18fecf171992f141728dac77cc3",
+    "head": "4590a324086ca18fecf171992f141728dac77cc3"
+   }
+  },
+  {
+   "check": "registered eval/d5_eval/gold/26_01101041.gold.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "8aff5fc0e17a5bbe8930f20a9ddbdb022f2e487f",
+    "head": "8aff5fc0e17a5bbe8930f20a9ddbdb022f2e487f"
+   }
+  },
+  {
+   "check": "registered eval/d5_eval/gold/26_01101041.mapping.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "9affd9dc61a713ba788f29e07ee62c7fc3e35cdd",
+    "head": "9affd9dc61a713ba788f29e07ee62c7fc3e35cdd"
+   }
+  },
+  {
+   "check": "registered eval/d5_eval/gold/27_00525679.gold.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "1281803b58dcdbc730943f835fb1cd90c294c316",
+    "head": "1281803b58dcdbc730943f835fb1cd90c294c316"
+   }
+  },
+  {
+   "check": "registered eval/d5_eval/gold/27_00525679.mapping.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "c497aef6ac54de543df9bd038cfbde1416e44deb",
+    "head": "c497aef6ac54de543df9bd038cfbde1416e44deb"
+   }
+  },
+  {
+   "check": "registered eval/d5_eval/gold/28_01160363.gold.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "d7573d0d4449516ad3b80f7e7b11e981957a73b7",
+    "head": "d7573d0d4449516ad3b80f7e7b11e981957a73b7"
+   }
+  },
+  {
+   "check": "registered eval/d5_eval/gold/28_01160363.mapping.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "954b537350a513b924efaf1921384ca4d6cf54b7",
+    "head": "954b537350a513b924efaf1921384ca4d6cf54b7"
+   }
+  },
+  {
+   "check": "registered eval/d5_eval/gold/30_00161046.gold.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "d539ee8a3c4f5f06efe473b2c16b59c143bc54e2",
+    "head": "d539ee8a3c4f5f06efe473b2c16b59c143bc54e2"
+   }
+  },
+  {
+   "check": "registered eval/d5_eval/gold/30_00161046.mapping.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "6ddd0c85675c529a5c744a95a7e0c4e26a6c80eb",
+    "head": "6ddd0c85675c529a5c744a95a7e0c4e26a6c80eb"
+   }
+  },
+  {
+   "check": "registered eval/d5_eval/gold/31_00106881.gold.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "e96359b4551bc5ddaf2a713772082133bdc2e8b6",
+    "head": "e96359b4551bc5ddaf2a713772082133bdc2e8b6"
+   }
+  },
+  {
+   "check": "registered eval/d5_eval/gold/31_00106881.mapping.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "db513af42670b041e304dbed9b1974122c12f684",
+    "head": "db513af42670b041e304dbed9b1974122c12f684"
+   }
+  },
+  {
+   "check": "registered eval/d5_eval/gold/33_01586455.gold.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "1e65188e4707538a3a9a98f13c0d88b039d8e996",
+    "head": "1e65188e4707538a3a9a98f13c0d88b039d8e996"
+   }
+  },
+  {
+   "check": "registered eval/d5_eval/gold/33_01586455.mapping.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "8efc87199ceb40c42fb22c873cca312afd0a72de",
+    "head": "8efc87199ceb40c42fb22c873cca312afd0a72de"
+   }
+  },
+  {
+   "check": "registered eval/d5_eval/gold/34_01412725.gold.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "ad104ced3f05964f53991d7150be5f13a5517dfe",
+    "head": "ad104ced3f05964f53991d7150be5f13a5517dfe"
+   }
+  },
+  {
+   "check": "registered eval/d5_eval/gold/34_01412725.mapping.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "7f0f33594b192af670a7fbfec7f76364ec288407",
+    "head": "7f0f33594b192af670a7fbfec7f76364ec288407"
+   }
+  },
+  {
+   "check": "registered eval/d5_eval/scans/20_01867758.blur.pdf.map.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "49c24f262e2c2111b441452edcd05e3b8af30fb9",
+    "head": "49c24f262e2c2111b441452edcd05e3b8af30fb9"
+   }
+  },
+  {
+   "check": "registered eval/d5_eval/scans/20_01867758.normal.pdf.map.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "0c0d3338e99f5017a3594e97172786ef0134b47e",
+    "head": "0c0d3338e99f5017a3594e97172786ef0134b47e"
+   }
+  },
+  {
+   "check": "registered eval/d5_eval/scans/20_01867758.tilt.pdf.map.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "d7660a6128f3dee98fa9a388176788b98caa6acf",
+    "head": "d7660a6128f3dee98fa9a388176788b98caa6acf"
+   }
+  },
+  {
+   "check": "registered eval/d5_eval/scans/22_01105621.blur.pdf.map.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "3920834a4c089abb52860057ba31482b9cd9b33b",
+    "head": "3920834a4c089abb52860057ba31482b9cd9b33b"
+   }
+  },
+  {
+   "check": "registered eval/d5_eval/scans/22_01105621.normal.pdf.map.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "ee6eb356c210ee5a706a581f39de957be1f97a9b",
+    "head": "ee6eb356c210ee5a706a581f39de957be1f97a9b"
+   }
+  },
+  {
+   "check": "registered eval/d5_eval/scans/22_01105621.tilt.pdf.map.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "b581e4eb569963a50e5e73430586ab688e37aea7",
+    "head": "b581e4eb569963a50e5e73430586ab688e37aea7"
+   }
+  },
+  {
+   "check": "registered eval/d5_eval/scans/24_00306719.blur.pdf.map.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "6ff3a84cb0a4ba0f5e3ea2b57e7780129670ae71",
+    "head": "6ff3a84cb0a4ba0f5e3ea2b57e7780129670ae71"
+   }
+  },
+  {
+   "check": "registered eval/d5_eval/scans/24_00306719.normal.pdf.map.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "334c16d670307de69fa59b6d2e1836a0712b4f3d",
+    "head": "334c16d670307de69fa59b6d2e1836a0712b4f3d"
+   }
+  },
+  {
+   "check": "registered eval/d5_eval/scans/24_00306719.tilt.pdf.map.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "933286ee2c9c69c545f855753a40734eba0ce307",
+    "head": "933286ee2c9c69c545f855753a40734eba0ce307"
+   }
+  },
+  {
+   "check": "registered eval/d5_eval/scans/26_01101041.blur.pdf.map.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "b23370ea9be76bb8c3249bdb56f9613762093063",
+    "head": "b23370ea9be76bb8c3249bdb56f9613762093063"
+   }
+  },
+  {
+   "check": "registered eval/d5_eval/scans/26_01101041.normal.pdf.map.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "0752e202913dcd09fc95bac631cf2a4295e9ee12",
+    "head": "0752e202913dcd09fc95bac631cf2a4295e9ee12"
+   }
+  },
+  {
+   "check": "registered eval/d5_eval/scans/26_01101041.tilt.pdf.map.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "6325f5a273b59038df9bd534fd157fccc23c4e67",
+    "head": "6325f5a273b59038df9bd534fd157fccc23c4e67"
+   }
+  },
+  {
+   "check": "registered eval/d5_eval/scans/27_00525679.blur.pdf.map.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "1947c10ab81d42b81d43b2fed1836e3313d436c3",
+    "head": "1947c10ab81d42b81d43b2fed1836e3313d436c3"
+   }
+  },
+  {
+   "check": "registered eval/d5_eval/scans/27_00525679.normal.pdf.map.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "03c353ebe030476af8d1ff52b4918f3a622985d9",
+    "head": "03c353ebe030476af8d1ff52b4918f3a622985d9"
+   }
+  },
+  {
+   "check": "registered eval/d5_eval/scans/27_00525679.tilt.pdf.map.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "e7cc4a7b875eca48ea3121cceb6f3142abed2735",
+    "head": "e7cc4a7b875eca48ea3121cceb6f3142abed2735"
+   }
+  },
+  {
+   "check": "registered eval/d5_eval/scans/28_01160363.blur.pdf.map.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "dc65b51c3853df692d1ccee0942f49986f2edf6e",
+    "head": "dc65b51c3853df692d1ccee0942f49986f2edf6e"
+   }
+  },
+  {
+   "check": "registered eval/d5_eval/scans/28_01160363.normal.pdf.map.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "77fe7971abd42d866518b6f4b75da2774d3da0eb",
+    "head": "77fe7971abd42d866518b6f4b75da2774d3da0eb"
+   }
+  },
+  {
+   "check": "registered eval/d5_eval/scans/28_01160363.tilt.pdf.map.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "78f5aad040f8bfb10daf40483379e5ff58cb3daf",
+    "head": "78f5aad040f8bfb10daf40483379e5ff58cb3daf"
+   }
+  },
+  {
+   "check": "registered eval/d5_eval/scans/30_00161046.blur.pdf.map.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "db5ad87c873dbebd4b47b5615db965dc00842c9d",
+    "head": "db5ad87c873dbebd4b47b5615db965dc00842c9d"
+   }
+  },
+  {
+   "check": "registered eval/d5_eval/scans/30_00161046.normal.pdf.map.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "d745a87e6b3b4e16335198d34554fce0bda0f6ad",
+    "head": "d745a87e6b3b4e16335198d34554fce0bda0f6ad"
+   }
+  },
+  {
+   "check": "registered eval/d5_eval/scans/30_00161046.tilt.pdf.map.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "1b2b06643f4779c091040355886507fdbfce57e2",
+    "head": "1b2b06643f4779c091040355886507fdbfce57e2"
+   }
+  },
+  {
+   "check": "registered eval/d5_eval/scans/31_00106881.blur.pdf.map.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "76270af44de0fa0aa02ffdc647c409e4eb4fd39f",
+    "head": "76270af44de0fa0aa02ffdc647c409e4eb4fd39f"
+   }
+  },
+  {
+   "check": "registered eval/d5_eval/scans/31_00106881.normal.pdf.map.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "f5ec0915aedf5bbfb3cb656b913ac088819ec73b",
+    "head": "f5ec0915aedf5bbfb3cb656b913ac088819ec73b"
+   }
+  },
+  {
+   "check": "registered eval/d5_eval/scans/31_00106881.tilt.pdf.map.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "44f2d95298716e350c8dc0101a2739a288cd660b",
+    "head": "44f2d95298716e350c8dc0101a2739a288cd660b"
+   }
+  },
+  {
+   "check": "registered eval/d5_eval/scans/33_01586455.blur.pdf.map.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "867c06e19ffa13885c8ea4edaeb7e667f7040618",
+    "head": "867c06e19ffa13885c8ea4edaeb7e667f7040618"
+   }
+  },
+  {
+   "check": "registered eval/d5_eval/scans/33_01586455.normal.pdf.map.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "21efa71a3116321900edbd61350ef92f78bb4250",
+    "head": "21efa71a3116321900edbd61350ef92f78bb4250"
+   }
+  },
+  {
+   "check": "registered eval/d5_eval/scans/33_01586455.tilt.pdf.map.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "039cc6f4254c526a071b0f6ab77c2df407cd312a",
+    "head": "039cc6f4254c526a071b0f6ab77c2df407cd312a"
+   }
+  },
+  {
+   "check": "registered eval/d5_eval/scans/34_01412725.blur.pdf.map.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "c7cb2d8a10c5f089aaa12943ff2cedf791cefe40",
+    "head": "c7cb2d8a10c5f089aaa12943ff2cedf791cefe40"
+   }
+  },
+  {
+   "check": "registered eval/d5_eval/scans/34_01412725.normal.pdf.map.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "80b180a4d14e4323339bd0c2ed36dfdb813e55ad",
+    "head": "80b180a4d14e4323339bd0c2ed36dfdb813e55ad"
+   }
+  },
+  {
+   "check": "registered eval/d5_eval/scans/34_01412725.tilt.pdf.map.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "b78fafa429b7cf29a39a0019aa5578bba15784dd",
+    "head": "b78fafa429b7cf29a39a0019aa5578bba15784dd"
+   }
+  },
+  {
+   "check": "registered eval/d5_excluded.json at HEAD is the recorded object",
+   "ok": true,
+   "detail": {
+    "recorded": "999145527f291fdd9f7715502746b10add03ee23",
+    "head": "999145527f291fdd9f7715502746b10add03ee23"
+   }
+  },
+  {
+   "check": "the registration names the frozen P and T",
+   "ok": true,
+   "detail": {
+    "registration": [
+     "180e621e21713933484fd830a33ea9a05bd271d4",
+     "54d6fcdbd70d06b814923b260ca79fe753ec0c2b"
+    ]
+   }
+  },
+  {
+   "check": "product_commit is an ancestor of HEAD",
+   "ok": true,
+   "detail": "180e621e21713933484fd830a33ea9a05bd271d4"
+  },
+  {
+   "check": "tools_commit is an ancestor of HEAD",
+   "ok": true,
+   "detail": "54d6fcdbd70d06b814923b260ca79fe753ec0c2b"
+  },
+  {
+   "check": "the pushed tag d5-registered on origin names HEAD",
+   "ok": true,
+   "detail": [
+    "85f0603dd3c85bc68e9d0b76aa1f24d5ef6889d5\trefs/tags/d5-registered",
+    "630b351473a7461a93a0d11aca8b2351e556e890\trefs/tags/d5-registered^{}"
+   ]
+  },
+  {
+   "check": "clean working tree and index (git status --porcelain)",
+   "ok": true,
+   "detail": []
+  },
+  {
+   "check": "product dart_review at HEAD is the frozen object",
+   "ok": true,
+   "detail": {
+    "frozen": "16ad0213c00a69a5aa53d0be19619a3a5be9ef5d",
+    "head": "16ad0213c00a69a5aa53d0be19619a3a5be9ef5d"
+   }
+  },
+  {
+   "check": "product pyproject.toml at HEAD is the frozen object",
+   "ok": true,
+   "detail": {
+    "frozen": "ec33ff10d002fd9bcd52efa587df2e0023d6a894",
+    "head": "ec33ff10d002fd9bcd52efa587df2e0023d6a894"
+   }
+  },
+  {
+   "check": "tools eval/d4_gold.py at HEAD is the frozen object",
+   "ok": true,
+   "detail": {
+    "frozen": "bb7ffe6d2c55aa002df940f8eced1830d671dbf1",
+    "head": "bb7ffe6d2c55aa002df940f8eced1830d671dbf1"
+   }
+  },
+  {
+   "check": "tools eval/d4_score.py at HEAD is the frozen object",
+   "ok": true,
+   "detail": {
+    "frozen": "2e79d79c4e698133393cdeb34c5920b3a7805fc7",
+    "head": "2e79d79c4e698133393cdeb34c5920b3a7805fc7"
+   }
+  },
+  {
+   "check": "tools eval/d4_candidates.py at HEAD is the frozen object",
+   "ok": true,
+   "detail": {
+    "frozen": "59c91f8654b99f97148071cc60b41e83236f9091",
+    "head": "59c91f8654b99f97148071cc60b41e83236f9091"
+   }
+  },
+  {
+   "check": "tools eval/d4_preflight.py at HEAD is the frozen object",
+   "ok": true,
+   "detail": {
+    "frozen": "c5da79d35b8b1996bd8ef4bcb0266d1433a96f3d",
+    "head": "c5da79d35b8b1996bd8ef4bcb0266d1433a96f3d"
+   }
+  },
+  {
+   "check": "tools eval/d4_scan.py at HEAD is the frozen object",
+   "ok": true,
+   "detail": {
+    "frozen": "b6bef64eea911ddaf92f98a966a6a5dd17358815",
+    "head": "b6bef64eea911ddaf92f98a966a6a5dd17358815"
+   }
+  },
+  {
+   "check": "tools eval/d4_eval/run_d4.py at HEAD is the frozen object",
+   "ok": true,
+   "detail": {
+    "frozen": "474e040ced17a1fce775bca54a99f04994756461",
+    "head": "474e040ced17a1fce775bca54a99f04994756461"
+   }
+  },
+  {
+   "check": "tools eval/d4_eval/position_check.py at HEAD is the frozen object",
+   "ok": true,
+   "detail": {
+    "frozen": "e376926f6abe2de2a1ea512b04d334007dcbd3f3",
+    "head": "e376926f6abe2de2a1ea512b04d334007dcbd3f3"
+   }
+  },
+  {
+   "check": "tools eval/d4_eval/official_d4.py at HEAD is the frozen object",
+   "ok": true,
+   "detail": {
+    "frozen": "aa9ab81b2847fe06a41078e06eebc53313dc31f7",
+    "head": "aa9ab81b2847fe06a41078e06eebc53313dc31f7"
+   }
+  },
+  {
+   "check": "tools eval/d4_eval/document_list.py at HEAD is the frozen object",
+   "ok": true,
+   "detail": {
+    "frozen": "201be9ae06b5f253e4d3ca8a6599c9c28de8dbe8",
+    "head": "201be9ae06b5f253e4d3ca8a6599c9c28de8dbe8"
+   }
+  },
+  {
+   "check": "dart_review imported from this checkout",
+   "ok": true,
+   "detail": "~/D5_official/checkout/dart_review/__init__.py"
+  },
+  {
+   "check": "python as frozen",
+   "ok": true,
+   "detail": {
+    "frozen": "3.13.12",
+    "now": "3.13.12"
+   }
+  },
+  {
+   "check": "packages as frozen",
+   "ok": true,
+   "detail": {
+    "only_frozen": [],
+    "only_now": []
+   }
+  },
+  {
+   "check": "model as frozen",
+   "ok": true,
+   "detail": {
+    "frozen": {
+     "qwen3-vl:8b": "901cae732162"
+    },
+    "now": {
+     "qwen3-vl:8b": "901cae732162"
+    }
+   }
+  },
+  {
+   "check": "ollama as frozen",
+   "ok": true,
+   "detail": {
+    "frozen": "ollama version is 0.34.4",
+    "now": "ollama version is 0.34.4"
+   }
+  },
+  {
+   "check": "tesseract as frozen",
+   "ok": true,
+   "detail": {
+    "frozen": "tesseract 5.5.3",
+    "now": "tesseract 5.5.3"
+   }
+  },
+  {
+   "check": "macos as frozen",
+   "ok": true,
+   "detail": {
+    "frozen": "27.2",
+    "now": "27.2"
+   }
+  }
+ ]
+}

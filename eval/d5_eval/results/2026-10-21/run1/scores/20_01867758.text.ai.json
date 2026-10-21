@@ -1,0 +1,183 @@
+{
+ "report_sha256": "8d69138c4811dd1a04ef5e688d4daab78886ee229d8343f917d872c2644c693f",
+ "totals": {
+  "gold_cells": 197,
+  "correct": 193,
+  "value_wrong": 0,
+  "label_wrong": 2,
+  "missing": 2,
+  "dash_filled": 0,
+  "S2": 0,
+  "L1": 2,
+  "G1": 0,
+  "product_cells": 195,
+  "flagged": 0,
+  "not_in_gold": 0,
+  "unjudged_extras": 0,
+  "extras_wrong_unmarked": 0,
+  "S1": 0,
+  "S1_parts": {
+   "value_wrong_unmarked": 0,
+   "dash_filled_unmarked": 0,
+   "extras_wrong_unmarked": 0
+  },
+  "statements_not_found": 0,
+  "product_statements_not_in_gold": [],
+  "sums_checked": 22,
+  "statements_with_uncertain_sums": 0,
+  "statements_without_sums": 0,
+  "statements_sums_not_checked_by_kind": 1,
+  "status": {
+   "machine_scored": true,
+   "mapping_confirmed": true,
+   "extras_judged": true,
+   "scorable": true,
+   "source_verified": true,
+   "report_saved": true,
+   "official_ready": true
+  },
+  "unscorable": []
+ },
+ "statements": [
+  {
+   "statement_id": "연결재무상태표@9",
+   "statement": "연결재무상태표",
+   "page": 9,
+   "found": true,
+   "product_index": 0,
+   "gold_cells": 78,
+   "product_cells": 78,
+   "correct": 78,
+   "value_wrong": 0,
+   "label_wrong": 0,
+   "missing": 0,
+   "dash_filled": 0,
+   "S1": 0,
+   "L1": 0,
+   "S2": 0,
+   "G1": 0,
+   "flagged": 0,
+   "not_in_gold": 0,
+   "extras_wrong_unmarked": 0,
+   "unjudged_extras": 0,
+   "sums_checked": 16,
+   "sums_uncertain": 0,
+   "problems": [
+    "9쪽: AI가 '매입채무및기타채무' 줄을 '매입채무및타채무'(으)로 읽어 원본 계정명을 썼다",
+    "9쪽: AI가 '지배기업주주지분' 줄을 '지배기업주주자본'(으)로 읽어 원본 계정명을 썼다",
+    "AI 호출 17번, 증거: PDF 글자"
+   ],
+   "extras": [],
+   "cells": []
+  },
+  {
+   "statement_id": "연결포괄손익계산서@11",
+   "statement": "연결포괄손익계산서",
+   "page": 11,
+   "found": true,
+   "product_index": 1,
+   "gold_cells": 57,
+   "product_cells": 55,
+   "correct": 55,
+   "value_wrong": 0,
+   "label_wrong": 0,
+   "missing": 2,
+   "dash_filled": 0,
+   "S1": 0,
+   "L1": 0,
+   "S2": 0,
+   "G1": 0,
+   "flagged": 0,
+   "not_in_gold": 0,
+   "extras_wrong_unmarked": 0,
+   "unjudged_extras": 0,
+   "sums_checked": null,
+   "sums_uncertain": 0,
+   "problems": [
+    "11쪽: AI가 '지배기업의소유주지분' 줄을 '비지배지분'(으)로 읽어 원본 계정명을 썼다",
+    "11쪽 '비지배지분' 줄 당기: 원본의 금액 '(2,970,068,864)'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+    "11쪽 '비지배지분' 줄 전기: 원본의 금액 '(7,385,106,230)'를 AI가 읽지 않았다 (행이 빠졌을 수 있다)",
+    "AI 호출 17번, 증거: PDF 글자"
+   ],
+   "extras": [],
+   "cells": [
+    {
+     "label": "비지배지분",
+     "period": 0,
+     "printed": "(2,970,068,864)",
+     "gold_value": -2970068864,
+     "page": 11,
+     "result": "missing",
+     "flagged": true,
+     "generic": false
+    },
+    {
+     "label": "비지배지분",
+     "period": 1,
+     "printed": "(7,385,106,230)",
+     "gold_value": -7385106230,
+     "page": 11,
+     "result": "missing",
+     "flagged": true,
+     "generic": false
+    }
+   ]
+  },
+  {
+   "statement_id": "연결현금흐름표@14",
+   "statement": "연결현금흐름표",
+   "page": 14,
+   "found": true,
+   "product_index": 3,
+   "gold_cells": 62,
+   "product_cells": 62,
+   "correct": 60,
+   "value_wrong": 0,
+   "label_wrong": 2,
+   "missing": 0,
+   "dash_filled": 0,
+   "S1": 0,
+   "L1": 2,
+   "S2": 0,
+   "G1": 0,
+   "flagged": 0,
+   "not_in_gold": 0,
+   "extras_wrong_unmarked": 0,
+   "unjudged_extras": 0,
+   "sums_checked": 6,
+   "sums_uncertain": 0,
+   "problems": [
+    "14쪽: AI가 '현금및현금성자산의증감(Ⅰ+Ⅱ+Ⅲ)' 줄을 '현금및현금성자산의증감(I + II + III)'(으)로 읽어 원본 계정명을 썼다",
+    "AI 호출 17번, 증거: PDF 글자"
+   ],
+   "extras": [],
+   "cells": [
+    {
+     "label": "현금및현금성자산의 증감",
+     "period": 0,
+     "printed": "96,117,188,818",
+     "gold_value": 96117188818,
+     "page": 14,
+     "result": "label_wrong",
+     "product_id": "3/32/0",
+     "product_label": "현금및현금성자산의증감(Ⅰ+Ⅱ+Ⅲ)",
+     "product_value": 96117188818,
+     "flagged": false
+    },
+    {
+     "label": "현금및현금성자산의 증감",
+     "period": 1,
+     "printed": "(124,823,108,248)",
+     "gold_value": -124823108248,
+     "page": 14,
+     "result": "label_wrong",
+     "product_id": "3/32/1",
+     "product_label": "현금및현금성자산의증감(Ⅰ+Ⅱ+Ⅲ)",
+     "product_value": -124823108248,
+     "flagged": false
+    }
+   ]
+  }
+ ],
+ "product_statements_not_in_gold": []
+}

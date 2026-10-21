@@ -1,0 +1,2505 @@
+{
+ "report_sha256": "ee8b5cf6c4cce761bc57f202d57aa58b3d2e5c331cd6868d50a547a2d5d961ca",
+ "totals": {
+  "gold_cells": 216,
+  "correct": 0,
+  "value_wrong": 0,
+  "label_wrong": 0,
+  "missing": 216,
+  "dash_filled": 0,
+  "S2": 216,
+  "L1": 0,
+  "G1": 0,
+  "product_cells": 15,
+  "flagged": 15,
+  "not_in_gold": 15,
+  "unjudged_extras": 0,
+  "extras_wrong_unmarked": 0,
+  "S1": 0,
+  "S1_parts": {
+   "value_wrong_unmarked": 0,
+   "dash_filled_unmarked": 0,
+   "extras_wrong_unmarked": 0
+  },
+  "statements_not_found": 1,
+  "product_statements_not_in_gold": [
+   "제목 미확인 표"
+  ],
+  "sums_checked": 0,
+  "statements_with_uncertain_sums": 0,
+  "statements_without_sums": 1,
+  "statements_sums_not_checked_by_kind": 1,
+  "status": {
+   "machine_scored": true,
+   "mapping_confirmed": true,
+   "extras_judged": true,
+   "scorable": true,
+   "source_verified": true,
+   "report_saved": true,
+   "official_ready": true
+  },
+  "unscorable": []
+ },
+ "statements": [
+  {
+   "statement_id": "연결재무상태표@7",
+   "statement": "연결재무상태표",
+   "page": 1,
+   "found": true,
+   "product_index": 0,
+   "gold_cells": 74,
+   "product_cells": 2,
+   "correct": 0,
+   "value_wrong": 0,
+   "label_wrong": 0,
+   "missing": 74,
+   "dash_filled": 0,
+   "S1": 0,
+   "L1": 0,
+   "S2": 74,
+   "G1": 0,
+   "flagged": 2,
+   "not_in_gold": 2,
+   "extras_wrong_unmarked": 0,
+   "unjudged_extras": 0,
+   "sums_checked": 0,
+   "sums_uncertain": 0,
+   "problems": [
+    "자산총계·부채총계·자본총계 줄을 모두 찾지 못해 합계 검산을 하지 못했다",
+    "표에 넣지 못한 금액 8개 (1쪽 '과 90000 |, 0) eC, C=)' 줄 '00000', 1쪽 'uanes7)' 줄 '00000', 1쪽 '1.08648', 1쪽 'CTE a QO)' 줄 '59466', 1쪽 '1969', 1쪽 '계 역 부 페' 줄 '599323.25', 1쪽 '1.40261.20', 1쪽 '1.3626620'): 줄이나 열을 복원하지 못한 행이 있을 수 있다 (원본과 대조 필요)",
+    "소계와 그 아래 항목을 구분하지 못해 소계 검산을 하지 못했다",
+    "1쪽 스캔 품질이 낮다 (OCR 평균 확신도 42): 읽지 못한 줄이나 칸이 많을 수 있다",
+    "2쪽 스캔 품질이 낮다 (OCR 평균 확신도 67): 읽지 못한 줄이나 칸이 많을 수 있다",
+    "3쪽 스캔 품질이 낮다 (OCR 평균 확신도 53): 읽지 못한 줄이나 칸이 많을 수 있다",
+    "4쪽 스캔 품질이 낮다 (OCR 평균 확신도 39): 읽지 못한 줄이나 칸이 많을 수 있다",
+    "5쪽 스캔 품질이 낮다 (OCR 평균 확신도 41): 읽지 못한 줄이나 칸이 많을 수 있다"
+   ],
+   "extras": [
+    {
+     "id": "0/0/0",
+     "statement": "연결재무상태표",
+     "statement_page": 1,
+     "page": 1,
+     "label": "rene ner] 태",
+     "period": 0,
+     "printed": "077",
+     "value": 77,
+     "flagged": true,
+     "verdict": null
+    },
+    {
+     "id": "0/1/0",
+     "statement": "연결재무상태표",
+     "statement_page": 1,
+     "page": 1,
+     "label": "srenaar.a0al | 19602",
+     "period": 0,
+     "printed": "2499669164949",
+     "value": 2499669164949,
+     "flagged": true,
+     "verdict": null
+    }
+   ],
+   "cells": [
+    {
+     "label": "유동자산",
+     "period": 0,
+     "printed": "45,288,974,246",
+     "gold_value": 45288974246,
+     "page": 1,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "유동자산",
+     "period": 1,
+     "printed": "45,517,105,261",
+     "gold_value": 45517105261,
+     "page": 1,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "현금및현금성자산",
+     "period": 0,
+     "printed": "3,963,730,179",
+     "gold_value": 3963730179,
+     "page": 1,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "현금및현금성자산",
+     "period": 1,
+     "printed": "1,988,510,006",
+     "gold_value": 1988510006,
+     "page": 1,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "매출채권및기타채권",
+     "period": 0,
+     "printed": "10,061,025,898",
+     "gold_value": 10061025898,
+     "page": 1,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "매출채권및기타채권",
+     "period": 1,
+     "printed": "10,830,817,879",
+     "gold_value": 10830817879,
+     "page": 1,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "기타금융자산",
+     "period": 0,
+     "printed": "1,200,000,000",
+     "gold_value": 1200000000,
+     "page": 1,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "기타금융자산",
+     "period": 1,
+     "printed": "1,650,000,000",
+     "gold_value": 1650000000,
+     "page": 1,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "재고자산",
+     "period": 0,
+     "printed": "29,765,862,849",
+     "gold_value": 29765862849,
+     "page": 1,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "재고자산",
+     "period": 1,
+     "printed": "30,492,607,564",
+     "gold_value": 30492607564,
+     "page": 1,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "기타유동자산",
+     "period": 0,
+     "printed": "298,355,320",
+     "gold_value": 298355320,
+     "page": 1,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "기타유동자산",
+     "period": 1,
+     "printed": "555,169,812",
+     "gold_value": 555169812,
+     "page": 1,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "비유동자산",
+     "period": 0,
+     "printed": "70,573,950,009",
+     "gold_value": 70573950009,
+     "page": 1,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "비유동자산",
+     "period": 1,
+     "printed": "75,817,330,977",
+     "gold_value": 75817330977,
+     "page": 1,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "기타비유동금융자산",
+     "period": 0,
+     "printed": "8,255,739,418",
+     "gold_value": 8255739418,
+     "page": 1,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "기타비유동금융자산",
+     "period": 1,
+     "printed": "11,110,098,539",
+     "gold_value": 11110098539,
+     "page": 1,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "투자부동산",
+     "period": 0,
+     "printed": "46,513,748,290",
+     "gold_value": 46513748290,
+     "page": 1,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "투자부동산",
+     "period": 1,
+     "printed": "44,839,558,190",
+     "gold_value": 44839558190,
+     "page": 1,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "유형자산",
+     "period": 0,
+     "printed": "3,339,496,646",
+     "gold_value": 3339496646,
+     "page": 1,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "유형자산",
+     "period": 1,
+     "printed": "3,782,569,542",
+     "gold_value": 3782569542,
+     "page": 1,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "무형자산",
+     "period": 0,
+     "printed": "344,349,844",
+     "gold_value": 344349844,
+     "page": 1,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "무형자산",
+     "period": 1,
+     "printed": "544,761,967",
+     "gold_value": 544761967,
+     "page": 1,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "기타비유동자산",
+     "period": 1,
+     "printed": "14,363,887",
+     "gold_value": 14363887,
+     "page": 1,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "사용권자산",
+     "period": 0,
+     "printed": "12,120,615,811",
+     "gold_value": 12120615811,
+     "page": 1,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "사용권자산",
+     "period": 1,
+     "printed": "15,525,978,852",
+     "gold_value": 15525978852,
+     "page": 1,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "자 산 총 계",
+     "period": 0,
+     "printed": "115,862,924,255",
+     "gold_value": 115862924255,
+     "page": 1,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "자 산 총 계",
+     "period": 1,
+     "printed": "121,334,436,238",
+     "gold_value": 121334436238,
+     "page": 1,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "유동부채",
+     "period": 0,
+     "printed": "63,434,370,044",
+     "gold_value": 63434370044,
+     "page": 1,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "유동부채",
+     "period": 1,
+     "printed": "48,761,886,256",
+     "gold_value": 48761886256,
+     "page": 1,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "매입채무및기타채무",
+     "period": 0,
+     "printed": "17,002,347,829",
+     "gold_value": 17002347829,
+     "page": 1,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "매입채무및기타채무",
+     "period": 1,
+     "printed": "18,221,327,203",
+     "gold_value": 18221327203,
+     "page": 1,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "단기차입금",
+     "period": 0,
+     "printed": "18,600,000,000",
+     "gold_value": 18600000000,
+     "page": 1,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "단기차입금",
+     "period": 1,
+     "printed": "20,400,000,000",
+     "gold_value": 20400000000,
+     "page": 1,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "유동성장기차입금",
+     "period": 0,
+     "printed": "18,000,000,000",
+     "gold_value": 18000000000,
+     "page": 1,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "기타금융부채",
+     "period": 0,
+     "printed": "3,395,571,125",
+     "gold_value": 3395571125,
+     "page": 1,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "기타금융부채",
+     "period": 1,
+     "printed": "3,648,922,168",
+     "gold_value": 3648922168,
+     "page": 1,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "계약부채",
+     "period": 0,
+     "printed": "539,373,251",
+     "gold_value": 539373251,
+     "page": 1,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "계약부채",
+     "period": 1,
+     "printed": "511,150,115",
+     "gold_value": 511150115,
+     "page": 1,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "충당부채",
+     "period": 0,
+     "printed": "15,330,850",
+     "gold_value": 15330850,
+     "page": 1,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "충당부채",
+     "period": 1,
+     "printed": "19,134,971",
+     "gold_value": 19134971,
+     "page": 1,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "미지급법인세",
+     "period": 1,
+     "printed": "350",
+     "gold_value": 350,
+     "page": 1,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "기타부채",
+     "period": 0,
+     "printed": "772,909,784",
+     "gold_value": 772909784,
+     "page": 1,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "기타부채",
+     "period": 1,
+     "printed": "1,025,178,797",
+     "gold_value": 1025178797,
+     "page": 1,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "리스부채",
+     "period": 0,
+     "printed": "5,108,837,205",
+     "gold_value": 5108837205,
+     "page": 1,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "리스부채",
+     "period": 1,
+     "printed": "4,936,172,652",
+     "gold_value": 4936172652,
+     "page": 1,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "비유동부채",
+     "period": 0,
+     "printed": "14,500,151,104",
+     "gold_value": 14500151104,
+     "page": 1,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "비유동부채",
+     "period": 1,
+     "printed": "34,712,216,199",
+     "gold_value": 34712216199,
+     "page": 1,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "확정급여부채 및 기타장기종업원급여부채",
+     "period": 0,
+     "printed": "5,038,328,305",
+     "gold_value": 5038328305,
+     "page": 1,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "확정급여부채 및 기타장기종업원급여부채",
+     "period": 1,
+     "printed": "5,209,359,654",
+     "gold_value": 5209359654,
+     "page": 1,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "장기차입금",
+     "period": 1,
+     "printed": "18,000,000,000",
+     "gold_value": 18000000000,
+     "page": 1,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "기타비유동금융부채",
+     "period": 0,
+     "printed": "993,086,339",
+     "gold_value": 993086339,
+     "page": 1,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "기타비유동금융부채",
+     "period": 1,
+     "printed": "901,322,678",
+     "gold_value": 901322678,
+     "page": 1,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "기타비유동부채",
+     "period": 0,
+     "printed": "617,613,859",
+     "gold_value": 617613859,
+     "page": 1,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "기타비유동부채",
+     "period": 1,
+     "printed": "733,416,439",
+     "gold_value": 733416439,
+     "page": 1,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "비유동리스부채",
+     "period": 0,
+     "printed": "6,302,095,080",
+     "gold_value": 6302095080,
+     "page": 1,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "비유동리스부채",
+     "period": 1,
+     "printed": "8,466,522,429",
+     "gold_value": 8466522429,
+     "page": 1,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "이연법인세부채",
+     "period": 0,
+     "printed": "1,549,027,521",
+     "gold_value": 1549027521,
+     "page": 1,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "이연법인세부채",
+     "period": 1,
+     "printed": "1,401,594,999",
+     "gold_value": 1401594999,
+     "page": 1,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "부 채 총 계",
+     "period": 0,
+     "printed": "77,934,521,148",
+     "gold_value": 77934521148,
+     "page": 1,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "부 채 총 계",
+     "period": 1,
+     "printed": "83,474,102,455",
+     "gold_value": 83474102455,
+     "page": 1,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "자본금",
+     "period": 0,
+     "printed": "37,556,497,500",
+     "gold_value": 37556497500,
+     "page": 1,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "자본금",
+     "period": 1,
+     "printed": "37,556,497,500",
+     "gold_value": 37556497500,
+     "page": 1,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "자본잉여금",
+     "period": 0,
+     "printed": "49,923,919,038",
+     "gold_value": 49923919038,
+     "page": 1,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "자본잉여금",
+     "period": 1,
+     "printed": "49,923,919,038",
+     "gold_value": 49923919038,
+     "page": 1,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "기타자본항목",
+     "period": 0,
+     "printed": "(1,424,753,382)",
+     "gold_value": -1424753382,
+     "page": 1,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "기타자본항목",
+     "period": 1,
+     "printed": "(1,424,753,382)",
+     "gold_value": -1424753382,
+     "page": 1,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "기타포괄손익누계액",
+     "period": 0,
+     "printed": "5,718,998,523",
+     "gold_value": 5718998523,
+     "page": 1,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "기타포괄손익누계액",
+     "period": 1,
+     "printed": "5,718,998,523",
+     "gold_value": 5718998523,
+     "page": 1,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "결손금",
+     "period": 0,
+     "printed": "(53,846,258,572)",
+     "gold_value": -53846258572,
+     "page": 1,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "결손금",
+     "period": 1,
+     "printed": "(53,914,327,896)",
+     "gold_value": -53914327896,
+     "page": 1,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "자 본 총 계",
+     "period": 0,
+     "printed": "37,928,403,107",
+     "gold_value": 37928403107,
+     "page": 1,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "자 본 총 계",
+     "period": 1,
+     "printed": "37,860,333,783",
+     "gold_value": 37860333783,
+     "page": 1,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "부채및자본총계",
+     "period": 0,
+     "printed": "115,862,924,255",
+     "gold_value": 115862924255,
+     "page": 2,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "부채및자본총계",
+     "period": 1,
+     "printed": "121,334,436,238",
+     "gold_value": 121334436238,
+     "page": 2,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    }
+   ]
+  },
+  {
+   "statement_id": "연결포괄손익계산서@9",
+   "statement": "연결포괄손익계산서",
+   "page": 3,
+   "found": true,
+   "product_index": 1,
+   "gold_cells": 36,
+   "product_cells": 2,
+   "correct": 0,
+   "value_wrong": 0,
+   "label_wrong": 0,
+   "missing": 36,
+   "dash_filled": 0,
+   "S1": 0,
+   "L1": 0,
+   "S2": 36,
+   "G1": 0,
+   "flagged": 2,
+   "not_in_gold": 2,
+   "extras_wrong_unmarked": 0,
+   "unjudged_extras": 0,
+   "sums_checked": null,
+   "sums_uncertain": 0,
+   "problems": [
+    "빈 칸 2개 (Ce a, 650090| | 이쓰 _): 원본이 '-'(해당 없음)인지, 읽지 못한 숫자인지 확인 필요",
+    "표에 넣지 못한 금액 5개 (3쪽 '00075.', 3쪽 '20000496920', 3쪽 '2002702091', 3쪽 '7', 3쪽 '(400,111,603)'): 줄이나 열을 복원하지 못한 행이 있을 수 있다 (원본과 대조 필요)",
+    "1쪽 스캔 품질이 낮다 (OCR 평균 확신도 42): 읽지 못한 줄이나 칸이 많을 수 있다",
+    "2쪽 스캔 품질이 낮다 (OCR 평균 확신도 67): 읽지 못한 줄이나 칸이 많을 수 있다",
+    "3쪽 스캔 품질이 낮다 (OCR 평균 확신도 53): 읽지 못한 줄이나 칸이 많을 수 있다",
+    "4쪽 스캔 품질이 낮다 (OCR 평균 확신도 39): 읽지 못한 줄이나 칸이 많을 수 있다",
+    "5쪽 스캔 품질이 낮다 (OCR 평균 확신도 41): 읽지 못한 줄이나 칸이 많을 수 있다"
+   ],
+   "extras": [
+    {
+     "id": "1/0/1",
+     "statement": "연결포괄손익계산서",
+     "statement_page": 3,
+     "page": 3,
+     "label": "Ce a",
+     "period": 1,
+     "printed": "2",
+     "value": 2,
+     "flagged": true,
+     "verdict": null
+    },
+    {
+     "id": "1/1/0",
+     "statement": "연결포괄손익계산서",
+     "statement_page": 3,
+     "page": 3,
+     "label": "650090| | 이쓰 _",
+     "period": 0,
+     "printed": "20000000520",
+     "value": 20000000520,
+     "flagged": true,
+     "verdict": null
+    }
+   ],
+   "cells": [
+    {
+     "label": "매출액",
+     "period": 0,
+     "printed": "104,591,440,092",
+     "gold_value": 104591440092,
+     "page": 3,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "매출액",
+     "period": 1,
+     "printed": "114,737,877,861",
+     "gold_value": 114737877861,
+     "page": 3,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "매출원가",
+     "period": 0,
+     "printed": "(42,767,604,797)",
+     "gold_value": -42767604797,
+     "page": 3,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "매출원가",
+     "period": 1,
+     "printed": "(47,325,899,998)",
+     "gold_value": -47325899998,
+     "page": 3,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "매출총이익",
+     "period": 0,
+     "printed": "61,823,835,295",
+     "gold_value": 61823835295,
+     "page": 3,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "매출총이익",
+     "period": 1,
+     "printed": "67,411,977,863",
+     "gold_value": 67411977863,
+     "page": 3,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "판매비와관리비",
+     "period": 0,
+     "printed": "(60,632,375,431)",
+     "gold_value": -60632375431,
+     "page": 3,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "판매비와관리비",
+     "period": 1,
+     "printed": "(68,239,155,557)",
+     "gold_value": -68239155557,
+     "page": 3,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "영업이익(손실)",
+     "period": 0,
+     "printed": "1,191,459,864",
+     "gold_value": 1191459864,
+     "page": 3,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "영업이익(손실)",
+     "period": 1,
+     "printed": "(827,177,694)",
+     "gold_value": -827177694,
+     "page": 3,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "기타영업외수익",
+     "period": 0,
+     "printed": "2,012,332,818",
+     "gold_value": 2012332818,
+     "page": 3,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "기타영업외수익",
+     "period": 1,
+     "printed": "3,663,809,259",
+     "gold_value": 3663809259,
+     "page": 3,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "기타영업외비용",
+     "period": 0,
+     "printed": "(345,027,299)",
+     "gold_value": -345027299,
+     "page": 3,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "기타영업외비용",
+     "period": 1,
+     "printed": "(711,695,941)",
+     "gold_value": -711695941,
+     "page": 3,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "순금융원가",
+     "period": 0,
+     "printed": "(2,818,588,581)",
+     "gold_value": -2818588581,
+     "page": 3,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "순금융원가",
+     "period": 1,
+     "printed": "(3,348,507,213)",
+     "gold_value": -3348507213,
+     "page": 3,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "금융수익-유효이자율법에 따른 이자수익",
+     "period": 0,
+     "printed": "610,062,445",
+     "gold_value": 610062445,
+     "page": 3,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "금융수익-유효이자율법에 따른 이자수익",
+     "period": 1,
+     "printed": "837,629,695",
+     "gold_value": 837629695,
+     "page": 3,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "금융비용",
+     "period": 0,
+     "printed": "(3,428,651,026)",
+     "gold_value": -3428651026,
+     "page": 3,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "금융비용",
+     "period": 1,
+     "printed": "(4,186,136,908)",
+     "gold_value": -4186136908,
+     "page": 3,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "법인세비용차감전순이익(손실)",
+     "period": 0,
+     "printed": "40,176,802",
+     "gold_value": 40176802,
+     "page": 3,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "법인세비용차감전순이익(손실)",
+     "period": 1,
+     "printed": "(1,223,571,589)",
+     "gold_value": -1223571589,
+     "page": 3,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "법인세비용",
+     "period": 0,
+     "printed": "(147,432,522)",
+     "gold_value": -147432522,
+     "page": 3,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "법인세비용",
+     "period": 1,
+     "printed": "(139,120,137)",
+     "gold_value": -139120137,
+     "page": 3,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "당기순손실",
+     "period": 0,
+     "printed": "(107,255,720)",
+     "gold_value": -107255720,
+     "page": 3,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "당기순손실",
+     "period": 1,
+     "printed": "(1,362,691,726)",
+     "gold_value": -1362691726,
+     "page": 3,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "기타포괄손익",
+     "period": 0,
+     "printed": "175,325,044",
+     "gold_value": 175325044,
+     "page": 3,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "기타포괄손익",
+     "period": 1,
+     "printed": "(400,111,603)",
+     "gold_value": -400111603,
+     "page": 3,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "후속적으로 당기손익으로재분류되지 않는 기타포괄손익",
+     "period": 0,
+     "printed": "175,325,044",
+     "gold_value": 175325044,
+     "page": 3,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "후속적으로 당기손익으로재분류되지 않는 기타포괄손익",
+     "period": 1,
+     "printed": "(400,111,603)",
+     "gold_value": -400111603,
+     "page": 3,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "확정급여제도의 재측정요소",
+     "period": 0,
+     "printed": "175,325,044",
+     "gold_value": 175325044,
+     "page": 3,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "확정급여제도의 재측정요소",
+     "period": 1,
+     "printed": "(400,111,603)",
+     "gold_value": -400111603,
+     "page": 3,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "총포괄이익(손실)",
+     "period": 0,
+     "printed": "68,069,324",
+     "gold_value": 68069324,
+     "page": 3,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "총포괄이익(손실)",
+     "period": 1,
+     "printed": "(1,762,803,329)",
+     "gold_value": -1762803329,
+     "page": 3,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "기본주당순손실",
+     "period": 0,
+     "printed": "(1)",
+     "gold_value": -1,
+     "page": 3,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "기본주당순손실",
+     "period": 1,
+     "printed": "(18)",
+     "gold_value": -18,
+     "page": 3,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    }
+   ]
+  },
+  {
+   "statement_id": "연결현금흐름표@11",
+   "statement": "연결현금흐름표",
+   "page": 4,
+   "found": false,
+   "product_index": null,
+   "gold_cells": 106,
+   "product_cells": 0,
+   "correct": 0,
+   "value_wrong": 0,
+   "label_wrong": 0,
+   "missing": 106,
+   "dash_filled": 0,
+   "S1": 0,
+   "L1": 0,
+   "S2": 106,
+   "G1": 0,
+   "flagged": 0,
+   "not_in_gold": 0,
+   "extras_wrong_unmarked": 0,
+   "unjudged_extras": 0,
+   "sums_checked": null,
+   "sums_uncertain": null,
+   "problems": [
+    "재무제표를 찾지 못했다"
+   ],
+   "extras": [],
+   "cells": [
+    {
+     "label": "영업활동으로 인한 현금흐름",
+     "period": 0,
+     "printed": "8,868,261,152",
+     "gold_value": 8868261152,
+     "page": 4,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "영업활동으로 인한 현금흐름",
+     "period": 1,
+     "printed": "3,241,394,757",
+     "gold_value": 3241394757,
+     "page": 4,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "당기순손실",
+     "period": 0,
+     "printed": "(107,255,720)",
+     "gold_value": -107255720,
+     "page": 4,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "당기순손실",
+     "period": 1,
+     "printed": "(1,362,691,726)",
+     "gold_value": -1362691726,
+     "page": 4,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "당기순손실조정을 위한 가감",
+     "period": 0,
+     "printed": "9,537,152,964",
+     "gold_value": 9537152964,
+     "page": 4,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "당기순손실조정을 위한 가감",
+     "period": 1,
+     "printed": "9,135,217,559",
+     "gold_value": 9135217559,
+     "page": 4,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "감가상각비",
+     "period": 0,
+     "printed": "7,201,577,747",
+     "gold_value": 7201577747,
+     "page": 4,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "감가상각비",
+     "period": 1,
+     "printed": "7,627,477,963",
+     "gold_value": 7627477963,
+     "page": 4,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "무형자산상각비",
+     "period": 0,
+     "printed": "279,677,702",
+     "gold_value": 279677702,
+     "page": 4,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "무형자산상각비",
+     "period": 1,
+     "printed": "298,955,437",
+     "gold_value": 298955437,
+     "page": 4,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "퇴직급여",
+     "period": 0,
+     "printed": "1,260,747,169",
+     "gold_value": 1260747169,
+     "page": 4,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "퇴직급여",
+     "period": 1,
+     "printed": "1,108,452,046",
+     "gold_value": 1108452046,
+     "page": 4,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "유형자산처분이익",
+     "period": 0,
+     "printed": "(1,520,694)",
+     "gold_value": -1520694,
+     "page": 4,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "투자부동산재평가이익",
+     "period": 0,
+     "printed": "(1,674,190,100)",
+     "gold_value": -1674190100,
+     "page": 4,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "투자부동산재평가이익",
+     "period": 1,
+     "printed": "(3,327,753,030)",
+     "gold_value": -3327753030,
+     "page": 4,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "사용권자산처분이익",
+     "period": 0,
+     "printed": "(136,053,296)",
+     "gold_value": -136053296,
+     "page": 4,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "사용권자산처분이익",
+     "period": 1,
+     "printed": "(77,589,431)",
+     "gold_value": -77589431,
+     "page": 4,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "외화환산이익",
+     "period": 0,
+     "printed": "(67,988,700)",
+     "gold_value": -67988700,
+     "page": 4,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "외화환산손실",
+     "period": 1,
+     "printed": "349,822,200",
+     "gold_value": 349822200,
+     "page": 4,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "유형자산폐기손실",
+     "period": 0,
+     "printed": "67,706,069",
+     "gold_value": 67706069,
+     "page": 4,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "유형자산폐기손실",
+     "period": 1,
+     "printed": "108,587,576",
+     "gold_value": 108587576,
+     "page": 4,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "유형자산처분손실",
+     "period": 0,
+     "printed": "1,338,667",
+     "gold_value": 1338667,
+     "page": 4,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "이자수익",
+     "period": 0,
+     "printed": "(610,062,445)",
+     "gold_value": -610062445,
+     "page": 4,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "이자수익",
+     "period": 1,
+     "printed": "(837,629,695)",
+     "gold_value": -837629695,
+     "page": 4,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "이자비용",
+     "period": 0,
+     "printed": "3,068,488,323",
+     "gold_value": 3068488323,
+     "page": 4,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "이자비용",
+     "period": 1,
+     "printed": "3,745,774,356",
+     "gold_value": 3745774356,
+     "page": 4,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "법인세비용",
+     "period": 0,
+     "printed": "147,432,522",
+     "gold_value": 147432522,
+     "page": 4,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "법인세비용",
+     "period": 1,
+     "printed": "139,120,137",
+     "gold_value": 139120137,
+     "page": 4,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "영업활동으로 인한 자산 부채의 변동",
+     "period": 0,
+     "printed": "(567,816,202)",
+     "gold_value": -567816202,
+     "page": 4,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "영업활동으로 인한 자산 부채의 변동",
+     "period": 1,
+     "printed": "(4,530,644,916)",
+     "gold_value": -4530644916,
+     "page": 4,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "매출채권의 감소",
+     "period": 0,
+     "printed": "762,374,361",
+     "gold_value": 762374361,
+     "page": 4,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "매출채권의 감소",
+     "period": 1,
+     "printed": "2,971,457,024",
+     "gold_value": 2971457024,
+     "page": 4,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "미수금의 감소(증가)",
+     "period": 0,
+     "printed": "7,417,620",
+     "gold_value": 7417620,
+     "page": 4,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "미수금의 감소(증가)",
+     "period": 1,
+     "printed": "(12,739,077)",
+     "gold_value": -12739077,
+     "page": 4,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "기타유동자산의 감소(증가)",
+     "period": 0,
+     "printed": "240,359,941",
+     "gold_value": 240359941,
+     "page": 4,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "기타유동자산의 감소(증가)",
+     "period": 1,
+     "printed": "(233,539,624)",
+     "gold_value": -233539624,
+     "page": 4,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "재고자산의 감소(증가)",
+     "period": 0,
+     "printed": "726,744,715",
+     "gold_value": 726744715,
+     "page": 4,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "재고자산의 감소(증가)",
+     "period": 1,
+     "printed": "(3,701,338,741)",
+     "gold_value": -3701338741,
+     "page": 4,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "기타비유동자산의 감소",
+     "period": 0,
+     "printed": "14,363,887",
+     "gold_value": 14363887,
+     "page": 4,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "기타비유동자산의 감소",
+     "period": 1,
+     "printed": "175,239,396",
+     "gold_value": 175239396,
+     "page": 4,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "매입채무의 감소",
+     "period": 0,
+     "printed": "(730,584,628)",
+     "gold_value": -730584628,
+     "page": 4,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "매입채무의 감소",
+     "period": 1,
+     "printed": "(1,186,244,395)",
+     "gold_value": -1186244395,
+     "page": 4,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "미지급금의 증가(감소)",
+     "period": 0,
+     "printed": "11,613,954",
+     "gold_value": 11613954,
+     "page": 4,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "미지급금의 증가(감소)",
+     "period": 1,
+     "printed": "(1,021,778,436)",
+     "gold_value": -1021778436,
+     "page": 4,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "유동계약부채의 증가",
+     "period": 0,
+     "printed": "28,223,136",
+     "gold_value": 28223136,
+     "page": 4,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "유동계약부채의 증가",
+     "period": 1,
+     "printed": "1,048,477",
+     "gold_value": 1048477,
+     "page": 4,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "충당부채의 감소",
+     "period": 0,
+     "printed": "(3,804,121)",
+     "gold_value": -3804121,
+     "page": 4,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "충당부채의 감소",
+     "period": 1,
+     "printed": "(8,447,691)",
+     "gold_value": -8447691,
+     "page": 4,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "기타부채의 감소",
+     "period": 0,
+     "printed": "(368,071,593)",
+     "gold_value": -368071593,
+     "page": 4,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "기타부채의 감소",
+     "period": 1,
+     "printed": "(686,699,652)",
+     "gold_value": -686699652,
+     "page": 4,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "퇴직금의 지급",
+     "period": 0,
+     "printed": "(1,441,337,738)",
+     "gold_value": -1441337738,
+     "page": 4,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "퇴직금의 지급",
+     "period": 1,
+     "printed": "(833,627,486)",
+     "gold_value": -833627486,
+     "page": 4,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "순확정급여채무의 증가",
+     "period": 0,
+     "printed": "193,584,291",
+     "gold_value": 193584291,
+     "page": 4,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "장기종업원급여부채 증가(감소)",
+     "period": 0,
+     "printed": "(8,700,027)",
+     "gold_value": -8700027,
+     "page": 4,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "장기종업원급여부채 증가(감소)",
+     "period": 1,
+     "printed": "6,025,289",
+     "gold_value": 6025289,
+     "page": 4,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "법인세 납부",
+     "period": 0,
+     "printed": "6,180,110",
+     "gold_value": 6180110,
+     "page": 4,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "법인세 납부",
+     "period": 1,
+     "printed": "(486,160)",
+     "gold_value": -486160,
+     "page": 4,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "투자활동으로 인한 현금흐름",
+     "period": 0,
+     "printed": "2,641,126,320",
+     "gold_value": 2641126320,
+     "page": 4,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "투자활동으로 인한 현금흐름",
+     "period": 1,
+     "printed": "(1,490,061,170)",
+     "gold_value": -1490061170,
+     "page": 4,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "투자활동으로 인한 현금유입액",
+     "period": 0,
+     "printed": "6,283,932,853",
+     "gold_value": 6283932853,
+     "page": 4,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "투자활동으로 인한 현금유입액",
+     "period": 1,
+     "printed": "2,841,010,997",
+     "gold_value": 2841010997,
+     "page": 4,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "단기금융상품의 감소",
+     "period": 0,
+     "printed": "1,650,000,000",
+     "gold_value": 1650000000,
+     "page": 4,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "단기금융상품의 감소",
+     "period": 1,
+     "printed": "1,800,000,000",
+     "gold_value": 1800000000,
+     "page": 4,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "유형자산의 처분",
+     "period": 0,
+     "printed": "17,442,779",
+     "gold_value": 17442779,
+     "page": 4,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "유형자산의 처분",
+     "period": 1,
+     "printed": "1,788,889",
+     "gold_value": 1788889,
+     "page": 4,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "보증금의 감소",
+     "period": 0,
+     "printed": "4,546,781,215",
+     "gold_value": 4546781215,
+     "page": 4,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "보증금의 감소",
+     "period": 1,
+     "printed": "929,327,899",
+     "gold_value": 929327899,
+     "page": 4,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "이자의 수취",
+     "period": 0,
+     "printed": "69,708,859",
+     "gold_value": 69708859,
+     "page": 4,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "이자의 수취",
+     "period": 1,
+     "printed": "109,894,209",
+     "gold_value": 109894209,
+     "page": 4,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "투자활동으로 인한 현금유출액",
+     "period": 0,
+     "printed": "(3,642,806,533)",
+     "gold_value": -3642806533,
+     "page": 4,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "투자활동으로 인한 현금유출액",
+     "period": 1,
+     "printed": "(4,331,072,167)",
+     "gold_value": -4331072167,
+     "page": 4,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "단기금융상품의 증가",
+     "period": 0,
+     "printed": "(1,200,000,000)",
+     "gold_value": -1200000000,
+     "page": 4,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "단기금융상품의 증가",
+     "period": 1,
+     "printed": "(1,800,000,000)",
+     "gold_value": -1800000000,
+     "page": 4,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "유형자산의 취득",
+     "period": 0,
+     "printed": "(2,034,510,954)",
+     "gold_value": -2034510954,
+     "page": 4,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "유형자산의 취득",
+     "period": 1,
+     "printed": "(2,161,625,864)",
+     "gold_value": -2161625864,
+     "page": 4,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "무형자산의 취득",
+     "period": 0,
+     "printed": "(79,265,579)",
+     "gold_value": -79265579,
+     "page": 4,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "무형자산의 취득",
+     "period": 1,
+     "printed": "(51,316,303)",
+     "gold_value": -51316303,
+     "page": 4,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "사용권자산의 취득",
+     "period": 1,
+     "printed": "(5,580,000)",
+     "gold_value": -5580000,
+     "page": 5,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "보증금의 증가",
+     "period": 0,
+     "printed": "(329,030,000)",
+     "gold_value": -329030000,
+     "page": 5,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "보증금의 증가",
+     "period": 1,
+     "printed": "(312,550,000)",
+     "gold_value": -312550000,
+     "page": 5,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "재무활동으로 인한 현금흐름",
+     "period": 0,
+     "printed": "(9,534,167,299)",
+     "gold_value": -9534167299,
+     "page": 5,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "재무활동으로 인한 현금흐름",
+     "period": 1,
+     "printed": "(5,724,045,479)",
+     "gold_value": -5724045479,
+     "page": 5,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "재무활동으로 인한 현금유입액",
+     "period": 0,
+     "printed": "20,441,000,000",
+     "gold_value": 20441000000,
+     "page": 5,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "재무활동으로 인한 현금유입액",
+     "period": 1,
+     "printed": "47,500,000,000",
+     "gold_value": 47500000000,
+     "page": 5,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "단기차입금의 차입",
+     "period": 0,
+     "printed": "20,200,000,000",
+     "gold_value": 20200000000,
+     "page": 5,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "단기차입금의 차입",
+     "period": 1,
+     "printed": "29,050,000,000",
+     "gold_value": 29050000000,
+     "page": 5,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "장기차입금의 차입",
+     "period": 1,
+     "printed": "18,000,000,000",
+     "gold_value": 18000000000,
+     "page": 5,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "예수보증금의 증가",
+     "period": 0,
+     "printed": "241,000,000",
+     "gold_value": 241000000,
+     "page": 5,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "예수보증금의 증가",
+     "period": 1,
+     "printed": "450,000,000",
+     "gold_value": 450000000,
+     "page": 5,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "재무활동으로 인한 현금유출액",
+     "period": 0,
+     "printed": "(29,975,167,299)",
+     "gold_value": -29975167299,
+     "page": 5,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "재무활동으로 인한 현금유출액",
+     "period": 1,
+     "printed": "(53,224,045,479)",
+     "gold_value": -53224045479,
+     "page": 5,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "단기차입금의 상환",
+     "period": 0,
+     "printed": "(22,000,000,000)",
+     "gold_value": -22000000000,
+     "page": 5,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "단기차입금의 상환",
+     "period": 1,
+     "printed": "(34,800,000,000)",
+     "gold_value": -34800000000,
+     "page": 5,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "사채의 상환",
+     "period": 1,
+     "printed": "(10,000,000,000)",
+     "gold_value": -10000000000,
+     "page": 5,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "리스부채의 지급",
+     "period": 0,
+     "printed": "(4,504,091,594)",
+     "gold_value": -4504091594,
+     "page": 5,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "리스부채의 지급",
+     "period": 1,
+     "printed": "(4,492,762,364)",
+     "gold_value": -4492762364,
+     "page": 5,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "예수보증금의 감소",
+     "period": 0,
+     "printed": "(475,000,000)",
+     "gold_value": -475000000,
+     "page": 5,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "예수보증금의 감소",
+     "period": 1,
+     "printed": "(375,000,000)",
+     "gold_value": -375000000,
+     "page": 5,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "이자의 지급",
+     "period": 0,
+     "printed": "(2,996,075,705)",
+     "gold_value": -2996075705,
+     "page": 5,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "이자의 지급",
+     "period": 1,
+     "printed": "(3,556,283,115)",
+     "gold_value": -3556283115,
+     "page": 5,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "현금및현금성자산의 증가(감소)(Ⅰ+Ⅱ+Ⅲ)",
+     "period": 0,
+     "printed": "1,975,220,173",
+     "gold_value": 1975220173,
+     "page": 5,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "현금및현금성자산의 증가(감소)(Ⅰ+Ⅱ+Ⅲ)",
+     "period": 1,
+     "printed": "(3,972,711,892)",
+     "gold_value": -3972711892,
+     "page": 5,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "기초현금및현금성자산",
+     "period": 0,
+     "printed": "1,988,510,006",
+     "gold_value": 1988510006,
+     "page": 5,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "기초현금및현금성자산",
+     "period": 1,
+     "printed": "5,961,221,898",
+     "gold_value": 5961221898,
+     "page": 5,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "기말현금및현금성자산",
+     "period": 0,
+     "printed": "3,963,730,179",
+     "gold_value": 3963730179,
+     "page": 5,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    },
+    {
+     "label": "기말현금및현금성자산",
+     "period": 1,
+     "printed": "1,988,510,006",
+     "gold_value": 1988510006,
+     "page": 5,
+     "result": "missing",
+     "flagged": false,
+     "generic": false
+    }
+   ]
+  }
+ ],
+ "product_statements_not_in_gold": [
+  {
+   "product_index": 2,
+   "statement": "제목 미확인 표",
+   "page": 4,
+   "not_in_gold": 11,
+   "extras_wrong_unmarked": 0,
+   "unjudged_extras": 0,
+   "S1": 0,
+   "flagged": 11,
+   "product_cells": 11,
+   "extras": [
+    {
+     "id": "2/0/1",
+     "statement": "제목 미확인 표",
+     "statement_page": 4,
+     "page": 4,
+     "label": "과 9 00000 ]4469) 기",
+     "period": 1,
+     "printed": "0",
+     "value": 0,
+     "flagged": true,
+     "verdict": null
+    },
+    {
+     "id": "2/0/2",
+     "statement": "제목 미확인 표",
+     "statement_page": 4,
+     "page": 4,
+     "label": "과 9 00000 ]4469) 기",
+     "period": 2,
+     "printed": "1045002",
+     "value": 1045002,
+     "flagged": true,
+     "verdict": null
+    },
+    {
+     "id": "2/0/3",
+     "statement": "제목 미확인 표",
+     "statement_page": 4,
+     "page": 4,
+     "label": "과 9 00000 ]4469) 기",
+     "period": 3,
+     "printed": "00000",
+     "value": 0,
+     "flagged": true,
+     "verdict": null
+    },
+    {
+     "id": "2/1/0",
+     "statement": "제목 미확인 표",
+     "statement_page": 4,
+     "page": 4,
+     "label": "이",
+     "period": 0,
+     "printed": "402404009",
+     "value": 402404009,
+     "flagged": true,
+     "verdict": null
+    },
+    {
+     "id": "2/2/0",
+     "statement": "제목 미확인 표",
+     "statement_page": 4,
+     "page": 4,
+     "label": "다 77777 께제제제제제제매제 . 메제제제제테제제제제 099",
+     "period": 0,
+     "printed": "00490799",
+     "value": 490799,
+     "flagged": true,
+     "verdict": null
+    },
+    {
+     "id": "2/3/1",
+     "statement": "제목 미확인 표",
+     "statement_page": 4,
+     "page": 4,
+     "label": "미 492 의 eres) | 0",
+     "period": 1,
+     "printed": "09395",
+     "value": 9395,
+     "flagged": true,
+     "verdict": null
+    },
+    {
+     "id": "2/4/3",
+     "statement": "제목 미확인 표",
+     "statement_page": 4,
+     "page": 4,
+     "label": "후지 @ 등으로 06226|| 264112620)| (1.490.061.1700)",
+     "period": 3,
+     "printed": "160)",
+     "value": 160,
+     "flagged": true,
+     "verdict": null
+    },
+    {
+     "id": "2/6/0",
+     "statement": "제목 미확인 표",
+     "statement_page": 4,
+     "page": 5,
+     "label": "0906 으로이 62099| - 20401.000000|| 50000]|",
+     "period": 0,
+     "printed": "620929348",
+     "value": 620929348,
+     "flagged": true,
+     "verdict": null
+    },
+    {
+     "id": "2/7/0",
+     "statement": "제목 미확인 표",
+     "statement_page": 4,
+     "page": 5,
+     "label": "드기차일 2 의 3| 22.000000000|ㅣ 64.690000||",
+     "period": 0,
+     "printed": "40940",
+     "value": 40940,
+     "flagged": true,
+     "verdict": null
+    },
+    {
+     "id": "2/8/0",
+     "statement": "제목 미확인 표",
+     "statement_page": 4,
+     "page": 5,
+     "label": "보 6292 소 000000 | 95.00000|| 005.0000||",
+     "period": 0,
+     "printed": "24949",
+     "value": 24949,
+     "flagged": true,
+     "verdict": null
+    },
+    {
+     "id": "2/9/0",
+     "statement": "제목 미확인 표",
+     "statement_page": 4,
+     "page": 5,
+     "label": "보 6292 소 000000 | 95.00000|| 005.0000||",
+     "period": 0,
+     "printed": "04949",
+     "value": 4949,
+     "flagged": true,
+     "verdict": null
+    }
+   ]
+  }
+ ]
+}

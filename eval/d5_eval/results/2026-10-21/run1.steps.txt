@@ -1,0 +1,142 @@
+2026-10-21T04:18:36Z launcher started (pid 54950)
+2026-10-21T04:18:36Z on AC power
+2026-10-21T04:18:36Z model server command: OLLAMA_NO_CLOUD=1 OLLAMA_HOST=127.0.0.1:11434 ollama serve
+2026-10-21T04:18:36Z model server pid 54961
+NAME           ID              SIZE      MODIFIED    
+qwen3-vl:8b    901cae732162    6.1 GB    11 days ago    
+gpt-oss:20b    17052f91a42e    13 GB     2 weeks ago    
+2026-10-21T04:18:38Z checkout HEAD 630b351473a7461a93a0d11aca8b2351e556e890
+ok   the freeze record holds the d5 profile
+ok   the registration is d5's, with its tag and freeze record
+ok   the registration holds d5's list, places, and freeze record
+ok   R is named by the tag d5-registered
+ok   F (d5-frozen) is the registration's, its freeze record the one at HEAD
+ok   F (d5-frozen) is an ancestor of HEAD
+ok   the pushed tag d5-frozen on origin names F
+ok   eval/freeze_d5.json is a regular file at HEAD, reached without a link
+ok   eval/register_d5.json is a regular file at HEAD, reached without a link
+ok   R's only parent is the registered commit, and R adds only the registration record
+ok   F (d5-frozen) is an ancestor of the registered commit
+ok   the registered files at the registered commit are the recorded objects
+ok   HEAD is the registered commit R
+ok   registered eval/freeze_d5.json at HEAD is the recorded object
+ok   registered docs/D5_RUN_PROCEDURE.ko.md at HEAD is the recorded object
+ok   registered docs/EVAL_CONTRACT_D5.ko.md at HEAD is the recorded object
+ok   registered eval/d4_download.py at HEAD is the recorded object
+ok   registered eval/d4_eval/document_list.py at HEAD is the recorded object
+ok   registered eval/d4_eval/official_d4.py at HEAD is the recorded object
+ok   registered eval/d4_eval/position_check.py at HEAD is the recorded object
+ok   registered eval/d4_eval/run_d4.py at HEAD is the recorded object
+ok   registered eval/d4_population.json at HEAD is the recorded object
+ok   registered eval/d4_population.py at HEAD is the recorded object
+ok   registered eval/d5_candidates/00020_01867758.json at HEAD is the recorded object
+ok   registered eval/d5_candidates/00021_00161408.json at HEAD is the recorded object
+ok   registered eval/d5_candidates/00022_01105621.json at HEAD is the recorded object
+ok   registered eval/d5_candidates/00023_00148896.json at HEAD is the recorded object
+ok   registered eval/d5_candidates/00024_00306719.json at HEAD is the recorded object
+ok   registered eval/d5_candidates/00025_00229818.json at HEAD is the recorded object
+ok   registered eval/d5_candidates/00026_01101041.json at HEAD is the recorded object
+ok   registered eval/d5_candidates/00027_00525679.json at HEAD is the recorded object
+ok   registered eval/d5_candidates/00028_01160363.json at HEAD is the recorded object
+ok   registered eval/d5_candidates/00029_00110963.json at HEAD is the recorded object
+ok   registered eval/d5_candidates/00030_00161046.json at HEAD is the recorded object
+ok   registered eval/d5_candidates/00031_00106881.json at HEAD is the recorded object
+ok   registered eval/d5_candidates/00032_01199985.json at HEAD is the recorded object
+ok   registered eval/d5_candidates/00033_01586455.json at HEAD is the recorded object
+ok   registered eval/d5_candidates/00034_01412725.json at HEAD is the recorded object
+ok   registered eval/d5_candidates/00035_01458161.json at HEAD is the recorded object
+ok   registered eval/d5_candidates/00036_01672114.json at HEAD is the recorded object
+ok   registered eval/d5_candidates/00037_00686147.json at HEAD is the recorded object
+ok   registered eval/d5_candidates/00038_00297095.json at HEAD is the recorded object
+ok   registered eval/d5_candidates/00039_00269339.json at HEAD is the recorded object
+ok   registered eval/d5_candidates/00040_00442048.json at HEAD is the recorded object
+ok   registered eval/d5_candidates/NOTES.ko.md at HEAD is the recorded object
+ok   registered eval/d5_candidates/checks.jsonl at HEAD is the recorded object
+ok   registered eval/d5_candidates/downloads.jsonl at HEAD is the recorded object
+ok   registered eval/d5_eval/REVIEW_GUIDE.ko.md at HEAD is the recorded object
+ok   registered eval/d5_eval/build_places.py at HEAD is the recorded object
+ok   registered eval/d5_eval/documents.json at HEAD is the recorded object
+ok   registered eval/d5_eval/draft_mappings.py at HEAD is the recorded object
+ok   registered eval/d5_eval/duplicate_places.json at HEAD is the recorded object
+ok   registered eval/d5_eval/gold/20_01867758.gold.json at HEAD is the recorded object
+ok   registered eval/d5_eval/gold/20_01867758.mapping.json at HEAD is the recorded object
+ok   registered eval/d5_eval/gold/22_01105621.gold.json at HEAD is the recorded object
+ok   registered eval/d5_eval/gold/22_01105621.mapping.json at HEAD is the recorded object
+ok   registered eval/d5_eval/gold/24_00306719.gold.json at HEAD is the recorded object
+ok   registered eval/d5_eval/gold/24_00306719.mapping.json at HEAD is the recorded object
+ok   registered eval/d5_eval/gold/26_01101041.gold.json at HEAD is the recorded object
+ok   registered eval/d5_eval/gold/26_01101041.mapping.json at HEAD is the recorded object
+ok   registered eval/d5_eval/gold/27_00525679.gold.json at HEAD is the recorded object
+ok   registered eval/d5_eval/gold/27_00525679.mapping.json at HEAD is the recorded object
+ok   registered eval/d5_eval/gold/28_01160363.gold.json at HEAD is the recorded object
+ok   registered eval/d5_eval/gold/28_01160363.mapping.json at HEAD is the recorded object
+ok   registered eval/d5_eval/gold/30_00161046.gold.json at HEAD is the recorded object
+ok   registered eval/d5_eval/gold/30_00161046.mapping.json at HEAD is the recorded object
+ok   registered eval/d5_eval/gold/31_00106881.gold.json at HEAD is the recorded object
+ok   registered eval/d5_eval/gold/31_00106881.mapping.json at HEAD is the recorded object
+ok   registered eval/d5_eval/gold/33_01586455.gold.json at HEAD is the recorded object
+ok   registered eval/d5_eval/gold/33_01586455.mapping.json at HEAD is the recorded object
+ok   registered eval/d5_eval/gold/34_01412725.gold.json at HEAD is the recorded object
+ok   registered eval/d5_eval/gold/34_01412725.mapping.json at HEAD is the recorded object
+ok   registered eval/d5_eval/scans/20_01867758.blur.pdf.map.json at HEAD is the recorded object
+ok   registered eval/d5_eval/scans/20_01867758.normal.pdf.map.json at HEAD is the recorded object
+ok   registered eval/d5_eval/scans/20_01867758.tilt.pdf.map.json at HEAD is the recorded object
+ok   registered eval/d5_eval/scans/22_01105621.blur.pdf.map.json at HEAD is the recorded object
+ok   registered eval/d5_eval/scans/22_01105621.normal.pdf.map.json at HEAD is the recorded object
+ok   registered eval/d5_eval/scans/22_01105621.tilt.pdf.map.json at HEAD is the recorded object
+ok   registered eval/d5_eval/scans/24_00306719.blur.pdf.map.json at HEAD is the recorded object
+ok   registered eval/d5_eval/scans/24_00306719.normal.pdf.map.json at HEAD is the recorded object
+ok   registered eval/d5_eval/scans/24_00306719.tilt.pdf.map.json at HEAD is the recorded object
+ok   registered eval/d5_eval/scans/26_01101041.blur.pdf.map.json at HEAD is the recorded object
+ok   registered eval/d5_eval/scans/26_01101041.normal.pdf.map.json at HEAD is the recorded object
+ok   registered eval/d5_eval/scans/26_01101041.tilt.pdf.map.json at HEAD is the recorded object
+ok   registered eval/d5_eval/scans/27_00525679.blur.pdf.map.json at HEAD is the recorded object
+ok   registered eval/d5_eval/scans/27_00525679.normal.pdf.map.json at HEAD is the recorded object
+ok   registered eval/d5_eval/scans/27_00525679.tilt.pdf.map.json at HEAD is the recorded object
+ok   registered eval/d5_eval/scans/28_01160363.blur.pdf.map.json at HEAD is the recorded object
+ok   registered eval/d5_eval/scans/28_01160363.normal.pdf.map.json at HEAD is the recorded object
+ok   registered eval/d5_eval/scans/28_01160363.tilt.pdf.map.json at HEAD is the recorded object
+ok   registered eval/d5_eval/scans/30_00161046.blur.pdf.map.json at HEAD is the recorded object
+ok   registered eval/d5_eval/scans/30_00161046.normal.pdf.map.json at HEAD is the recorded object
+ok   registered eval/d5_eval/scans/30_00161046.tilt.pdf.map.json at HEAD is the recorded object
+ok   registered eval/d5_eval/scans/31_00106881.blur.pdf.map.json at HEAD is the recorded object
+ok   registered eval/d5_eval/scans/31_00106881.normal.pdf.map.json at HEAD is the recorded object
+ok   registered eval/d5_eval/scans/31_00106881.tilt.pdf.map.json at HEAD is the recorded object
+ok   registered eval/d5_eval/scans/33_01586455.blur.pdf.map.json at HEAD is the recorded object
+ok   registered eval/d5_eval/scans/33_01586455.normal.pdf.map.json at HEAD is the recorded object
+ok   registered eval/d5_eval/scans/33_01586455.tilt.pdf.map.json at HEAD is the recorded object
+ok   registered eval/d5_eval/scans/34_01412725.blur.pdf.map.json at HEAD is the recorded object
+ok   registered eval/d5_eval/scans/34_01412725.normal.pdf.map.json at HEAD is the recorded object
+ok   registered eval/d5_eval/scans/34_01412725.tilt.pdf.map.json at HEAD is the recorded object
+ok   registered eval/d5_excluded.json at HEAD is the recorded object
+ok   the registration names the frozen P and T
+ok   product_commit is an ancestor of HEAD
+ok   tools_commit is an ancestor of HEAD
+ok   the pushed tag d5-registered on origin names HEAD
+ok   clean working tree and index (git status --porcelain)
+ok   product dart_review at HEAD is the frozen object
+ok   product pyproject.toml at HEAD is the frozen object
+ok   tools eval/d4_gold.py at HEAD is the frozen object
+ok   tools eval/d4_score.py at HEAD is the frozen object
+ok   tools eval/d4_candidates.py at HEAD is the frozen object
+ok   tools eval/d4_preflight.py at HEAD is the frozen object
+ok   tools eval/d4_scan.py at HEAD is the frozen object
+ok   tools eval/d4_eval/run_d4.py at HEAD is the frozen object
+ok   tools eval/d4_eval/position_check.py at HEAD is the frozen object
+ok   tools eval/d4_eval/official_d4.py at HEAD is the frozen object
+ok   tools eval/d4_eval/document_list.py at HEAD is the frozen object
+ok   dart_review imported from this checkout
+ok   python as frozen
+ok   packages as frozen
+ok   model as frozen
+ok   ollama as frozen
+ok   tesseract as frozen
+ok   macos as frozen
+2026-10-21T04:18:41Z preflight exit 0
+80 calls; inputs match the registered documents; nothing was run
+2026-10-21T04:18:41Z run started
+2026-10-21T05:11:06Z PAUSED by Claude at the user's request (moving): SIGSTOP to score 65764, runner 55200
+55201, launcher 54950
+55338, ollama 54961
+2026-10-21T05:11:14Z PAUSED by Claude at the user's request (moving): SIGSTOP to score 65764 (call 60, 27_00525679.blur.ai), runner 55200, launcher 54950, ollama 54961 and its children 58531; caffeinate 55201 left running
+2026-10-21T10:18:32Z NOT RESUMED: the Mac rebooted at 2026-10-21 18:38 local (09:38 UTC) while the run was paused; every paused process ended. run.json has no finished_at (59 of 80 calls logged, all exit 0), so no call of run1 is official (D4 procedure step 8.6); run1 is kept as an interrupted record and the run is to be done again in run2.

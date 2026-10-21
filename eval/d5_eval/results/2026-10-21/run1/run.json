@@ -1,0 +1,29 @@
+{
+ "started_at": "2026-10-21T04:18:41+00:00",
+ "commit": "630b351473a7461a93a0d11aca8b2351e556e890",
+ "status_porcelain": "",
+ "preflight": {
+  "log": "~/D5_official/run1.preflight.json",
+  "sha256": "1b6e14159d2941ecc90731566d9547c2f1bdb03325ff48f8dd03149a43cbab49",
+  "checked_at": "2026-10-21T04:18:41+00:00"
+ },
+ "python": "3.13.12",
+ "documents_sha256": "930b12eb68f60bf29b28bc78a900522cecb5f68246e02f507bc2fd6b76db8ac0",
+ "readers": [
+  "rules",
+  "ai"
+ ],
+ "calls": 80,
+ "argv": [
+  "--documents",
+  "eval/d5_eval/documents.json",
+  "--pdf-dir",
+  "~/Desktop/D5",
+  "--scan-dir",
+  "~/Desktop/D5/scans",
+  "--out",
+  "~/D5_official/run1",
+  "--preflight",
+  "~/D5_official/run1.preflight.json"
+ ]
+}

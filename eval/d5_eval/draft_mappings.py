@@ -81,7 +81,10 @@ def _amount_forms(value: int) -> list[str]:
 
 
 def _printed_on(line: dict, form: str) -> bool:
-    return re.search(r"(?<![\d,])" + re.escape(form) + r"(?![\d,])", line["compact"]) is not None
+    """``form`` is one of the line's printed amounts: a word of its own, without parentheses or a sign. The words,
+    not the line without spaces: two amounts side by side ("1,210 707") joined into "1,210707" hid both of them
+    (Codex D5 pre-registration review 1)."""
+    return any(re.sub(r"^[(\-−]+|[)]+$", "", word["text"]) == form for word in line["words"])
 
 
 def _sum_note(cells: list[dict], value: int) -> str:

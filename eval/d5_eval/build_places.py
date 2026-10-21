@@ -8,9 +8,10 @@ place, and a wrapped-label fallback for the places it cannot read.
 label. A label printed over two lines around its amounts ("기타포괄손익-공정가치측정 금융자" / amounts / "산", 차바이오텍
 8쪽) has no such line, so the builder stops for the whole document. This script runs the frozen builder on each place
 alone (its own code, ``places_of`` narrowed to that place) and, only where it raises "0 printed lines of that label",
-builds the place itself: a row is a line of the page with no letters whose period column (the frozen rule: amounts
-counted from the right) prints a gold cell of the place, and whose neighbouring lines (the one above and the one
-below, without amounts) join into the label. Every fallback place is listed in the output's ``fallback`` with its
+builds the place itself, for the two places of ``FALLBACK`` only: a row is a line of the page with no letters whose
+period column (the frozen rule: amounts counted from the right) prints a gold cell of the place, and whose
+neighbouring lines (the one above and the one below, without amounts, each within ``TOUCH`` points of it) join
+into the label. Every fallback place is listed in the output's ``fallback`` with its
 lines, and the whole file must pass the frozen ``fits_gold`` against each document's gold. The tool files are not
 changed; ``position_check.py verify`` cannot rebuild a fallback place, so ``--check`` rebuilds and compares instead.
 """
@@ -29,6 +30,11 @@ import position_check as pc  # noqa: E402
 from eval.d4_gold import apply_mapping  # noqa: E402
 
 DOCUMENTS = ROOT / "eval" / "d5_eval" / "documents.json"
+# the only places the fallback may build (D5 contract 6판 11.1): any other place the frozen builder cannot read
+# stops the build (Codex D5 pre-registration review 2)
+FALLBACK = {("27_00525679", "연결재무상태표@8|기타포괄손익-공정가치측정금융자산|0"),
+            ("27_00525679", "연결재무상태표@8|기타포괄손익-공정가치측정금융자산|1")}
+TOUCH = 4.0  # points: the label's lines and the amounts' line touch, as one printed row (they overlap by 1.0 here)
 
 
 def _fallback(document: dict, place: tuple, cells: list[dict], lines: list[dict]) -> dict:
@@ -46,6 +52,8 @@ def _fallback(document: dict, place: tuple, cells: list[dict], lines: list[dict]
             above, below = pc._line_parts(on_page[i - 1]), pc._line_parts(on_page[i + 1])
             if above[1] or below[1] or pc.label_key(d4_gold.clean(above[0] + below[0])) != key:
                 continue
+            if (line["top"] - on_page[i - 1]["bottom"] > TOUCH or on_page[i + 1]["top"] - line["bottom"] > TOUCH):
+                continue  # three lines apart on the page are not one printed row
             text = amounts[len(amounts) - columns + period]
             fit = next((c for c in here if pc._norm(c["printed"]) == pc._norm(text)), None)
             if fit is None:
@@ -78,7 +86,8 @@ def build(documents: dict, pdf_dir: Path) -> dict:
                     built = pc.build({"documents": [document]}, pdf_dir)
                     places += built["documents"][document["key"]]["places"]
                 except ValueError as exc:
-                    if "0 printed lines of that label" not in str(exc):
+                    if "0 printed lines of that label" not in str(exc) or \
+                            (document["key"], pc.place_id(*place)) not in FALLBACK:
                         raise
                     entry, evidence = _fallback(document, place, cells, lines)
                     places.append(entry)

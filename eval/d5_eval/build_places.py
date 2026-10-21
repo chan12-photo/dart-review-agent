@@ -1,4 +1,4 @@
-"""D5 registered places for the position check (D4 contract 4.6, D5 contract 6판 2절): the frozen builder, place by
+"""D5 registered places for the position check (D4 contract 4.6, D5 contract 6판 11.1): the frozen builder, place by
 place, and a wrapped-label fallback for the places it cannot read.
 
     python eval/d5_eval/build_places.py --pdf-dir ~/Desktop/D5 --out eval/d5_eval/duplicate_places.json

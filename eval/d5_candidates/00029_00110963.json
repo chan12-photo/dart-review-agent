@@ -1,0 +1,28 @@
+{
+ "rank": 29,
+ "corp_code": "00110963",
+ "corp_name": "대아건설",
+ "stock_code": "000380",
+ "induty_code": "41221",
+ "company_fetched_at": "2026-10-15T14:47:17+00:00",
+ "company_status": "000",
+ "filings": [],
+ "list_fetched_at": [
+  "2026-10-15T14:47:18+00:00"
+ ],
+ "recorded_at": "2026-10-15T14:47:18+00:00",
+ "copied_from": {
+  "path": "eval/d4_candidates/00029_00110963.json",
+  "git_object": "d273abeea447e7ec862f934a05fd3b2ce63f270b",
+  "commit": "7293deca0a995b75eebbe10535c3227aa1df2eac",
+  "company_fetched_at": "2026-10-15T14:47:17+00:00",
+  "list_fetched_at": [
+   "2026-10-15T14:47:18+00:00"
+  ],
+  "left_out": [
+   "attachments"
+  ],
+  "why": "D5 contract 5: D4 records of ranks 20-30 reused (user decision 2026-10-21); attachment names are recorded anew from the DART screen in the D5 file only"
+ },
+ "attachments": {}
+}

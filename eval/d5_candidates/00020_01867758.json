@@ -1,0 +1,51 @@
+{
+ "rank": 20,
+ "corp_code": "01867758",
+ "corp_name": "한화비전",
+ "stock_code": "489790",
+ "induty_code": "264",
+ "company_fetched_at": "2026-10-15T14:47:08+00:00",
+ "company_status": "000",
+ "filings": [
+  {
+   "rcept_no": "20260513000735",
+   "report_nm": "분기보고서 (2026.03)",
+   "rcept_dt": "20260513",
+   "corp_name": "한화비전",
+   "flr_nm": "한화비전"
+  },
+  {
+   "rcept_no": "20260330000608",
+   "report_nm": "[첨부정정]사업보고서 (2025.12)",
+   "rcept_dt": "20260330",
+   "corp_name": "한화비전",
+   "flr_nm": "한화비전"
+  },
+  {
+   "rcept_no": "20260316001204",
+   "report_nm": "사업보고서 (2025.12)",
+   "rcept_dt": "20260316",
+   "corp_name": "한화비전",
+   "flr_nm": "한화비전"
+  }
+ ],
+ "list_fetched_at": [
+  "2026-10-15T14:47:08+00:00"
+ ],
+ "recorded_at": "2026-10-15T14:47:08+00:00",
+ "copied_from": {
+  "path": "eval/d4_candidates/00020_01867758.json",
+  "git_object": "c22bf3058aa1742ffc1aff2c962067de46cfd36c",
+  "commit": "7293deca0a995b75eebbe10535c3227aa1df2eac",
+  "company_fetched_at": "2026-10-15T14:47:08+00:00",
+  "list_fetched_at": [
+   "2026-10-15T14:47:08+00:00"
+  ],
+  "left_out": [
+   "attachments",
+   "attachments_recorded"
+  ],
+  "why": "D5 contract 5: D4 records of ranks 20-30 reused (user decision 2026-10-21); attachment names are recorded anew from the DART screen in the D5 file only"
+ },
+ "attachments": {}
+}

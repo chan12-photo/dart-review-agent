@@ -1,0 +1,43 @@
+{
+ "rank": 26,
+ "corp_code": "01101041",
+ "corp_name": "패션플랫폼",
+ "stock_code": "225590",
+ "induty_code": "141",
+ "company_fetched_at": "2026-10-15T14:47:14+00:00",
+ "company_status": "000",
+ "filings": [
+  {
+   "rcept_no": "20260515002486",
+   "report_nm": "분기보고서 (2026.03)",
+   "rcept_dt": "20260515",
+   "corp_name": "패션플랫폼",
+   "flr_nm": "패션플랫폼"
+  },
+  {
+   "rcept_no": "20260320000970",
+   "report_nm": "사업보고서 (2025.12)",
+   "rcept_dt": "20260320",
+   "corp_name": "패션플랫폼",
+   "flr_nm": "패션플랫폼"
+  }
+ ],
+ "list_fetched_at": [
+  "2026-10-15T14:47:15+00:00"
+ ],
+ "recorded_at": "2026-10-15T14:47:15+00:00",
+ "copied_from": {
+  "path": "eval/d4_candidates/00026_01101041.json",
+  "git_object": "ae1ca591479aa03821b0e817031fc995f08e3a22",
+  "commit": "7293deca0a995b75eebbe10535c3227aa1df2eac",
+  "company_fetched_at": "2026-10-15T14:47:14+00:00",
+  "list_fetched_at": [
+   "2026-10-15T14:47:15+00:00"
+  ],
+  "left_out": [
+   "attachments"
+  ],
+  "why": "D5 contract 5: D4 records of ranks 20-30 reused (user decision 2026-10-21); attachment names are recorded anew from the DART screen in the D5 file only"
+ },
+ "attachments": {}
+}

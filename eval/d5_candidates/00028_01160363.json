@@ -1,0 +1,43 @@
+{
+ "rank": 28,
+ "corp_code": "01160363",
+ "corp_name": "에코프로비엠",
+ "stock_code": "247540",
+ "induty_code": "28202",
+ "company_fetched_at": "2026-10-15T14:47:16+00:00",
+ "company_status": "000",
+ "filings": [
+  {
+   "rcept_no": "20260515001109",
+   "report_nm": "분기보고서 (2026.03)",
+   "rcept_dt": "20260515",
+   "corp_name": "에코프로비엠",
+   "flr_nm": "에코프로비엠"
+  },
+  {
+   "rcept_no": "20260318001622",
+   "report_nm": "사업보고서 (2025.12)",
+   "rcept_dt": "20260318",
+   "corp_name": "에코프로비엠",
+   "flr_nm": "에코프로비엠"
+  }
+ ],
+ "list_fetched_at": [
+  "2026-10-15T14:47:17+00:00"
+ ],
+ "recorded_at": "2026-10-15T14:47:17+00:00",
+ "copied_from": {
+  "path": "eval/d4_candidates/00028_01160363.json",
+  "git_object": "aca274cd315e4a77e4f5991710c44493cf265353",
+  "commit": "7293deca0a995b75eebbe10535c3227aa1df2eac",
+  "company_fetched_at": "2026-10-15T14:47:16+00:00",
+  "list_fetched_at": [
+   "2026-10-15T14:47:17+00:00"
+  ],
+  "left_out": [
+   "attachments"
+  ],
+  "why": "D5 contract 5: D4 records of ranks 20-30 reused (user decision 2026-10-21); attachment names are recorded anew from the DART screen in the D5 file only"
+ },
+ "attachments": {}
+}

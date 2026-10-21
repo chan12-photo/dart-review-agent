@@ -1,0 +1,43 @@
+{
+ "rank": 30,
+ "corp_code": "00161046",
+ "corp_name": "한독",
+ "stock_code": "002390",
+ "induty_code": "212",
+ "company_fetched_at": "2026-10-15T14:47:18+00:00",
+ "company_status": "000",
+ "filings": [
+  {
+   "rcept_no": "20260514001203",
+   "report_nm": "분기보고서 (2026.03)",
+   "rcept_dt": "20260514",
+   "corp_name": "한독",
+   "flr_nm": "한독"
+  },
+  {
+   "rcept_no": "20260318000762",
+   "report_nm": "[첨부추가]사업보고서 (2025.12)",
+   "rcept_dt": "20260318",
+   "corp_name": "한독",
+   "flr_nm": "한독"
+  }
+ ],
+ "list_fetched_at": [
+  "2026-10-15T14:47:19+00:00"
+ ],
+ "recorded_at": "2026-10-15T14:47:19+00:00",
+ "copied_from": {
+  "path": "eval/d4_candidates/00030_00161046.json",
+  "git_object": "9b4174245aa711f3ea98366962289b5a84a7a38e",
+  "commit": "7293deca0a995b75eebbe10535c3227aa1df2eac",
+  "company_fetched_at": "2026-10-15T14:47:18+00:00",
+  "list_fetched_at": [
+   "2026-10-15T14:47:19+00:00"
+  ],
+  "left_out": [
+   "attachments"
+  ],
+  "why": "D5 contract 5: D4 records of ranks 20-30 reused (user decision 2026-10-21); attachment names are recorded anew from the DART screen in the D5 file only"
+ },
+ "attachments": {}
+}

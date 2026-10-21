@@ -1,0 +1,43 @@
+{
+ "rank": 23,
+ "corp_code": "00148896",
+ "corp_name": "OCI홀딩스",
+ "stock_code": "010060",
+ "induty_code": "64992",
+ "company_fetched_at": "2026-10-15T14:47:11+00:00",
+ "company_status": "000",
+ "filings": [
+  {
+   "rcept_no": "20260514000992",
+   "report_nm": "분기보고서 (2026.03)",
+   "rcept_dt": "20260514",
+   "corp_name": "OCI홀딩스",
+   "flr_nm": "OCI홀딩스"
+  },
+  {
+   "rcept_no": "20260318000617",
+   "report_nm": "사업보고서 (2025.12)",
+   "rcept_dt": "20260318",
+   "corp_name": "OCI홀딩스",
+   "flr_nm": "OCI홀딩스"
+  }
+ ],
+ "list_fetched_at": [
+  "2026-10-15T14:47:12+00:00"
+ ],
+ "recorded_at": "2026-10-15T14:47:12+00:00",
+ "copied_from": {
+  "path": "eval/d4_candidates/00023_00148896.json",
+  "git_object": "55ac005a63ae330e5726e1bc686a9445c81313a2",
+  "commit": "7293deca0a995b75eebbe10535c3227aa1df2eac",
+  "company_fetched_at": "2026-10-15T14:47:11+00:00",
+  "list_fetched_at": [
+   "2026-10-15T14:47:12+00:00"
+  ],
+  "left_out": [
+   "attachments"
+  ],
+  "why": "D5 contract 5: D4 records of ranks 20-30 reused (user decision 2026-10-21); attachment names are recorded anew from the DART screen in the D5 file only"
+ },
+ "attachments": {}
+}

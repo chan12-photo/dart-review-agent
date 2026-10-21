@@ -1,0 +1,57 @@
+{
+ "rank": 27,
+ "corp_code": "00525679",
+ "corp_name": "차바이오텍",
+ "stock_code": "085660",
+ "induty_code": "211",
+ "company_fetched_at": "2026-10-15T14:47:15+00:00",
+ "company_status": "000",
+ "filings": [
+  {
+   "rcept_no": "20260609000370",
+   "report_nm": "[기재정정]사업보고서 (2025.12)",
+   "rcept_dt": "20260609",
+   "corp_name": "차바이오텍",
+   "flr_nm": "차바이오텍"
+  },
+  {
+   "rcept_no": "20260515000195",
+   "report_nm": "분기보고서 (2026.03)",
+   "rcept_dt": "20260515",
+   "corp_name": "차바이오텍",
+   "flr_nm": "차바이오텍"
+  },
+  {
+   "rcept_no": "20260331004822",
+   "report_nm": "[기재정정]사업보고서 (2025.12)",
+   "rcept_dt": "20260331",
+   "corp_name": "차바이오텍",
+   "flr_nm": "차바이오텍"
+  },
+  {
+   "rcept_no": "20260320001318",
+   "report_nm": "사업보고서 (2025.12)",
+   "rcept_dt": "20260320",
+   "corp_name": "차바이오텍",
+   "flr_nm": "차바이오텍"
+  }
+ ],
+ "list_fetched_at": [
+  "2026-10-15T14:47:16+00:00"
+ ],
+ "recorded_at": "2026-10-15T14:47:16+00:00",
+ "copied_from": {
+  "path": "eval/d4_candidates/00027_00525679.json",
+  "git_object": "ef14730a7d1a02d6ece5d45d1a6379db401de194",
+  "commit": "7293deca0a995b75eebbe10535c3227aa1df2eac",
+  "company_fetched_at": "2026-10-15T14:47:15+00:00",
+  "list_fetched_at": [
+   "2026-10-15T14:47:16+00:00"
+  ],
+  "left_out": [
+   "attachments"
+  ],
+  "why": "D5 contract 5: D4 records of ranks 20-30 reused (user decision 2026-10-21); attachment names are recorded anew from the DART screen in the D5 file only"
+ },
+ "attachments": {}
+}

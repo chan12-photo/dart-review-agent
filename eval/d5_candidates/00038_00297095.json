@@ -25,6 +25,24 @@
  "list_fetched_at": [
   "2026-10-21T01:11:17+00:00"
  ],
- "attachments": {},
- "recorded_at": "2026-10-21T01:11:17+00:00"
+ "attachments": {
+  "20260319000720": [
+   "2026.03.19 감사보고서",
+   "2026.03.19 감사의감사보고서",
+   "2026.03.19 내부감시장치에대한감사의의견서",
+   "2026.03.19 내부회계관리제도운영보고서",
+   "2026.03.19 연결감사보고서",
+   "2026.03.19 영업보고서",
+   "2026.03.19 자기주식보고서",
+   "2026.03.19 정관"
+  ]
+ },
+ "recorded_at": "2026-10-21T01:11:17+00:00",
+ "attachments_recorded": {
+  "20260319000720": {
+   "by": "user",
+   "how": "DART web 첨부 select box, screenshot sent in chat 2026-10-21 (13 screenshots, one per company); the page is the filing Claude linked as https://dart.fss.or.kr/dsaf001/main.do?rcpNo=<rcept_no>; '+첨부선택+' left out; transcribed by Claude in the order shown",
+   "at": "2026-10-21"
+  }
+ }
 }

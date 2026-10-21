@@ -1,0 +1,81 @@
+{
+ "product_commit": "180e621e21713933484fd830a33ea9a05bd271d4",
+ "tools_commit": "54d6fcdbd70d06b814923b260ca79fe753ec0c2b",
+ "objects": {
+  "product": {
+   "dart_review": "16ad0213c00a69a5aa53d0be19619a3a5be9ef5d",
+   "pyproject.toml": "ec33ff10d002fd9bcd52efa587df2e0023d6a894"
+  },
+  "tools": {
+   "eval/d4_gold.py": "bb7ffe6d2c55aa002df940f8eced1830d671dbf1",
+   "eval/d4_score.py": "2e79d79c4e698133393cdeb34c5920b3a7805fc7",
+   "eval/d4_candidates.py": "59c91f8654b99f97148071cc60b41e83236f9091",
+   "eval/d4_preflight.py": "c5da79d35b8b1996bd8ef4bcb0266d1433a96f3d",
+   "eval/d4_scan.py": "b6bef64eea911ddaf92f98a966a6a5dd17358815",
+   "eval/d4_eval/run_d4.py": "474e040ced17a1fce775bca54a99f04994756461",
+   "eval/d4_eval/position_check.py": "e376926f6abe2de2a1ea512b04d334007dcbd3f3",
+   "eval/d4_eval/official_d4.py": "aa9ab81b2847fe06a41078e06eebc53313dc31f7",
+   "eval/d4_eval/document_list.py": "201be9ae06b5f253e4d3ca8a6599c9c28de8dbe8"
+  }
+ },
+ "environment": {
+  "python": "3.13.12",
+  "packages": [
+   "annotated-doc==0.0.5",
+   "annotated-types==0.8.0",
+   "anyio==4.15.1",
+   "cffi==2.1.1",
+   "charset-normalizer==3.5.2",
+   "click==8.5.0",
+   "cryptography==50.0.2",
+   "et_xmlfile==2.0.0",
+   "fastapi==0.143.0",
+   "h11==0.16.0",
+   "idna==3.20",
+   "openpyxl==3.1.5",
+   "opentelemetry-api==1.45.1",
+   "pdfminer.six==20260107",
+   "pdfplumber==0.11.10",
+   "pillow==12.3.0",
+   "pip==26.2.1",
+   "pycparser==3.11",
+   "pydantic==2.14.0",
+   "pydantic_core==2.50.0",
+   "pypdfium2==5.14.0",
+   "python-multipart==0.0.32",
+   "starlette==1.7.0",
+   "typing-inspection==0.4.4",
+   "typing_extensions==4.16.0",
+   "uvicorn==0.54.0"
+  ],
+  "model": {
+   "qwen3-vl:8b": "901cae732162"
+  },
+  "ollama": "ollama version is 0.34.4",
+  "tesseract": "tesseract 5.5.3",
+  "macos": "27.2"
+ },
+ "frozen_at": "2026-10-21T01:00:13+00:00",
+ "profile": {
+  "name": "d5",
+  "documents": "eval/d5_eval/documents.json",
+  "places": "eval/d5_eval/duplicate_places.json",
+  "freeze": "eval/freeze_d5.json",
+  "register": "eval/register_d5.json",
+  "tag": "d5-registered",
+  "frozen_tag": "d5-frozen",
+  "tool_paths": [
+   "eval/d4_gold.py",
+   "eval/d4_score.py",
+   "eval/d4_candidates.py",
+   "eval/d4_preflight.py",
+   "eval/d4_scan.py",
+   "eval/d4_eval/run_d4.py",
+   "eval/d4_eval/position_check.py",
+   "eval/d4_eval/official_d4.py",
+   "eval/d4_eval/document_list.py"
+  ],
+  "product_commit": "180e621e21713933484fd830a33ea9a05bd271d4",
+  "expected_documents": 10
+ }
+}

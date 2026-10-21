@@ -1,6 +1,6 @@
 # D5 평가 ⑥ 정답 매핑표 검토 안내 (사용자 확인용)
 
-- 작성: 2026-10-21, Claude 1차 (`status: draft`). 등록 전 Codex 검토([결과](../../docs/reviews/D5_registration_codex_result.ko.md)) 1번을 반영해 근거 메모 7개를 고쳤다. 결정은 바뀌지 않았다.
+- 작성: 2026-10-21, Claude 1차 (`status: draft`). **2026-10-21 사용자 확인 → `confirmed`** (결정은 그대로). 등록 전 Codex 검토([결과](../../docs/reviews/D5_registration_codex_result.ko.md)) 1번을 반영해 근거 메모 7개를 고쳤다. 결정은 바뀌지 않았다.
 - 대상: `eval/d5_eval/gold/<순번>_<고유번호>.gold.json`(정답 생성기 출력)과 `.mapping.json`(사람이 정할 항목의 결정) 10쌍.
 - **만든 방법:** [`draft_mappings.py`](draft_mappings.py).
   - 145개 결정 가운데 141개는 세 가지 근거 규칙으로 정했다.

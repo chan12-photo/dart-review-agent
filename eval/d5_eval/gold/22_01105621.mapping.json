@@ -1,5 +1,8 @@
 {
- "status": "draft",
+ "status": "confirmed",
+ "drafted_by": "Claude (eval/d5_eval/draft_mappings.py)",
+ "confirmed_by": "사용자 (chan12-photo)",
+ "confirmed_at": "2026-10-21T03:51:03+00:00",
  "basis": "PDF 글자 층(정답 생성기의 lines_of)의 인쇄 줄과 정답, OpenDART 캐시(cache/d4, fnlttSinglAcntAll, 2025, 11011, CFS)를 항목마다 대조했다. 합·차는 원 단위 정수로 계산해 맞는 것만 적었다. 사용자 확인 전이다.",
  "decisions": {
   "n1": {

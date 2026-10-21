@@ -48,3 +48,4 @@
 - **확인:**
   - 합성 사례 9개가 모두 맞다. 찾는 것: 붙은 두 금액, `△`, 괄호, `-`, `−`. 찾지 않는 것: 붙은 숫자 "1,210707", 글자가 붙은 단어, 쉼표 위치가 다른 수.
   - `--replace-drafts`로 다시 만든 매핑표 10개는 커밋된 것과 바이트 단위로 같다.
+- **두 번째 재확인:** [`D5_registration_recheck2_codex_result.ko.md`](D5_registration_recheck2_codex_result.ko.md). "등록 전에 고칠 것 없음"이다.

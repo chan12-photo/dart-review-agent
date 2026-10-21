@@ -1,9 +1,10 @@
-# D5 문서 → 엑셀 정확도 평가 계약 (초안 4판, 2026-10-21)
+# D5 문서 → 엑셀 정확도 평가 계약 (초안 5판, 2026-10-21)
 
-- 상태: **초안 4판.**
+- 상태: **초안 5판.**
   - 2판: Codex 1차 검토(치명 1, 중요 5, 사소 1)를 반영했다([결과](reviews/D5_contract_codex_result.ko.md), [응답](reviews/D5_contract_codex_response.ko.md)).
   - 3판: Codex 재검토(치명 1, 중요 2, 사소 1)를 반영했다([결과](reviews/D5_contract_recheck_codex_result.ko.md), [응답](reviews/D5_contract_recheck_codex_response.ko.md)).
   - 4판: Codex 3차 검토(치명 1, 중요 1, 사소 2)를 반영했다([결과](reviews/D5_contract_recheck2_codex_result.ko.md), [응답](reviews/D5_contract_recheck2_codex_response.ko.md)).
+  - 5판: Codex 4차 확인(중요 1)을 반영했다([결과](reviews/D5_contract_recheck3_codex_result.ko.md), [응답](reviews/D5_contract_recheck3_codex_response.ko.md)).
 - 아직 정하지 않은 것: **D5를 할지는 사용자 결정(9절) 전이다.** 계획은 [`EVAL_PLAN_D5.ko.md`](EVAL_PLAN_D5.ko.md)에 있다.
 - **이 계약은 D4 계약 7판([`EVAL_CONTRACT_D4.ko.md`](EVAL_CONTRACT_D4.ko.md))을 따른다.** 다른 점은 이 문서에 적는다. 파일과 명령은 2절의 표가 정한다. "D4"를 "D5"로 바꿔 읽는 식의 포괄 치환은 하지 않는다.
 - 목적: D4가 찾은 결함을 고친 제품이 **처음 보는 문서**에서 무엇을 내는지 잰다. 볼 것은 표시 없이 틀린 값·계정명, 가리키지 않은 빠진 칸이다. 기준은 D4와 같다(텍스트 PDF S1 = L1 = S2 = 0, 합성 스캔 S1 = 0).
@@ -44,6 +45,8 @@
     - 등록 파일에는 문서 목록, 위치 검사 등록 자리, 목록이 가리키는 정답·매핑표·대응표 전부가 들어가야 한다. 빠지면 등록하지 않는다.
     - 문서 목록은 고정 기록의 N으로 검사한다.
     - 로컬과 `origin`의 `d5-frozen`이 같은 커밋 F를 가리켜야 하고, HEAD의 고정 기록이 F의 것과 같은 객체여야 한다. 등록 기록에 F와 그 객체를 적는다.
+    - **등록 시점의 HEAD는 F의 자손이어야 한다.** F 옆의 가지에서 등록하지 않는다(Codex 4차 1번).
+    - 등록 뒤에는 등록 기록 하나만 더한 커밋을 R로 만든다. R의 부모는 등록 시점의 HEAD(`based_on`) 하나뿐이다. 병합 커밋은 R이 될 수 없다.
     - 고정 기록과 등록 기록은 링크가 아닌 일반 파일이어야 한다(Codex 3차 2번).
   - ⑧: `python eval/d4_preflight.py check --profile d5 --freeze eval/freeze_d5.json --register eval/register_d5.json --registered d5-registered --remote origin --log <실행 폴더>.preflight.json`
     - 점검은 다음을 확인한다.
@@ -52,6 +55,8 @@
       - 등록 기록의 F가 로컬 `d5-frozen`이고 HEAD의 조상이며, `origin`의 `d5-frozen`도 F를 가리키는지
       - 고정 기록이 F의 것과 같은 객체인지
       - 고정·등록 기록이 HEAD에서 일반 파일인지
+      - R의 부모가 등록 기록의 `based_on` 하나뿐이고, 둘 사이에 바뀐 파일이 등록 기록 하나뿐인지
+      - F가 `based_on`의 조상인지, 등록 파일들이 `based_on`에서도 기록된 객체인지
   - ⑧ 실행: `python eval/d4_eval/run_d4.py --pdf-dir <D5 PDF 폴더> --scan-dir <D5 스캔 폴더> --out <실행 폴더> --documents eval/d5_eval/documents.json --preflight <실행 폴더>.preflight.json`
     - 실행기는 점검 로그의 프로필이 d5인지 확인한다(프로필이 없는 로그는 D4의 것이다).
   - ⑨의 정확한 명령(`position_check.py … --documents eval/d5_eval/documents.json`, `official_d4.py --documents … --places eval/d5_eval/duplicate_places.json`)은 절차서에 적는다.

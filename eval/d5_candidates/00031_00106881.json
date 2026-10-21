@@ -1,0 +1,30 @@
+{
+ "rank": 31,
+ "corp_code": "00106881",
+ "corp_name": "인디에프",
+ "stock_code": "014990",
+ "induty_code": "14112",
+ "company_fetched_at": "2026-10-21T01:11:09+00:00",
+ "company_status": "000",
+ "filings": [
+  {
+   "rcept_no": "20260515002197",
+   "report_nm": "분기보고서 (2026.03)",
+   "rcept_dt": "20260515",
+   "corp_name": "인디에프",
+   "flr_nm": "인디에프"
+  },
+  {
+   "rcept_no": "20260319000445",
+   "report_nm": "사업보고서 (2025.12)",
+   "rcept_dt": "20260319",
+   "corp_name": "인디에프",
+   "flr_nm": "인디에프"
+  }
+ ],
+ "list_fetched_at": [
+  "2026-10-21T01:11:10+00:00"
+ ],
+ "attachments": {},
+ "recorded_at": "2026-10-21T01:11:10+00:00"
+}

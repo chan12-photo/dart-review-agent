@@ -1,0 +1,30 @@
+{
+ "rank": 34,
+ "corp_code": "01412725",
+ "corp_name": "두산퓨얼셀",
+ "stock_code": "336260",
+ "induty_code": "28111",
+ "company_fetched_at": "2026-10-21T01:11:12+00:00",
+ "company_status": "000",
+ "filings": [
+  {
+   "rcept_no": "20260514001059",
+   "report_nm": "분기보고서 (2026.03)",
+   "rcept_dt": "20260514",
+   "corp_name": "두산퓨얼셀",
+   "flr_nm": "두산퓨얼셀"
+  },
+  {
+   "rcept_no": "20260318001264",
+   "report_nm": "사업보고서 (2025.12)",
+   "rcept_dt": "20260318",
+   "corp_name": "두산퓨얼셀",
+   "flr_nm": "두산퓨얼셀"
+  }
+ ],
+ "list_fetched_at": [
+  "2026-10-21T01:11:13+00:00"
+ ],
+ "attachments": {},
+ "recorded_at": "2026-10-21T01:11:13+00:00"
+}

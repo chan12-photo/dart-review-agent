@@ -1,0 +1,30 @@
+{
+ "rank": 40,
+ "corp_code": "00442048",
+ "corp_name": "아바텍",
+ "stock_code": "149950",
+ "induty_code": "26211",
+ "company_fetched_at": "2026-10-21T01:11:18+00:00",
+ "company_status": "000",
+ "filings": [
+  {
+   "rcept_no": "20260515000149",
+   "report_nm": "분기보고서 (2026.03)",
+   "rcept_dt": "20260515",
+   "corp_name": "아바텍",
+   "flr_nm": "아바텍"
+  },
+  {
+   "rcept_no": "20260312001140",
+   "report_nm": "사업보고서 (2025.12)",
+   "rcept_dt": "20260312",
+   "corp_name": "아바텍",
+   "flr_nm": "아바텍"
+  }
+ ],
+ "list_fetched_at": [
+  "2026-10-21T01:11:19+00:00"
+ ],
+ "attachments": {},
+ "recorded_at": "2026-10-21T01:11:19+00:00"
+}

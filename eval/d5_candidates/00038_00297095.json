@@ -1,0 +1,30 @@
+{
+ "rank": 38,
+ "corp_code": "00297095",
+ "corp_name": "나라엠앤디",
+ "stock_code": "051490",
+ "induty_code": "292",
+ "company_fetched_at": "2026-10-21T01:11:16+00:00",
+ "company_status": "000",
+ "filings": [
+  {
+   "rcept_no": "20260515001501",
+   "report_nm": "분기보고서 (2026.03)",
+   "rcept_dt": "20260515",
+   "corp_name": "나라엠앤디",
+   "flr_nm": "나라엠앤디"
+  },
+  {
+   "rcept_no": "20260319000720",
+   "report_nm": "사업보고서 (2025.12)",
+   "rcept_dt": "20260319",
+   "corp_name": "나라엠앤디",
+   "flr_nm": "나라엠앤디"
+  }
+ ],
+ "list_fetched_at": [
+  "2026-10-21T01:11:17+00:00"
+ ],
+ "attachments": {},
+ "recorded_at": "2026-10-21T01:11:17+00:00"
+}

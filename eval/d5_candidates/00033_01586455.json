@@ -1,0 +1,30 @@
+{
+ "rank": 33,
+ "corp_code": "01586455",
+ "corp_name": "꿈비",
+ "stock_code": "407400",
+ "induty_code": "32099",
+ "company_fetched_at": "2026-10-21T01:11:11+00:00",
+ "company_status": "000",
+ "filings": [
+  {
+   "rcept_no": "20260515002463",
+   "report_nm": "분기보고서 (2026.03)",
+   "rcept_dt": "20260515",
+   "corp_name": "꿈비",
+   "flr_nm": "꿈비"
+  },
+  {
+   "rcept_no": "20260320000669",
+   "report_nm": "사업보고서 (2025.12)",
+   "rcept_dt": "20260320",
+   "corp_name": "꿈비",
+   "flr_nm": "꿈비"
+  }
+ ],
+ "list_fetched_at": [
+  "2026-10-21T01:11:12+00:00"
+ ],
+ "attachments": {},
+ "recorded_at": "2026-10-21T01:11:12+00:00"
+}

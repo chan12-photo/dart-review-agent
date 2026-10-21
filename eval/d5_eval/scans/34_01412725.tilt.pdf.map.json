@@ -1,0 +1,17 @@
+{
+ "source": "34_두산퓨얼셀.pdf",
+ "source_sha256": "c06117117b9fa0ea500bf5068f8d8474fe2a8c8317901c79fb0d35528b436d9a",
+ "condition": "tilt",
+ "dpi": 150,
+ "rotate": 1.0,
+ "blur": 0.0,
+ "pages": [
+  9,
+  10,
+  11,
+  13
+ ],
+ "scan": "34_01412725.tilt.pdf",
+ "scan_sha256": "6649b47f056a3e815810ca944422a4555d364c4db0e630aee1f9cbac519d5025",
+ "pixels_sha256": "c2feac66874350e49a14d210cfc899a6bd34b9f6729f01d263f5aa94696a805a"
+}

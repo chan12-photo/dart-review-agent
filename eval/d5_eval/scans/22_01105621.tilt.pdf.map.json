@@ -1,0 +1,19 @@
+{
+ "source": "22_엔투텍.pdf",
+ "source_sha256": "c67873f187e3a6e4f07966ae36f0cac9c4661a31741d7b6ef789c33697605877",
+ "condition": "tilt",
+ "dpi": 150,
+ "rotate": 1.0,
+ "blur": 0.0,
+ "pages": [
+  8,
+  9,
+  10,
+  11,
+  13,
+  14
+ ],
+ "scan": "22_01105621.tilt.pdf",
+ "scan_sha256": "f8d01d6c2c8fe293732c8813b8904da837b225fe71cb872440c21b347cf3118c",
+ "pixels_sha256": "ae917db7a68d0703ccc167466df4c9324b3133fc5e1bd478ee0e187105344ab1"
+}

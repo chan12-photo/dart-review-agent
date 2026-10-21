@@ -1,0 +1,18 @@
+{
+ "source": "31_인디에프.pdf",
+ "source_sha256": "5a4a9cc57f752d6a7971659e6bc825c2c257528e15d73f123c2ab36eb8faddf0",
+ "condition": "blur",
+ "dpi": 150,
+ "rotate": 0.0,
+ "blur": 1.2,
+ "pages": [
+  7,
+  8,
+  9,
+  11,
+  12
+ ],
+ "scan": "31_00106881.blur.pdf",
+ "scan_sha256": "85ff59471e598baea76d515ec26730f735856a53f353f33d2da2b2d0d76957cd",
+ "pixels_sha256": "6c89453749b5f2c33b1cfb722a3db07b4dad52ba97fc99cdd790d38bc02a3e84"
+}

@@ -1,0 +1,20 @@
+{
+ "source": "27_차바이오텍.pdf",
+ "source_sha256": "2b8837287bbb55caeacf90fe6ccdd25e0bfce8973cd230ca0c93bcd044251b84",
+ "condition": "tilt",
+ "dpi": 150,
+ "rotate": 1.0,
+ "blur": 0.0,
+ "pages": [
+  8,
+  9,
+  10,
+  11,
+  13,
+  14,
+  15
+ ],
+ "scan": "27_00525679.tilt.pdf",
+ "scan_sha256": "f2e76da68201f7d5fa8078b05179cc5f9a878016ccb7b7bff59c01e1af54595a",
+ "pixels_sha256": "7b8b9fd62703922b2d9574850fc8f324dbf0944e6921938405534c4c0c31b45f"
+}

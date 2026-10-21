@@ -1,0 +1,18 @@
+{
+ "source": "30_한독.pdf",
+ "source_sha256": "55d7e040a4acfbc2a88de2407bb3b39e90a5ac35456527a4f93d3a44e8841f8b",
+ "condition": "blur",
+ "dpi": 150,
+ "rotate": 0.0,
+ "blur": 1.2,
+ "pages": [
+  8,
+  9,
+  10,
+  11,
+  13
+ ],
+ "scan": "30_00161046.blur.pdf",
+ "scan_sha256": "cd5b6bf417057e506d7c4bfeb46990015dd3b398c37b8ad1d27ba1025caca483",
+ "pixels_sha256": "159ae704764015be282a0ca6d8f0143c063683def94c0429051d32dc3cb6b6dc"
+}

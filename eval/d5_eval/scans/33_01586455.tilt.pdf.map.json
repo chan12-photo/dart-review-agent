@@ -1,0 +1,18 @@
+{
+ "source": "33_꿈비.pdf",
+ "source_sha256": "b45b58b7563fa488c4cb581a36d9c932d48dbf5a99bf5ebb534c2b0878f9c9eb",
+ "condition": "tilt",
+ "dpi": 150,
+ "rotate": 1.0,
+ "blur": 0.0,
+ "pages": [
+  7,
+  8,
+  9,
+  11,
+  12
+ ],
+ "scan": "33_01586455.tilt.pdf",
+ "scan_sha256": "4b7ec29bf95b44580880b9533d74fdde3522117157100796694386b00c4fe71a",
+ "pixels_sha256": "35c5ae312989e9d21ee3ba2b4f4e50d1ebc6397cb30374604dc6f3a95d2aa60a"
+}

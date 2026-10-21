@@ -1,0 +1,18 @@
+{
+ "source": "26_패션플랫폼.pdf",
+ "source_sha256": "bc2d2a3bede4a86b38a3fcd2b4ea9d54eb89b3e8207f6839ac4e274292492cd8",
+ "condition": "blur",
+ "dpi": 150,
+ "rotate": 0.0,
+ "blur": 1.2,
+ "pages": [
+  7,
+  8,
+  9,
+  11,
+  12
+ ],
+ "scan": "26_01101041.blur.pdf",
+ "scan_sha256": "bd742f59ed2ce0ec6ff66f70aaba0c4877a3f0da4a94dd3e597e6ea7704303f1",
+ "pixels_sha256": "e5a12cdb365eb818b9e84f188b7036da7e5d01019c1a7f10323d4d024bf47c57"
+}

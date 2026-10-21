@@ -1,0 +1,18 @@
+{
+ "source": "28_에코프로비엠.pdf",
+ "source_sha256": "8d4e6cf27e90bf203028bc8cacaea748e445d8d1c7863db30ba3a7ab01bb35c1",
+ "condition": "tilt",
+ "dpi": 150,
+ "rotate": 1.0,
+ "blur": 0.0,
+ "pages": [
+  9,
+  10,
+  11,
+  13,
+  14
+ ],
+ "scan": "28_01160363.tilt.pdf",
+ "scan_sha256": "91585f4ed2c833a0fddbe0f7470dba721a7eca8bb32b0cdabedc6280ced1e4fe",
+ "pixels_sha256": "61afbb2481f9dfb547b6b5ac38a083e8272d4c0da2d1b3a02ac41f0533eb40ba"
+}

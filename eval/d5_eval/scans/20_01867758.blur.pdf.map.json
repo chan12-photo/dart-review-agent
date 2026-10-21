@@ -1,0 +1,18 @@
+{
+ "source": "20_한화비전.pdf",
+ "source_sha256": "0a5b0106f67f19272ae7d7da5c5c4cd32ae4d6b2a0e18f38f3c11f2b0307fe85",
+ "condition": "blur",
+ "dpi": 150,
+ "rotate": 0.0,
+ "blur": 1.2,
+ "pages": [
+  9,
+  10,
+  11,
+  12,
+  14
+ ],
+ "scan": "20_01867758.blur.pdf",
+ "scan_sha256": "0a9c498b49c3972cbabc50d44c2fe3aae32637a3a7e260241b15165522addfee",
+ "pixels_sha256": "b98a70f345bbbba761cb76712bf32459934de1fba538df1a87041c55fde99db9"
+}

@@ -1,0 +1,18 @@
+{
+ "source": "24_에스텍.pdf",
+ "source_sha256": "a4cd553788469bb7d5d8743f1ea01ecdb74ad516cd5bf104cc0a3a8f43883a8c",
+ "condition": "blur",
+ "dpi": 150,
+ "rotate": 0.0,
+ "blur": 1.2,
+ "pages": [
+  9,
+  10,
+  11,
+  12,
+  14
+ ],
+ "scan": "24_00306719.blur.pdf",
+ "scan_sha256": "30a67f886883a13de435871759ac37d3aca53bad4dcf640f416689ad3054616c",
+ "pixels_sha256": "596b9931a5132254e0380ffc5210a736aa40ebd13d4cc1eefe05a17058fed64c"
+}

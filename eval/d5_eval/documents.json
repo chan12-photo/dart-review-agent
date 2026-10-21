@@ -1,0 +1,502 @@
+{
+ "note": "D5 evaluation documents (D5 contract 2 and 5; D4 contract 3.1, 3.3): file names and SHA-256 only; the PDFs are not committed (D4 contract 8). eval/d4_eval/run_d4.py --documents eval/d5_eval/documents.json reads them from --pdf-dir and --scan-dir and refuses any other bytes.",
+ "expected_documents": 10,
+ "documents": [
+  {
+   "key": "20_01867758",
+   "rank": 20,
+   "company": "한화비전",
+   "corp_code": "01867758",
+   "pdf": "20_한화비전.pdf",
+   "sha256": "0a5b0106f67f19272ae7d7da5c5c4cd32ae4d6b2a0e18f38f3c11f2b0307fe85",
+   "pages": 103,
+   "gold": "eval/d5_eval/gold/20_01867758.gold.json",
+   "mapping": "eval/d5_eval/gold/20_01867758.mapping.json",
+   "scans": {
+    "normal": {
+     "pdf": "20_01867758.normal.pdf",
+     "sha256": "e135f21a3afcbd6c4d50eed8d21ecb0f264473909c916da2894ca58df8c9be94",
+     "map": "eval/d5_eval/scans/20_01867758.normal.pdf.map.json",
+     "pages": [
+      9,
+      10,
+      11,
+      12,
+      14
+     ]
+    },
+    "tilt": {
+     "pdf": "20_01867758.tilt.pdf",
+     "sha256": "a4b837c2d1b778bfad5eb6eff5d0f1ac4c7f2fec3854b34476df194537ff7afe",
+     "map": "eval/d5_eval/scans/20_01867758.tilt.pdf.map.json",
+     "pages": [
+      9,
+      10,
+      11,
+      12,
+      14
+     ]
+    },
+    "blur": {
+     "pdf": "20_01867758.blur.pdf",
+     "sha256": "0a9c498b49c3972cbabc50d44c2fe3aae32637a3a7e260241b15165522addfee",
+     "map": "eval/d5_eval/scans/20_01867758.blur.pdf.map.json",
+     "pages": [
+      9,
+      10,
+      11,
+      12,
+      14
+     ]
+    }
+   }
+  },
+  {
+   "key": "22_01105621",
+   "rank": 22,
+   "company": "엔투텍",
+   "corp_code": "01105621",
+   "pdf": "22_엔투텍.pdf",
+   "sha256": "c67873f187e3a6e4f07966ae36f0cac9c4661a31741d7b6ef789c33697605877",
+   "pages": 92,
+   "gold": "eval/d5_eval/gold/22_01105621.gold.json",
+   "mapping": "eval/d5_eval/gold/22_01105621.mapping.json",
+   "scans": {
+    "normal": {
+     "pdf": "22_01105621.normal.pdf",
+     "sha256": "8b51f1da5ba66b3da6b3358a5f74a172a1957254e085868f792f63234e0505ef",
+     "map": "eval/d5_eval/scans/22_01105621.normal.pdf.map.json",
+     "pages": [
+      8,
+      9,
+      10,
+      11,
+      13,
+      14
+     ]
+    },
+    "tilt": {
+     "pdf": "22_01105621.tilt.pdf",
+     "sha256": "f8d01d6c2c8fe293732c8813b8904da837b225fe71cb872440c21b347cf3118c",
+     "map": "eval/d5_eval/scans/22_01105621.tilt.pdf.map.json",
+     "pages": [
+      8,
+      9,
+      10,
+      11,
+      13,
+      14
+     ]
+    },
+    "blur": {
+     "pdf": "22_01105621.blur.pdf",
+     "sha256": "d5c5d85420e6f433b07226bdf25827cf5fa291a0de0501ac18f26c3cd2762aa1",
+     "map": "eval/d5_eval/scans/22_01105621.blur.pdf.map.json",
+     "pages": [
+      8,
+      9,
+      10,
+      11,
+      13,
+      14
+     ]
+    }
+   }
+  },
+  {
+   "key": "24_00306719",
+   "rank": 24,
+   "company": "에스텍",
+   "corp_code": "00306719",
+   "pdf": "24_에스텍.pdf",
+   "sha256": "a4cd553788469bb7d5d8743f1ea01ecdb74ad516cd5bf104cc0a3a8f43883a8c",
+   "pages": 72,
+   "gold": "eval/d5_eval/gold/24_00306719.gold.json",
+   "mapping": "eval/d5_eval/gold/24_00306719.mapping.json",
+   "scans": {
+    "normal": {
+     "pdf": "24_00306719.normal.pdf",
+     "sha256": "11367fcfb1e6bac5808b3f1ab7797aef59b40d0abec08cec88f03351d07b385e",
+     "map": "eval/d5_eval/scans/24_00306719.normal.pdf.map.json",
+     "pages": [
+      9,
+      10,
+      11,
+      12,
+      14
+     ]
+    },
+    "tilt": {
+     "pdf": "24_00306719.tilt.pdf",
+     "sha256": "010cc6ce04b9b8681a45b44920316ccdd5f2b32c223755feff68f25531b22d60",
+     "map": "eval/d5_eval/scans/24_00306719.tilt.pdf.map.json",
+     "pages": [
+      9,
+      10,
+      11,
+      12,
+      14
+     ]
+    },
+    "blur": {
+     "pdf": "24_00306719.blur.pdf",
+     "sha256": "30a67f886883a13de435871759ac37d3aca53bad4dcf640f416689ad3054616c",
+     "map": "eval/d5_eval/scans/24_00306719.blur.pdf.map.json",
+     "pages": [
+      9,
+      10,
+      11,
+      12,
+      14
+     ]
+    }
+   }
+  },
+  {
+   "key": "26_01101041",
+   "rank": 26,
+   "company": "패션플랫폼",
+   "corp_code": "01101041",
+   "pdf": "26_패션플랫폼.pdf",
+   "sha256": "bc2d2a3bede4a86b38a3fcd2b4ea9d54eb89b3e8207f6839ac4e274292492cd8",
+   "pages": 82,
+   "gold": "eval/d5_eval/gold/26_01101041.gold.json",
+   "mapping": "eval/d5_eval/gold/26_01101041.mapping.json",
+   "scans": {
+    "normal": {
+     "pdf": "26_01101041.normal.pdf",
+     "sha256": "68677cb50c5b27aebde37932839e43b3a70bfa6c878c833cd62f2b362865b0bd",
+     "map": "eval/d5_eval/scans/26_01101041.normal.pdf.map.json",
+     "pages": [
+      7,
+      8,
+      9,
+      11,
+      12
+     ]
+    },
+    "tilt": {
+     "pdf": "26_01101041.tilt.pdf",
+     "sha256": "efc2ade4c460847bcd3fb5fba4d9daccfa12bc737816df463e3803030891f210",
+     "map": "eval/d5_eval/scans/26_01101041.tilt.pdf.map.json",
+     "pages": [
+      7,
+      8,
+      9,
+      11,
+      12
+     ]
+    },
+    "blur": {
+     "pdf": "26_01101041.blur.pdf",
+     "sha256": "bd742f59ed2ce0ec6ff66f70aaba0c4877a3f0da4a94dd3e597e6ea7704303f1",
+     "map": "eval/d5_eval/scans/26_01101041.blur.pdf.map.json",
+     "pages": [
+      7,
+      8,
+      9,
+      11,
+      12
+     ]
+    }
+   }
+  },
+  {
+   "key": "27_00525679",
+   "rank": 27,
+   "company": "차바이오텍",
+   "corp_code": "00525679",
+   "pdf": "27_차바이오텍.pdf",
+   "sha256": "2b8837287bbb55caeacf90fe6ccdd25e0bfce8973cd230ca0c93bcd044251b84",
+   "pages": 169,
+   "gold": "eval/d5_eval/gold/27_00525679.gold.json",
+   "mapping": "eval/d5_eval/gold/27_00525679.mapping.json",
+   "scans": {
+    "normal": {
+     "pdf": "27_00525679.normal.pdf",
+     "sha256": "79d9951ad49d158a9ef2d885cb2f7883785ec67b54edfaffd6ee4fe112836a14",
+     "map": "eval/d5_eval/scans/27_00525679.normal.pdf.map.json",
+     "pages": [
+      8,
+      9,
+      10,
+      11,
+      13,
+      14,
+      15
+     ]
+    },
+    "tilt": {
+     "pdf": "27_00525679.tilt.pdf",
+     "sha256": "f2e76da68201f7d5fa8078b05179cc5f9a878016ccb7b7bff59c01e1af54595a",
+     "map": "eval/d5_eval/scans/27_00525679.tilt.pdf.map.json",
+     "pages": [
+      8,
+      9,
+      10,
+      11,
+      13,
+      14,
+      15
+     ]
+    },
+    "blur": {
+     "pdf": "27_00525679.blur.pdf",
+     "sha256": "e8d8ce705862c1e1cc2139f609a3ad8670c1499cbdb60845c3079b0ab6d7187a",
+     "map": "eval/d5_eval/scans/27_00525679.blur.pdf.map.json",
+     "pages": [
+      8,
+      9,
+      10,
+      11,
+      13,
+      14,
+      15
+     ]
+    }
+   }
+  },
+  {
+   "key": "28_01160363",
+   "rank": 28,
+   "company": "에코프로비엠",
+   "corp_code": "01160363",
+   "pdf": "28_에코프로비엠.pdf",
+   "sha256": "8d4e6cf27e90bf203028bc8cacaea748e445d8d1c7863db30ba3a7ab01bb35c1",
+   "pages": 113,
+   "gold": "eval/d5_eval/gold/28_01160363.gold.json",
+   "mapping": "eval/d5_eval/gold/28_01160363.mapping.json",
+   "scans": {
+    "normal": {
+     "pdf": "28_01160363.normal.pdf",
+     "sha256": "cb382e56d066ef77e6459a628209dac0a14dcd97aad9c6f9228b10ddb6cad443",
+     "map": "eval/d5_eval/scans/28_01160363.normal.pdf.map.json",
+     "pages": [
+      9,
+      10,
+      11,
+      13,
+      14
+     ]
+    },
+    "tilt": {
+     "pdf": "28_01160363.tilt.pdf",
+     "sha256": "91585f4ed2c833a0fddbe0f7470dba721a7eca8bb32b0cdabedc6280ced1e4fe",
+     "map": "eval/d5_eval/scans/28_01160363.tilt.pdf.map.json",
+     "pages": [
+      9,
+      10,
+      11,
+      13,
+      14
+     ]
+    },
+    "blur": {
+     "pdf": "28_01160363.blur.pdf",
+     "sha256": "bb03f8b7b7a6e746f97ded64a702a30db15a3bbb05cffb55018c433052b1b986",
+     "map": "eval/d5_eval/scans/28_01160363.blur.pdf.map.json",
+     "pages": [
+      9,
+      10,
+      11,
+      13,
+      14
+     ]
+    }
+   }
+  },
+  {
+   "key": "30_00161046",
+   "rank": 30,
+   "company": "한독",
+   "corp_code": "00161046",
+   "pdf": "30_한독.pdf",
+   "sha256": "55d7e040a4acfbc2a88de2407bb3b39e90a5ac35456527a4f93d3a44e8841f8b",
+   "pages": 104,
+   "gold": "eval/d5_eval/gold/30_00161046.gold.json",
+   "mapping": "eval/d5_eval/gold/30_00161046.mapping.json",
+   "scans": {
+    "normal": {
+     "pdf": "30_00161046.normal.pdf",
+     "sha256": "0df1eea415b45e14dba6f3a185d716d91cc2810d0e6a85869412ec1afb3e3846",
+     "map": "eval/d5_eval/scans/30_00161046.normal.pdf.map.json",
+     "pages": [
+      8,
+      9,
+      10,
+      11,
+      13
+     ]
+    },
+    "tilt": {
+     "pdf": "30_00161046.tilt.pdf",
+     "sha256": "432ec10660772abc36f5c7e5e27140346d1afc27d9a5d433a592a377b05b1020",
+     "map": "eval/d5_eval/scans/30_00161046.tilt.pdf.map.json",
+     "pages": [
+      8,
+      9,
+      10,
+      11,
+      13
+     ]
+    },
+    "blur": {
+     "pdf": "30_00161046.blur.pdf",
+     "sha256": "cd5b6bf417057e506d7c4bfeb46990015dd3b398c37b8ad1d27ba1025caca483",
+     "map": "eval/d5_eval/scans/30_00161046.blur.pdf.map.json",
+     "pages": [
+      8,
+      9,
+      10,
+      11,
+      13
+     ]
+    }
+   }
+  },
+  {
+   "key": "31_00106881",
+   "rank": 31,
+   "company": "인디에프",
+   "corp_code": "00106881",
+   "pdf": "31_인디에프.pdf",
+   "sha256": "5a4a9cc57f752d6a7971659e6bc825c2c257528e15d73f123c2ab36eb8faddf0",
+   "pages": 80,
+   "gold": "eval/d5_eval/gold/31_00106881.gold.json",
+   "mapping": "eval/d5_eval/gold/31_00106881.mapping.json",
+   "scans": {
+    "normal": {
+     "pdf": "31_00106881.normal.pdf",
+     "sha256": "654f58a00a91956168fd402e2a1026c1200b1b5b8c4f3614120c8c0afda8b096",
+     "map": "eval/d5_eval/scans/31_00106881.normal.pdf.map.json",
+     "pages": [
+      7,
+      8,
+      9,
+      11,
+      12
+     ]
+    },
+    "tilt": {
+     "pdf": "31_00106881.tilt.pdf",
+     "sha256": "bf01943def16898388234d6ddd205e506c6e270ed42f0a330b431409b89ba866",
+     "map": "eval/d5_eval/scans/31_00106881.tilt.pdf.map.json",
+     "pages": [
+      7,
+      8,
+      9,
+      11,
+      12
+     ]
+    },
+    "blur": {
+     "pdf": "31_00106881.blur.pdf",
+     "sha256": "85ff59471e598baea76d515ec26730f735856a53f353f33d2da2b2d0d76957cd",
+     "map": "eval/d5_eval/scans/31_00106881.blur.pdf.map.json",
+     "pages": [
+      7,
+      8,
+      9,
+      11,
+      12
+     ]
+    }
+   }
+  },
+  {
+   "key": "33_01586455",
+   "rank": 33,
+   "company": "꿈비",
+   "corp_code": "01586455",
+   "pdf": "33_꿈비.pdf",
+   "sha256": "b45b58b7563fa488c4cb581a36d9c932d48dbf5a99bf5ebb534c2b0878f9c9eb",
+   "pages": 83,
+   "gold": "eval/d5_eval/gold/33_01586455.gold.json",
+   "mapping": "eval/d5_eval/gold/33_01586455.mapping.json",
+   "scans": {
+    "normal": {
+     "pdf": "33_01586455.normal.pdf",
+     "sha256": "b12000d05d240aec7f642a0df3a78c59929d5bb7f28969f135c207b34e994104",
+     "map": "eval/d5_eval/scans/33_01586455.normal.pdf.map.json",
+     "pages": [
+      7,
+      8,
+      9,
+      11,
+      12
+     ]
+    },
+    "tilt": {
+     "pdf": "33_01586455.tilt.pdf",
+     "sha256": "4b7ec29bf95b44580880b9533d74fdde3522117157100796694386b00c4fe71a",
+     "map": "eval/d5_eval/scans/33_01586455.tilt.pdf.map.json",
+     "pages": [
+      7,
+      8,
+      9,
+      11,
+      12
+     ]
+    },
+    "blur": {
+     "pdf": "33_01586455.blur.pdf",
+     "sha256": "171c81008987efb08d9eef545a18674861b7dfab2468a65b72d16f5cc44e08ba",
+     "map": "eval/d5_eval/scans/33_01586455.blur.pdf.map.json",
+     "pages": [
+      7,
+      8,
+      9,
+      11,
+      12
+     ]
+    }
+   }
+  },
+  {
+   "key": "34_01412725",
+   "rank": 34,
+   "company": "두산퓨얼셀",
+   "corp_code": "01412725",
+   "pdf": "34_두산퓨얼셀.pdf",
+   "sha256": "c06117117b9fa0ea500bf5068f8d8474fe2a8c8317901c79fb0d35528b436d9a",
+   "pages": 118,
+   "gold": "eval/d5_eval/gold/34_01412725.gold.json",
+   "mapping": "eval/d5_eval/gold/34_01412725.mapping.json",
+   "scans": {
+    "normal": {
+     "pdf": "34_01412725.normal.pdf",
+     "sha256": "398a19c3f3ac4c0da83c1582a3f6c22c7e86d9de7b30fe8566ed496d32d5f1e4",
+     "map": "eval/d5_eval/scans/34_01412725.normal.pdf.map.json",
+     "pages": [
+      9,
+      10,
+      11,
+      13
+     ]
+    },
+    "tilt": {
+     "pdf": "34_01412725.tilt.pdf",
+     "sha256": "6649b47f056a3e815810ca944422a4555d364c4db0e630aee1f9cbac519d5025",
+     "map": "eval/d5_eval/scans/34_01412725.tilt.pdf.map.json",
+     "pages": [
+      9,
+      10,
+      11,
+      13
+     ]
+    },
+    "blur": {
+     "pdf": "34_01412725.blur.pdf",
+     "sha256": "de5ac4f5dc73753a8648a4b463d823c35faf669f3c25ace7cf2e1b5e66d5f9a1",
+     "map": "eval/d5_eval/scans/34_01412725.blur.pdf.map.json",
+     "pages": [
+      9,
+      10,
+      11,
+      13
+     ]
+    }
+   }
+  }
+ ]
+}

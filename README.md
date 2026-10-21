@@ -175,7 +175,7 @@ The design was chosen on 13 development questions plus 13 paraphrases ([report](
 - The 3-5 questions are mechanical. Its human review covered all failures and a sample of 60 passed answers.
 - Next is fixing the defects 3-5 found. A fixed version is to be measured on new questions, not on ones whose results have been seen.
 
-## Status and next tasks (2026-10-20)
+## Status and next tasks (2026-10-21)
 
 The comparison feature is closed at v0.1.2. In progress: **v0.2 documents to verified spreadsheets**. Its pre-registered evaluation D4 is done, and **the criteria were not met**:
 
@@ -193,7 +193,10 @@ The comparison feature is closed at v0.1.2. In progress: **v0.2 documents to ver
   - Of the 8 wrong labels, 4 are real (the AI inserted a character), and 4 are a notation mismatch between the evaluation's own tools; without those, no verdict changes.
   - The rules reader does not meet the criteria either.
   - Ten companies are cases, not an error-rate estimate.
-  - Next is a product fix against the mixing; a fixed version is to be measured on new documents.
+- **After D4 (2026-10-21, local work):**
+  - The product fix against the mixing is done.
+  - Measured again on the same D4 documents, the causes of D4's wrong values are gone, and the five development documents give the same results. These documents have been seen, so this is not an evaluation ([development measurement](eval/documents_2026-10-20_after-d4/REPORT.ko.md), in Korean).
+  - The fixed version is to be measured on documents of companies it has not seen (the D5 evaluation). Its contract is a draft reviewed five times by Codex; whether to run it is not yet decided. [Roadmap](docs/ROADMAP.ko.md)
 
 Deferred tasks, and when they would be picked up:
 

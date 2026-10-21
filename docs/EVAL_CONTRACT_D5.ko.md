@@ -5,6 +5,7 @@
   - 3판: Codex 재검토(치명 1, 중요 2, 사소 1)를 반영했다([결과](reviews/D5_contract_recheck_codex_result.ko.md), [응답](reviews/D5_contract_recheck_codex_response.ko.md)).
   - 4판: Codex 3차 검토(치명 1, 중요 1, 사소 2)를 반영했다([결과](reviews/D5_contract_recheck2_codex_result.ko.md), [응답](reviews/D5_contract_recheck2_codex_response.ko.md)).
   - 5판: Codex 4차 확인(중요 1)을 반영했다([결과](reviews/D5_contract_recheck3_codex_result.ko.md), [응답](reviews/D5_contract_recheck3_codex_response.ko.md)).
+  - Codex 5차 확인(2026-10-21): 4차 지적이 닫혔고, 고칠 것과 계약에 적을 것이 없다([결과](reviews/D5_contract_recheck4_codex_result.ko.md)). 확인한 도구 코드는 `e71ec90dff176fc4427ac2c6d4a0633b2149984f`다.
 - 아직 정하지 않은 것: **D5를 할지는 사용자 결정(9절) 전이다.** 계획은 [`EVAL_PLAN_D5.ko.md`](EVAL_PLAN_D5.ko.md)에 있다.
 - **이 계약은 D4 계약 7판([`EVAL_CONTRACT_D4.ko.md`](EVAL_CONTRACT_D4.ko.md))을 따른다.** 다른 점은 이 문서에 적는다. 파일과 명령은 2절의 표가 정한다. "D4"를 "D5"로 바꿔 읽는 식의 포괄 치환은 하지 않는다.
 - 목적: D4가 찾은 결함을 고친 제품이 **처음 보는 문서**에서 무엇을 내는지 잰다. 볼 것은 표시 없이 틀린 값·계정명, 가리키지 않은 빠진 칸이다. 기준은 D4와 같다(텍스트 PDF S1 = L1 = S2 = 0, 합성 스캔 S1 = 0).

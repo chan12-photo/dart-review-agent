@@ -1,0 +1,7 @@
+samsung {'gold_cells': 236, 'correct': 236, 'value_wrong': 0, 'label_wrong': 0, 'missing': 0, 'S1': 0, 'L1': 0, 'S2': 0, 'flagged': 1, 'product_cells': 237, 'not_in_gold': 0, 'unjudged_extras': 0} same
+naver {'gold_cells': 254, 'correct': 254, 'value_wrong': 0, 'label_wrong': 0, 'missing': 0, 'S1': 0, 'L1': 0, 'S2': 0, 'flagged': 0, 'product_cells': 254, 'not_in_gold': 0, 'unjudged_extras': 0} same
+hanwha {'gold_cells': 230, 'correct': 230, 'value_wrong': 0, 'label_wrong': 0, 'missing': 0, 'S1': 0, 'L1': 0, 'S2': 0, 'flagged': 16, 'product_cells': 230, 'not_in_gold': 0, 'unjudged_extras': 0} same
+posco {'gold_cells': 270, 'correct': 270, 'value_wrong': 0, 'label_wrong': 0, 'missing': 0, 'S1': 0, 'L1': 0, 'S2': 0, 'flagged': 55, 'product_cells': 270, 'not_in_gold': 0, 'unjudged_extras': 0} same
+lges {'gold_cells': 417, 'correct': 415, 'value_wrong': 0, 'label_wrong': 0, 'missing': 2, 'S1': 0, 'L1': 0, 'S2': 0, 'flagged': 1, 'product_cells': 416, 'not_in_gold': 0, 'unjudged_extras': 0} same
+before {'gold_cells': 1407, 'correct': 1405, 'value_wrong': 0, 'label_wrong': 0, 'missing': 2, 'S1': 0, 'L1': 0, 'S2': 0, 'flagged': 73, 'product_cells': 1407, 'not_in_gold': 0, 'unjudged_extras': 0}
+after {'gold_cells': 1407, 'correct': 1405, 'value_wrong': 0, 'label_wrong': 0, 'missing': 2, 'S1': 0, 'L1': 0, 'S2': 0, 'flagged': 73, 'product_cells': 1407, 'not_in_gold': 0, 'unjudged_extras': 0}

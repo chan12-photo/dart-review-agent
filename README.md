@@ -193,7 +193,7 @@ The comparison feature is closed at v0.1.2. In progress: **v0.2 documents to ver
   - Of the 8 wrong labels, 4 are real (the AI inserted a character), and 4 are a notation mismatch between the evaluation's own tools; without those, no verdict changes.
   - The rules reader does not meet the criteria either.
   - Ten companies are cases, not an error-rate estimate.
-- **After D4 (2026-10-21, local work):**
+- **After D4 (2026-10-21):**
   - The product fix against the mixing is done.
   - Measured again on the same D4 documents, the causes of D4's wrong values are gone, and the five development documents give the same results. These documents have been seen, so this is not an evaluation ([development measurement](eval/documents_2026-10-20_after-d4/REPORT.ko.md), in Korean).
   - The fixed version is to be measured on documents of companies it has not seen (the D5 evaluation). Its contract is a draft reviewed five times by Codex; whether to run it is not yet decided. [Roadmap](docs/ROADMAP.ko.md)
